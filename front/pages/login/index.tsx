@@ -1,7 +1,13 @@
 import type { NextPage } from "next";
+import Container from "@userContainer/Container";
+import LoginForm from "@loginComp/LoginForm";
 
 const LoginPage: NextPage = () => {
-  return <div>LoginPage</div>;
+  return (
+    <Container>
+      <LoginForm />
+    </Container>
+  );
 };
 
 export default LoginPage;
