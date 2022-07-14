@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
-
 @Module({
   imports: [],
   controllers: [AppController],
