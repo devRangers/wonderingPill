@@ -23,6 +23,7 @@ function Container({ children }: UserContainerProps) {
           alt="wondering-pill-logo"
           layout="fill"
           objectFit="cover"
+          priority={true}
         />
       </LogoContainer>
       {children}
