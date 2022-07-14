@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as config from 'config';
 import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
-
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
@@ -33,7 +32,7 @@ async function bootstrap() {
   app.enableCors(); // CORS 설정
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
   await app.listen(PORT);
-  
+
   Logger.log(`Application running on port ${PORT}`);
 }
 bootstrap();
