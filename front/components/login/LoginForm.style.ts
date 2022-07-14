@@ -6,6 +6,70 @@ export const Form = styled("form", {
   height: "40%",
 });
 
+export const ContentContainer = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  alignItems: "center",
+  height: "80%",
+});
+
+export const Input = styled("input", {
+  width: "65%",
+  height: "25%",
+  border: 0,
+  borderRadius: "25px",
+  fontSize: "1rem",
+  padding: "0 1rem",
+  "::-webkit-input-placeholder": {
+    textAlign: "center",
+    fontFamily: "'Noto Sans KR', sans-serif",
+    color: "#A4A4A4",
+  },
+});
+
+export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
+  textAlign: "start",
+  width: "65%",
+  height: "1rem",
+  padding: "0 1rem",
+  marginBottom: "0.5rem",
+  color: props.$txtColor,
+}));
+
+export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
+  width: "65%",
+  height: "25%",
+  border: 0,
+  borderRadius: "25px",
+  fontSize: "1rem",
+  backgroundColor: props.$btnColor,
+  color: "#fff",
+  fontWeight: "bold",
+}));
+
+export const SubBtnContainer = styled("div", {
+  display: "flex",
+  justifyContent: "space-evenly",
+  alignItems: "center",
+  width: "80%",
+  height: "20%",
+  margin: "0 auto",
+  color: "#fff",
+});
+
+export const CheckboxContainer = styled("div", {
+  color: "#fff",
+  fontSize: "0.9rem",
+});
+
+export const TextBtn = styled("button", {
+  border: 0,
+  backgroundColor: "transparent",
+  color: "#fff",
+  fontSize: "0.9rem",
+});
+
 export const SnsLoginContainer = styled("div", {
   height: "15%",
 });
@@ -20,7 +84,7 @@ export const SnsTitle = styled("div", {
     content: "''",
     flexGrow: 1,
     backgroundColor: "#fff",
-    height: "1.5px",
+    height: "1px",
     fontSize: "0px",
     lineHeight: "0px",
     margin: "0 1.5rem",
@@ -29,7 +93,7 @@ export const SnsTitle = styled("div", {
     content: "''",
     flexGrow: 1,
     backgroundColor: "#fff",
-    height: "1.5px",
+    height: "1px",
     fontSize: "0px",
     lineHeight: "0px",
     margin: "0 1.5rem",
