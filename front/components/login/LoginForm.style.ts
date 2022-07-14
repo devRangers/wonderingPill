@@ -31,10 +31,9 @@ export const Input = styled("input", {
 export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
   textAlign: "start",
   width: "65%",
-  height: "1rem",
   padding: "0 1rem",
-  marginBottom: "0.5rem",
   color: props.$txtColor,
+  fontSize: "0.9rem",
 }));
 
 export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({

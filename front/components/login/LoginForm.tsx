@@ -1,9 +1,12 @@
 import Image from "next/image";
-import { BUTTON_COLOR } from "@utils/constant";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import {
   Form,
   ContentContainer,
   Input,
+  ErrorMessage,
   SubmitBtn,
   SubBtnContainer,
   CheckboxContainer,
@@ -15,18 +18,63 @@ import {
   GoogleBtn,
 } from "./LoginForm.style";
 
+interface LoginValues {
+  email: string;
+  password: string;
+}
+
+const initialValue: LoginValues = { email: "", password: "" };
+
 function LoginForm() {
+  const formik = useFormik({
+    initialValues: initialValue,
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("이메일을 다시 확인해 주세요.")
+        .required("이메일을 입력해 주세요."),
+      password: Yup.string()
+        .matches(
+          /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+          "비밀번호는 소문자, 숫자, 특수문자 포함 8자 이상입니다.",
+        )
+        .required("비밀번호를 입력해 주세요."),
+    }),
+    onSubmit: async (values, actions) => {
+      // Submit Handler 구현 예정
+      console.log(values);
+    },
+  });
+
   return (
     <>
-      <Form>
+      <Form onSubmit={formik.handleSubmit}>
         <ContentContainer>
-          <Input id="email" name="email" type="text" placeholder="이메일" />
+          <Input
+            id="email"
+            name="email"
+            type="text"
+            placeholder="이메일"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.email}
+          />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {formik.touched.email && formik.errors.email}
+          </ErrorMessage>
+
           <Input
             id="password"
             name="password"
             type="password"
             placeholder="비밀번호"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.password}
           />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {formik.touched.password && formik.errors.password}
+          </ErrorMessage>
+
           <SubmitBtn $btnColor={BUTTON_COLOR}>로그인하기</SubmitBtn>
         </ContentContainer>
         <SubBtnContainer>
