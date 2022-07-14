@@ -1,5 +1,17 @@
 import { styled } from "styletron-react";
 
+export const Container = styled("div", (props: { $bgColor: string }) => ({
+  width: "100vw",
+  display: "flex",
+  flexDirection: "column",
+  backgroundColor: props.$bgColor,
+}));
+
+export const LogoContainer = styled("div", {
+  position: "relative",
+  height: "100px",
+});
+
 export const Form = styled("form", {
   display: "flex",
   justifyContent: "space-between",
