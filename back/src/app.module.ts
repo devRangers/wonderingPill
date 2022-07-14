@@ -6,9 +6,11 @@ import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
 @Module({
   imports: [],
   controllers: [AppController],
-  providers: [{
-    provide: APP_FILTER,
-    useClass: HttpExceptionFilter,
-  },],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
