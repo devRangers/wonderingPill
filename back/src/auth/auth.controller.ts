@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User as UserModel } from '@prisma/client';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 @ApiTags('User API')
 @Controller('auth')
 export class AuthController {
