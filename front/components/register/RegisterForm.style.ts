@@ -114,7 +114,11 @@ export const SelfAuthenticationLine = styled(
   }),
 );
 
-export const AuthenticationForm = styled(Form, {
+export const AuthenticationForm = styled("form", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  flexDirection: "column",
   padding: "0",
 });
 
@@ -125,7 +129,22 @@ export const PhoneNumberContainer = styled("div", {
   alignItems: "center",
 });
 
-export const AuthenticationInput = styled(Input, {
+export const AuthenticationInput = styled("input", {
+  maxWidth: "25rem",
+  minHeight: "3.5rem",
+
+  backgroundColor: "#fff",
+  border: "none",
+  borderRadius: "25px",
+
+  outline: "0",
+  fontSize: "1.2rem",
+  padding: "0 1rem",
+
+  "::-webkit-input-placeholder": {
+    textAlign: "center",
+    color: "#A4A4A4",
+  },
   width: "70%",
   marginRight: "0.7rem",
 });
@@ -146,12 +165,11 @@ export const SubmitAuthenticationBtn = styled(
 export const CheckboxContainer = styled("div", {
   width: "85%",
   maxHeight: "8rem",
-  maxWidth: "30rem",
+  maxWidth: "25rem",
   margin: "auto",
-  display: "flex",
-  justifyContent: "space-around",
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
 });
-export const LabelContainer = styled("div", {});
 
 export const LabelWrapper = styled("div", {
   fontSize: "0.8rem",
@@ -165,7 +183,7 @@ export const CheckBox = styled("input", {
 export const Label = styled("label", {
   display: "flex",
   alignItems: "center",
-  padding: "0 0.2rem 0.5rem 0.2rem",
+  paddingBottom: "0.4rem",
   userSelect: "none",
 });
 
@@ -183,8 +201,9 @@ export const CustomCheckmark = styled(
       position: "absolute",
       width: "3px",
       height: "7px",
-      border: "1px solid white",
       borderWidth: "0px 3px 3px 0px",
+      borderStyle: "solid",
+      borderColor: "#fff",
       transform: "translate(5px, 2px) rotate(45deg)",
       visibility: props.$checked ? "visible" : "hidden",
     },

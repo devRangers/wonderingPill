@@ -14,7 +14,6 @@ import {
   Form,
   Input,
   Label,
-  LabelContainer,
   LabelWrapper,
   LogoContainer,
   PhoneNumberContainer,
@@ -25,6 +24,13 @@ import {
 import { HeaderContainer } from "@userContainer/Container.style";
 import { CheckboxContainer } from "./RegisterForm.style";
 import Header from "@userContainer/Header";
+
+const labelData: { [key in string]: string } = {
+  age: "만 14세 이상입니까?",
+  privacy: "개인정보 취급방침 동의",
+  "terms of service": "이용약관 동의",
+  "location information": "위치정보 동의",
+};
 
 const RegisterForm = () => {
   const [selectedCheckbox, setSelectedCheckbox] = useState([
@@ -219,94 +225,29 @@ const RegisterForm = () => {
         )}
       </AuthenticationForm>
       <CheckboxContainer>
-        <LabelContainer>
-          <LabelWrapper>
-            <Label htmlFor="age">
+        {Object.entries(labelData).map(([key, value], index) => (
+          <LabelWrapper key={key}>
+            <Label htmlFor={key}>
               <CheckBox
                 type="checkbox"
-                id="age"
-                name="age"
+                id={key}
+                name={key}
                 onClick={() =>
                   setSelectedCheckbox((cur) => {
                     const temp = [...cur];
-                    temp[0] = !temp[0];
+                    temp[index] = !temp[index];
                     return temp;
                   })
                 }
               />
               <CustomCheckmark
-                $checked={selectedCheckbox[0]}
+                $checked={selectedCheckbox[index]}
                 $markColor={SUB_COLOR}
               />
-              만 14세 이상입니까?
+              {value}
             </Label>
           </LabelWrapper>
-          <LabelWrapper>
-            <Label>
-              <CheckBox
-                type="checkbox"
-                id="terms of service"
-                name="terms of service"
-                onClick={() =>
-                  setSelectedCheckbox((cur) => {
-                    const temp = [...cur];
-                    temp[1] = !temp[1];
-                    return temp;
-                  })
-                }
-              />
-              <CustomCheckmark
-                $checked={selectedCheckbox[1]}
-                $markColor={SUB_COLOR}
-              />
-              이용약관 동의
-            </Label>
-          </LabelWrapper>
-        </LabelContainer>
-        <LabelContainer>
-          <LabelWrapper>
-            <Label>
-              <CheckBox
-                type="checkbox"
-                id="privacy"
-                name="privacy"
-                onClick={() =>
-                  setSelectedCheckbox((cur) => {
-                    const temp = [...cur];
-                    temp[2] = !temp[2];
-                    return temp;
-                  })
-                }
-              />
-              <CustomCheckmark
-                $checked={selectedCheckbox[2]}
-                $markColor={SUB_COLOR}
-              />
-              개인정보 취급방치 동의
-            </Label>
-          </LabelWrapper>
-          <LabelWrapper>
-            <Label>
-              <CheckBox
-                type="checkbox"
-                id="location information"
-                name="location information"
-                onClick={() =>
-                  setSelectedCheckbox((cur) => {
-                    const temp = [...cur];
-                    temp[3] = !temp[3];
-                    return temp;
-                  })
-                }
-              />
-              <CustomCheckmark
-                $checked={selectedCheckbox[3]}
-                $markColor={SUB_COLOR}
-              />
-              위치정보 동의
-            </Label>
-          </LabelWrapper>
-        </LabelContainer>
+        ))}
       </CheckboxContainer>
       <EmptyBox />
     </Container>
