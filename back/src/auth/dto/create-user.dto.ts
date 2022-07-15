@@ -1,31 +1,26 @@
-import {
-  IsDate,
-  IsEmail,
-  IsNumber,
-  IsString,
-  Matches,
-  MinLength,
-} from 'class-validator';
-import { providerType } from '../auth-provider.enum';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsDate, IsEmail, IsString, Matches, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
+  @ApiProperty()
   email: string;
 
   @IsString()
+  @ApiProperty()
   name: string;
 
   @IsString()
   @MinLength(8)
   @Matches(/^(?=.[a-z])(?=.\d)(?=.*[!@#$%^&*])(?=.{8,})/)
+  @ApiProperty()
   password: string;
 
-  @IsDate()
-  birth: Date;
-
-  @IsNumber()
-  phone: number;
+  @IsString()
+  @ApiProperty()
+  birth: string;
 
   @IsString()
-  provider: providerType;
+  @ApiProperty()
+  phone: string;
 }

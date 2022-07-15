@@ -49,7 +49,7 @@ model User {
   password         String?            @db.VarChar(20)
   birth            DateTime?          @db.Date
   phone            String?            @db.VarChar(20)
-  provider         String?            @db.VarChar(20)
+  provider         String?            @db.VarChar(7)
   profileImg       String?            @default("imageUrl")
   isDeleted        Boolean?           @default(false)
   createdAt        DateTime?          @db.Date @default(now())
