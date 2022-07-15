@@ -7,3 +7,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Pharmacy {
+  id                Int                 @id
+  name              String?             @db.VarChar(50)
+  phone             String?             @db.VarChar(20)
+  address           String?
+  PharmacyBookMark  PharmacyBookMark[]
+  PharmacyTimeTable PharmacyTimeTable[]
+}
+
+model PharmacyBookMark {
+  user_id     Int
+  pharmacy_id Int
+  id          Int      @default(autoincrement())
+  Pharmacy    Pharmacy @relation(fields: [pharmacy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User        User     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id, user_id, pharmacy_id])
+}
+
+model PharmacyTimeTable {
+  id          Int
+  pharmacy_id Int
+  monday      String   @db.VarChar(50)
+  tuesday     String   @db.VarChar(50)
+  wednesday   String   @db.VarChar(50)
+  thursday    String   @db.VarChar(50)
+  friday      String   @db.VarChar(50)
+  saturday    String   @db.VarChar(50)
+  sunday      String   @db.VarChar(50)
+  holiday     String   @db.VarChar(50)
+  Pharmacy    Pharmacy @relation(fields: [pharmacy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id, pharmacy_id])
+}
+
+model User {
+  id               Int                @id
+  email            String?            @db.VarChar(100)
+  name             String?            @db.VarChar(20)
+  password         String?            @db.VarChar(20)
+  birth            DateTime?          @db.Date
+  phone            String?            @db.VarChar(20)
+  provider         String?            @db.VarChar(20)
+  profileImg       String?
+  isDeleted        Boolean?
+  createdAt        DateTime?          @db.Date
+  updatedAt        DateTime?          @db.Date
+  PharmacyBookMark PharmacyBookMark[]
+}
