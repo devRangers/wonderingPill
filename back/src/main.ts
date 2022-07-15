@@ -6,6 +6,7 @@ import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
 
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { setupSwagger } from './util/swagger';
 
 dotenv.config({
   path: path.resolve(
@@ -30,10 +31,11 @@ async function bootstrap() {
 
   // PORT 설정
   const PORT = process.env.SERVER_PORT || config.get('server').port;
+  setupSwagger(app);
   app.enableCors(); // CORS 설정
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
   await app.listen(PORT);
-  
+
   Logger.log(`Application running on port ${PORT}`);
 }
 bootstrap();
