@@ -140,7 +140,7 @@ const RegisterForm = () => {
 
         <Input
           id="password"
-          type="text"
+          type="password"
           {...userDataFormik.getFieldProps("password")}
           placeholder="비밀번호"
         />
@@ -152,7 +152,7 @@ const RegisterForm = () => {
 
         <Input
           id="checkPassword"
-          type="text"
+          type="password"
           {...userDataFormik.getFieldProps("checkPassword")}
           placeholder="비밀번호 확인"
         />
