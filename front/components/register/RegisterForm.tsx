@@ -1,27 +1,38 @@
+import Image from "next/image";
+import { useState } from "react";
 import { useFormik } from "formik";
+import * as Yup from "yup";
+import { BUTTON_COLOR, MAIN_COLOR, SUB_COLOR } from "@utils/constant";
 import {
   AuthenticationForm,
   AuthenticationInput,
   CheckBox,
   Container,
+  CustomCheckmark,
+  EmptyBox,
   ErrorMessage,
   Form,
   Input,
+  Label,
   LabelContainer,
   LabelWrapper,
   LogoContainer,
   PhoneNumberContainer,
   SelfAuthenticationLine,
   SubmitAuthenticationBtn,
+  SubmitButton,
 } from "./RegisterForm.style";
-import { MAIN_COLOR, SUB_COLOR } from "@utils/constant";
-import * as Yup from "yup";
 import { HeaderContainer } from "@userContainer/Container.style";
-import Header from "@userContainer/Header";
-import Image from "next/image";
 import { CheckboxContainer } from "./RegisterForm.style";
+import Header from "@userContainer/Header";
 
 const RegisterForm = () => {
+  const [selectedCheckbox, setSelectedCheckbox] = useState([
+    false,
+    false,
+    false,
+    false,
+  ]);
   const userDataFormik = useFormik({
     initialValues: {
       email: "",
@@ -49,7 +60,9 @@ const RegisterForm = () => {
           /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
           "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
         ),
-      birthday: Yup.string().required("필수 입력 란입니다."),
+      birthday: Yup.string()
+        .required("필수 입력 란입니다.")
+        .matches(/^[0-9]{8}$/, "생년월일 8글자를 입력하세요."),
     }),
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -79,6 +92,7 @@ const RegisterForm = () => {
       alert(JSON.stringify(values, null, 2));
     },
   });
+
   return (
     <Container $bgColor={MAIN_COLOR}>
       <HeaderContainer>
@@ -159,7 +173,9 @@ const RegisterForm = () => {
           본인 인증
         </SelfAuthenticationLine>
 
-        <button type="submit">Submit</button>
+        <SubmitButton type="submit" $btnColor={BUTTON_COLOR}>
+          회원가입하기
+        </SubmitButton>
       </Form>
       <AuthenticationForm onSubmit={phoneNumberFormik.handleSubmit}>
         <PhoneNumberContainer>
@@ -205,33 +221,94 @@ const RegisterForm = () => {
       <CheckboxContainer>
         <LabelContainer>
           <LabelWrapper>
-            <CheckBox type="checkbox" id="age" name="age" />
-            <label htmlFor="age">만 14세 이상입니까?</label>
+            <Label htmlFor="age">
+              <CheckBox
+                type="checkbox"
+                id="age"
+                name="age"
+                onClick={() =>
+                  setSelectedCheckbox((cur) => {
+                    const temp = [...cur];
+                    temp[0] = !temp[0];
+                    return temp;
+                  })
+                }
+              />
+              <CustomCheckmark
+                $checked={selectedCheckbox[0]}
+                $markColor={SUB_COLOR}
+              />
+              만 14세 이상입니까?
+            </Label>
           </LabelWrapper>
           <LabelWrapper>
-            <CheckBox
-              type="checkbox"
-              id="terms of service"
-              name="terms of service"
-            />
-            <label htmlFor="terms of service">이용약관 동의</label>
+            <Label>
+              <CheckBox
+                type="checkbox"
+                id="terms of service"
+                name="terms of service"
+                onClick={() =>
+                  setSelectedCheckbox((cur) => {
+                    const temp = [...cur];
+                    temp[1] = !temp[1];
+                    return temp;
+                  })
+                }
+              />
+              <CustomCheckmark
+                $checked={selectedCheckbox[1]}
+                $markColor={SUB_COLOR}
+              />
+              이용약관 동의
+            </Label>
           </LabelWrapper>
         </LabelContainer>
         <LabelContainer>
           <LabelWrapper>
-            <CheckBox type="checkbox" id="privacy" name="privacy" />
-            <label htmlFor="privacy">개인정보 취급방치 동의</label>
+            <Label>
+              <CheckBox
+                type="checkbox"
+                id="privacy"
+                name="privacy"
+                onClick={() =>
+                  setSelectedCheckbox((cur) => {
+                    const temp = [...cur];
+                    temp[2] = !temp[2];
+                    return temp;
+                  })
+                }
+              />
+              <CustomCheckmark
+                $checked={selectedCheckbox[2]}
+                $markColor={SUB_COLOR}
+              />
+              개인정보 취급방치 동의
+            </Label>
           </LabelWrapper>
           <LabelWrapper>
-            <CheckBox
-              type="checkbox"
-              id="location information"
-              name="location information"
-            />
-            <label htmlFor="location information">위치정보 동의</label>
+            <Label>
+              <CheckBox
+                type="checkbox"
+                id="location information"
+                name="location information"
+                onClick={() =>
+                  setSelectedCheckbox((cur) => {
+                    const temp = [...cur];
+                    temp[3] = !temp[3];
+                    return temp;
+                  })
+                }
+              />
+              <CustomCheckmark
+                $checked={selectedCheckbox[3]}
+                $markColor={SUB_COLOR}
+              />
+              위치정보 동의
+            </Label>
           </LabelWrapper>
         </LabelContainer>
       </CheckboxContainer>
+      <EmptyBox />
     </Container>
   );
 };
