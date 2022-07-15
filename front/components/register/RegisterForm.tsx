@@ -32,6 +32,37 @@ const labelData: { [key in string]: string } = {
   "location information": "위치정보 동의",
 };
 
+interface RegisterValues {
+  email: string;
+  name: string;
+  password: string;
+  checkPassword: string;
+  birth: string;
+}
+
+interface PhoneValues {
+  phoneNumber: string;
+}
+
+interface AuthenticationValues {
+  authenticationNumber: string;
+}
+
+const userInitialValue: RegisterValues = {
+  email: "",
+  name: "",
+  password: "",
+  checkPassword: "",
+  birth: "",
+};
+
+const phoneInitialValue: PhoneValues = {
+  phoneNumber: "",
+};
+const authenticationInitialValue: AuthenticationValues = {
+  authenticationNumber: "",
+};
+
 const RegisterForm = () => {
   const [selectedCheckbox, setSelectedCheckbox] = useState([
     false,
@@ -40,13 +71,7 @@ const RegisterForm = () => {
     false,
   ]);
   const userDataFormik = useFormik({
-    initialValues: {
-      email: "",
-      name: "",
-      password: "",
-      checkPassword: "",
-      birthday: "",
-    },
+    initialValues: userInitialValue,
     validationSchema: Yup.object({
       email: Yup.string()
         .email("이메일을 확인 해 주세요")
@@ -55,20 +80,17 @@ const RegisterForm = () => {
         .max(20, "20자 이하로 입력 해 주세요.")
         .required("필수 입력 란입니다."),
       password: Yup.string()
-        .required("필수 입력 란입니다.")
         .matches(
           /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
           "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
-        ),
+        )
+        .required("필수 입력 란입니다."),
       checkPassword: Yup.string()
-        .required("필수 입력 란입니다.")
-        .matches(
-          /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-          "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
-        ),
-      birthday: Yup.string()
-        .required("필수 입력 란입니다.")
-        .matches(/^[0-9]{8}$/, "생년월일 8글자를 입력하세요."),
+        .oneOf([Yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
+        .required("필수 입력 란입니다."),
+      birth: Yup.string()
+        .matches(/^[0-9]{8}$/, "생년월일 8글자를 입력하세요.")
+        .required("필수 입력 란입니다."),
     }),
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -76,11 +98,12 @@ const RegisterForm = () => {
   });
 
   const phoneNumberFormik = useFormik({
-    initialValues: {
-      phoneNumber: "",
-    },
+    initialValues: phoneInitialValue,
     validationSchema: Yup.object({
-      phoneNumber: Yup.number().required("필수 입력 란입니다."),
+      phoneNumber: Yup.string().matches(
+        /^[0-9]{11}$/,
+        "유효하지 않은 번호입니다.",
+      ),
     }),
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -88,9 +111,7 @@ const RegisterForm = () => {
   });
 
   const authenticationFormik = useFormik({
-    initialValues: {
-      authenticationNumber: "",
-    },
+    initialValues: authenticationInitialValue,
     validationSchema: Yup.object({
       authenticationNumber: Yup.string().required("필수 입력 란입니다."),
     }),
@@ -164,13 +185,13 @@ const RegisterForm = () => {
         )}
 
         <Input
-          id="birthday"
+          id="birth"
           type="text"
-          {...userDataFormik.getFieldProps("birthday")}
+          {...userDataFormik.getFieldProps("birth")}
           placeholder="생년월일(8자리)"
         />
-        {userDataFormik.touched.birthday && userDataFormik.errors.birthday ? (
-          <ErrorMessage>{userDataFormik.errors.birthday}</ErrorMessage>
+        {userDataFormik.touched.birth && userDataFormik.errors.birth ? (
+          <ErrorMessage>{userDataFormik.errors.birth}</ErrorMessage>
         ) : (
           <ErrorMessage />
         )}
