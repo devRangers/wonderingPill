@@ -24,7 +24,7 @@ const userInitialValue: RegisterValues = {
   checkPassword: "",
   birth: "",
 };
-function UserDAtaForm() {
+function UserDataForm() {
   const userDataFormik = useFormik({
     initialValues: userInitialValue,
     validationSchema: Yup.object({
@@ -126,4 +126,4 @@ function UserDAtaForm() {
   );
 }
 
-export default UserDAtaForm;
+export default UserDataForm;

@@ -1,23 +1,9 @@
 import Image from "next/image";
 import { MAIN_COLOR } from "@utils/constant";
-import {
-  AuthenticationForm,
-  AuthenticationInput,
-  CheckBox,
-  Container,
-  CustomCheckmark,
-  EmptyBox,
-  ErrorMessage,
-  Label,
-  LabelWrapper,
-  LogoContainer,
-  PhoneNumberContainer,
-  SubmitAuthenticationBtn,
-} from "./RegisterForm.style";
+import { Container, EmptyBox, LogoContainer } from "./RegisterForm.style";
 import { HeaderContainer } from "@userContainer/Container.style";
-import { CheckboxContainer } from "./RegisterForm.style";
 import Header from "@userContainer/Header";
-import UserDAtaForm from "./UserDAtaForm";
+import UserDataForm from "./UserDataForm";
 import Authentication from "./Authentication";
 
 const RegisterForm = () => {
@@ -35,7 +21,7 @@ const RegisterForm = () => {
           priority={true}
         />
       </LogoContainer>
-      <UserDAtaForm />
+      <UserDataForm />
       <Authentication />
       <EmptyBox />
     </Container>
