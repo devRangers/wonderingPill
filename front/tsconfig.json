@@ -18,6 +18,7 @@
     "paths": {
       "@utils/*": ["common/utils/*"],
       "@userContainer/*": ["common/userContainer/*"],
+      "@modal/*": ["common/modal/*"],
       "@loginComp/*": ["components/login/*"]
     }
   },
