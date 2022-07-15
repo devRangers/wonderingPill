@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as config from 'config';
 import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
-
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { setupSwagger } from './util/swagger';
