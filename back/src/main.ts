@@ -7,6 +7,7 @@ import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { setupSwagger } from './util/swagger';
+import { PrismaService } from './prisma/prisma.service';
 
 dotenv.config({
   path: path.resolve(
@@ -29,6 +30,9 @@ async function bootstrap() {
     }),
   );
 
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app);
+
   // PORT 설정
   const PORT = process.env.SERVER_PORT || config.get('server').port;
   setupSwagger(app);
@@ -36,6 +40,6 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
   await app.listen(PORT);
 
-  Logger.log(`Application running on port ${PORT}`);
+  Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
 }
 bootstrap();
