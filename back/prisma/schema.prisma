@@ -17,9 +17,9 @@ model Pharmacy {
 }
 
 model PharmacyBookMark {
-  id          Int      @default(autoincrement())
   user_id     Int
   pharmacy_id Int
+  id          Int      @default(autoincrement())
   Pharmacy    Pharmacy @relation(fields: [pharmacy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User        User     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
