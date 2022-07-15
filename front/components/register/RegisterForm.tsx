@@ -2,20 +2,24 @@ import { useFormik } from "formik";
 import {
   AuthenticationForm,
   AuthenticationInput,
+  CheckBox,
   Container,
   ErrorMessage,
   Form,
   Input,
+  LabelContainer,
+  LabelWrapper,
   LogoContainer,
   PhoneNumberContainer,
   SelfAuthenticationLine,
-  SubmitPhoneNumber,
+  SubmitAuthenticationBtn,
 } from "./RegisterForm.style";
 import { MAIN_COLOR, SUB_COLOR } from "@utils/constant";
 import * as Yup from "yup";
 import { HeaderContainer } from "@userContainer/Container.style";
 import Header from "@userContainer/Header";
 import Image from "next/image";
+import { CheckboxContainer } from "./RegisterForm.style";
 
 const RegisterForm = () => {
   const userDataFormik = useFormik({
@@ -165,7 +169,9 @@ const RegisterForm = () => {
             {...phoneNumberFormik.getFieldProps("phoneNumber")}
             placeholder="- 제외 휴대폰번호"
           />
-          <SubmitPhoneNumber type="submit">전송</SubmitPhoneNumber>
+          <SubmitAuthenticationBtn type="submit" $btnColor={SUB_COLOR}>
+            전송
+          </SubmitAuthenticationBtn>
         </PhoneNumberContainer>
         {phoneNumberFormik.touched.phoneNumber &&
         phoneNumberFormik.errors.phoneNumber ? (
@@ -183,7 +189,9 @@ const RegisterForm = () => {
             {...authenticationFormik.getFieldProps("authenticationNumber")}
             placeholder="인증번호"
           />
-          <SubmitPhoneNumber type="submit">확인</SubmitPhoneNumber>
+          <SubmitAuthenticationBtn type="submit" $btnColor={SUB_COLOR}>
+            확인
+          </SubmitAuthenticationBtn>
         </PhoneNumberContainer>
         {authenticationFormik.touched.authenticationNumber &&
         authenticationFormik.errors.authenticationNumber ? (
@@ -194,6 +202,36 @@ const RegisterForm = () => {
           <ErrorMessage />
         )}
       </AuthenticationForm>
+      <CheckboxContainer>
+        <LabelContainer>
+          <LabelWrapper>
+            <CheckBox type="checkbox" id="age" name="age" />
+            <label htmlFor="age">만 14세 이상입니까?</label>
+          </LabelWrapper>
+          <LabelWrapper>
+            <CheckBox
+              type="checkbox"
+              id="terms of service"
+              name="terms of service"
+            />
+            <label htmlFor="terms of service">이용약관 동의</label>
+          </LabelWrapper>
+        </LabelContainer>
+        <LabelContainer>
+          <LabelWrapper>
+            <CheckBox type="checkbox" id="privacy" name="privacy" />
+            <label htmlFor="privacy">개인정보 취급방치 동의</label>
+          </LabelWrapper>
+          <LabelWrapper>
+            <CheckBox
+              type="checkbox"
+              id="location information"
+              name="location information"
+            />
+            <label htmlFor="location information">위치정보 동의</label>
+          </LabelWrapper>
+        </LabelContainer>
+      </CheckboxContainer>
     </Container>
   );
 };

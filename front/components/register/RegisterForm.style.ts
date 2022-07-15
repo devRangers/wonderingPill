@@ -99,9 +99,35 @@ export const AuthenticationInput = styled(Input, {
   marginRight: "0.7rem",
 });
 
-export const SubmitPhoneNumber = styled("button", {
-  width: "50px",
-  height: "40px",
-  border: "none",
-  borderRadius: "18px",
+export const SubmitAuthenticationBtn = styled(
+  "button",
+  (props: { $btnColor: string }) => ({
+    width: "50px",
+    height: "40px",
+    border: "none",
+    borderRadius: "18px",
+
+    backgroundColor: props.$btnColor,
+    color: "#fff",
+  }),
+);
+
+export const CheckboxContainer = styled("div", {
+  width: "85%",
+  margin: "auto",
+  display: "flex",
+  justifyContent: "space-around",
+});
+export const LabelContainer = styled("div", {
+  // display: "flex",
+  // justifyContent: "center",
+});
+
+export const LabelWrapper = styled("div", {
+  fontSize: "0.8rem",
+  flexWrap: "wrap",
+});
+
+export const CheckBox = styled("input", {
+  borderRadius: "50%",
 });
