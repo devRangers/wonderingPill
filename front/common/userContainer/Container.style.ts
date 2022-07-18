@@ -2,7 +2,7 @@ import { styled } from "styletron-react";
 
 export const MainContainer = styled("div", (props: { $bgColor: string }) => ({
   width: "100vw",
-  height: "100vh",
+  minHeight: "100vh",
   display: "flex",
   flexDirection: "column",
   backgroundColor: props.$bgColor,
