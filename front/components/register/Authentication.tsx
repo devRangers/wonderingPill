@@ -9,11 +9,17 @@ import {
   ErrorMessage,
   Label,
   LabelWrapper,
+  ModalButton,
+  ModalChildrenContainer,
+  ModalContent,
+  ModalTitle,
   PhoneNumberContainer,
   SubmitAuthenticationBtn,
 } from "./RegisterForm.style";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Modal from "@modal/Modal";
+import { useCallback } from "react";
 
 interface PhoneValues {
   phoneNumber: string;
@@ -44,6 +50,46 @@ function Authentication() {
     false,
     false,
   ]);
+  const [openModal, setOpenModal] = useState([false, false, false, false]);
+
+  const handleClickCheckbox = (index: number) => {
+    // 아직 동의하지 않았다면 모달을 띄운다.
+    if (selectedCheckbox[index] === false) {
+      setOpenModal((cur) => {
+        const temp = [...cur];
+        temp[index] = !temp[index];
+        return temp;
+      });
+    }
+    setSelectedCheckbox((cur) => {
+      const temp = [...cur];
+      temp[index] = !temp[index];
+      return temp;
+    });
+  };
+
+  const handleClickModalBack = (index: number) => {
+    // 모달 바깥쪽을 클릭한다면 동의를 취소
+    setSelectedCheckbox((cur) => {
+      const temp = [...cur];
+      temp[index] = !temp[index];
+      return temp;
+    });
+
+    setOpenModal((cur) => {
+      const temp = [...cur];
+      temp[index] = !temp[index];
+      return temp;
+    });
+  };
+
+  const handleClickModalBtn = (index: number) => {
+    setOpenModal((cur) => {
+      const temp = [...cur];
+      temp[index] = !temp[index];
+      return temp;
+    });
+  };
 
   const phoneNumberFormik = useFormik({
     initialValues: phoneInitialValue,
@@ -68,8 +114,56 @@ function Authentication() {
     },
   });
 
+  interface ModalProps {
+    title: string;
+    content: string;
+    close: string;
+  }
+  const modalText: { [key in string]: ModalProps } = {
+    age: {
+      title: "이용약관",
+      content:
+        "aaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁ",
+      close: "확인",
+    },
+    privacy: {
+      title: "개인정보 취급방침 동의",
+      content:
+        "aaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁ",
+      close: "확인",
+    },
+    "terms of service": {
+      title: "이용약관 동의",
+      content:
+        "aaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁ",
+      close: "확인",
+    },
+    "location information": {
+      title: "위치정보 동의",
+      content:
+        "aaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁ",
+      close: "확인",
+    },
+  };
+
   return (
     <>
+      {Object.entries(modalText).map(([key, value], index) => (
+        <Modal
+          key={key}
+          open={openModal[index]}
+          onClose={() => handleClickModalBack(index)}>
+          <ModalChildrenContainer>
+            <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
+            <ModalContent $scrollColor={SUB_COLOR}>
+              {value.content}
+            </ModalContent>
+            <ModalButton onClick={() => handleClickModalBtn(index)}>
+              {value.close}
+            </ModalButton>
+          </ModalChildrenContainer>
+        </Modal>
+      ))}
       <AuthenticationForm onSubmit={phoneNumberFormik.handleSubmit}>
         <PhoneNumberContainer>
           <AuthenticationInput
@@ -119,13 +213,7 @@ function Authentication() {
                 type="checkbox"
                 id={key}
                 name={key}
-                onClick={() =>
-                  setSelectedCheckbox((cur) => {
-                    const temp = [...cur];
-                    temp[index] = !temp[index];
-                    return temp;
-                  })
-                }
+                onClick={() => handleClickCheckbox(index)}
               />
               <CustomCheckmark
                 $checked={selectedCheckbox[index]}

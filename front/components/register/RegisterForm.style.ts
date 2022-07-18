@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { styled } from "styletron-react";
 
 export const Container = styled("div", (props: { $bgColor: string }) => ({
@@ -196,6 +197,7 @@ export const CustomCheckmark = styled(
     backgroundColor: props.$checked ? props.$markColor : "#eee",
     borderRadius: "100%",
     marginRight: "0.3rem",
+
     ":after": {
       content: "''",
       position: "absolute",
@@ -213,4 +215,42 @@ export const CustomCheckmark = styled(
 export const EmptyBox = styled("div", {
   width: "100%",
   height: "5.5rem",
+});
+
+export const ModalChildrenContainer = styled("div", {
+  height: "80vh",
+  padding: "1.5rem",
+  display: "grid",
+  gridTemplateRows: "0.8fr 6fr 0.5fr",
+  gap: "0.7rem",
+});
+
+export const ModalTitle = styled("h1", (props: { $fontColor: string }) => ({
+  fontSize: "1.2rem",
+  fontWeight: "bold",
+  color: props.$fontColor,
+  textAlign: "center",
+}));
+
+export const ModalContent = styled(
+  "div",
+  (props: { $scrollColor: string }) => ({
+    wordBreak: "break-word",
+    padding: "1.2rem 0.8rem 1.2rem 1.2rem",
+    overflowY: "auto",
+    backgroundColor: "lightgray",
+
+    "::-webkit-scrollbar": {
+      backgroundColor: "transparent",
+      width: "0.9rem",
+    },
+    "::-webkit-scrollbar-thumb": {
+      backgroundColor: props.$scrollColor,
+      borderRadius: "20px",
+    },
+  }),
+);
+
+export const ModalButton = styled("button", {
+  width: "100%",
 });
