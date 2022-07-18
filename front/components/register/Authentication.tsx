@@ -19,7 +19,6 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Modal from "@modal/Modal";
-import { useCallback } from "react";
 
 interface PhoneValues {
   phoneNumber: string;
@@ -50,7 +49,7 @@ function Authentication() {
     false,
     false,
   ]);
-  const [openModal, setOpenModal] = useState([false, false, false, false]);
+  const [openModal, setOpenModal] = useState([false, false, false]);
 
   const handleClickCheckbox = (index: number) => {
     // 아직 동의하지 않았다면 모달을 띄운다.
@@ -120,12 +119,6 @@ function Authentication() {
     close: string;
   }
   const modalText: { [key in string]: ModalProps } = {
-    age: {
-      title: "이용약관",
-      content:
-        "aaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁ",
-      close: "확인",
-    },
     privacy: {
       title: "개인정보 취급방침 동의",
       content:
@@ -151,14 +144,14 @@ function Authentication() {
       {Object.entries(modalText).map(([key, value], index) => (
         <Modal
           key={key}
-          open={openModal[index]}
-          onClose={() => handleClickModalBack(index)}>
+          open={openModal[index + 1]}
+          onClose={() => handleClickModalBack(index + 1)}>
           <ModalChildrenContainer>
             <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
             <ModalContent $scrollColor={SUB_COLOR}>
               {value.content}
             </ModalContent>
-            <ModalButton onClick={() => handleClickModalBtn(index)}>
+            <ModalButton onClick={() => handleClickModalBtn(index + 1)}>
               {value.close}
             </ModalButton>
           </ModalChildrenContainer>
