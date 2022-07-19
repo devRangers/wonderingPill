@@ -3,15 +3,12 @@ import { styled } from "styletron-react";
 export const MainContainer = styled("div", (props: { $bgColor: string }) => ({
   width: "100vw",
   minHeight: "100vh",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
+  display: "grid",
+  gridTemplateRows: "1fr 3fr 5fr",
   backgroundColor: props.$bgColor,
 }));
 
 export const HeaderContainer = styled("div", {
-  height: "10vh",
-  minHeight: "4rem",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
@@ -40,6 +37,4 @@ export const LinkBtn = styled("button", {
 export const LogoContainer = styled("div", {
   position: "relative",
   width: "100%",
-  height: "35%",
-  minHeight: "15rem",
 });
