@@ -9,6 +9,14 @@ export const Container = styled("div", (props: { $bgColor: string }) => ({
   position: "relative",
 }));
 
+export const HeaderContainer = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  paddingRight: "0.5rem",
+  minHeight: "4rem",
+});
+
 export const LogoContainer = styled("div", {
   position: "relative",
   margin: "0 auto",
