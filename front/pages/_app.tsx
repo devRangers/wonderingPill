@@ -10,6 +10,7 @@ import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
+
   return (
     <StyletronProvider value={styletron}>
       <QueryClientProvider client={queryClient}>
