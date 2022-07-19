@@ -33,7 +33,6 @@ async function bootstrap() {
   app.enableCors(); // CORS 설정
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
   await app.listen(PORT);
-  
   Logger.log(`Application running on port ${PORT}`);
 }
 bootstrap();
