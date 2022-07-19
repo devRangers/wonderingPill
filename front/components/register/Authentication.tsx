@@ -141,22 +141,6 @@ function Authentication() {
 
   return (
     <>
-      {Object.entries(modalText).map(([key, value], index) => (
-        <Modal
-          key={key}
-          open={openModal[index + 1]}
-          onClose={() => handleClickModalBack(index + 1)}>
-          <ModalChildrenContainer>
-            <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
-            <ModalContent $scrollColor={SUB_COLOR}>
-              {value.content}
-            </ModalContent>
-            <ModalButton onClick={() => handleClickModalBtn(index + 1)}>
-              {value.close}
-            </ModalButton>
-          </ModalChildrenContainer>
-        </Modal>
-      ))}
       <AuthenticationForm onSubmit={phoneNumberFormik.handleSubmit}>
         <PhoneNumberContainer>
           <AuthenticationInput
@@ -217,6 +201,22 @@ function Authentication() {
           </LabelWrapper>
         ))}
       </CheckboxContainer>
+      {Object.entries(modalText).map(([key, value], index) => (
+        <Modal
+          key={key}
+          open={openModal[index + 1]}
+          onClose={() => handleClickModalBack(index + 1)}>
+          <ModalChildrenContainer>
+            <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
+            <ModalContent $scrollColor={SUB_COLOR}>
+              {value.content}
+            </ModalContent>
+            <ModalButton onClick={() => handleClickModalBtn(index + 1)}>
+              {value.close}
+            </ModalButton>
+          </ModalChildrenContainer>
+        </Modal>
+      ))}
     </>
   );
 }
