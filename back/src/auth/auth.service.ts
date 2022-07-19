@@ -41,7 +41,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ForbiddenException('Credentials taken');
+          throw new ForbiddenException('이미 존재하는 이메일입니다.');
         }
       } else {
         throw new InternalServerErrorException();

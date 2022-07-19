@@ -25,14 +25,14 @@ model Pharmacy {
 
 model PharmacyBookMark {
   id          Int       @id @default(autoincrement())
-  user_id     Int?
+  user_id     String?
   pharmacy_id Int?
   Pharmacy    Pharmacy? @relation(fields: [pharmacy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User        User?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model User {
-  id               Int                @id @default(autoincrement())
+  id               String             @id @default(uuid())
   email            String?            @unique @db.VarChar(100)
   name             String?            @db.VarChar(20)
   password         String?            @db.VarChar(100)

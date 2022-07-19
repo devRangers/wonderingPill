@@ -29,15 +29,15 @@ async function bootstrap() {
     }),
   );
 
+  // Prisma
   const prismaService = app.get(PrismaService);
-  await prismaService.enableShutdownHooks(app);
+  await prismaService.enableShutdownHooks(app); // enableShutdownHooks 에러 해결
 
-  // PORT 설정
-  const PORT = process.env.SERVER_PORT || config.get('server').port;
-  setupSwagger(app);
+  const PORT = process.env.SERVER_PORT || config.get('server').port; // PORT 설정
+  setupSwagger(app); // Swagger 설정
   app.enableCors(); // CORS 설정
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
-  app.useGlobalPipes(new ValidationPipe()); // 글로벌 파이프 설정
+
   await app.listen(PORT);
 
   if (process.env.NODE_ENV === 'stage') {
