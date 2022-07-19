@@ -28,6 +28,12 @@ interface AuthenticationValues {
   authenticationNumber: string;
 }
 
+interface ModalValue {
+  title: string;
+  content: string;
+  close: string;
+}
+
 const phoneInitialValue: PhoneValues = {
   phoneNumber: "",
 };
@@ -40,6 +46,27 @@ const labelData: { [key in string]: string } = {
   privacy: "개인정보 취급방침 동의",
   "terms of service": "이용약관 동의",
   "location information": "위치정보 동의",
+};
+
+const modalText: { [key in string]: ModalValue } = {
+  privacy: {
+    title: "개인정보 취급방침 동의",
+    content:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?",
+    close: "확인",
+  },
+  "terms of service": {
+    title: "이용약관 동의",
+    content:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?",
+    close: "확인",
+  },
+  "location information": {
+    title: "위치정보 동의",
+    content:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?",
+    close: "확인",
+  },
 };
 
 function Authentication() {
@@ -93,10 +120,9 @@ function Authentication() {
   const phoneNumberFormik = useFormik({
     initialValues: phoneInitialValue,
     validationSchema: Yup.object({
-      phoneNumber: Yup.string().matches(
-        /^[0-9]{11}$/,
-        "유효하지 않은 번호입니다.",
-      ),
+      phoneNumber: Yup.string()
+        .matches(/^[0-9]{11}$/, "유효하지 않은 번호입니다.")
+        .required("필수 입력 란입니다."),
     }),
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -112,32 +138,6 @@ function Authentication() {
       alert(JSON.stringify(values, null, 2));
     },
   });
-
-  interface ModalProps {
-    title: string;
-    content: string;
-    close: string;
-  }
-  const modalText: { [key in string]: ModalProps } = {
-    privacy: {
-      title: "개인정보 취급방침 동의",
-      content:
-        "aaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁ",
-      close: "확인",
-    },
-    "terms of service": {
-      title: "이용약관 동의",
-      content:
-        "aaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁ",
-      close: "확인",
-    },
-    "location information": {
-      title: "위치정보 동의",
-      content:
-        "aaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁaaaaaaaaaaaaaaaaaaaaaaaaaasdasdadadjkㅁㄴㅇㅁ넝ㅁ어만엄ㄴ엄암ㄴㅇㅁ",
-      close: "확인",
-    },
-  };
 
   return (
     <>

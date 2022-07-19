@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { styled } from "styletron-react";
 
 export const Container = styled("div", (props: { $bgColor: string }) => ({
@@ -9,14 +8,6 @@ export const Container = styled("div", (props: { $bgColor: string }) => ({
   backgroundColor: props.$bgColor,
   position: "relative",
 }));
-
-export const UserDataContainer = styled("section", {
-  flex: "0.5",
-});
-
-export const AuthenticationContainer = styled("section", {
-  flex: "0.4",
-});
 
 export const LogoContainer = styled("div", {
   position: "relative",
