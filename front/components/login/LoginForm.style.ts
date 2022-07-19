@@ -3,20 +3,17 @@ import { styled } from "styletron-react";
 export const Form = styled("form", {
   display: "flex",
   flexDirection: "column",
-  height: "40%",
 });
 
 export const ContentContainer = styled("div", {
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
   alignItems: "center",
-  height: "80%",
 });
 
 export const Input = styled("input", {
   width: "65%",
-  height: "25%",
+  height: "3rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
@@ -32,13 +29,14 @@ export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
   textAlign: "start",
   width: "65%",
   padding: "0 1rem",
+  margin: "0.3rem 0 0.5rem",
   color: props.$txtColor,
   fontSize: "0.9rem",
 }));
 
 export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
   width: "65%",
-  height: "25%",
+  height: "3rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
@@ -52,7 +50,7 @@ export const SubBtnContainer = styled("div", {
   justifyContent: "space-evenly",
   alignItems: "center",
   width: "80%",
-  height: "20%",
+  height: "3rem",
   margin: "0 auto",
   color: "#fff",
 });
@@ -70,7 +68,7 @@ export const TextBtn = styled("button", {
 });
 
 export const SnsLoginContainer = styled("div", {
-  height: "15%",
+  height: "7rem",
 });
 
 export const SnsTitle = styled("div", {
