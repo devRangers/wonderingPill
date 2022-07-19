@@ -10,4 +10,7 @@ export const ROUTE = {
   REGISTER: {
     link: "/register",
   },
+  PASSWORDFIND: {
+    link: "/password-find",
+  },
 };
