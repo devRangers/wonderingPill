@@ -2,7 +2,7 @@ import { styled } from "styletron-react";
 
 export const MainContainer = styled("div", (props: { $bgColor: string }) => ({
   width: "100vw",
-  minHeight: "100vh",
+  minHeight: "calc(var(--vh, 1vh) * 100)",
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
@@ -10,7 +10,7 @@ export const MainContainer = styled("div", (props: { $bgColor: string }) => ({
 }));
 
 export const HeaderContainer = styled("div", {
-  height: "10vh",
+  height: "calc(var(--vh, 1vh) * 10)",
   minHeight: "4rem",
   display: "flex",
   justifyContent: "space-between",
