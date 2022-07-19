@@ -13,7 +13,8 @@ export const ContentContainer = styled("div", {
 
 export const Input = styled("input", {
   width: "65%",
-  height: "3rem",
+  height: "25%",
+  minHeight: "3rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
@@ -36,7 +37,8 @@ export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
 
 export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
   width: "65%",
-  height: "3rem",
+  height: "25%",
+  minHeight: "3rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
@@ -50,7 +52,8 @@ export const SubBtnContainer = styled("div", {
   justifyContent: "space-evenly",
   alignItems: "center",
   width: "80%",
-  height: "3rem",
+  height: "20%",
+  minHeight: "3rem",
   margin: "0 auto",
   color: "#fff",
 });
@@ -68,7 +71,10 @@ export const TextBtn = styled("button", {
 });
 
 export const SnsLoginContainer = styled("div", {
-  height: "7rem",
+  height: "15%",
+  minHeight: "7rem",
+  display: "flex",
+  flexDirection: "column",
 });
 
 export const SnsTitle = styled("div", {
@@ -99,11 +105,10 @@ export const SnsTitle = styled("div", {
 
 export const SnsBtnContainer = styled("div", {
   width: "30%",
-  height: "85%",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  margin: "0 auto",
+  margin: "auto",
 });
 
 export const KakaoBtn = styled("div", {

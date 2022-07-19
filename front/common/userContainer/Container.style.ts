@@ -10,7 +10,8 @@ export const MainContainer = styled("div", (props: { $bgColor: string }) => ({
 }));
 
 export const HeaderContainer = styled("div", {
-  height: "4rem",
+  height: "10vh",
+  minHeight: "4rem",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
@@ -39,5 +40,6 @@ export const LinkBtn = styled("button", {
 export const LogoContainer = styled("div", {
   position: "relative",
   width: "100%",
+  height: "35%",
   minHeight: "15rem",
 });
