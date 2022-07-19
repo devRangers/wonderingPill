@@ -5,6 +5,8 @@ import * as config from 'config';
 import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { setupSwagger } from './util/swagger';
+import { PrismaService } from './prisma/prisma.service';
 
 dotenv.config({
   path: path.resolve(
@@ -27,12 +29,19 @@ async function bootstrap() {
     }),
   );
 
-  // PORT 설정
-  const PORT = process.env.SERVER_PORT || config.get('server').port;
+  // Prisma
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app); // enableShutdownHooks 에러 해결
+
+  const PORT = process.env.SERVER_PORT || config.get('server').port; // PORT 설정
+  setupSwagger(app); // Swagger 설정
   app.enableCors(); // CORS 설정
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
+
   await app.listen(PORT);
 
-  Logger.log(`Application running on port ${PORT}`);
+  if (process.env.NODE_ENV === 'stage') {
+    Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
+  }
 }
 bootstrap();
