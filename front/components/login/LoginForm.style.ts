@@ -3,20 +3,18 @@ import { styled } from "styletron-react";
 export const Form = styled("form", {
   display: "flex",
   flexDirection: "column",
-  height: "40%",
 });
 
 export const ContentContainer = styled("div", {
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
   alignItems: "center",
-  height: "80%",
 });
 
 export const Input = styled("input", {
   width: "65%",
   height: "25%",
+  minHeight: "3rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
@@ -32,6 +30,7 @@ export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
   textAlign: "start",
   width: "65%",
   padding: "0 1rem",
+  margin: "0.3rem 0 0.5rem",
   color: props.$txtColor,
   fontSize: "0.9rem",
 }));
@@ -39,6 +38,7 @@ export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
 export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
   width: "65%",
   height: "25%",
+  minHeight: "3rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
@@ -53,6 +53,7 @@ export const SubBtnContainer = styled("div", {
   alignItems: "center",
   width: "80%",
   height: "20%",
+  minHeight: "3rem",
   margin: "0 auto",
   color: "#fff",
 });
@@ -71,6 +72,9 @@ export const TextBtn = styled("button", {
 
 export const SnsLoginContainer = styled("div", {
   height: "15%",
+  minHeight: "7rem",
+  display: "flex",
+  flexDirection: "column",
 });
 
 export const SnsTitle = styled("div", {
@@ -101,11 +105,10 @@ export const SnsTitle = styled("div", {
 
 export const SnsBtnContainer = styled("div", {
   width: "30%",
-  height: "85%",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  margin: "0 auto",
+  margin: "auto",
 });
 
 export const KakaoBtn = styled("div", {
