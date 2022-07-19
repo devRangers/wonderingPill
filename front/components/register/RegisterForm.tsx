@@ -1,7 +1,11 @@
 import Image from "next/image";
 import { MAIN_COLOR } from "@utils/constant";
-import { Container, EmptyBox, LogoContainer } from "./RegisterForm.style";
-import { HeaderContainer } from "@userContainer/Container.style";
+import {
+  Container,
+  EmptyBox,
+  LogoContainer,
+  HeaderContainer,
+} from "./RegisterForm.style";
 import Header from "@userContainer/Header";
 import UserDataForm from "./UserDataForm";
 import Authentication from "./Authentication";
