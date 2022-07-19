@@ -3,13 +3,15 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import {
-  LoginFormContainer,
-  Form,
-  ContentContainer,
   InputContainer,
   Input,
   ErrorMessage,
   SubmitBtn,
+} from "@userContainer/Container.style";
+import {
+  LoginFormContainer,
+  Form,
+  ContentContainer,
   SubBtnContainer,
   CheckboxContainer,
   TextBtn,

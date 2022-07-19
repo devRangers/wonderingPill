@@ -1,12 +1,13 @@
-import { BUTTON_COLOR } from "@utils/constant";
+import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
-  ErrorMessage,
-  FindBtn as ChangeBtn,
-  Form,
+  InputContainer,
   Input,
-} from "./FindPasswordForm.style";
+  SubmitBtn as ChangeBtn,
+  ErrorMessage,
+} from "@userContainer/Container.style";
+import { Form } from "./FindPasswordForm.style";
 
 interface NewPasswordValues {
   password: string;
@@ -38,33 +39,40 @@ function NewPasswordForm() {
   });
   return (
     <Form onSubmit={newPasswordFormik.handleSubmit}>
-      <Input
-        id="password"
-        type="password"
-        {...newPasswordFormik.getFieldProps("password")}
-        placeholder="새로운 비밀번호"
-      />
-      {newPasswordFormik.touched.password &&
-      newPasswordFormik.errors.password ? (
-        <ErrorMessage>{newPasswordFormik.errors.password}</ErrorMessage>
-      ) : (
-        <ErrorMessage />
-      )}
+      <InputContainer>
+        <Input
+          id="password"
+          type="password"
+          {...newPasswordFormik.getFieldProps("password")}
+          placeholder="새로운 비밀번호"
+        />
+        {newPasswordFormik.touched.password &&
+        newPasswordFormik.errors.password ? (
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {newPasswordFormik.errors.password}
+          </ErrorMessage>
+        ) : (
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
+        )}
+      </InputContainer>
+      <InputContainer>
+        <Input
+          id="checkPassword"
+          type="password"
+          {...newPasswordFormik.getFieldProps("checkPassword")}
+          placeholder="비밀번호 확인"
+        />
+        {newPasswordFormik.touched.checkPassword &&
+        newPasswordFormik.errors.checkPassword ? (
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {newPasswordFormik.errors.checkPassword}
+          </ErrorMessage>
+        ) : (
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
+        )}
+      </InputContainer>
 
-      <Input
-        id="checkPassword"
-        type="password"
-        {...newPasswordFormik.getFieldProps("checkPassword")}
-        placeholder="비밀번호 확인"
-      />
-      {newPasswordFormik.touched.checkPassword &&
-      newPasswordFormik.errors.checkPassword ? (
-        <ErrorMessage>{newPasswordFormik.errors.checkPassword}</ErrorMessage>
-      ) : (
-        <ErrorMessage />
-      )}
-
-      <ChangeBtn type="submit" $bgColor={BUTTON_COLOR}>
+      <ChangeBtn type="submit" $btnColor={BUTTON_COLOR}>
         비밀번호 변경
       </ChangeBtn>
     </Form>
