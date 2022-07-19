@@ -1,13 +1,7 @@
 import { BUTTON_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  Container,
-  ErrorMessage,
-  FindBtn,
-  Form,
-  Input,
-} from "./FindPasswordForm.style";
+import { ErrorMessage, FindBtn, Form, Input } from "./FindPasswordForm.style";
 
 interface FindPasswordFormValues {
   email: string;

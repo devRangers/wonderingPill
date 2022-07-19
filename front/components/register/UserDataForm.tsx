@@ -44,7 +44,11 @@ function UserDataForm() {
         .oneOf([Yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
         .required("필수 입력 란입니다."),
       birth: Yup.string()
-        .matches(/^[0-9]{8}$/, "생년월일 8글자를 입력하세요.")
+        .matches(
+          /(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/,
+          "생년월일을 확인해주세요.",
+        )
+        // .matches(/^[0-9]{8}$/, "생년월일 8글자를 입력하세요.")
         .required("필수 입력 란입니다."),
     }),
     onSubmit: (values) => {
@@ -105,7 +109,7 @@ function UserDataForm() {
 
       <Input
         id="birth"
-        type="number"
+        type="text"
         {...userDataFormik.getFieldProps("birth")}
         placeholder="생년월일(8자리)"
       />

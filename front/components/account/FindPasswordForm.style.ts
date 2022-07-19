@@ -1,14 +1,10 @@
 import { styled } from "styletron-react";
 
-export const Container = styled("div", {
-  display: "space-around",
-});
-
 export const Form = styled("form", {
   display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
   flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
   padding: "1rem",
 });
 
