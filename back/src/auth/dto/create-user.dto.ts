@@ -18,13 +18,13 @@ export class CreateUserDto {
   @ApiProperty()
   name: string;
 
+  @ApiProperty()
   @IsString()
   @MinLength(8)
   @IsNotEmpty()
-  // @Matches(/^[0-9]$/, {
-  //   message: '비밀번호 양식에 맞게 작성하세요.',
-  // })
-  @ApiProperty()
+  @Matches(/^[A-Za-z\d!@#$%^&*()]{8,30}$/, {
+    message: '비밀번호 양식에 맞게 작성하세요.',
+  })
   password: string;
 
   @IsString()

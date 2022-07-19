@@ -37,8 +37,11 @@ async function bootstrap() {
   setupSwagger(app);
   app.enableCors(); // CORS 설정
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
+  app.useGlobalPipes(new ValidationPipe()); // 글로벌 파이프 설정
   await app.listen(PORT);
 
-  Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
+  if (process.env.NODE_ENV === 'stage') {
+    Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
+  }
 }
 bootstrap();
