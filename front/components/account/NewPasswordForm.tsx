@@ -14,7 +14,7 @@ interface NewPasswordValues {
   checkPassword: string;
 }
 
-const findPasswordInitialValue = {
+const findPasswordInitialValue: NewPasswordValues = {
   password: "",
   checkPassword: "",
 };

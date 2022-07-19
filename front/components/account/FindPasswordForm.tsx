@@ -14,7 +14,7 @@ interface FindPasswordFormValues {
   birth: string;
 }
 
-const findPasswordFormInitialValue = {
+const findPasswordFormInitialValue: FindPasswordFormValues = {
   email: "",
   name: "",
   birth: "",
