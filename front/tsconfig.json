@@ -16,10 +16,7 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@utils/*": ["common/utils/*"],
-      "@userContainer/*": ["common/userContainer/*"],
-      "@modal/*": ["common/modal/*"],
-      "@loginComp/*": ["components/login/*"]
+      "@utils/*": ["common/utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
