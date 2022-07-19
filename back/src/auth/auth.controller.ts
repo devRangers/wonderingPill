@@ -1,13 +1,13 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User as UserModel } from '@prisma/client';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from './dto';
 
-@ApiTags('User API')
+@ApiTags('Auth API')
 @Controller('auth')
 export class AuthController {
-  private logger = new Logger(`UserController`);
+  private logger = new Logger(`AuthController`);
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')

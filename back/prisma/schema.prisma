@@ -33,14 +33,15 @@ model PharmacyBookMark {
 
 model User {
   id               Int                @id @default(autoincrement())
-  email            String?            @db.VarChar(100) @unique
+  email            String?            @unique @db.VarChar(100)
   name             String?            @db.VarChar(20)
-  password         String?            @db.VarChar(20)
-  birth            String?            @db.VarChar(20)
+  password         String?            @db.VarChar(100)
   phone            String?            @db.VarChar(20)
   provider         String?            @db.VarChar(7)
   profileImg       String?            @default("imageUrl")
   isDeleted        Boolean?           @default(false)
-  createdAt        DateTime?          @db.Date @default(now())
+  createdAt        DateTime?          @default(now()) @db.Date
+  updatedAt        DateTime?          @updatedAt
+  birth            String?            @db.VarChar(9)
   PharmacyBookMark PharmacyBookMark[]
 }
