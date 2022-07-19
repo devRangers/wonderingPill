@@ -9,13 +9,13 @@ import {
   Input,
 } from "./FindPasswordForm.style";
 
-interface FindPasswordValues {
+interface FindPasswordFormValues {
   email: string;
   name: string;
   birth: string;
 }
 
-const findPasswordInitialValue = {
+const findPasswordFormInitialValue = {
   email: "",
   name: "",
   birth: "",
@@ -23,7 +23,7 @@ const findPasswordInitialValue = {
 
 function FindPasswordForm() {
   const findPasswordFormik = useFormik({
-    initialValues: findPasswordInitialValue,
+    initialValues: findPasswordFormInitialValue,
     validationSchema: Yup.object({
       email: Yup.string()
         .email("이메일을 확인 해 주세요")
@@ -40,46 +40,44 @@ function FindPasswordForm() {
     },
   });
   return (
-    <Container>
-      <Form onSubmit={findPasswordFormik.handleSubmit}>
-        <Input
-          id="email"
-          type="email"
-          {...findPasswordFormik.getFieldProps("email")}
-          placeholder="이메일"
-        />
-        {findPasswordFormik.touched.email && findPasswordFormik.errors.email ? (
-          <ErrorMessage>{findPasswordFormik.errors.email}</ErrorMessage>
-        ) : (
-          <ErrorMessage />
-        )}
-        <Input
-          id="email"
-          type="text"
-          {...findPasswordFormik.getFieldProps("name")}
-          placeholder="이름"
-        />
-        {findPasswordFormik.touched.name && findPasswordFormik.errors.name ? (
-          <ErrorMessage>{findPasswordFormik.errors.name}</ErrorMessage>
-        ) : (
-          <ErrorMessage />
-        )}
-        <Input
-          id="birth"
-          type="number"
-          {...findPasswordFormik.getFieldProps("birth")}
-          placeholder="생년월일"
-        />
-        {findPasswordFormik.touched.birth && findPasswordFormik.errors.birth ? (
-          <ErrorMessage>{findPasswordFormik.errors.birth}</ErrorMessage>
-        ) : (
-          <ErrorMessage />
-        )}
-        <FindBtn type="submit" $bgColor={BUTTON_COLOR}>
-          비밀번호 찾기
-        </FindBtn>
-      </Form>
-    </Container>
+    <Form onSubmit={findPasswordFormik.handleSubmit}>
+      <Input
+        id="email"
+        type="email"
+        {...findPasswordFormik.getFieldProps("email")}
+        placeholder="이메일"
+      />
+      {findPasswordFormik.touched.email && findPasswordFormik.errors.email ? (
+        <ErrorMessage>{findPasswordFormik.errors.email}</ErrorMessage>
+      ) : (
+        <ErrorMessage />
+      )}
+      <Input
+        id="email"
+        type="text"
+        {...findPasswordFormik.getFieldProps("name")}
+        placeholder="이름"
+      />
+      {findPasswordFormik.touched.name && findPasswordFormik.errors.name ? (
+        <ErrorMessage>{findPasswordFormik.errors.name}</ErrorMessage>
+      ) : (
+        <ErrorMessage />
+      )}
+      <Input
+        id="birth"
+        type="number"
+        {...findPasswordFormik.getFieldProps("birth")}
+        placeholder="생년월일"
+      />
+      {findPasswordFormik.touched.birth && findPasswordFormik.errors.birth ? (
+        <ErrorMessage>{findPasswordFormik.errors.birth}</ErrorMessage>
+      ) : (
+        <ErrorMessage />
+      )}
+      <FindBtn type="submit" $bgColor={BUTTON_COLOR}>
+        비밀번호 찾기
+      </FindBtn>
+    </Form>
   );
 }
 
