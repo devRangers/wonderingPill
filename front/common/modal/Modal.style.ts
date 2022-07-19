@@ -14,7 +14,7 @@ export const Background = styled("div", (props: { $isOpen: boolean }) => ({
 }));
 
 export const ModalContainer = styled("div", (props: { $isOpen: boolean }) => ({
-  position: "absolute",
+  position: "fixed",
   width: "85vw",
   top: "50%",
   left: "50%",

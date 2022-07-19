@@ -105,7 +105,7 @@ function UserDataForm() {
 
       <Input
         id="birth"
-        type="text"
+        type="number"
         {...userDataFormik.getFieldProps("birth")}
         placeholder="생년월일(8자리)"
       />

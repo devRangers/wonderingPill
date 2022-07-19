@@ -9,11 +9,16 @@ import {
   ErrorMessage,
   Label,
   LabelWrapper,
+  ModalButton,
+  ModalChildrenContainer,
+  ModalContent,
+  ModalTitle,
   PhoneNumberContainer,
   SubmitAuthenticationBtn,
 } from "./RegisterForm.style";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Modal from "@modal/Modal";
 
 interface PhoneValues {
   phoneNumber: string;
@@ -21,6 +26,12 @@ interface PhoneValues {
 
 interface AuthenticationValues {
   authenticationNumber: string;
+}
+
+interface ModalValue {
+  title: string;
+  content: string;
+  close: string;
 }
 
 const phoneInitialValue: PhoneValues = {
@@ -37,6 +48,27 @@ const labelData: { [key in string]: string } = {
   "location information": "위치정보 동의",
 };
 
+const modalText: { [key in string]: ModalValue } = {
+  privacy: {
+    title: "개인정보 취급방침 동의",
+    content:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?",
+    close: "확인",
+  },
+  "terms of service": {
+    title: "이용약관 동의",
+    content:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?",
+    close: "확인",
+  },
+  "location information": {
+    title: "위치정보 동의",
+    content:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae alias magnam obcaecati expedita minima in vitae id laborum consectetur, accusantium rerum quia omnis recusandae, veniam odio labore! Deleniti, corrupti tempora?",
+    close: "확인",
+  },
+};
+
 function Authentication() {
   const [selectedCheckbox, setSelectedCheckbox] = useState([
     false,
@@ -44,14 +76,53 @@ function Authentication() {
     false,
     false,
   ]);
+  const [openModal, setOpenModal] = useState([false, false, false]);
+
+  const handleClickCheckbox = (index: number) => {
+    // 아직 동의하지 않았다면 모달을 띄운다.
+    if (selectedCheckbox[index] === false) {
+      setOpenModal((cur) => {
+        const temp = [...cur];
+        temp[index] = !temp[index];
+        return temp;
+      });
+    }
+    setSelectedCheckbox((cur) => {
+      const temp = [...cur];
+      temp[index] = !temp[index];
+      return temp;
+    });
+  };
+
+  const handleClickModalBack = (index: number) => {
+    // 모달 바깥쪽을 클릭한다면 동의를 취소
+    setSelectedCheckbox((cur) => {
+      const temp = [...cur];
+      temp[index] = !temp[index];
+      return temp;
+    });
+
+    setOpenModal((cur) => {
+      const temp = [...cur];
+      temp[index] = !temp[index];
+      return temp;
+    });
+  };
+
+  const handleClickModalBtn = (index: number) => {
+    setOpenModal((cur) => {
+      const temp = [...cur];
+      temp[index] = !temp[index];
+      return temp;
+    });
+  };
 
   const phoneNumberFormik = useFormik({
     initialValues: phoneInitialValue,
     validationSchema: Yup.object({
-      phoneNumber: Yup.string().matches(
-        /^[0-9]{11}$/,
-        "유효하지 않은 번호입니다.",
-      ),
+      phoneNumber: Yup.string()
+        .matches(/^[0-9]{11}$/, "유효하지 않은 번호입니다.")
+        .required("필수 입력 란입니다."),
     }),
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -119,13 +190,7 @@ function Authentication() {
                 type="checkbox"
                 id={key}
                 name={key}
-                onClick={() =>
-                  setSelectedCheckbox((cur) => {
-                    const temp = [...cur];
-                    temp[index] = !temp[index];
-                    return temp;
-                  })
-                }
+                onClick={() => handleClickCheckbox(index)}
               />
               <CustomCheckmark
                 $checked={selectedCheckbox[index]}
@@ -136,6 +201,22 @@ function Authentication() {
           </LabelWrapper>
         ))}
       </CheckboxContainer>
+      {Object.entries(modalText).map(([key, value], index) => (
+        <Modal
+          key={key}
+          open={openModal[index + 1]}
+          onClose={() => handleClickModalBack(index + 1)}>
+          <ModalChildrenContainer>
+            <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
+            <ModalContent $scrollColor={SUB_COLOR}>
+              {value.content}
+            </ModalContent>
+            <ModalButton onClick={() => handleClickModalBtn(index + 1)}>
+              {value.close}
+            </ModalButton>
+          </ModalChildrenContainer>
+        </Modal>
+      ))}
     </>
   );
 }
