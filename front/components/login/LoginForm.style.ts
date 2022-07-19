@@ -1,8 +1,14 @@
 import { styled } from "styletron-react";
 
+export const LoginFormContainer = styled("div", {
+  display: "grid",
+  gridTemplateRows: "3fr 1fr",
+});
+
 export const Form = styled("form", {
-  display: "flex",
-  flexDirection: "column",
+  display: "grid",
+  gridTemplateRows: "4fr 1fr",
+  alignItems: "center",
 });
 
 export const ContentContainer = styled("div", {
@@ -11,10 +17,16 @@ export const ContentContainer = styled("div", {
   alignItems: "center",
 });
 
+export const InputContainer = styled("div", {
+  width: "100%",
+  display: "grid",
+  gridTemplateRows: "2.1fr 1fr",
+  justifyItems: "center",
+});
+
 export const Input = styled("input", {
   width: "65%",
-  height: "25%",
-  minHeight: "3rem",
+  height: "3.5rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
@@ -29,16 +41,14 @@ export const Input = styled("input", {
 export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
   textAlign: "start",
   width: "65%",
-  padding: "0 1rem",
-  margin: "0.3rem 0 0.5rem",
+  padding: "0.3rem 1rem",
   color: props.$txtColor,
   fontSize: "0.9rem",
 }));
 
 export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
   width: "65%",
-  height: "25%",
-  minHeight: "3rem",
+  height: "3.5rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
@@ -52,8 +62,6 @@ export const SubBtnContainer = styled("div", {
   justifyContent: "space-evenly",
   alignItems: "center",
   width: "80%",
-  height: "20%",
-  minHeight: "3rem",
   margin: "0 auto",
   color: "#fff",
 });
@@ -71,10 +79,8 @@ export const TextBtn = styled("button", {
 });
 
 export const SnsLoginContainer = styled("div", {
-  height: "15%",
-  minHeight: "7rem",
-  display: "flex",
-  flexDirection: "column",
+  display: "grid",
+  gridTemplateRows: "1fr 1.5fr",
 });
 
 export const SnsTitle = styled("div", {
@@ -108,7 +114,7 @@ export const SnsBtnContainer = styled("div", {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  margin: "auto",
+  margin: "0 auto",
 });
 
 export const KakaoBtn = styled("div", {
