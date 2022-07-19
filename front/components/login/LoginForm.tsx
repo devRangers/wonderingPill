@@ -3,8 +3,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import {
+  LoginFormContainer,
   Form,
   ContentContainer,
+  InputContainer,
   Input,
   ErrorMessage,
   SubmitBtn,
@@ -46,34 +48,38 @@ function LoginForm() {
   });
 
   return (
-    <>
+    <LoginFormContainer>
       <Form onSubmit={formik.handleSubmit}>
         <ContentContainer>
-          <Input
-            id="email"
-            name="email"
-            type="text"
-            placeholder="이메일"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.email}
-          />
-          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
-            {formik.touched.email && formik.errors.email}
-          </ErrorMessage>
+          <InputContainer>
+            <Input
+              id="email"
+              name="email"
+              type="text"
+              placeholder="이메일"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.email}
+            />
+            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+              {formik.touched.email && formik.errors.email}
+            </ErrorMessage>
+          </InputContainer>
 
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="비밀번호"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.password}
-          />
-          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
-            {formik.touched.password && formik.errors.password}
-          </ErrorMessage>
+          <InputContainer>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="비밀번호"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
+            />
+            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+              {formik.touched.password && formik.errors.password}
+            </ErrorMessage>
+          </InputContainer>
 
           <SubmitBtn $btnColor={BUTTON_COLOR}>로그인하기</SubmitBtn>
         </ContentContainer>
@@ -110,7 +116,7 @@ function LoginForm() {
           </GoogleBtn>
         </SnsBtnContainer>
       </SnsLoginContainer>
-    </>
+    </LoginFormContainer>
   );
 }
 
