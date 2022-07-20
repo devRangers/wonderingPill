@@ -1,5 +1,7 @@
 import { BUTTON_COLOR, SUB_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
+import { useMutation } from "react-query";
+import { CreateUserDto } from "src/model";
 import * as Yup from "yup";
 import {
   ErrorMessage,
@@ -24,7 +26,20 @@ const userInitialValue: RegisterValues = {
   checkPassword: "",
   birth: "",
 };
+
+const postRegisterAPI = async () => {
+  const res = await fetch("http://localhost:5000/auth/signup");
+  const result = res.json();
+  return result;
+};
+
 function UserDataForm() {
+  const mutation = useMutation(postRegisterAPI, {
+    onSuccess: (data, variables) => {
+      console.log("data : ", data);
+    },
+  });
+
   const userDataFormik = useFormik({
     initialValues: userInitialValue,
     validationSchema: Yup.object({
@@ -50,8 +65,9 @@ function UserDataForm() {
         )
         .required("필수 입력 란입니다."),
     }),
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      // alert(JSON.stringify(values, null, 2));
+      mutation.mutate(values);
     },
   });
 

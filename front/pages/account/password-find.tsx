@@ -1,5 +1,5 @@
 import Container from "@userContainer/Container";
-import FindPasswordForm from "components/account/FindPasswordForm";
+import FindPasswordForm from "components/account/findPassword/FindPasswordForm";
 import React from "react";
 
 function passwordFind() {

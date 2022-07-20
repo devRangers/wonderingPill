@@ -1,5 +1,5 @@
 import Container from "@userContainer/Container";
-import NewPasswordForm from "components/account/NewPasswordForm";
+import NewPasswordForm from "components/account/newPassword/NewPasswordForm";
 
 function passwordNew() {
   return (
