@@ -53,6 +53,7 @@ export const PhoneNumberSelect = styled("select", {
   fontSize: "1rem",
   fontWeight: "bold",
   textAlign: "center",
+  backgroundColor: "#fff",
 });
 
 export const PhoneNumberInput = styled("input", {
@@ -61,7 +62,7 @@ export const PhoneNumberInput = styled("input", {
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
-  padding: "0 1rem",
+  textAlign: "center",
 });
 
 export const Hyphen = styled("p", (props: { $txtColor: string }) => ({
