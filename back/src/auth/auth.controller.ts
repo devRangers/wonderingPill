@@ -13,6 +13,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto, SigninUserDto } from './dto';
 import { Response } from 'express';
 import * as config from 'config';
+import { UserEntity } from 'src/entities';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -25,7 +26,7 @@ export class AuthController {
     summary: '유저 생성(회원가입) API',
     description: '유저를 생성한다.',
   })
-  @ApiResponse({ description: '회원가입 성공' })
+  @ApiResponse({ status: 200, description: '회원가입 성공', type: UserEntity })
   @ApiBody({ type: CreateUserDto })
   async signupUser(@Body() createUserDto: CreateUserDto): Promise<UserModel> {
     const user: UserModel = await this.authService.createUser(createUserDto);
@@ -35,12 +36,12 @@ export class AuthController {
   }
 
   @HttpCode(200)
-  @Post('/signin/local')
+  @Post('signin')
   @ApiOperation({
     summary: '유저 로그인 API',
     description: '유저의 accessToken을 발행한다.',
   })
-  @ApiResponse({ description: '로그인 성공' })
+  @ApiResponse({ status: 200, description: '로그인 성공' })
   @ApiBody({ type: SigninUserDto })
   async signinUser(
     @Body() signinUserDto: SigninUserDto,
@@ -49,7 +50,6 @@ export class AuthController {
     const accessToken: string = await this.authService.getAccessToken(
       signinUserDto,
     );
-    console.log(accessToken);
 
     res.cookie('Authentication', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,

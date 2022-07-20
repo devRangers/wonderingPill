@@ -77,6 +77,7 @@ export class AuthService {
           expiresIn: process.env.EXPIRESIN || config.get('jwt').expiresIn,
         },
       );
+
       return accessToken;
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
