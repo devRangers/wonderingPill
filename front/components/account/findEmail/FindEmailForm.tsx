@@ -1,6 +1,8 @@
-import { Dispatch, SetStateAction } from "react";
+import { useRef } from "react";
+import { useMutation } from "react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import ReCAPTCHA from "react-google-recaptcha";
 import { BUTTON_COLOR, ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
 import {
   InputContainer,
@@ -19,10 +21,6 @@ import {
   BtnContainer,
 } from "./FindEmailForm.style";
 
-interface FindEmailFormProps {
-  setSubmitBtnClick: Dispatch<SetStateAction<boolean>>;
-}
-
 interface FindEmailValues {
   name: string;
   birth: string;
@@ -39,7 +37,25 @@ const initialValue: FindEmailValues = {
   lastPhoneNum: "",
 };
 
-function FindEmailForm({ setSubmitBtnClick }: FindEmailFormProps) {
+const getRecaptchaResult = async (token: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_RECAPTCHA_URL}?secret=${process.env.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY}&response=${token}`,
+    {
+      method: "POST",
+    },
+  );
+  const result = await res.json();
+  return result;
+};
+
+function FindEmailForm() {
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const recaptchaMutation = useMutation(getRecaptchaResult, {
+    onSuccess: (data, variables) => {
+      console.log(data);
+    },
+  });
+
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({
@@ -62,8 +78,9 @@ function FindEmailForm({ setSubmitBtnClick }: FindEmailFormProps) {
     }),
     onSubmit: async (values, actions) => {
       // Submit Handler 구현 예정
-      setSubmitBtnClick(true);
-      console.log(values);
+      const token = (await recaptchaRef?.current?.executeAsync()) as string;
+      recaptchaMutation.mutate(token);
+      recaptchaRef?.current?.reset();
     },
   });
 
@@ -146,6 +163,11 @@ function FindEmailForm({ setSubmitBtnClick }: FindEmailFormProps) {
       <BtnContainer>
         <SubmitBtn $btnColor={BUTTON_COLOR}>계정 찾기</SubmitBtn>
       </BtnContainer>
+      <ReCAPTCHA
+        ref={recaptchaRef}
+        size="invisible"
+        sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+      />
     </Form>
   );
 }
