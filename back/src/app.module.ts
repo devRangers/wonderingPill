@@ -5,9 +5,11 @@ import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
 import { PharmacyService } from './pharmacy/pharmacy.service';
 import { PharmacyController } from './pharmacy/pharmacy.controller';
 import { PrismaService } from './prisma/prisma.service';
+import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [],
+  imports: [AuthModule, PrismaModule],
   controllers: [AppController, PharmacyController],
   providers: [
     {

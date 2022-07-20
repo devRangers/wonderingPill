@@ -126,6 +126,14 @@ class MyDocument extends NextDocument<{
             property="og:image"
             content="http://localhost:3000/icons/icon-48x48.png"
           />
+
+          {/* font */}
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap"
+            rel="stylesheet"
+          />
         </Head>
         <body>
           <Main />
