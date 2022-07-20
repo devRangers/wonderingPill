@@ -12,14 +12,14 @@ model Pharmacy {
   name             String?            @db.VarChar(50)
   phone            String?            @db.VarChar(20)
   address          String?
-  monday           String             @db.VarChar(50)
-  tuesday          String             @db.VarChar(50)
-  wednesday        String             @db.VarChar(50)
-  thursday         String             @db.VarChar(50)
-  friday           String             @db.VarChar(50)
-  saturday         String             @db.VarChar(50)
-  sunday           String             @db.VarChar(50)
-  holiday          String             @db.VarChar(50)
+  monday           String?             @db.VarChar(50)
+  tuesday          String?             @db.VarChar(50)
+  wednesday        String?             @db.VarChar(50)
+  thursday         String?             @db.VarChar(50)
+  friday           String?             @db.VarChar(50)
+  saturday         String?             @db.VarChar(50)
+  sunday           String?             @db.VarChar(50)
+  holiday          String?             @db.VarChar(50)
   PharmacyBookMark PharmacyBookMark[]
 }
 
@@ -32,7 +32,7 @@ model PharmacyBookMark {
 }
 
 model User {
-  id               String             @id
+  id               String             @id @default(uuid())
   email            String?            @unique @db.VarChar(100)
   name             String?            @db.VarChar(20)
   password         String?            @db.VarChar(100)
