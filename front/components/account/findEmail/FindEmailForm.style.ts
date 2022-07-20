@@ -1,50 +1,77 @@
 import { styled } from "styletron-react";
 
 export const Form = styled("form", {
-  display: "flex",
-  flexDirection: "column",
-  height: "55%",
+  display: "grid",
+  gridTemplateRows: "2fr 1fr 1fr",
 });
 
-export const ContentContainer = styled("div", {
-  height: "45%",
+export const PhoneContainer = styled("div", {
+  display: "grid",
+  gridTemplateRows: "1fr 2fr",
 });
 
-export const InputContainer = styled("div", {
-  width: "100%",
-  height: "50%",
+export const PhoneTitle = styled("div", (props: { $txtColor: string }) => ({
   display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
+  flexBasis: "100%",
+  alignItems: "center",
+  fontSize: "0.7rem",
+  color: props.$txtColor,
+  ":before": {
+    content: "''",
+    flexGrow: 1,
+    backgroundColor: props.$txtColor,
+    height: "1px",
+    fontSize: "0px",
+    lineHeight: "0px",
+    margin: "0 1rem 0 3rem",
+  },
+  ":after": {
+    content: "''",
+    flexGrow: 1,
+    backgroundColor: props.$txtColor,
+    height: "1px",
+    fontSize: "0px",
+    lineHeight: "0px",
+    margin: "0 3rem 0 1rem",
+  },
+}));
+
+export const PhoneNumberContainer = styled("div", {
+  width: "80%",
+  display: "grid",
+  gridTemplateColumns: "1fr 0.3fr 1fr 0.3fr 1fr",
+  margin: "0 auto",
+  justifyItems: "center",
   alignItems: "center",
 });
 
-export const Input = styled("input", {
-  width: "65%",
-  height: "60%",
+export const PhoneNumberSelect = styled("select", {
+  width: "100%",
+  height: "3rem",
+  border: 0,
+  borderRadius: "25px",
+  fontSize: "1rem",
+  fontWeight: "bold",
+  textAlign: "center",
+});
+
+export const PhoneNumberInput = styled("input", {
+  width: "100%",
+  height: "3rem",
   border: 0,
   borderRadius: "25px",
   fontSize: "1rem",
   padding: "0 1rem",
-  "::-webkit-input-placeholder": {
-    textAlign: "center",
-    fontFamily: "'Noto Sans KR', sans-serif",
-    color: "#A4A4A4",
-  },
 });
 
-export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
-  textAlign: "start",
-  width: "65%",
-  marginTop: "0.2rem",
-  padding: "0 1rem",
+export const Hyphen = styled("p", (props: { $txtColor: string }) => ({
+  fontSize: "1rem",
+  fontWeight: "bold",
   color: props.$txtColor,
-  fontSize: "0.9rem",
 }));
 
-export const SubmitBtn = styled(
-  "button",
-  (props: { $btnColor: string }) => ({
-    
-  }),
-);
+export const BtnContainer = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
