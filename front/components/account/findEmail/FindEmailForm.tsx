@@ -83,7 +83,9 @@ function FindEmailForm() {
           <Input
             id="birth"
             name="birth"
-            type="number"
+            type="text"
+            maxLength={8}
+            inputMode="numeric"
             placeholder="생년월일(8자리)"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -113,7 +115,9 @@ function FindEmailForm() {
           <PhoneNumberInput
             id="middlePhoneNum"
             name="middlePhoneNum"
-            type="number"
+            type="text"
+            maxLength={4}
+            inputMode="tel"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.middlePhoneNum}
@@ -123,7 +127,9 @@ function FindEmailForm() {
           <PhoneNumberInput
             id="lastPhoneNum"
             name="lastPhoneNum"
-            type="number"
+            type="text"
+            maxLength={4}
+            inputMode="tel"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.lastPhoneNum}
