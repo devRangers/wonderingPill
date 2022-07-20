@@ -1,6 +1,6 @@
-import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Pharmacy, Prisma } from '@prisma/client';
+import { Pharmacy } from '@prisma/client';
 @Injectable()
 export class PharmacyService {
   constructor(private prisma: PrismaService) {}
@@ -8,25 +8,21 @@ export class PharmacyService {
     return await this.prisma.pharmacy.findMany({});
   }
 
-  async pharmacySearchName(
-    name: string,
-    pharmacy?: number,
-  ): Promise<Pharmacy[]> {
+  async pharmacySearchName(name: string, start?: number): Promise<Pharmacy[]> {
     return await this.prisma.pharmacy.findMany({
       where: {
         name: {
           contains: name,
         },
       },
-      take: 4,
-      skip: pharmacy ? 1 : 0,
-      ...(pharmacy && { cursor: { id: pharmacy } }),
+      skip: start ? start : 0,
+      take: 5,
     });
   }
 
   async pharmacySearchPhone(
     phone: string,
-    pharmacy?: number,
+    start?: number,
   ): Promise<Pharmacy[]> {
     return await this.prisma.pharmacy.findMany({
       where: {
@@ -34,15 +30,14 @@ export class PharmacyService {
           contains: phone,
         },
       },
-      take: 4,
-      skip: pharmacy ? 1 : 0,
-      ...(pharmacy && { cursor: { id: pharmacy } }),
+      skip: start ? start : 0,
+      take: 5,
     });
   }
 
   async pharmacySearchAddress(
     address: string,
-    pharmacy?: number,
+    start?: number,
   ): Promise<Pharmacy[]> {
     return await this.prisma.pharmacy.findMany({
       where: {
@@ -50,9 +45,37 @@ export class PharmacyService {
           contains: address,
         },
       },
-      take: 4,
-      skip: pharmacy ? 1 : 0,
-      ...(pharmacy && { cursor: { id: pharmacy } }),
+      take: 5,
+      skip: start ? start : 0,
+    });
+  }
+
+  async pharmacyCountAddress(address: string): Promise<number> {
+    return await this.prisma.pharmacy.count({
+      where: {
+        address: {
+          contains: address,
+        },
+      },
+    });
+  }
+
+  async pharmacyCountName(name: string): Promise<number> {
+    return await this.prisma.pharmacy.count({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    });
+  }
+  async pharmacyCountPhone(phone: string): Promise<number> {
+    return await this.prisma.pharmacy.count({
+      where: {
+        phone: {
+          contains: phone,
+        },
+      },
     });
   }
 }

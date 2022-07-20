@@ -1,14 +1,7 @@
-import { Controller, Get, HttpCode, Query, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Get, HttpCode, Query } from '@nestjs/common';
 import { PharmacyService } from './pharmacy.service';
 import { Pharmacy } from '@prisma/client';
-
-type pharmacyQuery = {
-  phone?: string;
-  name?: string;
-  address?: string;
-  pharmacyId?: number;
-};
+import { PharmacyQueryDto } from './dto/pharmacy.search.dto';
 @Controller('pharmacy')
 export class PharmacyController {
   constructor(private pharmacyService: PharmacyService) {}
@@ -20,13 +13,26 @@ export class PharmacyController {
 
   @Get('search')
   @HttpCode(200)
-  async pharmacySearch(@Query() query: pharmacyQuery): Promise<Pharmacy[]> {
-    const { phone, name, address, pharmacyId } = query;
-    if (phone)
-      return this.pharmacyService.pharmacySearchPhone(phone, +pharmacyId);
-    else if (name)
-      return this.pharmacyService.pharmacySearchName(name, +pharmacyId);
-    else if (address)
-      return this.pharmacyService.pharmacySearchAddress(address, +pharmacyId);
+  async pharmacySearch(@Query() query: PharmacyQueryDto): Promise<Pharmacy[]> {
+    const { phone, name, address, start } = query;
+    if (phone) {
+      return await this.pharmacyService.pharmacySearchPhone(phone, start);
+    } else if (name) {
+      return await this.pharmacyService.pharmacySearchName(name, start);
+    } else if (address) {
+      return await this.pharmacyService.pharmacySearchAddress(address, start);
+    }
+  }
+  @Get('count')
+  @HttpCode(200)
+  async pharmacyCount(@Query() query: PharmacyQueryDto): Promise<number> {
+    const { phone, name, address } = query;
+    if (phone) {
+      return await this.pharmacyService.pharmacyCountPhone(phone);
+    } else if (name) {
+      return await this.pharmacyService.pharmacyCountName(name);
+    } else if (address) {
+      return await this.pharmacyService.pharmacyCountAddress(address);
+    }
   }
 }
