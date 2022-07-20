@@ -7,6 +7,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { setupSwagger } from './util/swagger';
 import { PrismaService } from './prisma/prisma.service';
+import * as cookieParser from 'cookie-parser';
 
 dotenv.config({
   path: path.resolve(
@@ -36,6 +37,7 @@ async function bootstrap() {
   const PORT = process.env.SERVER_PORT || config.get('server').port; // PORT 설정
   setupSwagger(app); // Swagger 설정
   app.enableCors(); // CORS 설정
+  app.use(cookieParser()); // cookie parser 사용
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
 
   await app.listen(PORT);

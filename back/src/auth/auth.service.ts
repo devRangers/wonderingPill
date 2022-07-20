@@ -2,24 +2,30 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
+import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { providerType } from './auth-provider.enum';
 import * as argon from 'argon2';
-import { CreateUserDto } from './dto';
+import { CreateUserDto, SigninUserDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { JwtService } from '@nestjs/jwt';
+import * as config from 'config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async user(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
+  async getUser(email): Promise<User | null> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { email },
     });
+    if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
+    return user;
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User | null> {
@@ -46,6 +52,34 @@ export class AuthService {
       } else {
         throw new InternalServerErrorException();
       }
+    }
+  }
+
+  async getAccessToken(signinUserDto: SigninUserDto): Promise<string> {
+    try {
+      const { email, password } = signinUserDto;
+      const user = await this.getUser(email);
+
+      const isPwMatching = await argon.verify(user.password, password);
+      if (!isPwMatching)
+        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+
+      // TODO : redis - refresh token update
+
+      const accessToken = await this.jwtService.sign(
+        {
+          id: user.id,
+          email,
+          sub: 'accessToken',
+        },
+        {
+          secret: process.env.JWT_SECRET || config.get('jwt').secret,
+          expiresIn: process.env.EXPIRESIN || config.get('jwt').expiresIn,
+        },
+      );
+      return accessToken;
+    } catch (error) {
+      throw new UnauthorizedException('로그인에 실패했습니다.');
     }
   }
 }

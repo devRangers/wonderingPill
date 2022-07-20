@@ -2,3 +2,6 @@ server:
   port: 5000
 db:
   DATABASE_URL:
+jwt:
+  secret:
+  expiresIn:
