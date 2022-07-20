@@ -1,14 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { User } from '@prisma/client';
 import { ExtractJwt } from 'passport-jwt';
 import { Strategy } from 'passport-local';
-import { AuthService } from '../auth.service';
 import { Request } from 'express';
 import * as config from 'config';
+import { AuthService } from '../auth.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   constructor(private authService: AuthService) {
     super({
       usernameField: 'email',
@@ -16,21 +19,26 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       passReqToCallback: true,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          return req?.cookies?.AccessToken;
+          return req?.cookies?.RefreshToken;
         },
       ]),
-      secretOrKey: process.env.JWT_SECRET || config.get('jwt').expiresIn,
+      secretOrKey:
+        process.env.JWT_SECRET || config.get('jwt-refresh').expiresIn,
       ignoreExpiration: true,
     });
   }
 
-  async validate(email: string): Promise<User> {
+  async validate(req: Request, email: string): Promise<any> {
     const user = await this.authService.getUser({
       where: { email },
     });
     if (!user) {
       throw new UnauthorizedException();
     }
-    return user;
+
+    const refreshToken = req?.cookies?.RefreshToken;
+    if (!refreshToken)
+      throw new ForbiddenException('Refresh token이 만료되었습니다.');
+    return { ...user, refreshToken };
   }
 }

@@ -5,3 +5,6 @@ db:
 jwt:
   secret:
   expiresIn:
+jwt-refresh:
+  secret:
+  expiresIn:

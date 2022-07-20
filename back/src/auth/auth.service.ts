@@ -24,7 +24,10 @@ export class AuthService {
     const user: User = await this.prisma.user.findUnique({
       where: { email },
     });
-    if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
+
+    if (!user) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    }
     return user;
   }
 
@@ -64,8 +67,6 @@ export class AuthService {
       if (!isPwMatching)
         throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
 
-      // TODO : redis - refresh token update
-
       const accessToken = await this.jwtService.sign(
         {
           id: user.id,
@@ -74,11 +75,41 @@ export class AuthService {
         },
         {
           secret: process.env.JWT_SECRET || config.get('jwt').secret,
-          expiresIn: process.env.EXPIRESIN || config.get('jwt').expiresIn,
+          expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
         },
       );
 
       return accessToken;
+    } catch (error) {
+      throw new UnauthorizedException('로그인에 실패했습니다.');
+    }
+  }
+
+  async getRefreshToken(signinUserDto: SigninUserDto): Promise<string> {
+    try {
+      const { email, password } = signinUserDto;
+      const user = await this.getUser(email);
+      const isPwMatching = await argon.verify(user.password, password);
+
+      if (!isPwMatching)
+        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+
+      const refreshToken = await this.jwtService.sign(
+        {
+          id: user.id,
+          email,
+          sub: 'refreshToken',
+        },
+        {
+          secret:
+            process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+          expiresIn:
+            process.env.JWT_REFRESH_EXPIRESIN ||
+            config.get('jwt-refresh').expiresIn,
+        },
+      );
+
+      return refreshToken;
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
     }

@@ -46,19 +46,31 @@ export class AuthController {
   async signinUser(
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const accessToken: string = await this.authService.getAccessToken(
       signinUserDto,
     );
 
-    res.cookie('Authentication', accessToken, {
+    res.cookie('AccessToken', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,
       httpOnly: true,
     });
 
+    const refreshToken: string = await this.authService.getRefreshToken(
+      signinUserDto,
+    );
+
+    res.cookie('RefreshToken', refreshToken, {
+      maxAge:
+        process.env.JWT_REFRESH_EXPIRESIN || config.get('jwt-refresh').secret,
+      httpOnly: true,
+    });
+
+    // redis: refresh token
+
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!
-    Payload: ${JSON.stringify(accessToken)}`);
-    return { accessToken };
+    Payload: ${JSON.stringify({ accessToken, refreshToken })}`);
+    return { accessToken, refreshToken };
   }
 
   @Get('refresh')

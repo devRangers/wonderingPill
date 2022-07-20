@@ -17,7 +17,6 @@ import { PassportModule } from '@nestjs/passport';
       },
     }),
   ],
-
   controllers: [AuthController],
   providers: [PrismaService, AuthService, JwtStrategy],
   exports: [JwtStrategy],
