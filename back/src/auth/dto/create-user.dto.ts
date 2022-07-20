@@ -22,7 +22,7 @@ export class CreateUserDto {
   @IsString()
   @MinLength(8)
   @IsNotEmpty()
-  @Matches(/^[A-Za-z\d!@#$%^&*()]{8,30}$/, {
+  @Matches(/^[A-Za-z\d!@#$%^&*()]{8,20}$/, {
     message: '비밀번호 양식에 맞게 작성하세요.',
   })
   password: string;
