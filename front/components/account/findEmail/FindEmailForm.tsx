@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { BUTTON_COLOR, ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
@@ -18,8 +18,10 @@ import {
   Hyphen,
   BtnContainer,
 } from "./FindEmailForm.style";
+import Modal from "@modal/Modal";
 
 interface FindEmailFormProps {
+  successVerification: boolean;
   setStartVerification: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -39,7 +41,12 @@ const initialValue: FindEmailValues = {
   lastPhoneNum: "",
 };
 
-function FindEmailForm({ setStartVerification }: FindEmailFormProps) {
+function FindEmailForm({
+  successVerification,
+  setStartVerification,
+}: FindEmailFormProps) {
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({
@@ -66,6 +73,10 @@ function FindEmailForm({ setStartVerification }: FindEmailFormProps) {
       console.log(values);
     },
   });
+
+  useEffect(() => {
+    setAuthModalOpen(successVerification);
+  }, [successVerification]);
 
   return (
     <Form onSubmit={formik.handleSubmit}>
@@ -146,6 +157,12 @@ function FindEmailForm({ setStartVerification }: FindEmailFormProps) {
       <BtnContainer>
         <SubmitBtn $btnColor={BUTTON_COLOR}>계정 찾기</SubmitBtn>
       </BtnContainer>
+
+      {authModalOpen && (
+        <Modal open={authModalOpen} onClose={() => setAuthModalOpen(false)}>
+          TEST
+        </Modal>
+      )}
     </Form>
   );
 }
