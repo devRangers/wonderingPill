@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { useMutation } from "react-query";
+import { Dispatch, SetStateAction } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -21,6 +20,10 @@ import {
   BtnContainer,
 } from "./FindEmailForm.style";
 
+interface FindEmailFormProps {
+  setStartVerification: Dispatch<SetStateAction<boolean>>;
+}
+
 interface FindEmailValues {
   name: string;
   birth: string;
@@ -37,26 +40,7 @@ const initialValue: FindEmailValues = {
   lastPhoneNum: "",
 };
 
-const getRecaptchaResult = async (token: string) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_RECAPTCHA_URL}?secret=${process.env.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY}&response=${token}`,
-    {
-      method: "POST",
-    },
-  );
-  console.log(res);
-  const result = await res.json();
-  return result;
-};
-
-function FindEmailForm() {
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
-  const recaptchaMutation = useMutation(getRecaptchaResult, {
-    onSuccess: (data, variables) => {
-      recaptchaRef?.current?.reset();
-    },
-  });
-
+function FindEmailForm({ setStartVerification }: FindEmailFormProps) {
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({
@@ -79,9 +63,7 @@ function FindEmailForm() {
     }),
     onSubmit: async (values, actions) => {
       // Submit Handler 구현 예정
-      const token = (await recaptchaRef?.current?.executeAsync()) as string;
-      console.log(token);
-      recaptchaMutation.mutate(token);
+      setStartVerification(true);
     },
   });
 
@@ -164,11 +146,6 @@ function FindEmailForm() {
       <BtnContainer>
         <SubmitBtn $btnColor={BUTTON_COLOR}>계정 찾기</SubmitBtn>
       </BtnContainer>
-      <ReCAPTCHA
-        ref={recaptchaRef}
-        size="invisible"
-        sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-      />
     </Form>
   );
 }
