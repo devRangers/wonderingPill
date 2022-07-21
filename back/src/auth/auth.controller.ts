@@ -10,7 +10,13 @@ import {
 import { AuthService } from './auth.service';
 import { User as UserModel } from '@prisma/client';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto, CreateUserResponse, SigninUserDto } from './dto';
+import {
+  CreateUserDto,
+  CreateUserResponse,
+  RecapchaResponse,
+  SigninUserDto,
+  UseRecapchaDto,
+} from './dto';
 import { Response } from 'express';
 import * as config from 'config';
 
@@ -67,13 +73,13 @@ export class AuthController {
       signinUserDto,
     );
 
+    // redis: refresh token
+
     res.cookie('RefreshToken', refreshToken, {
       maxAge:
         process.env.JWT_REFRESH_EXPIRESIN || config.get('jwt-refresh').secret,
       httpOnly: true,
     });
-
-    // redis: refresh token
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!
     Payload: ${JSON.stringify({ accessToken, refreshToken })}`);
@@ -82,4 +88,33 @@ export class AuthController {
 
   @Get('refresh')
   async refresh() {}
+
+  @HttpCode(200)
+  @Post('recaptcha-v3')
+  @ApiOperation({
+    summary: 'Recaptcha v3 요청 API',
+    description: 'Recaptcha v3에 인증을 요청하고 판별한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원가입 성공',
+    type: RecapchaResponse,
+  })
+  @ApiBody({ type: UseRecapchaDto })
+  async verifyRecaptchaV3(@Body() useRecapchaDto: UseRecapchaDto) {
+    const data = await this.authService.sendRecaptchaV3(useRecapchaDto);
+    const checkScore = await this.authService.checkRecaptchaV3(data.score);
+
+    this.logger.verbose(`v3 recaptcha verify human Success!
+    Payload: ${JSON.stringify({ checkScore })}`);
+
+    return {
+      statusCode: 200,
+      message: '정상적인 트래픽 활동입니다.',
+      recaptchav3: { result: checkScore },
+    };
+  }
+
+  @Post('recaptcha-v2')
+  async verifyRecaptchaV2() {}
 }

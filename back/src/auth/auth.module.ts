@@ -6,6 +6,7 @@ import { JwtStrategy } from './strategy';
 import { JwtModule } from '@nestjs/jwt';
 import * as config from 'config';
 import { PassportModule } from '@nestjs/passport';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PassportModule } from '@nestjs/passport';
         expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
       },
     }),
+    HttpModule
   ],
   controllers: [AuthController],
   providers: [PrismaService, AuthService, JwtStrategy],

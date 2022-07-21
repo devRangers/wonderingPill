@@ -7,9 +7,10 @@ import { PharmacyController } from './pharmacy/pharmacy.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [AuthModule, PrismaModule],
+  imports: [HttpModule, AuthModule, PrismaModule],
   controllers: [AppController, PharmacyController],
   providers: [
     {
@@ -19,5 +20,6 @@ import { PrismaModule } from './prisma/prisma.module';
     PharmacyService,
     PrismaService,
   ],
+  exports:[HttpModule]
 })
 export class AppModule {}

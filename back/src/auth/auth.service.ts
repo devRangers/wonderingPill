@@ -8,16 +8,18 @@ import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { providerType } from './auth-provider.enum';
 import * as argon from 'argon2';
-import { CreateUserDto, SigninUserDto } from './dto';
+import { CreateUserDto, SigninUserDto, UseRecapchaDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
 import * as config from 'config';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly httpService: HttpService,
   ) {}
 
   async getUser(email): Promise<User | null> {
@@ -113,5 +115,20 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
     }
+  }
+
+  async sendRecaptchaV3(useRecapchaDto:UseRecapchaDto):Promise<any> {
+    const result = await this.httpService.post(`${process.env.RECAPTCHA_V3_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V3_SECRETKEY}&response=${useRecapchaDto.token}`).toPromise()
+    if (!result.data.success || !result) {
+      throw new ForbiddenException('recaptcha-v3 인증 요청에 실패하였습니다.')
+    }
+    return result.data
+  }
+
+  async checkRecaptchaV3(score: number):Promise<boolean> {
+    if(score<0.8) {
+      throw new UnauthorizedException('의심스러운 트래픽 활동이 감지되었습니다.')
+    }
+    return true
   }
 }
