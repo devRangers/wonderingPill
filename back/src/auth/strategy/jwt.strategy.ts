@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       where: { email },
     });
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('회원이 존재하지 않습니다.');
     }
     return user;
   }

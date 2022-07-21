@@ -10,10 +10,9 @@ import {
 import { AuthService } from './auth.service';
 import { User as UserModel } from '@prisma/client';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto, SigninUserDto } from './dto';
+import { CreateUserDto, CreateUserResponse, SigninUserDto } from './dto';
 import { Response } from 'express';
 import * as config from 'config';
-import { UserEntity } from 'src/entities';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -26,13 +25,21 @@ export class AuthController {
     summary: '유저 생성(회원가입) API',
     description: '유저를 생성한다.',
   })
-  @ApiResponse({ status: 200, description: '회원가입 성공', type: UserEntity })
+  @ApiResponse({
+    status: 200,
+    description: '회원가입 성공',
+    type: CreateUserResponse,
+  })
   @ApiBody({ type: CreateUserDto })
-  async signupUser(@Body() createUserDto: CreateUserDto): Promise<UserModel> {
+  async signupUser(@Body() createUserDto: CreateUserDto): Promise<any> {
     const user: UserModel = await this.authService.createUser(createUserDto);
     this.logger.verbose(`User ${user.email} Sign-Up Success!
     Payload: ${JSON.stringify({ user })}`);
-    return user;
+    return {
+      statusCode: 200,
+      message: '회원가입에 성공했습니다.',
+      user: { id: user.id },
+    };
   }
 
   @HttpCode(200)
