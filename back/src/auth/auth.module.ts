@@ -7,20 +7,16 @@ import { JwtModule } from '@nestjs/jwt';
 import * as config from 'config';
 import { PassportModule } from '@nestjs/passport';
 import { HttpModule } from '@nestjs/axios';
+import { JwtRefreshStrategy } from './strategy/jwt.refresh.strategy';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || config.get('jwt').secret,
-      signOptions: {
-        expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
-      },
-    }),
-    HttpModule
+    JwtModule.register({}),
+    HttpModule,
   ],
   controllers: [AuthController],
-  providers: [PrismaService, AuthService, JwtStrategy],
+  providers: [PrismaService, AuthService, JwtStrategy, JwtRefreshStrategy],
   exports: [JwtStrategy],
 })
 export class AuthModule {}

@@ -70,6 +70,7 @@ export class AuthController {
     });
 
     // redis: refresh token
+    // 자동로그인
 
     res.cookie('RefreshToken', refreshToken, {
       maxAge:
@@ -79,6 +80,7 @@ export class AuthController {
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!
     Payload: ${JSON.stringify({ accessToken, refreshToken })}`);
+    console.log(new Date());
     return { accessToken, refreshToken };
   }
 

@@ -77,10 +77,8 @@ export class AuthService {
         email,
       );
 
-      // update refresh token
-      // 자동로그인
+      this.updateRefreshToken();
 
-      console.log('왜???');
       return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
@@ -89,7 +87,7 @@ export class AuthService {
 
   async getTokens(id: string, email: string): Promise<Tokens> {
     const jwtPayload: JwtPayload = {
-      email: email,
+      email,
       sub: id,
     };
 
@@ -108,6 +106,10 @@ export class AuthService {
     ]);
 
     return { accessToken, refreshToken };
+  }
+
+  async updateRefreshToken() {
+    // token update
   }
 
   async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {
