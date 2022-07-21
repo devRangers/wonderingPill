@@ -19,7 +19,8 @@
       "@utils/*": ["common/utils/*"],
       "@userContainer/*": ["common/userContainer/*"],
       "@modal/*": ["common/modal/*"],
-      "@loginComp/*": ["components/login/*"]
+      "@loginComp/*": ["components/login/*"],
+      "@accountComp/*": ["components/account/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

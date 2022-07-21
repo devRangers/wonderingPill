@@ -1,8 +1,8 @@
 import { BUTTON_COLOR, SUB_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
-import { CreateUserDto } from "src/model";
 import * as Yup from "yup";
+import { ApplySubmitValues } from "./RegisterForm";
 import {
   ErrorMessage,
   Form,
@@ -10,6 +10,10 @@ import {
   SelfAuthenticationLine,
   SubmitButton,
 } from "./RegisterForm.style";
+
+interface UserDataFormProps {
+  applySubmit: ApplySubmitValues;
+}
 
 interface RegisterValues {
   email: string;
@@ -27,16 +31,32 @@ const userInitialValue: RegisterValues = {
   birth: "",
 };
 
-const postRegisterAPI = async () => {
-  const res = await fetch("http://localhost:5000/auth/signup");
-  const result = res.json();
+type PostUserData = Omit<RegisterValues, "checkPassword">;
+
+const postRegisterAPI = async (data: PostUserData) => {
+  const res = await fetch("http://localhost:5000/auth/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await res.json();
+  if (result.statusCode >= 400) {
+    throw new Error(result.message);
+  }
   return result;
 };
 
-function UserDataForm() {
+function UserDataForm({ applySubmit }: UserDataFormProps) {
   const mutation = useMutation(postRegisterAPI, {
     onSuccess: (data, variables) => {
       console.log("data : ", data);
+    },
+    onError: (error, variables, context) => {
+      // An error happened!
+      console.log("error: ", error);
+      console.log("variables:", variables);
     },
   });
 
@@ -54,9 +74,11 @@ function UserDataForm() {
           /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
           "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
         )
+        .max(20, "20자 이하로 입력 해 주세요.")
         .required("필수 입력 란입니다."),
       checkPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
+        .max(20, "20자 이하로 입력 해 주세요.")
         .required("필수 입력 란입니다."),
       birth: Yup.string()
         .matches(
@@ -66,8 +88,22 @@ function UserDataForm() {
         .required("필수 입력 란입니다."),
     }),
     onSubmit: async (values) => {
-      // alert(JSON.stringify(values, null, 2));
-      mutation.mutate(values);
+      if (applySubmit.authSelf && applySubmit.checkAllBox) {
+        const tempBirth = String(values.birth);
+        const { checkPassword, ...dataToSubmit } = values;
+        const temp = {
+          ...dataToSubmit,
+          birth: tempBirth,
+          phone: "01027008084",
+        };
+        mutation.mutate(temp);
+      } else {
+        if (!applySubmit.authSelf) {
+          alert("본인 인증을 진행해주세요.");
+        } else {
+          alert("동의사항을 확인해주세요.");
+        }
+      }
     },
   });
 
@@ -102,6 +138,7 @@ function UserDataForm() {
         type="password"
         {...userDataFormik.getFieldProps("password")}
         placeholder="비밀번호"
+        autoComplete="true"
       />
       {userDataFormik.touched.password && userDataFormik.errors.password ? (
         <ErrorMessage>{userDataFormik.errors.password}</ErrorMessage>
@@ -114,6 +151,7 @@ function UserDataForm() {
         type="password"
         {...userDataFormik.getFieldProps("checkPassword")}
         placeholder="비밀번호 확인"
+        autoComplete="true"
       />
       {userDataFormik.touched.checkPassword &&
       userDataFormik.errors.checkPassword ? (
@@ -124,7 +162,9 @@ function UserDataForm() {
 
       <Input
         id="birth"
-        type="number"
+        type="text"
+        maxLength={8}
+        inputMode="numeric"
         {...userDataFormik.getFieldProps("birth")}
         placeholder="생년월일(8자리)"
       />
