@@ -1,7 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import ReCAPTCHA from "react-google-recaptcha";
 import { BUTTON_COLOR, ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
 import {
   InputContainer,
@@ -19,10 +18,7 @@ import {
   Hyphen,
   BtnContainer,
 } from "./FindEmailForm.style";
-
-interface FindEmailFormProps {
-  setStartVerification: Dispatch<SetStateAction<boolean>>;
-}
+import ReCaptcha from "../ReCaptcha";
 
 interface FindEmailValues {
   name: string;
@@ -40,7 +36,9 @@ const initialValue: FindEmailValues = {
   lastPhoneNum: "",
 };
 
-function FindEmailForm({ setStartVerification }: FindEmailFormProps) {
+function FindEmailForm() {
+  const [startVerification, setStartVerification] = useState(false);
+
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({
@@ -146,6 +144,10 @@ function FindEmailForm({ setStartVerification }: FindEmailFormProps) {
       <BtnContainer>
         <SubmitBtn $btnColor={BUTTON_COLOR}>계정 찾기</SubmitBtn>
       </BtnContainer>
+      <ReCaptcha
+        startVerification={startVerification}
+        setStartVerification={setStartVerification}
+      />
     </Form>
   );
 }
