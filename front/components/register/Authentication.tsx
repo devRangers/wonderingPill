@@ -20,6 +20,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Modal from "@modal/Modal";
 
+const ReSendTimer = 4000;
+
 interface AuthenticationProps {
   handleSetApplySelfAuth: (phoneNumber: string) => void;
   handleSetApplyAllCheckBox: (checkAllBox: boolean) => void;
@@ -142,6 +144,19 @@ function Authentication({
         .required("필수 입력 란입니다."),
     }),
     onSubmit: (values) => {
+      const number: string =
+        phoneNumberFormik.getFieldProps("phoneNumber").value;
+      if (number.length === 0) {
+        return;
+      }
+      setAuthSelf((cur) => {
+        return {
+          ...cur,
+          authPhone: true,
+          authNumberConfirm: false,
+        };
+      });
+
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -152,6 +167,17 @@ function Authentication({
       authenticationNumber: Yup.string().required("필수 입력 란입니다."),
     }),
     onSubmit: (values) => {
+      handleSetApplySelfAuth(
+        phoneNumberFormik.getFieldProps("phoneNumber").value,
+      );
+      console.log("asd");
+
+      setAuthSelf((cur) => {
+        return {
+          ...cur,
+          authNumberConfirm: true,
+        };
+      });
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -164,6 +190,21 @@ function Authentication({
       handleSetApplyAllCheckBox(false);
     }
   }, [selectedCheckbox]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAuthSelf((cur) => {
+        return {
+          ...cur,
+          authPhone: false,
+        };
+      });
+    }, ReSendTimer);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [authSelf.authPhone]);
 
   return (
     <>
@@ -181,21 +222,7 @@ function Authentication({
             type="submit"
             $btnColor={SUB_COLOR}
             $isDisabled={authSelf.authPhone}
-            disabled={authSelf.authPhone ? true : false}
-            onClick={() => {
-              const number: string =
-                phoneNumberFormik.getFieldProps("phoneNumber").value;
-              if (number.length === 0) {
-                return;
-              }
-
-              setAuthSelf((cur) => {
-                return {
-                  ...cur,
-                  authPhone: true,
-                };
-              });
-            }}>
+            disabled={authSelf.authPhone ? true : false}>
             전송
           </SubmitAuthenticationBtn>
         </PhoneNumberContainer>
@@ -219,23 +246,12 @@ function Authentication({
             type="submit"
             $btnColor={SUB_COLOR}
             $isDisabled={authSelf.authNumberConfirm}
-            disabled={authSelf.authNumberConfirm ? true : false}
-            onClick={() => {
-              if (
-                authSelf.authPhone &&
-                !authenticationFormik.errors.authenticationNumber
-              ) {
-                handleSetApplySelfAuth(
-                  phoneNumberFormik.getFieldProps("phoneNumber").value,
-                );
-                setAuthSelf((cur) => {
-                  return {
-                    ...cur,
-                    authNumberConfirm: true,
-                  };
-                });
-              }
-            }}>
+            disabled={
+              authenticationFormik.errors.authenticationNumber &&
+              authSelf.authNumberConfirm
+                ? true
+                : false
+            }>
             확인
           </SubmitAuthenticationBtn>
         </PhoneNumberContainer>

@@ -151,7 +151,7 @@ export const AuthenticationInput = styled("input", {
 
 export const SubmitAuthenticationBtn = styled(
   "button",
-  (props: { $btnColor: string; $isDisabled: boolean }) => ({
+  (props: { $btnColor: string; $isDisabled?: boolean }) => ({
     width: "50px",
     height: "40px",
     border: "none",
