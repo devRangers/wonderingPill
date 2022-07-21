@@ -13,6 +13,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
 import * as config from 'config';
 import { HttpService } from '@nestjs/axios';
+import { JwtPayload, Tokens } from './types';
 
 @Injectable()
 export class AuthService {
@@ -60,7 +61,9 @@ export class AuthService {
     }
   }
 
-  async getAccessToken(signinUserDto: SigninUserDto): Promise<string> {
+  async getLocalSignin(
+    signinUserDto: SigninUserDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const { email, password } = signinUserDto;
       const user = await this.getUser(email);
@@ -69,66 +72,62 @@ export class AuthService {
       if (!isPwMatching)
         throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
 
-      const accessToken = await this.jwtService.sign(
-        {
-          id: user.id,
-          email,
-          sub: 'accessToken',
-        },
-        {
-          secret: process.env.JWT_SECRET || config.get('jwt').secret,
-          expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
-        },
+      const { accessToken, refreshToken } = await this.getTokens(
+        user.id,
+        email,
       );
 
-      return accessToken;
+      // update refresh token
+      // 자동로그인
+
+      console.log('왜???');
+      return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
     }
   }
 
-  async getRefreshToken(signinUserDto: SigninUserDto): Promise<string> {
-    try {
-      const { email, password } = signinUserDto;
-      const user = await this.getUser(email);
-      const isPwMatching = await argon.verify(user.password, password);
+  async getTokens(id: string, email: string): Promise<Tokens> {
+    const jwtPayload: JwtPayload = {
+      email: email,
+      sub: id,
+    };
 
-      if (!isPwMatching)
-        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(jwtPayload, {
+        secret: process.env.JWT_SECRET || config.get('jwt').secret,
+        expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      }),
+      this.jwtService.signAsync(jwtPayload, {
+        secret:
+          process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+        expiresIn:
+          process.env.JWT_REFRESH_EXPIRESIN ||
+          config.get('jwt-refresh').expiresIn,
+      }),
+    ]);
 
-      const refreshToken = await this.jwtService.sign(
-        {
-          id: user.id,
-          email,
-          sub: 'refreshToken',
-        },
-        {
-          secret:
-            process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
-          expiresIn:
-            process.env.JWT_REFRESH_EXPIRESIN ||
-            config.get('jwt-refresh').expiresIn,
-        },
-      );
-
-      return refreshToken;
-    } catch (error) {
-      throw new UnauthorizedException('로그인에 실패했습니다.');
-    }
+    return { accessToken, refreshToken };
   }
 
-  async sendRecaptchaV3(useRecapchaDto:UseRecapchaDto):Promise<any> {
-    const result = await this.httpService.post(`${process.env.RECAPTCHA_V3_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V3_SECRETKEY}&response=${useRecapchaDto.token}`).toPromise()
+  async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {
+    const result = await this.httpService
+      .post(
+        `${process.env.RECAPTCHA_V3_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V3_SECRETKEY}&response=${useRecapchaDto.token}`,
+      )
+      .toPromise();
     if (!result.data.success || !result) {
-      throw new ForbiddenException('recaptcha-v3 인증 요청에 실패하였습니다.')
+      throw new ForbiddenException('recaptcha-v3 인증 요청에 실패하였습니다.');
     }
-    return result.data
+    return result.data;
   }
 
-  async checkRecaptchaV3(score: number):Promise<boolean> {
-    if(score<0.8) {
-      throw new UnauthorizedException('의심스러운 트래픽 활동이 감지되었습니다.')
+  async checkRecaptchaV3(score: number): Promise<boolean> {
+    if (score < 0.8) {
+      throw new UnauthorizedException(
+        '의심스러운 트래픽 활동이 감지되었습니다.',
+      );
     }
-    return true
+    return true;
   }
 }

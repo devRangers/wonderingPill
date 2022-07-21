@@ -41,7 +41,7 @@ model User {
   profileImg       String?            @default("imageUrl")
   isDeleted        Boolean?           @default(false)
   createdAt        DateTime?          @default(now()) @db.Date
-  updatedAt        DateTime?          @updatedAt
   birth            String?            @db.VarChar(9)
+  updatedAt        DateTime?          @updatedAt
   PharmacyBookMark PharmacyBookMark[]
 }

@@ -19,6 +19,7 @@ import {
 } from './dto';
 import { Response } from 'express';
 import * as config from 'config';
+import { Tokens } from './types';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -59,19 +60,14 @@ export class AuthController {
   async signinUser(
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
-    const accessToken: string = await this.authService.getAccessToken(
-      signinUserDto,
-    );
+  ): Promise<Tokens> {
+    const { accessToken, refreshToken }: Tokens =
+      await this.authService.getLocalSignin(signinUserDto);
 
     res.cookie('AccessToken', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,
       httpOnly: true,
     });
-
-    const refreshToken: string = await this.authService.getRefreshToken(
-      signinUserDto,
-    );
 
     // redis: refresh token
 
@@ -116,15 +112,15 @@ export class AuthController {
     };
   }
 
-  @Post('recaptcha-v2')
-  async verifyRecaptchaV2() {}
-
   @Post('send-sms')
   async sendSMS() {}
 
   @Post('verify-code')
   async verifyCode() {}
 
-  @Get('getUser')
+  @Get('get-user')
   async getUser() {}
+
+  @Post('send-email')
+  async sendEmail() {}
 }

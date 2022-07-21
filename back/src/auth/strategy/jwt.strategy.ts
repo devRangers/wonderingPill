@@ -6,10 +6,11 @@ import { Strategy } from 'passport-local';
 import { AuthService } from '../auth.service';
 import { Request } from 'express';
 import * as config from 'config';
+import { JwtPayload } from '../types';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(private authService: AuthService) {
+  constructor() {
     super({
       usernameField: 'email',
       passwordField: 'password',
@@ -24,13 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(email: string): Promise<User> {
-    const user = await this.authService.getUser({
-      where: { email },
-    });
-    if (!user) {
-      throw new UnauthorizedException('회원이 존재하지 않습니다.');
-    }
-    return user;
+  async validate(payload: JwtPayload) {
+    return payload;
   }
 }

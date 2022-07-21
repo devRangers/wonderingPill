@@ -9,6 +9,7 @@ import { Strategy } from 'passport-local';
 import { Request } from 'express';
 import * as config from 'config';
 import { AuthService } from '../auth.service';
+import { JwtPayload } from '../types';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
@@ -28,17 +29,14 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     });
   }
 
-  async validate(req: Request, email: string): Promise<any> {
-    const user = await this.authService.getUser({
-      where: { email },
-    });
-    if (!user) {
-      throw new UnauthorizedException();
-    }
+  async validate(req: Request, payload: JwtPayload) {
+    const refreshToken = req?.cookies?.refreshToken;
 
-    const refreshToken = req?.cookies?.RefreshToken;
-    if (!refreshToken)
-      throw new ForbiddenException('Refresh token이 만료되었습니다.');
-    return { ...user, refreshToken };
+    if (!refreshToken) throw new ForbiddenException('Refresh token malformed');
+
+    return {
+      ...payload,
+      refreshToken,
+    };
   }
 }
