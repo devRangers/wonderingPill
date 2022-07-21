@@ -44,6 +44,7 @@ const getRecaptchaResult = async (token: string) => {
       method: "POST",
     },
   );
+  console.log(res);
   const result = await res.json();
   return result;
 };
@@ -52,7 +53,7 @@ function FindEmailForm() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const recaptchaMutation = useMutation(getRecaptchaResult, {
     onSuccess: (data, variables) => {
-      console.log(data);
+      recaptchaRef?.current?.reset();
     },
   });
 
@@ -79,8 +80,8 @@ function FindEmailForm() {
     onSubmit: async (values, actions) => {
       // Submit Handler 구현 예정
       const token = (await recaptchaRef?.current?.executeAsync()) as string;
+      console.log(token);
       recaptchaMutation.mutate(token);
-      recaptchaRef?.current?.reset();
     },
   });
 
