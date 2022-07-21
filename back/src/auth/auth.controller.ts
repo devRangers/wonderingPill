@@ -89,6 +89,7 @@ export class AuthController {
   @Get('refresh')
   async refresh() {}
 
+  // recaptcha를 guard로 대체 가능! 비용 절감
   @HttpCode(200)
   @Post('recaptcha-v3')
   @ApiOperation({
@@ -105,7 +106,7 @@ export class AuthController {
     const data = await this.authService.sendRecaptchaV3(useRecapchaDto);
     const checkScore = await this.authService.checkRecaptchaV3(data.score);
 
-    this.logger.verbose(`v3 recaptcha verify human Success!
+    this.logger.verbose(`recaptcha v3 verify human Success!
     Payload: ${JSON.stringify({ checkScore })}`);
 
     return {
@@ -117,4 +118,13 @@ export class AuthController {
 
   @Post('recaptcha-v2')
   async verifyRecaptchaV2() {}
+
+  @Post('send-sms')
+  async sendSMS() {}
+
+  @Post('verify-code')
+  async verifyCode() {}
+
+  @Get('getUser')
+  async getUser() {}
 }
