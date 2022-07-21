@@ -180,6 +180,7 @@ function Authentication({
           <SubmitAuthenticationBtn
             type="submit"
             $btnColor={SUB_COLOR}
+            $isDisabled={authSelf.authPhone}
             disabled={authSelf.authPhone ? true : false}
             onClick={() => {
               const number: string =
@@ -217,6 +218,7 @@ function Authentication({
           <SubmitAuthenticationBtn
             type="submit"
             $btnColor={SUB_COLOR}
+            $isDisabled={authSelf.authNumberConfirm}
             disabled={authSelf.authNumberConfirm ? true : false}
             onClick={() => {
               if (
