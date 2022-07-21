@@ -20,7 +20,7 @@ import {
 } from "./FindEmailForm.style";
 
 interface FindEmailFormProps {
-  setSubmitBtnClick: Dispatch<SetStateAction<boolean>>;
+  setStartVerification: Dispatch<SetStateAction<boolean>>;
 }
 
 interface FindEmailValues {
@@ -39,7 +39,7 @@ const initialValue: FindEmailValues = {
   lastPhoneNum: "",
 };
 
-function FindEmailForm({ setSubmitBtnClick }: FindEmailFormProps) {
+function FindEmailForm({ setStartVerification }: FindEmailFormProps) {
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({
@@ -62,7 +62,7 @@ function FindEmailForm({ setSubmitBtnClick }: FindEmailFormProps) {
     }),
     onSubmit: async (values, actions) => {
       // Submit Handler 구현 예정
-      setSubmitBtnClick(true);
+      setStartVerification(true);
       console.log(values);
     },
   });

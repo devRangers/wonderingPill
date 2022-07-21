@@ -5,13 +5,18 @@ import FindEmailForm from "@accountComp/findEmail/FindEmailForm";
 import Recaptcha from "@accountComp/Recaptcha";
 
 const FindEmailPage: NextPage = () => {
-  const [submitBtnClick, setSubmitBtnClick] = useState(false);
+  const [startVerification, setStartVerification] = useState(false); // ReCaptcha 검증 시점 결정
+  const [successVerification, setSuccessVerification] = useState(false); // ReCaptcha 검증 성공 여부
   return (
     <>
       <Container>
-        <FindEmailForm setSubmitBtnClick={setSubmitBtnClick} />
+        <FindEmailForm setStartVerification={setStartVerification} />
       </Container>
-      {submitBtnClick && <Recaptcha />}
+      <Recaptcha
+        startVerification={startVerification}
+        setStartVerification={setStartVerification}
+        setSuccessVerification={setSuccessVerification}
+      />
     </>
   );
 };

@@ -1,9 +1,15 @@
-import { useCallback } from "react";
+import { useCallback, Dispatch, SetStateAction } from "react";
 import {
   GoogleReCaptchaProvider,
   GoogleReCaptcha,
 } from "react-google-recaptcha-v3";
 import { useMutation } from "react-query";
+
+interface RecaptchaProps {
+  startVerification: boolean;
+  setStartVerification: Dispatch<SetStateAction<boolean>>;
+  setSuccessVerification: Dispatch<SetStateAction<boolean>>;
+}
 
 const getRecaptchaResult = async (token: string) => {
   const res = await fetch(
@@ -16,16 +22,25 @@ const getRecaptchaResult = async (token: string) => {
   return result;
 };
 
-function Recaptcha() {
+function Recaptcha({
+  startVerification,
+  setStartVerification,
+  setSuccessVerification,
+}: RecaptchaProps) {
   const recaptchaMutation = useMutation(getRecaptchaResult, {
     onSuccess: (data, variables) => {
-      console.log(data);
+      setStartVerification(false);
     },
   });
 
-  const verifyToken = useCallback((data: string) => {
-    recaptchaMutation.mutate(data);
-  }, []);
+  const verifyToken = useCallback(
+    (data: string) => {
+      if (startVerification) {
+        recaptchaMutation.mutate(data);
+      }
+    },
+    [startVerification],
+  );
 
   return (
     <GoogleReCaptchaProvider
