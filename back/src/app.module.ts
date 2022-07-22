@@ -7,10 +7,12 @@ import { PharmacyController } from './pharmacy/pharmacy.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { BookmarkController } from './bookmark/bookmark.controller';
+import { BookmarkService } from './bookmark/bookmark.service';
 
 @Module({
   imports: [AuthModule, PrismaModule],
-  controllers: [AppController, PharmacyController],
+  controllers: [AppController, PharmacyController, BookmarkController],
   providers: [
     {
       provide: APP_FILTER,
@@ -18,6 +20,7 @@ import { PrismaModule } from './prisma/prisma.module';
     },
     PharmacyService,
     PrismaService,
+    BookmarkService,
   ],
 })
 export class AppModule {}
