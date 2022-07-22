@@ -170,7 +170,6 @@ function Authentication({
       handleSetApplySelfAuth(
         phoneNumberFormik.getFieldProps("phoneNumber").value,
       );
-      console.log("asd");
 
       setAuthSelf((cur) => {
         return {
