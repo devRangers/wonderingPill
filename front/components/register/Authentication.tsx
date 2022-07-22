@@ -113,7 +113,7 @@ function Authentication({
     });
   };
 
-  const handleClickModalBack = (index: number) => {
+  const handleClickModalBackground = (index: number) => {
     // 모달 바깥쪽을 클릭한다면 동의를 취소
     setSelectedCheckbox((cur) => {
       const temp = [...cur];
@@ -183,8 +183,8 @@ function Authentication({
   });
 
   useEffect(() => {
-    const result = selectedCheckbox.find((check) => check === false);
-    if (result === undefined) {
+    const result = selectedCheckbox.includes(false);
+    if (result === false) {
       handleSetApplyAllCheckBox(true);
     } else {
       handleSetApplyAllCheckBox(false);
@@ -205,6 +205,8 @@ function Authentication({
       clearTimeout(timer);
     };
   }, [authSelf.authPhone]);
+
+  const a =  Promise<void>
 
   return (
     <>
@@ -287,7 +289,7 @@ function Authentication({
         <Modal
           key={key}
           open={openModal[index + 1]}
-          onClose={() => handleClickModalBack(index + 1)}>
+          onClose={() => handleClickModalBackground(index + 1)}>
           <ModalChildrenContainer>
             <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
             <ModalContent $scrollColor={SUB_COLOR}>

@@ -254,3 +254,28 @@ export const ModalContent = styled(
 export const ModalButton = styled("button", {
   width: "100%",
 });
+
+// 회원 가입 버튼을 클릭할 시 나오게 될 모달 스타일
+export const NoticeCheckPhoneNumberModal = styled("div", {
+  height: "12rem",
+  padding: "1.5rem",
+
+  display: "grid",
+  gridTemplateRows: "1fr 1.5fr",
+});
+
+export const Mark = styled("div", (props: { $iconColor: string }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  fontSize: "2rem",
+  color: props.$iconColor,
+}));
+
+export const NoticeCheckPhoneNumberBody = styled("div", {
+  fontSize: "1.4rem",
+  fontWeight: "bold",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
