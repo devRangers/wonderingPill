@@ -92,6 +92,7 @@ function Authentication({
     false,
   ]);
   const [openModal, setOpenModal] = useState([false, false, false]);
+  // 전화번호 및 인증번호 확인
   const [authSelf, setAuthSelf] = useState<AuthSelfValues>({
     authPhone: false,
     authNumberConfirm: false,
