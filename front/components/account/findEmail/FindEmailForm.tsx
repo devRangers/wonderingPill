@@ -20,6 +20,7 @@ import {
 } from "./FindEmailForm.style";
 import Recaptcha from "@recaptcha/Recaptcha";
 import Modal from "@modal/Modal";
+import AuthForm from "./AuthForm";
 
 interface FindEmailValues {
   name: string;
@@ -71,6 +72,10 @@ function FindEmailForm() {
       setAuthModalOpen(true);
     },
   });
+
+  const modalCloseHandler = () => {
+    setAuthModalOpen(false);
+  };
 
   return (
     <>
@@ -154,8 +159,8 @@ function FindEmailForm() {
         </BtnContainer>
 
         {authModalOpen && (
-          <Modal open={authModalOpen} onClose={() => setAuthModalOpen(false)}>
-            TEST
+          <Modal open={authModalOpen} onClose={modalCloseHandler}>
+            <AuthForm onClose={modalCloseHandler} />
           </Modal>
         )}
       </Form>
