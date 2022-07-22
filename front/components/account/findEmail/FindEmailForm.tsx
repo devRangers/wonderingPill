@@ -21,7 +21,8 @@ import {
 import Modal from "@modal/Modal";
 
 interface FindEmailFormProps {
-  successVerification: boolean;
+  token: string;
+  setToken: Dispatch<SetStateAction<string>>;
   setStartVerification: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -42,7 +43,8 @@ const initialValue: FindEmailValues = {
 };
 
 function FindEmailForm({
-  successVerification,
+  token,
+  setToken,
   setStartVerification,
 }: FindEmailFormProps) {
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -71,12 +73,11 @@ function FindEmailForm({
       // Submit Handler 구현 예정
       setStartVerification(true);
       console.log(values);
+
+      // 성공 시 로직
+      setAuthModalOpen(true);
     },
   });
-
-  useEffect(() => {
-    setAuthModalOpen(successVerification);
-  }, [successVerification]);
 
   return (
     <Form onSubmit={formik.handleSubmit}>

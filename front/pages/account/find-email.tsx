@@ -6,21 +6,18 @@ import Recaptcha from "@accountComp/Recaptcha";
 
 const FindEmailPage: NextPage = () => {
   const [startVerification, setStartVerification] = useState(false); // ReCaptcha 검증 시점 결정
-  const [successVerification, setSuccessVerification] = useState(false); // ReCaptcha 검증 성공 여부
+  const [token, setToken] = useState("");
 
   return (
     <>
       <Container>
         <FindEmailForm
           setStartVerification={setStartVerification}
-          successVerification={successVerification}
+          token={token}
+          setToken={setToken}
         />
       </Container>
-      <Recaptcha
-        startVerification={startVerification}
-        setStartVerification={setStartVerification}
-        setSuccessVerification={setSuccessVerification}
-      />
+      <Recaptcha startVerification={startVerification} setToken={setToken} />
     </>
   );
 };
