@@ -273,7 +273,7 @@ export const Mark = styled("div", (props: { $iconColor: string }) => ({
 }));
 
 export const NoticeCheckPhoneNumberBody = styled("div", {
-  fontSize: "1.4rem",
+  fontSize: "1.3rem",
   fontWeight: "bold",
   display: "flex",
   justifyContent: "center",

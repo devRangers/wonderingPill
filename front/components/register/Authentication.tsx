@@ -182,6 +182,7 @@ function Authentication({
     },
   });
 
+  // 체크박스가 전부 클릭되어 있는지 확인한다.
   useEffect(() => {
     const result = selectedCheckbox.includes(false);
     if (result === false) {

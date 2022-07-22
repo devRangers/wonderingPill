@@ -67,10 +67,13 @@ const modalText: { [key in string]: ModalValue } = {
   agreementModal: {
     content: "동의사항을 확인해주세요.",
   },
+  failModal: {
+    content: "이미 존재하는 이메일입니다.",
+  },
 };
 
 function UserDataForm({ applySubmit }: UserDataFormProps) {
-  const [openModal, setOpenModal] = useState([false, false]);
+  const [openModal, setOpenModal] = useState([false, false, false]);
   const router = useRouter();
 
   const mutation = useMutation(postRegisterAPI, {
@@ -89,6 +92,11 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
       // An error happened!
       console.log("error: ", error);
       console.log("variables:", variables);
+      setOpenModal((cur) => {
+        const temp = [...cur];
+        temp[2] = !temp[2];
+        return temp;
+      });
     },
   });
 
