@@ -19,6 +19,7 @@
       "@utils/*": ["common/utils/*"],
       "@userContainer/*": ["common/userContainer/*"],
       "@modal/*": ["common/modal/*"],
+      "@recaptcha/*": ["common/recaptcha/*"],
       "@loginComp/*": ["components/login/*"],
       "@accountComp/*": ["components/account/*"]
     }
