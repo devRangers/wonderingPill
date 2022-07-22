@@ -45,7 +45,7 @@ export class AuthController {
     return {
       statusCode: 200,
       message: '회원가입에 성공했습니다.',
-      user: { id: user.id },
+      user: { id: user.id, email: user.email },
     };
   }
 
@@ -62,7 +62,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<Tokens> {
     const { accessToken, refreshToken }: Tokens =
-      await this.authService.getLocalSignin(signinUserDto);
+      await this.authService.localSignin(signinUserDto);
 
     res.cookie('AccessToken', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,

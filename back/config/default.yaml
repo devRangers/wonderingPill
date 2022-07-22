@@ -8,3 +8,6 @@ jwt:
 jwt-refresh:
   secret:
   expiresIn:
+redis:
+  host:
+  port:

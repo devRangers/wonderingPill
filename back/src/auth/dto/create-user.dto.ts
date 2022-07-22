@@ -63,5 +63,5 @@ export class CreateUserResponse {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()
-  user: { id: string };
+  user: { id: string; email: string };
 }

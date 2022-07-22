@@ -61,7 +61,7 @@ export class AuthService {
     }
   }
 
-  async getLocalSignin(
+  async localSignin(
     signinUserDto: SigninUserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
@@ -77,7 +77,7 @@ export class AuthService {
         email,
       );
 
-      this.updateRefreshToken();
+      await this.updateRefreshToken();
 
       return { accessToken, refreshToken };
     } catch (error) {
