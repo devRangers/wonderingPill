@@ -1,12 +1,12 @@
 import "../styles/globals.css";
 import "../styles/reset.css";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import { useState } from "react";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
-import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
