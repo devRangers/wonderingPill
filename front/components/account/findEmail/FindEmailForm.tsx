@@ -40,7 +40,6 @@ const initialValue: FindEmailValues = {
 
 function FindEmailForm() {
   const [startVerification, setStartVerification] = useState(false); // ReCaptcha 검증 시점 결정
-  const [token, setToken] = useState("");
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const formik = useFormik({
@@ -66,10 +65,9 @@ function FindEmailForm() {
     onSubmit: async (values, actions) => {
       // Submit Handler 구현 예정
       setStartVerification(true);
-      console.log(values, token);
 
       // 성공 시 로직
-      setAuthModalOpen(true);
+      // setAuthModalOpen(true);
     },
   });
 
@@ -155,7 +153,9 @@ function FindEmailForm() {
         </PhoneContainer>
 
         <BtnContainer>
-          <SubmitBtn $btnColor={BUTTON_COLOR}>계정 찾기</SubmitBtn>
+          <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
+            계정 찾기
+          </SubmitBtn>
         </BtnContainer>
 
         {authModalOpen && (
@@ -164,7 +164,11 @@ function FindEmailForm() {
           </Modal>
         )}
       </Form>
-      <Recaptcha startVerification={startVerification} setToken={setToken} />
+
+      <Recaptcha
+        startVerification={startVerification}
+        setStartVerification={setStartVerification}
+      />
     </>
   );
 }

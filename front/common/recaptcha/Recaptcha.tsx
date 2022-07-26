@@ -1,30 +1,35 @@
-import { useCallback, Dispatch, SetStateAction } from "react";
-import {
-  GoogleReCaptchaProvider,
-  GoogleReCaptcha,
-} from "react-google-recaptcha-v3";
+import { useEffect, useRef, Dispatch, SetStateAction } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
-interface RecaptchaProps {
+interface ReCaptchaProps {
   startVerification: boolean;
-  setToken: Dispatch<SetStateAction<string>>;
+  setStartVerification: Dispatch<SetStateAction<boolean>>;
 }
 
-function Recaptcha({ startVerification, setToken }: RecaptchaProps) {
-  const verifyToken = useCallback(
-    (token: string) => {
-      if (startVerification) {
-        setToken(token);
-      }
-    },
-    [startVerification],
-  );
+function ReCaptcha({
+  startVerification,
+  setStartVerification,
+}: ReCaptchaProps) {
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  useEffect(() => {
+    const getToken = async () => {
+      const token = (await recaptchaRef?.current?.executeAsync()) as string;
+      recaptchaRef?.current?.reset();
+    };
+    if (startVerification) {
+      getToken();
+      setStartVerification(false);
+    }
+  }, [startVerification]);
 
   return (
-    <GoogleReCaptchaProvider
-      reCaptchaKey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}>
-      <GoogleReCaptcha onVerify={verifyToken} />
-    </GoogleReCaptchaProvider>
+    <ReCAPTCHA
+      ref={recaptchaRef}
+      size="invisible"
+      sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2}`}
+    />
   );
 }
 
-export default Recaptcha;
+export default ReCaptcha;
