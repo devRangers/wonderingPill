@@ -22,6 +22,8 @@ import { Response } from 'express';
 import * as config from 'config';
 import { Tokens } from './types';
 import { LocalRefresh } from 'src/common/guards';
+import { GetCurrentUserId } from 'src/common/decorators';
+import { GetCurrentUser } from 'src/common/decorators/get.current-user.decorator';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -112,7 +114,14 @@ export class AuthController {
   @HttpCode(200)
   @Post('refresh')
   @LocalRefresh()
-  async refresh() {}
+  async refresh(
+    @GetCurrentUserId() id: string,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+  ): Promise<Tokens> {
+    const tokens = this.authService.updateRefreshToken(id, refreshToken);
+
+    return tokens;
+  }
 
   @Get('current-user')
   async currentUser() {}

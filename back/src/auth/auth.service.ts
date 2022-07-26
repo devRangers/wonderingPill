@@ -124,7 +124,17 @@ export class AuthService {
     return user;
   }
 
-  async updateRefreshToken() {}
+  async updateRefreshToken(id, refreshToken) {
+    const user = await this.getUser({ email: id });
+
+    const isRTMatches = await argon.verify(user.refreshToken, refreshToken);
+    if (!isRTMatches) throw new ForbiddenException('Access Denied');
+
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.saveRefreshToken(user.email, tokens.refreshToken);
+
+    return tokens;
+  }
 
   async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {
     const result = await this.httpService
