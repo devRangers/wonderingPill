@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
+import Botd from "@lib/botd/script";
 import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -21,7 +22,9 @@ function MyApp({ Component, pageProps }: AppProps) {
               content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
             />
           </Head>
-          <Component {...pageProps} />
+          <Botd onLoad={() => {}}>
+            <Component {...pageProps} />
+          </Botd>
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         </Hydrate>
       </QueryClientProvider>
