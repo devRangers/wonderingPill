@@ -44,6 +44,7 @@ export async function botdEdge(
       (options.useRequestId && req.cookies.get(COOKIE_NAME)) || "",
     timestamp: Date.now(),
   };
+
   // `?header` is used to always get results in headers
   const botdReq = fetch(`${BOTD_DEFAULT_URL}${BOTD_EDGE_PATH}?header`, {
     method: "POST",
@@ -53,6 +54,7 @@ export async function botdEdge(
     },
     body: JSON.stringify(body),
   });
+
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => {
       reject(new Error("Botd timeout"));
@@ -71,14 +73,13 @@ export async function botdEdge(
     console.error("Botd failed with:", err);
     return;
   }
-
   const botdStatus = botdRes.headers.get(REQUEST_STATUS_HEADER);
 
-  //   console.log(
-  //     "botd edge debug",
-  //     botdRes.status,
-  //     JSON.stringify(Object.fromEntries(botdRes.headers), null, 2),
-  //   );
+  console.log(
+    "botd edge debug",
+    botdRes.status,
+    JSON.stringify(Object.fromEntries(botdRes.headers), null, 2),
+  );
 
   switch (botdStatus) {
     case STATUS.ERROR: {

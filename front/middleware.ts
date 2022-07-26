@@ -9,23 +9,19 @@ const config = {
 };
 
 export default async function middleware(req: NextRequest) {
-  // Do light bot detection for all paths
-  const res = await botdEdge(req, {
-    // The request id is excluded for demo purposes because
-    // Botd remembers your request id and will always show
-    // you the /bot-detected page if you're a bot, and
-    // never if you have been identified as a human
-    useRequestId: false,
-  });
+  if (config["matcher"].includes(req.nextUrl.pathname)) {
+    const res = await botdEdge(req, {
+      useRequestId: false,
+    });
+    if (res && res.status !== 200) {
+      // Bot detected!
+      req.nextUrl.pathname = ROUTE.BLOCK.link;
+      const rewrite = NextResponse.rewrite(req.nextUrl);
+      // Move Botd headers to the rewrite response
+      res.headers.forEach((v, k) => rewrite.headers.set(k, v));
 
-  if (res && res.status !== 200) {
-    // Bot detected!
-    req.nextUrl.pathname = ROUTE.BLOCK.link;
-    const rewrite = NextResponse.rewrite(req.nextUrl);
-    // Move Botd headers to the rewrite response
-    res.headers.forEach((v, k) => rewrite.headers.set(k, v));
-
-    return rewrite;
+      return rewrite;
+    }
+    return res;
   }
-  return res;
 }
