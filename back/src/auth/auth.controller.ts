@@ -5,6 +5,7 @@ import {
   HttpCode,
   Logger,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -14,11 +15,12 @@ import {
   CreateUserDto,
   CreateUserResponse,
   RecapchaResponse,
+  RefreshResponse,
   SigninResponse,
   SigninUserDto,
   UseRecapchaDto,
 } from './dto';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import * as config from 'config';
 import { Tokens } from './types';
 import { LocalRefresh } from 'src/common/guards';
@@ -76,14 +78,13 @@ export class AuthController {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto);
 
-    // redis: refresh token
+    // redis: refresh token, isSignin
     // 일단은 db에 저장
-    const user: UserModel = await this.authService.saveRefreshToken(
+    const user: UserModel = await this.authService.saveRTandIsSignin(
       signinUserDto.email,
       refreshToken,
+      signinUserDto.isSignin,
     );
-
-    // 자동로그인 기능 추가 필요
 
     // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
@@ -114,13 +115,39 @@ export class AuthController {
   @HttpCode(200)
   @Post('refresh')
   @LocalRefresh()
+  @ApiOperation({
+    summary: '자동 로그인 유지 API',
+    description:
+      '자동 로그인을 선택한 유저에 한해 Refresh token으로 Access token을 발행한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Access Token 발행 성공',
+    type: RefreshResponse,
+  })
   async refresh(
+    req: Request,
     @GetCurrentUserId() id: string,
     @GetCurrentUser('refreshToken') refreshToken: string,
-  ): Promise<Tokens> {
-    const tokens = this.authService.updateRefreshToken(id, refreshToken);
+  ): Promise<any> {
+    const accessToken = this.authService.updateAccessToken(
+      req,
+      id,
+      refreshToken,
+    );
 
-    return tokens;
+    if (accessToken) {
+      return {
+        statusCode: 200,
+        message: '정상적으로 access token이 발행되었습니다.',
+        accessToken: { accessToken },
+      };
+    }
+    return {
+      statusCode: 200,
+      message: '로그인이 유지되지 않습니다.',
+      accessToken: { accessToken },
+    };
   }
 
   @Get('current-user')

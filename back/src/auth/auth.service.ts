@@ -66,7 +66,7 @@ export class AuthService {
     signinUserDto: SigninUserDto,
   ): Promise<{ accessToken: string; refreshToken: string } | null> {
     try {
-      const { email, password } = signinUserDto;
+      const { email, password, isSignin } = signinUserDto;
       const user = await this.getUser(email);
 
       const isPwMatching = await argon.verify(user.password, password);
@@ -76,6 +76,7 @@ export class AuthService {
       const { accessToken, refreshToken } = await this.getTokens(
         user.id,
         email,
+        isSignin,
       );
 
       return { accessToken, refreshToken };
@@ -84,36 +85,49 @@ export class AuthService {
     }
   }
 
-  async getTokens(id: string, email: string): Promise<Tokens | null> {
+  async getTokens(
+    id: string,
+    email: string,
+    isSignin: boolean,
+  ): Promise<Tokens | null> {
     const jwtPayload: JwtPayload = {
       email,
       sub: id,
     };
+    let accessToken, refreshToken;
 
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(jwtPayload, {
+    if (isSignin) {
+      [accessToken, refreshToken] = await Promise.all([
+        this.jwtService.signAsync(jwtPayload, {
+          secret: process.env.JWT_SECRET || config.get('jwt').secret,
+          expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+        }),
+        this.jwtService.signAsync(jwtPayload, {
+          secret:
+            process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+          expiresIn:
+            process.env.JWT_REFRESH_EXPIRESIN ||
+            config.get('jwt-refresh').expiresIn,
+        }),
+      ]);
+    } else {
+      accessToken = this.jwtService.signAsync(jwtPayload, {
         secret: process.env.JWT_SECRET || config.get('jwt').secret,
         expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
-      }),
-      this.jwtService.signAsync(jwtPayload, {
-        secret:
-          process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
-        expiresIn:
-          process.env.JWT_REFRESH_EXPIRESIN ||
-          config.get('jwt-refresh').expiresIn,
-      }),
-    ]);
-
+      });
+      refreshToken = null;
+    }
     return { accessToken, refreshToken };
   }
 
-  async saveRefreshToken(email, refreshToken): Promise<User | null> {
+  async saveRTandIsSignin(email, refreshToken, isSignin): Promise<User | null> {
     const user = await this.prisma.user.update({
       where: {
         email,
       },
       data: {
         refreshToken,
+        isSignin,
       },
     });
 
@@ -124,16 +138,46 @@ export class AuthService {
     return user;
   }
 
-  async updateRefreshToken(id, refreshToken) {
+  async updateAccessToken(req, id, refreshToken): Promise<string | null> {
     const user = await this.getUser({ email: id });
 
+    console.log(user);
     const isRTMatches = await argon.verify(user.refreshToken, refreshToken);
     if (!isRTMatches) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(user.id, user.email);
-    await this.saveRefreshToken(user.email, tokens.refreshToken);
+    if (user.isSignin === true) {
+      const accessToken: string | null = await this.checkTokens(
+        req,
+        user.id,
+        user.email,
+      );
 
-    return tokens;
+      return accessToken;
+    }
+    return null;
+  }
+
+  async checkTokens(req, id, email) {
+    const jwtPayload: JwtPayload = {
+      email,
+      sub: id,
+    };
+
+    if (req.cookie.refreshToken) {
+      if (!req.cookies.accessToken) {
+        const accessToken = this.jwtService.signAsync(jwtPayload, {
+          secret: process.env.JWT_SECRET || config.get('jwt').secret,
+          expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+        });
+        req.cookie('AccessToken', accessToken, {
+          maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,
+          httpOnly: true,
+        });
+        return accessToken;
+      }
+      return req.cookies.accessToken;
+    }
+    return null;
   }
 
   async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {

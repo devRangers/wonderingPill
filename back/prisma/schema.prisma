@@ -44,6 +44,6 @@ model User {
   birth            String?            @db.VarChar(9)
   updatedAt        DateTime?          @updatedAt  
   refreshToken     String?            @db.VarChar(500)
+  isSignin         Boolean?           @default(false)
   PharmacyBookMark PharmacyBookMark[]
 }
-

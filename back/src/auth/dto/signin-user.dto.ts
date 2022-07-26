@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEmail,
   IsJSON,
   IsNotEmpty,
@@ -23,6 +24,11 @@ export class SigninUserDto {
     message: '비밀번호 양식에 맞게 작성하세요.',
   })
   password: string;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty()
+  isSignin: boolean;
 }
 
 export class SigninResponse {
@@ -44,5 +50,24 @@ export class SigninResponse {
     email: string;
     name: string;
     profileImg: string;
+  };
+}
+
+export class RefreshResponse {
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  statusCode: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  message: string;
+
+  @IsJSON()
+  @IsNotEmpty()
+  @ApiProperty()
+  accessToken: {
+    accessToken: string | null;
   };
 }
