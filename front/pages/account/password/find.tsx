@@ -1,8 +1,11 @@
 import Container from "@userContainer/Container";
 import FindPasswordForm from "components/account/findPassword/FindPasswordForm";
+import { useRouter } from "next/router";
 import React from "react";
 
-function passwordFind() {
+function FindPassword() {
+  const router = useRouter();
+
   return (
     <Container>
       <FindPasswordForm />
@@ -10,4 +13,4 @@ function passwordFind() {
   );
 }
 
-export default passwordFind;
+export default FindPassword;

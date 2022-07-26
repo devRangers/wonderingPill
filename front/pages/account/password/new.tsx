@@ -1,7 +1,7 @@
 import Container from "@userContainer/Container";
 import NewPasswordForm from "components/account/newPassword/NewPasswordForm";
 
-function passwordNew() {
+function NewPassword() {
   return (
     <Container>
       <NewPasswordForm />
@@ -9,4 +9,4 @@ function passwordNew() {
   );
 }
 
-export default passwordNew;
+export default NewPassword;

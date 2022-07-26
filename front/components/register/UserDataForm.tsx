@@ -31,6 +31,14 @@ interface RegisterValues {
   birth: string;
 }
 
+interface PostSubmitData {
+  birth: string;
+  phone: string;
+  email: string;
+  name: string;
+  password: string;
+}
+
 interface ModalValue {
   content: string;
 }
@@ -129,11 +137,10 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
     }),
     onSubmit: async (values) => {
       if (applySubmit.authSelf && applySubmit.checkAllBox) {
-        const tempBirth = String(values.birth);
         const { checkPassword, ...dataToSubmit } = values;
-        const newSubmitData = {
+        const newSubmitData: PostSubmitData = {
           ...dataToSubmit,
-          birth: tempBirth,
+          birth: values.birth,
           phone: applySubmit.phoneNumber,
         };
         mutation.mutate(newSubmitData);
@@ -169,6 +176,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
         <Input
           id="email"
           type="email"
+          inputMode="email"
           {...userDataFormik.getFieldProps("email")}
           placeholder="이메일"
         />
