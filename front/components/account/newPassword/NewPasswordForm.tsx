@@ -7,7 +7,7 @@ import {
   SubmitBtn as ChangeBtn,
   ErrorMessage,
 } from "@userContainer/Container.style";
-import { Form } from "./FindPasswordForm.style";
+import { Form } from "../findPassword/FindPasswordForm.style";
 
 interface NewPasswordValues {
   password: string;

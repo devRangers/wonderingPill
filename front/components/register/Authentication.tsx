@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SUB_COLOR } from "@utils/constant";
 import {
   AuthenticationForm,
@@ -19,6 +19,18 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Modal from "@modal/Modal";
+
+const ReSendTimer = 4000;
+
+interface AuthenticationProps {
+  handleSetApplySelfAuth: (phoneNumber: string) => void;
+  handleSetApplyAllCheckBox: (checkAllBox: boolean) => void;
+}
+
+interface AuthSelfValues {
+  authPhone: boolean;
+  authNumberConfirm: boolean;
+}
 
 interface PhoneValues {
   phoneNumber: string;
@@ -69,7 +81,10 @@ const modalText: { [key in string]: ModalValue } = {
   },
 };
 
-function Authentication() {
+function Authentication({
+  handleSetApplySelfAuth,
+  handleSetApplyAllCheckBox,
+}: AuthenticationProps) {
   const [selectedCheckbox, setSelectedCheckbox] = useState([
     false,
     false,
@@ -77,6 +92,11 @@ function Authentication() {
     false,
   ]);
   const [openModal, setOpenModal] = useState([false, false, false]);
+  // 전화번호 및 인증번호 확인
+  const [authSelf, setAuthSelf] = useState<AuthSelfValues>({
+    authPhone: false,
+    authNumberConfirm: false,
+  });
 
   const handleClickCheckbox = (index: number) => {
     // 아직 동의하지 않았다면 모달을 띄운다.
@@ -94,7 +114,7 @@ function Authentication() {
     });
   };
 
-  const handleClickModalBack = (index: number) => {
+  const handleClickModalBackground = (index: number) => {
     // 모달 바깥쪽을 클릭한다면 동의를 취소
     setSelectedCheckbox((cur) => {
       const temp = [...cur];
@@ -121,10 +141,23 @@ function Authentication() {
     initialValues: phoneInitialValue,
     validationSchema: Yup.object({
       phoneNumber: Yup.string()
-        .matches(/^[0-9]{11}$/, "유효하지 않은 번호입니다.")
+        .matches(/^\d{3}\d{4}\d{4}$/, "유효하지 않은 번호입니다.")
         .required("필수 입력 란입니다."),
     }),
     onSubmit: (values) => {
+      const number: string =
+        phoneNumberFormik.getFieldProps("phoneNumber").value;
+      if (number.length === 0) {
+        return;
+      }
+      setAuthSelf((cur) => {
+        return {
+          ...cur,
+          authPhone: true,
+          authNumberConfirm: false,
+        };
+      });
+
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -135,9 +168,44 @@ function Authentication() {
       authenticationNumber: Yup.string().required("필수 입력 란입니다."),
     }),
     onSubmit: (values) => {
+      handleSetApplySelfAuth(
+        phoneNumberFormik.getFieldProps("phoneNumber").value,
+      );
+
+      setAuthSelf((cur) => {
+        return {
+          ...cur,
+          authNumberConfirm: true,
+        };
+      });
       alert(JSON.stringify(values, null, 2));
     },
   });
+
+  // 체크박스가 전부 클릭되어 있는지 확인한다.
+  useEffect(() => {
+    const result = selectedCheckbox.includes(false);
+    if (!result) {
+      handleSetApplyAllCheckBox(true);
+    } else {
+      handleSetApplyAllCheckBox(false);
+    }
+  }, [selectedCheckbox]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAuthSelf((cur) => {
+        return {
+          ...cur,
+          authPhone: false,
+        };
+      });
+    }, ReSendTimer);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [authSelf.authPhone]);
 
   return (
     <>
@@ -145,11 +213,17 @@ function Authentication() {
         <PhoneNumberContainer>
           <AuthenticationInput
             id="phoneNumber"
-            type="number"
+            type="text"
+            inputMode="tel"
+            maxLength={11}
             {...phoneNumberFormik.getFieldProps("phoneNumber")}
             placeholder="- 제외 휴대폰번호"
           />
-          <SubmitAuthenticationBtn type="submit" $btnColor={SUB_COLOR}>
+          <SubmitAuthenticationBtn
+            type="submit"
+            $btnColor={SUB_COLOR}
+            $isDisabled={authSelf.authPhone}
+            disabled={authSelf.authPhone ? true : false}>
             전송
           </SubmitAuthenticationBtn>
         </PhoneNumberContainer>
@@ -169,7 +243,16 @@ function Authentication() {
             {...authenticationFormik.getFieldProps("authenticationNumber")}
             placeholder="인증번호"
           />
-          <SubmitAuthenticationBtn type="submit" $btnColor={SUB_COLOR}>
+          <SubmitAuthenticationBtn
+            type="submit"
+            $btnColor={SUB_COLOR}
+            $isDisabled={authSelf.authNumberConfirm}
+            disabled={
+              authenticationFormik.errors.authenticationNumber &&
+              authSelf.authNumberConfirm
+                ? true
+                : false
+            }>
             확인
           </SubmitAuthenticationBtn>
         </PhoneNumberContainer>
@@ -205,7 +288,7 @@ function Authentication() {
         <Modal
           key={key}
           open={openModal[index + 1]}
-          onClose={() => handleClickModalBack(index + 1)}>
+          onClose={() => handleClickModalBackground(index + 1)}>
           <ModalChildrenContainer>
             <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
             <ModalContent $scrollColor={SUB_COLOR}>
