@@ -22,4 +22,24 @@ export class BookmarkService {
       },
     });
   }
+
+  async listBookmark(userId): Promise<PharmacyBookMark[]> {
+    return this.prisma.pharmacyBookMark.findMany({
+      where: {
+        user_id: userId,
+      },
+    });
+  }
+
+  async getBookmark(userId, pharmacyId: number): Promise<PharmacyBookMark> {
+    return this.prisma.pharmacyBookMark.findFirst({
+      where: {
+        user_id: userId,
+        pharmacy_id: pharmacyId,
+      },
+      include: {
+        Pharmacy: true,
+      },
+    });
+  }
 }

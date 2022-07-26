@@ -12,8 +12,6 @@ export class BookmarkController {
   createBookmark(
     @Body() bookmarkCreateDto: BookmarkCreateDto,
   ): Promise<PharmacyBookMark> {
-    console.log(bookmarkCreateDto.userId);
-    console.log(bookmarkCreateDto.pharmacyId);
     return this.bookmarkService.createBookmark(
       bookmarkCreateDto.userId,
       bookmarkCreateDto.pharmacyId,
