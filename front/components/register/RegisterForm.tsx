@@ -9,8 +9,42 @@ import {
 import Header from "@userContainer/Header";
 import UserDataForm from "./UserDataForm";
 import Authentication from "./Authentication";
+import { useState } from "react";
+
+export interface ApplySubmitValues {
+  phoneNumber: string;
+  authSelf: boolean;
+  authUserData: boolean;
+  checkAllBox: boolean;
+}
 
 const RegisterForm = () => {
+  const [applySubmit, setApplySubmit] = useState<ApplySubmitValues>({
+    phoneNumber: "",
+    authSelf: false,
+    authUserData: false,
+    checkAllBox: false,
+  });
+
+  const handleSetApplySelfAuth = (phoneNumber: string) => {
+    setApplySubmit((cur) => {
+      return {
+        ...cur,
+        phoneNumber,
+        authSelf: true,
+      };
+    });
+  };
+
+  const handleSetApplyAllCheckBox = (checkAllBox: boolean) => {
+    setApplySubmit((cur) => {
+      return {
+        ...cur,
+        checkAllBox,
+      };
+    });
+  };
+
   return (
     <Container $bgColor={MAIN_COLOR}>
       <HeaderContainer>
@@ -25,8 +59,11 @@ const RegisterForm = () => {
           priority={true}
         />
       </LogoContainer>
-      <UserDataForm />
-      <Authentication />
+      <UserDataForm applySubmit={applySubmit} />
+      <Authentication
+        handleSetApplySelfAuth={handleSetApplySelfAuth}
+        handleSetApplyAllCheckBox={handleSetApplyAllCheckBox}
+      />
       <EmptyBox />
     </Container>
   );

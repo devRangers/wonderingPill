@@ -23,7 +23,8 @@
       "@modal/*": ["common/modal/*"],
       "@recaptcha/*": ["common/recaptcha/*"],
       "@loginComp/*": ["components/login/*"],
-      "@accountComp/*": ["components/account/*"]
+      "@accountComp/*": ["components/account/*"],
+      "@modelTypes/*": ["src/model/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
