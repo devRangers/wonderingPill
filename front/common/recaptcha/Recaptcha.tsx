@@ -27,7 +27,7 @@ function ReCaptcha({
     <ReCAPTCHA
       ref={recaptchaRef}
       size="invisible"
-      sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2}`}
+      sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
     />
   );
 }
