@@ -14,6 +14,7 @@ import {
   CreateUserDto,
   CreateUserResponse,
   RecapchaResponse,
+  SigninResponse,
   SigninUserDto,
   UseRecapchaDto,
 } from './dto';
@@ -53,14 +54,18 @@ export class AuthController {
   @Post('signin')
   @ApiOperation({
     summary: '유저 로그인 API',
-    description: '유저의 accessToken을 발행한다.',
+    description: '유저의 accessToken, refreshToken을 발행한다.',
   })
-  @ApiResponse({ status: 200, description: '로그인 성공' })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 성공',
+    type: SigninResponse,
+  })
   @ApiBody({ type: SigninUserDto })
   async signinUser(
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<Tokens> {
+  ): Promise<any> {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto);
 
@@ -68,10 +73,14 @@ export class AuthController {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,
       httpOnly: true,
     });
-
     // redis: refresh token
-    // 자동로그인
+    // 일단은 db에 저장
+    const user = await this.authService.saveRefresh(
+      signinUserDto.email,
+      refreshToken,
+    );
 
+    // 자동로그인
     res.cookie('RefreshToken', refreshToken, {
       maxAge:
         process.env.JWT_REFRESH_EXPIRESIN || config.get('jwt-refresh').secret,
@@ -81,13 +90,26 @@ export class AuthController {
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!
     Payload: ${JSON.stringify({ accessToken, refreshToken })}`);
     console.log(new Date());
-    return { accessToken, refreshToken };
+    return {
+      statusCode: 200,
+      message: '정상적으로 로그인되었습니다.',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        profileImg: user.profileImg,
+      },
+    };
   }
 
   @Get('refresh')
   async refresh() {}
 
+  @Get('current-user')
+  async currentUser() {}
+
   // recaptcha를 guard로 대체 가능! 비용 절감
+  // 일단은 api로 놔둠
   @HttpCode(200)
   @Post('recaptcha-v3')
   @ApiOperation({

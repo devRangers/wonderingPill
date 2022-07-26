@@ -13,7 +13,7 @@ import { JwtPayload } from '../types';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
-  constructor(private authService: AuthService) {
+  constructor() {
     super({
       usernameField: 'email',
       passwordField: 'password',

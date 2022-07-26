@@ -34,4 +34,8 @@ export class UserEntity implements UserModel {
 
   @ApiProperty()
   updatedAt: Date;
+
+  // redis로 옮기기 전까지 DB에
+  @ApiProperty()
+  refreshToken: string;
 }

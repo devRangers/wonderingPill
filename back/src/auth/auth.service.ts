@@ -112,6 +112,24 @@ export class AuthService {
     // token update
   }
 
+  async saveRefresh(email, refreshToken): Promise<User> {
+    console.log(email, refreshToken);
+    const user = await this.prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        refreshToken,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('refresh token이 저장되지 않았습니다.');
+    }
+
+    return user;
+  }
+
   async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {
     const result = await this.httpService
       .post(
