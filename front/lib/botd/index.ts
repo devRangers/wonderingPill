@@ -9,9 +9,8 @@ import {
   STATUS,
   TIMEOUT,
   ERROR_DESCRIPTION_HEADER,
-  RESULT_HEADERS,
-  BOTD_RESULT_PATH,
   AUTO_TOOL_PROB_HEADER,
+  AUTO_TOOL_TYPE_HEADER,
   SEARCH_BOT_PROB_HEADER,
   VM_PROB_HEADER,
   BROWSER_SPOOFING_PROB_HEADER,
@@ -92,13 +91,15 @@ export async function botdEdge(
       const requestId = botdRes.headers.get(REQUEST_ID_HEADER);
       // For edge detection not all of these headers return something
       const botProb = Number(botdRes.headers.get(AUTO_TOOL_PROB_HEADER));
+      const botType = botdRes.headers.get(AUTO_TOOL_TYPE_HEADER);
       const searchBotProb = Number(botdRes.headers.get(SEARCH_BOT_PROB_HEADER));
       const vmProb = Number(botdRes.headers.get(VM_PROB_HEADER));
       const browserSpoofingProb = Number(
         botdRes.headers.get(BROWSER_SPOOFING_PROB_HEADER),
       );
+
       const status =
-        botProb > 0 ||
+        (botProb > 0 && !!botType) ||
         searchBotProb > 0 ||
         vmProb > 0 ||
         browserSpoofingProb > 0

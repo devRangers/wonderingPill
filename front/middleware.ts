@@ -13,6 +13,7 @@ export default async function middleware(req: NextRequest) {
   const res = await botdEdge(req, {
     useRequestId: false,
   });
+
   if (res && res.status !== 200) {
     // Bot detected!
     req.nextUrl.pathname = ROUTE.BLOCK.link;
