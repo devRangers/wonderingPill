@@ -13,4 +13,7 @@ export const ROUTE = {
   PASSWORDFIND: {
     link: "/account/password-find",
   },
+  BLOCK: {
+    link: "/blocked",
+  },
 };
