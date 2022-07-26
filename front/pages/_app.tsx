@@ -17,8 +17,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   const checkPathname = (pathname: string) => {
-    console.log(pathname);
-
     if (
       pathname.includes(ROUTE.LOGIN.link) ||
       pathname.includes(ROUTE.REGISTER.link) ||
