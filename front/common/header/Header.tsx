@@ -1,8 +1,14 @@
+import { HEADER_HEIGHT } from "@utils/constant";
 import React from "react";
-import { HeaderContainer } from "./Header.style";
+import { HeaderEmptyBox, HeaderContainer } from "./Header.style";
 
 function Header() {
-  return <HeaderContainer></HeaderContainer>;
+  return (
+    <>
+      <HeaderContainer $height={HEADER_HEIGHT}></HeaderContainer>
+      <HeaderEmptyBox $height={HEADER_HEIGHT} />
+    </>
+  );
 }
 
 export default Header;
