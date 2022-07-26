@@ -21,6 +21,7 @@ import {
 import { Response } from 'express';
 import * as config from 'config';
 import { Tokens } from './types';
+import { LocalRefresh } from 'src/common/guards';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -28,6 +29,7 @@ export class AuthController {
   private logger = new Logger(`AuthController`);
   constructor(private readonly authService: AuthService) {}
 
+  @HttpCode(200)
   @Post('signup')
   @ApiOperation({
     summary: '유저 생성(회원가입) API',
@@ -39,7 +41,9 @@ export class AuthController {
     type: CreateUserResponse,
   })
   @ApiBody({ type: CreateUserDto })
-  async signupUser(@Body() createUserDto: CreateUserDto): Promise<any> {
+  async signupUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<CreateUserResponse> {
     const user: UserModel = await this.authService.createUser(createUserDto);
     this.logger.verbose(`User ${user.email} Sign-Up Success!
     Payload: ${JSON.stringify({ user })}`);
@@ -54,7 +58,8 @@ export class AuthController {
   @Post('signin')
   @ApiOperation({
     summary: '유저 로그인 API',
-    description: '유저의 accessToken, refreshToken을 발행한다.',
+    description:
+      '유저의 accessToken, refreshToken을 발행하여 cookie에 저장하고 로그인한다.',
   })
   @ApiResponse({
     status: 200,
@@ -69,18 +74,20 @@ export class AuthController {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto);
 
-    res.cookie('AccessToken', accessToken, {
-      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,
-      httpOnly: true,
-    });
     // redis: refresh token
     // 일단은 db에 저장
-    const user = await this.authService.saveRefresh(
+    const user: UserModel = await this.authService.saveRefreshToken(
       signinUserDto.email,
       refreshToken,
     );
 
-    // 자동로그인
+    // 자동로그인 기능 추가 필요
+
+    // cookie에 accessToken, refreshToken 저장
+    res.cookie('AccessToken', accessToken, {
+      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,
+      httpOnly: true,
+    });
     res.cookie('RefreshToken', refreshToken, {
       maxAge:
         process.env.JWT_REFRESH_EXPIRESIN || config.get('jwt-refresh').secret,
@@ -102,7 +109,9 @@ export class AuthController {
     };
   }
 
-  @Get('refresh')
+  @HttpCode(200)
+  @Post('refresh')
+  @LocalRefresh()
   async refresh() {}
 
   @Get('current-user')

@@ -31,6 +31,7 @@ export class AuthService {
     if (!user) {
       throw new ForbiddenException('회원이 존재하지 않습니다.');
     }
+
     return user;
   }
 
@@ -63,7 +64,7 @@ export class AuthService {
 
   async localSignin(
     signinUserDto: SigninUserDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string } | null> {
     try {
       const { email, password } = signinUserDto;
       const user = await this.getUser(email);
@@ -77,15 +78,13 @@ export class AuthService {
         email,
       );
 
-      await this.updateRefreshToken();
-
       return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
     }
   }
 
-  async getTokens(id: string, email: string): Promise<Tokens> {
+  async getTokens(id: string, email: string): Promise<Tokens | null> {
     const jwtPayload: JwtPayload = {
       email,
       sub: id,
@@ -108,12 +107,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async updateRefreshToken() {
-    // token update
-  }
-
-  async saveRefresh(email, refreshToken): Promise<User> {
-    console.log(email, refreshToken);
+  async saveRefreshToken(email, refreshToken): Promise<User | null> {
     const user = await this.prisma.user.update({
       where: {
         email,
@@ -129,6 +123,8 @@ export class AuthService {
 
     return user;
   }
+
+  async updateRefreshToken() {}
 
   async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {
     const result = await this.httpService

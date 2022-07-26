@@ -3,7 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { User } from '@prisma/client';
 import { ExtractJwt } from 'passport-jwt';
 import { Strategy } from 'passport-local';
-import { AuthService } from '../auth.service';
 import { Request } from 'express';
 import * as config from 'config';
 import { JwtPayload } from '../types';
@@ -25,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: JwtPayload) {
+  async validate(payload: JwtPayload): Promise<JwtPayload> {
     return payload;
   }
 }

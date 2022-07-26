@@ -4,7 +4,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategy';
 import { JwtModule } from '@nestjs/jwt';
-import * as config from 'config';
 import { PassportModule } from '@nestjs/passport';
 import { HttpModule } from '@nestjs/axios';
 import { JwtRefreshStrategy } from './strategy/jwt.refresh.strategy';
@@ -17,6 +16,6 @@ import { JwtRefreshStrategy } from './strategy/jwt.refresh.strategy';
   ],
   controllers: [AuthController],
   providers: [PrismaService, AuthService, JwtStrategy, JwtRefreshStrategy],
-  exports: [JwtStrategy],
+  exports: [JwtStrategy, JwtRefreshStrategy],
 })
 export class AuthModule {}
