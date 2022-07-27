@@ -4,12 +4,19 @@ import { botdEdge } from "@lib/botd";
 import { ROUTE } from "@utils/constant";
 
 export const config = {
-  // It's possible to run Botd for all paths, but it's better to take
-  // advantage of pattern matching and only protect from bots where required.
-  matcher: ["/login", "/register"],
+  matcher: [
+    "/login",
+    "/register",
+    "/account/email/find",
+    "/account/password/find",
+    "/account/password/new",
+  ],
 };
 
 export default async function middleware(req: NextRequest) {
+  // sec-fetch-mode가 navigate일 경우에는 botd 요청 안 함
+  if (req.headers.get("sec-fetch-mode") === "navigate") return;
+
   const res = await botdEdge(req, {
     useRequestId: false,
   });

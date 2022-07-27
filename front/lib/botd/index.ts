@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import {
   BOTD_DEFAULT_URL,
   BOTD_EDGE_PATH,
@@ -10,7 +11,6 @@ import {
   TIMEOUT,
   ERROR_DESCRIPTION_HEADER,
   AUTO_TOOL_PROB_HEADER,
-  AUTO_TOOL_TYPE_HEADER,
   SEARCH_BOT_PROB_HEADER,
   VM_PROB_HEADER,
   BROWSER_SPOOFING_PROB_HEADER,
@@ -28,8 +28,8 @@ export async function botdEdge(
   if (!token) return;
 
   const { pathname } = req.nextUrl;
-
   const headers = new Headers();
+
   const body = {
     headers: getHeadersDict(req.headers),
     path: pathname,
@@ -64,11 +64,11 @@ export async function botdEdge(
   }
   const botdStatus = botdRes.headers.get(REQUEST_STATUS_HEADER);
 
-  // console.log(
-  //   "botd edge debug",
-  //   botdRes.status,
-  //   JSON.stringify(Object.fromEntries(botdRes.headers), null, 2),
-  // );
+  console.log(
+    "botd edge debug",
+    botdRes.status,
+    JSON.stringify(Object.fromEntries(botdRes.headers), null, 2),
+  );
 
   switch (botdStatus) {
     case STATUS.ERROR: {
@@ -91,7 +91,6 @@ export async function botdEdge(
       const requestId = botdRes.headers.get(REQUEST_ID_HEADER);
       // For edge detection not all of these headers return something
       const botProb = Number(botdRes.headers.get(AUTO_TOOL_PROB_HEADER));
-      const botType = botdRes.headers.get(AUTO_TOOL_TYPE_HEADER);
       const searchBotProb = Number(botdRes.headers.get(SEARCH_BOT_PROB_HEADER));
       const vmProb = Number(botdRes.headers.get(VM_PROB_HEADER));
       const browserSpoofingProb = Number(
@@ -99,7 +98,7 @@ export async function botdEdge(
       );
 
       const status =
-        (botProb > 0 && !!botType) ||
+        botProb > 0 ||
         searchBotProb > 0 ||
         vmProb > 0 ||
         browserSpoofingProb > 0
