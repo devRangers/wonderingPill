@@ -38,7 +38,4 @@ export class UserEntity implements UserModel {
   // redis로 옮기기 전까지 DB에 저장
   @ApiProperty()
   refreshToken: string;
-
-  @ApiProperty()
-  isSignin: boolean;
 }

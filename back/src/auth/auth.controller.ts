@@ -127,79 +127,79 @@ export class AuthController {
     };
   }
 
-  @Public()
-  @HttpCode(200)
-  @Post('refresh')
-  @UseGuards(RefreshGuard)
-  @ApiOperation({
-    summary: 'accessToken 재발행 API',
-    description: 'refreshToken이 만료되지 않았다면 accessToken을 재발행한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Access Token 발행 성공',
-    type: RefreshResponse,
-  })
-  @ApiCookieAuth('refreshToken')
-  @ApiCookieAuth('accessToken')
-  async refresh(
-    @GetCurrentUserId() id: string,
-    @GetCurrentUser('refreshToken') refreshToken: string,
-  ): Promise<RefreshResponse> {
-    const accessToken: string = await this.authService.updateAccessToken(
-      id,
-      refreshToken,
-    );
+  // @Public()
+  // @HttpCode(200)
+  // @Post('refresh')
+  // @UseGuards(RefreshGuard)
+  // @ApiOperation({
+  //   summary: 'accessToken 재발행 API',
+  //   description: 'refreshToken이 만료되지 않았다면 accessToken을 재발행한다.',
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Access Token 발행 성공',
+  //   type: RefreshResponse,
+  // })
+  // @ApiCookieAuth('refreshToken')
+  // @ApiCookieAuth('accessToken')
+  // async refresh(
+  //   @GetCurrentUserId() id: string,
+  //   @GetCurrentUser('refreshToken') refreshToken: string,
+  // ): Promise<RefreshResponse> {
+  //   const accessToken: string = await this.authService.updateAccessToken(
+  //     id,
+  //     refreshToken,
+  //   );
 
-    let message;
-    if (accessToken) {
-      message = '정상적으로 access token이 발행되었습니다.';
-    } else {
-      message = '로그인이 유지되지 않습니다.';
-    }
-    this.logger.verbose(`User ${id} keep login Success!`);
-    return {
-      statusCode: 200,
-      message,
-      accessToken: { accessToken },
-    };
-  }
+  //   let message;
+  //   if (accessToken) {
+  //     message = '정상적으로 access token이 발행되었습니다.';
+  //   } else {
+  //     message = '로그인이 유지되지 않습니다.';
+  //   }
+  //   this.logger.verbose(`User ${id} keep login Success!`);
+  //   return {
+  //     statusCode: 200,
+  //     message,
+  //     accessToken: { accessToken },
+  //   };
+  // }
 
-  @Get('logout')
-  @UseGuards(AccessGuard)
-  @ApiOperation({
-    summary: '로그아웃 API',
-    description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '로그아웃 성공',
-    type: LogoutResponse,
-  })
-  @ApiCookieAuth('refreshToken')
-  @ApiCookieAuth('accessToken')
-  async logout(
-    @GetCurrentUserId() id: string,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<LogoutResponse> {
-    const checkLogout = await this.authService.logout(id);
+  // @Get('logout')
+  // @UseGuards(AccessGuard)
+  // @ApiOperation({
+  //   summary: '로그아웃 API',
+  //   description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '로그아웃 성공',
+  //   type: LogoutResponse,
+  // })
+  // @ApiCookieAuth('refreshToken')
+  // @ApiCookieAuth('accessToken')
+  // async logout(
+  //   @GetCurrentUserId() id: string,
+  //   @Res({ passthrough: true }) res: Response,
+  // ): Promise<LogoutResponse> {
+  //   const checkLogout = await this.authService.logout(id);
 
-    let message;
-    if (checkLogout) {
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
+  //   let message;
+  //   if (checkLogout) {
+  //     res.clearCookie('accessToken');
+  //     res.clearCookie('refreshToken');
 
-      message = '로그아웃이 완료되었습니다.';
-    } else {
-      message = '로그아웃에 실패하였습니다.';
-    }
-    this.logger.verbose(`User ${id} logout Success!`);
-    return {
-      statusCode: 200,
-      message,
-      checkLogout: { checkLogout },
-    };
-  }
+  //     message = '로그아웃이 완료되었습니다.';
+  //   } else {
+  //     message = '로그아웃에 실패하였습니다.';
+  //   }
+  //   this.logger.verbose(`User ${id} logout Success!`);
+  //   return {
+  //     statusCode: 200,
+  //     message,
+  //     checkLogout: { checkLogout },
+  //   };
+  // }
 
   // recaptcha를 guard로 대체 가능! 비용 절감
   // 일단은 api로 놔둠
