@@ -15,7 +15,7 @@ export const config = {
 
 export default async function middleware(req: NextRequest) {
   // sec-fetch-mode가 navigate일 경우에는 botd 요청 안 함
-  if (req.headers.get("sec-fetch-mode") === "navigate") return;
+  if (req.headers.get("sec-fetch-mode") !== "cors") return;
 
   const res = await botdEdge(req, {
     useRequestId: false,
