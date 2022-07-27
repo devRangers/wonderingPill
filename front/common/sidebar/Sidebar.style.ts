@@ -22,7 +22,7 @@ export const SidebarContainer = styled(
     zIndex: "3",
 
     transform: props.$openSideBar ? "translateX(0)" : "translateX(-71vw)",
-    transition: "transform 1s",
+    transition: "transform 0.7s",
   }),
 );
 
@@ -41,6 +41,42 @@ export const SidebarHeader = styled(
 );
 
 export const SidebarBody = styled("div", (props: { $height: string }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "space-between",
+
   height: `calc(100vh - ${props.$height})`,
   backgroundColor: "#fff",
+  padding: "1.6rem 1rem",
+}));
+
+export const BtnContainer = styled("div", {
+  textAlign: "center",
+});
+
+export const SidebarBtn = styled("button", (props: { $bgColor: string }) => ({
+  width: "90%",
+  height: "2.8rem",
+  fontSize: "1.3rem",
+
+  color: "#fff",
+  backgroundColor: props.$bgColor,
+
+  borderRadius: "2rem",
+
+  marginBottom: "0.7rem",
+}));
+
+export const LoginBtn = styled("button", (props: { $bgColor: string }) => ({
+  width: "90%",
+  height: "3.6rem",
+  fontSize: "1.3rem",
+
+  color: "#fff",
+  backgroundColor: props.$bgColor,
+
+  borderRadius: "2rem",
+
+  marginBottom: "0.7rem",
 }));

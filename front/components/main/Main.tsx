@@ -9,12 +9,12 @@ import {
   MainSection,
 } from "./Main.style";
 
-interface MainSectionValue {
+interface MainSectionValues {
   title: string;
   src: string;
   alt: string;
 }
-const MainSectionTitle: { [key in string]: MainSectionValue } = {
+const MainSectionTitle: { [key in string]: MainSectionValues } = {
   findWithPicture: {
     title: "사진으로 찾기",
     src: "",
