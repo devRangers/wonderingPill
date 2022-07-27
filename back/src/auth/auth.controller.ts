@@ -114,7 +114,7 @@ export class AuthController {
     });
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
-    console.log(new Date());
+
     return {
       statusCode: 200,
       message: '정상적으로 로그인되었습니다.',

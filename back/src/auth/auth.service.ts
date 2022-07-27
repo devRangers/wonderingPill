@@ -23,7 +23,7 @@ export class AuthService {
     private readonly httpService: HttpService,
   ) {}
 
-  async getUserByEmail(email): Promise<User | null> {
+  async getUserByEmail(email): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -35,7 +35,7 @@ export class AuthService {
     return user;
   }
 
-  async getUserById(id): Promise<User | null> {
+  async getUserById(id): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
       where: { id },
     });
