@@ -17,4 +17,18 @@ export const ImageSection = styled("section", {
   margin: "0 auto",
   width: "60%",
 });
-export const MainSection = styled("section", {});
+export const MainSection = styled("section", {
+  display: "grid",
+  gridTemplateRows: "repeat(3, 1fr)",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  backgroundColor: "#fff",
+  margin: "0 2rem",
+  borderRadius: "2rem",
+});
+
+export const MainItem = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  position: "relative",
+});
