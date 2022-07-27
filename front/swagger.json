@@ -36,6 +36,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "회원가입 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEntity"
+                }
+              }
+            }
+          },
           "201": {
             "description": "",
             "content": {
@@ -45,9 +55,45 @@
                 }
               }
             }
+          }
+        },
+        "tags": ["Auth API"]
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "operationId": "AuthController_signinUser",
+        "summary": "유저 로그인 API",
+        "description": "유저의 accessToken을 발행한다.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SigninUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
           },
           "default": {
-            "description": "회원가입 성공"
+            "description": "로그인 성공"
+          }
+        },
+        "tags": ["Auth API"]
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
           }
         },
         "tags": ["Auth API"]
@@ -84,6 +130,71 @@
           }
         },
         "required": ["email", "name", "password", "birth", "phone"]
+      },
+      "UserEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "profileImg": {
+            "type": "string"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "birth": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name",
+          "password",
+          "phone",
+          "provider",
+          "profileImg",
+          "isDeleted",
+          "birth",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "SigninUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "password"]
       }
     }
   }
