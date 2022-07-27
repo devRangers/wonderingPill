@@ -32,7 +32,7 @@ model PharmacyBookMark {
 }
 
 model User {
-  id               String             @id @default(uuid())
+  id               String             @unique @id @default(uuid())
   email            String?            @unique @db.VarChar(100)
   name             String?            @db.VarChar(20)
   password         String?            @db.VarChar(100)
@@ -44,6 +44,5 @@ model User {
   birth            String?            @db.VarChar(9)
   updatedAt        DateTime?          @updatedAt  
   refreshToken     String?            @db.VarChar(500)
-  isSignin         Boolean?           @default(false)
   PharmacyBookMark PharmacyBookMark[]
 }

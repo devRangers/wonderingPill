@@ -23,9 +23,21 @@ export class AuthService {
     private readonly httpService: HttpService,
   ) {}
 
-  async getUser(email): Promise<User | null> {
+  async getUserByEmail(email): Promise<User | null> {
     const user: User = await this.prisma.user.findUnique({
       where: { email },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    }
+
+    return user;
+  }
+
+  async getUserById(id): Promise<User | null> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { id },
     });
 
     if (!user) {
@@ -62,12 +74,10 @@ export class AuthService {
     }
   }
 
-  async localSignin(
-    signinUserDto: SigninUserDto,
-  ): Promise<{ accessToken: string; refreshToken: string } | null> {
+  async localSignin(signinUserDto: SigninUserDto): Promise<Tokens | null> {
     try {
       const { email, password, isSignin } = signinUserDto;
-      const user = await this.getUser(email);
+      const user = await this.getUserByEmail(email);
 
       const isPwMatching = await argon.verify(user.password, password);
       if (!isPwMatching)
@@ -94,40 +104,42 @@ export class AuthService {
       email,
       sub: id,
     };
-    let accessToken, refreshToken;
+    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+      secret: process.env.JWT_SECRET || config.get('jwt').secret,
+      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+    });
+    let refreshToken;
 
     if (isSignin) {
-      [accessToken, refreshToken] = await Promise.all([
-        this.jwtService.signAsync(jwtPayload, {
-          secret: process.env.JWT_SECRET || config.get('jwt').secret,
-          expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
-        }),
-        this.jwtService.signAsync(jwtPayload, {
-          secret:
-            process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
-          expiresIn:
-            process.env.JWT_REFRESH_EXPIRESIN ||
-            config.get('jwt-refresh').expiresIn,
-        }),
-      ]);
-    } else {
-      accessToken = this.jwtService.signAsync(jwtPayload, {
-        secret: process.env.JWT_SECRET || config.get('jwt').secret,
-        expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      refreshToken = await this.jwtService.signAsync(jwtPayload, {
+        secret:
+          process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+        expiresIn:
+          process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
+          config.get('jwt-refresh').expiresIn_autosave,
       });
-      refreshToken = null;
+    } else {
+      refreshToken = await this.jwtService.signAsync(jwtPayload, {
+        secret:
+          process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+        expiresIn:
+          process.env.JWT_REFRESH_EXPIRESIN ||
+          config.get('jwt-refresh').expiresIn,
+      });
     }
     return { accessToken, refreshToken };
   }
 
-  async saveRTandIsSignin(email, refreshToken, isSignin): Promise<User | null> {
+  async saveRefreshToken(
+    email: string,
+    refreshToken: string,
+  ): Promise<User | null> {
     const user = await this.prisma.user.update({
       where: {
         email,
       },
       data: {
         refreshToken,
-        isSignin,
       },
     });
 
@@ -138,46 +150,50 @@ export class AuthService {
     return user;
   }
 
-  async updateAccessToken(req, id, refreshToken): Promise<string | null> {
-    const user = await this.getUser({ email: id });
+  async updateAccessToken(
+    id: string,
+    refreshToken: string,
+  ): Promise<string | null> {
+    const user = await this.getUserById({ id });
 
-    console.log(user);
     const isRTMatches = await argon.verify(user.refreshToken, refreshToken);
     if (!isRTMatches) throw new ForbiddenException('Access Denied');
 
-    if (user.isSignin === true) {
-      const accessToken: string | null = await this.checkTokens(
-        req,
-        user.id,
-        user.email,
-      );
+    const accessToken: string = await this.getAccessToken(id, user.email);
 
-      return accessToken;
-    }
-    return null;
+    await this.saveRefreshToken(user.email, refreshToken);
+    return accessToken;
   }
 
-  async checkTokens(req, id, email) {
+  async getAccessToken(id: string, email: string): Promise<string> {
     const jwtPayload: JwtPayload = {
-      email,
       sub: id,
+      email: email,
     };
+    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+      secret: process.env.JWT_SECRET || config.get('jwt').secret,
+      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+    });
+    return accessToken;
+  }
 
-    if (req.cookie.refreshToken) {
-      if (!req.cookies.accessToken) {
-        const accessToken = this.jwtService.signAsync(jwtPayload, {
-          secret: process.env.JWT_SECRET || config.get('jwt').secret,
-          expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
-        });
-        req.cookie('AccessToken', accessToken, {
-          maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,
-          httpOnly: true,
-        });
-        return accessToken;
-      }
-      return req.cookies.accessToken;
+  async logout(id: string): Promise<boolean> {
+    const user = await this.prisma.user.updateMany({
+      where: {
+        id,
+        refreshToken: {
+          not: null,
+        },
+      },
+      data: {
+        refreshToken: null,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('토큰을 삭제하지 못했습니다.');
     }
-    return null;
+    return true;
   }
 
   async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {

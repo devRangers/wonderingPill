@@ -5,25 +5,30 @@ import {
   HttpCode,
   Logger,
   Post,
-  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User as UserModel } from '@prisma/client';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   CreateUserDto,
   CreateUserResponse,
-  RecapchaResponse,
+  LogoutResponse,
   RefreshResponse,
   SigninResponse,
   SigninUserDto,
-  UseRecapchaDto,
 } from './dto';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import * as config from 'config';
 import { Tokens } from './types';
-import { LocalRefresh } from 'src/common/guards';
+import { AccessGuard, RefreshGuard } from 'src/common/guards';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { GetCurrentUser } from 'src/common/decorators/get.current-user.decorator';
 
@@ -49,8 +54,7 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
   ): Promise<CreateUserResponse> {
     const user: UserModel = await this.authService.createUser(createUserDto);
-    this.logger.verbose(`User ${user.email} Sign-Up Success!
-    Payload: ${JSON.stringify({ user })}`);
+    this.logger.verbose(`User ${user.email} Sign-Up Success!`);
     return {
       statusCode: 200,
       message: '회원가입에 성공했습니다.',
@@ -74,31 +78,40 @@ export class AuthController {
   async signinUser(
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<any> {
+  ): Promise<SigninResponse> {
+    // token 발행
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto);
 
-    // redis: refresh token, isSignin
+    // redis: save refresh-token
     // 일단은 db에 저장
-    const user: UserModel = await this.authService.saveRTandIsSignin(
+    const user: UserModel = await this.authService.saveRefreshToken(
       signinUserDto.email,
       refreshToken,
-      signinUserDto.isSignin,
     );
 
     // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
-      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').secret,
-      httpOnly: true,
-    });
-    res.cookie('RefreshToken', refreshToken, {
-      maxAge:
-        process.env.JWT_REFRESH_EXPIRESIN || config.get('jwt-refresh').secret,
+      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
       httpOnly: true,
     });
 
-    this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!
-    Payload: ${JSON.stringify({ accessToken, refreshToken })}`);
+    let maxAge;
+    if (signinUserDto.isSignin) {
+      maxAge =
+        process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
+        config.get('jwt-refresh').expiresIn_autosave;
+    } else {
+      maxAge =
+        process.env.JWT_REFRESH_EXPIRESIN ||
+        config.get('jwt-refresh').expiresIn;
+    }
+    res.cookie('RefreshToken', refreshToken, {
+      maxAge,
+      httpOnly: true,
+    });
+
+    this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
     console.log(new Date());
     return {
       statusCode: 200,
@@ -114,82 +127,113 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('refresh')
-  @LocalRefresh()
+  // @UseGuards(RefreshGuard)
   @ApiOperation({
-    summary: '자동 로그인 유지 API',
-    description:
-      '자동 로그인을 선택한 유저에 한해 Refresh token으로 Access token을 발행한다.',
+    summary: 'accessToken 재발행 API',
+    description: 'refreshToken이 만료되지 않았다면 accessToken을 재발행한다.',
   })
   @ApiResponse({
     status: 200,
     description: 'Access Token 발행 성공',
     type: RefreshResponse,
   })
+  @ApiCookieAuth('refreshToken')
+  @ApiCookieAuth('accessToken')
   async refresh(
-    req: Request,
     @GetCurrentUserId() id: string,
     @GetCurrentUser('refreshToken') refreshToken: string,
-  ): Promise<any> {
-    const accessToken = this.authService.updateAccessToken(
-      req,
+  ): Promise<RefreshResponse> {
+    const accessToken: string = await this.authService.updateAccessToken(
       id,
       refreshToken,
     );
 
+    let message;
     if (accessToken) {
-      return {
-        statusCode: 200,
-        message: '정상적으로 access token이 발행되었습니다.',
-        accessToken: { accessToken },
-      };
+      message = '정상적으로 access token이 발행되었습니다.';
+    } else {
+      message = '로그인이 유지되지 않습니다.';
     }
+    this.logger.verbose(`User ${id} keep login Success!`);
     return {
       statusCode: 200,
-      message: '로그인이 유지되지 않습니다.',
+      message,
       accessToken: { accessToken },
     };
   }
 
-  @Get('current-user')
-  async currentUser() {}
-
-  // recaptcha를 guard로 대체 가능! 비용 절감
-  // 일단은 api로 놔둠
-  @HttpCode(200)
-  @Post('recaptcha-v3')
+  @Get('logout')
+  @UseGuards(AccessGuard)
   @ApiOperation({
-    summary: 'Recaptcha v3 요청 API',
-    description: 'Recaptcha v3에 인증을 요청하고 판별한다.',
+    summary: '로그아웃 API',
+    description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
   })
   @ApiResponse({
     status: 200,
-    description: '회원가입 성공',
-    type: RecapchaResponse,
+    description: '로그아웃 성공',
+    type: LogoutResponse,
   })
-  @ApiBody({ type: UseRecapchaDto })
-  async verifyRecaptchaV3(@Body() useRecapchaDto: UseRecapchaDto) {
-    const data = await this.authService.sendRecaptchaV3(useRecapchaDto);
-    const checkScore = await this.authService.checkRecaptchaV3(data.score);
+  @ApiCookieAuth('refreshToken')
+  @ApiCookieAuth('accessToken')
+  async logout(
+    @GetCurrentUserId() id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<LogoutResponse> {
+    const checkLogout = await this.authService.logout(id);
 
-    this.logger.verbose(`recaptcha v3 verify human Success!
-    Payload: ${JSON.stringify({ checkScore })}`);
-
+    let message;
+    if (checkLogout) {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      message = '로그아웃이 완료되었습니다.';
+    } else {
+      message = '로그아웃에 실패하였습니다.';
+    }
+    this.logger.verbose(`User ${id} logout Success!`);
     return {
       statusCode: 200,
-      message: '정상적인 트래픽 활동입니다.',
-      recaptchav3: { result: checkScore },
+      message,
+      checkLogout: { checkLogout },
     };
   }
 
-  @Post('send-sms')
-  async sendSMS() {}
+  // recaptcha를 guard로 대체 가능! 비용 절감
+  // 일단은 api로 놔둠
+  // @HttpCode(200)
+  // @Post('recaptcha-v3')
+  // @ApiOperation({
+  //   summary: 'Recaptcha v3 요청 API',
+  //   description: 'Recaptcha v3에 인증을 요청하고 판별한다.',
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '회원가입 성공',
+  //   type: RecapchaResponse,
+  // })
+  // @ApiBody({ type: UseRecapchaDto })
+  // async verifyRecaptchaV3(@Body() useRecapchaDto: UseRecapchaDto) {
+  //   const data = await this.authService.sendRecaptchaV3(useRecapchaDto);
+  //   const checkScore = await this.authService.checkRecaptchaV3(data.score);
 
-  @Post('verify-code')
-  async verifyCode() {}
+  //   this.logger.verbose(`recaptcha v3 verify human Success!
+  //   Payload: ${JSON.stringify({ checkScore })}`);
 
-  @Get('get-user')
-  async getUser() {}
+  //   return {
+  //     statusCode: 200,
+  //     message: '정상적인 트래픽 활동입니다.',
+  //     recaptchav3: { result: checkScore },
+  //   };
+  // }
 
-  @Post('send-email')
-  async sendEmail() {}
+  // @Post('send-sms')
+  // async sendSMS() {}
+
+  // @Post('verify-code')
+  // async verifyCode() {}
+
+  // @Get('get-user')
+  // async getUser() {}
+
+  // @Post('send-email')
+  // async sendEmail() {}
 }

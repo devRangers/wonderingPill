@@ -8,6 +8,7 @@ jwt:
 jwt-refresh:
   secret:
   expiresIn:
+  expiresIn_autosave:
 redis:
   host:
   port:

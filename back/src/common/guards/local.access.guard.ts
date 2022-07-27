@@ -1,9 +1,9 @@
-import { ExecutionContext, Injectable, UseGuards } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class LocalAccessToken extends AuthGuard('jwt') {
+export class AccessGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
     super();
   }
@@ -19,5 +19,3 @@ export class LocalAccessToken extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 }
-
-export const LocalAccess = () => UseGuards(LocalAccessToken);

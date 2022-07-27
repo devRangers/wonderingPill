@@ -71,3 +71,22 @@ export class RefreshResponse {
     accessToken: string | null;
   };
 }
+
+export class LogoutResponse {
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  statusCode: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  message: string;
+
+  @IsJSON()
+  @IsNotEmpty()
+  @ApiProperty()
+  checkLogout: {
+    checkLogout: boolean;
+  };
+}

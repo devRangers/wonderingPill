@@ -11,6 +11,24 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('WonderingPill API Docs')
     .setDescription('WonderingPill API description')
     .setVersion('1.0.0')
+    .addCookieAuth(
+      'auth-cookie',
+      {
+        type: 'http',
+        in: 'Header',
+        scheme: 'Bearer',
+      },
+      'accessToken',
+    )
+    .addCookieAuth(
+      'auth-cookie',
+      {
+        type: 'http',
+        in: 'Header',
+        scheme: 'Bearer',
+      },
+      'refreshToken',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
