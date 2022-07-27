@@ -108,24 +108,21 @@ export class AuthService {
       secret: process.env.JWT_SECRET || config.get('jwt').secret,
       expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
     });
-    let refreshToken;
+    let expiresIn;
     if (isSignin) {
-      refreshToken = await this.jwtService.signAsync(jwtPayload, {
-        secret:
-          process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
-        expiresIn:
-          process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
-          config.get('jwt-refresh').expiresIn_autosave,
-      });
+      expiresIn =
+        process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
+        config.get('jwt-refresh').expiresIn_autosave;
     } else {
-      refreshToken = await this.jwtService.signAsync(jwtPayload, {
-        secret:
-          process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
-        expiresIn:
-          process.env.JWT_REFRESH_EXPIRESIN ||
-          config.get('jwt-refresh').expiresIn,
-      });
+      expiresIn =
+        process.env.JWT_REFRESH_EXPIRESIN ||
+        config.get('jwt-refresh').expiresIn;
     }
+    const refreshToken = await this.jwtService.signAsync(jwtPayload, {
+      secret:
+        process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+      expiresIn,
+    });
     return { accessToken, refreshToken };
   }
 
