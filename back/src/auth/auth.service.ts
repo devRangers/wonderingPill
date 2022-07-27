@@ -88,7 +88,6 @@ export class AuthService {
         email,
         isSignin,
       );
-
       return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
@@ -104,12 +103,12 @@ export class AuthService {
       email,
       sub: id,
     };
+
     const accessToken = await this.jwtService.signAsync(jwtPayload, {
       secret: process.env.JWT_SECRET || config.get('jwt').secret,
       expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
     });
     let refreshToken;
-
     if (isSignin) {
       refreshToken = await this.jwtService.signAsync(jwtPayload, {
         secret:

@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
 import { PharmacyService } from './pharmacy/pharmacy.service';
@@ -12,7 +11,7 @@ import { AccessGuard } from './common/guards';
 
 @Module({
   imports: [HttpModule, AuthModule, PrismaModule],
-  controllers: [AppController, PharmacyController],
+  controllers: [PharmacyController],
   providers: [
     {
       provide: APP_GUARD,

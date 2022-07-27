@@ -29,7 +29,7 @@ import { Response } from 'express';
 import * as config from 'config';
 import { Tokens } from './types';
 import { AccessGuard, RefreshGuard } from 'src/common/guards';
-import { GetCurrentUserId } from 'src/common/decorators';
+import { GetCurrentUserId, Public } from 'src/common/decorators';
 import { GetCurrentUser } from 'src/common/decorators/get.current-user.decorator';
 
 @ApiTags('Auth API')
@@ -38,6 +38,7 @@ export class AuthController {
   private logger = new Logger(`AuthController`);
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @HttpCode(200)
   @Post('signup')
   @ApiOperation({
@@ -62,6 +63,7 @@ export class AuthController {
     };
   }
 
+  @Public()
   @HttpCode(200)
   @Post('signin')
   @ApiOperation({
@@ -125,9 +127,10 @@ export class AuthController {
     };
   }
 
+  @Public()
   @HttpCode(200)
   @Post('refresh')
-  // @UseGuards(RefreshGuard)
+  @UseGuards(RefreshGuard)
   @ApiOperation({
     summary: 'accessToken 재발행 API',
     description: 'refreshToken이 만료되지 않았다면 accessToken을 재발행한다.',
@@ -185,6 +188,7 @@ export class AuthController {
     if (checkLogout) {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
+
       message = '로그아웃이 완료되었습니다.';
     } else {
       message = '로그아웃에 실패하였습니다.';
