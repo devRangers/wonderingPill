@@ -20,6 +20,7 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
     "react-query": "^3.39.1",
+    "react-tooltip": "^4.2.21",
     "styletron-engine-atomic": "^1.4.8",
     "styletron-react": "^6.0.2",
     "yup": "^0.32.11"

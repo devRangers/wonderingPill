@@ -17,7 +17,7 @@ import {
 } from "./RegisterForm.style";
 import { BsFillExclamationCircleFill } from "react-icons/bs";
 import { useRouter } from "next/router";
-import { UserEntity } from "@modelTypes/userEntity";
+import ReactTooltip from "react-tooltip";
 
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
@@ -123,7 +123,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
         )
         .max(20, "20자 이하로 입력 해 주세요.")
-        .required("필수 입력 란입니다."),
+        .required("소문자, 숫자, 특수문자 포함 8자 이상입니다."),
       checkPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
         .max(20, "20자 이하로 입력 해 주세요.")
@@ -204,9 +204,20 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           {...userDataFormik.getFieldProps("password")}
           placeholder="비밀번호"
           autoComplete="true"
+          data-tip="password-tooltip"
+          data-for="password-tooltip"
         />
         {userDataFormik.touched.password && userDataFormik.errors.password ? (
-          <ErrorMessage>{userDataFormik.errors.password}</ErrorMessage>
+          <>
+            <ErrorMessage>필수 입력 란입니다.</ErrorMessage>
+
+            <ReactTooltip
+              key="password-tooltip"
+              id="password-tooltip"
+              place="top">
+              {userDataFormik.errors.password}
+            </ReactTooltip>
+          </>
         ) : (
           <ErrorMessage />
         )}

@@ -2,24 +2,49 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
+import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { providerType } from './auth-provider.enum';
 import * as argon from 'argon2';
-import { CreateUserDto } from './dto';
+import { CreateUserDto, SigninUserDto, UseRecapchaDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { JwtService } from '@nestjs/jwt';
+import * as config from 'config';
+import { HttpService } from '@nestjs/axios';
+import { JwtPayload, Tokens } from './types';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly httpService: HttpService,
+  ) {}
 
-  async user(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
+  async getUserByEmail(email): Promise<User> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { email },
     });
+
+    if (!user) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    }
+
+    return user;
+  }
+
+  async getUserById(id): Promise<User> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    }
+
+    return user;
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User | null> {
@@ -47,5 +72,144 @@ export class AuthService {
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  async localSignin(signinUserDto: SigninUserDto): Promise<Tokens | null> {
+    try {
+      const { email, password, isSignin } = signinUserDto;
+      const user = await this.getUserByEmail(email);
+
+      const isPwMatching = await argon.verify(user.password, password);
+      if (!isPwMatching)
+        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+
+      const { accessToken, refreshToken } = await this.getTokens(
+        user.id,
+        email,
+        isSignin,
+      );
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new UnauthorizedException('로그인에 실패했습니다.');
+    }
+  }
+
+  async getTokens(
+    id: string,
+    email: string,
+    isSignin: boolean,
+  ): Promise<Tokens | null> {
+    const jwtPayload: JwtPayload = {
+      email,
+      sub: id,
+    };
+
+    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+      secret: process.env.JWT_SECRET || config.get('jwt').secret,
+      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+    });
+    let expiresIn;
+    if (isSignin) {
+      expiresIn =
+        process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
+        config.get('jwt-refresh').expiresIn_autosave;
+    } else {
+      expiresIn =
+        process.env.JWT_REFRESH_EXPIRESIN ||
+        config.get('jwt-refresh').expiresIn;
+    }
+    const refreshToken = await this.jwtService.signAsync(jwtPayload, {
+      secret:
+        process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+      expiresIn,
+    });
+    return { accessToken, refreshToken };
+  }
+
+  async saveRefreshToken(
+    email: string,
+    refreshToken: string,
+  ): Promise<User | null> {
+    const user = await this.prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        refreshToken,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('refresh token이 저장되지 않았습니다.');
+    }
+
+    return user;
+  }
+
+  async updateAccessToken(
+    id: string,
+    refreshToken: string,
+  ): Promise<string | null> {
+    const user = await this.getUserById({ id });
+
+    const isRTMatches = await argon.verify(user.refreshToken, refreshToken);
+    if (!isRTMatches) throw new ForbiddenException('Access Denied');
+
+    const accessToken: string = await this.getAccessToken(id, user.email);
+
+    await this.saveRefreshToken(user.email, refreshToken);
+    return accessToken;
+  }
+
+  async getAccessToken(id: string, email: string): Promise<string> {
+    const jwtPayload: JwtPayload = {
+      sub: id,
+      email: email,
+    };
+    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+      secret: process.env.JWT_SECRET || config.get('jwt').secret,
+      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+    });
+    return accessToken;
+  }
+
+  async logout(id: string): Promise<boolean> {
+    const user = await this.prisma.user.updateMany({
+      where: {
+        id,
+        refreshToken: {
+          not: null,
+        },
+      },
+      data: {
+        refreshToken: null,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('토큰을 삭제하지 못했습니다.');
+    }
+    return true;
+  }
+
+  async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {
+    const result = await this.httpService
+      .post(
+        `${process.env.RECAPTCHA_V3_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V3_SECRETKEY}&response=${useRecapchaDto.token}`,
+      )
+      .toPromise();
+    if (!result.data.success || !result) {
+      throw new ForbiddenException('recaptcha-v3 인증 요청에 실패하였습니다.');
+    }
+    return result.data;
+  }
+
+  async checkRecaptchaV3(score: number): Promise<boolean> {
+    if (score < 0.8) {
+      throw new UnauthorizedException(
+        '의심스러운 트래픽 활동이 감지되었습니다.',
+      );
+    }
+    return true;
   }
 }
