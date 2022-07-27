@@ -64,12 +64,6 @@ export async function botdEdge(
   }
   const botdStatus = botdRes.headers.get(REQUEST_STATUS_HEADER);
 
-  console.log(
-    "botd edge debug",
-    botdRes.status,
-    JSON.stringify(Object.fromEntries(botdRes.headers), null, 2),
-  );
-
   switch (botdStatus) {
     case STATUS.ERROR: {
       const error = botdRes.headers.get(ERROR_DESCRIPTION_HEADER);
