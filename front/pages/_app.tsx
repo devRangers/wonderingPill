@@ -11,6 +11,7 @@ import Header from "common/header/Header";
 import { ROUTE } from "@utils/constant";
 import { useRouter } from "next/router";
 import Footer from "common/footer/Footer";
+import Sidebar from "common/sidebar/Sidebar";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
@@ -42,6 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           {checkPathname(router.pathname) && <Header />}
           <Component {...pageProps} />
           {checkPathname(router.pathname) && <Footer />}
+
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         </Hydrate>
       </QueryClientProvider>
