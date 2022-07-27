@@ -10,6 +10,12 @@ export const ROUTE = {
   REGISTER: {
     link: "/register",
   },
+  EMAIL_FIND: {
+    link: "/account/email/find",
+  },
+  EMAIL_RESULT: {
+    link: "/account/email/result",
+  },
   PASSWORD_FIND: {
     link: "/account/password/find",
   },

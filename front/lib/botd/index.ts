@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import {
   BOTD_DEFAULT_URL,
   BOTD_EDGE_PATH,
@@ -9,16 +10,11 @@ import {
   STATUS,
   TIMEOUT,
   ERROR_DESCRIPTION_HEADER,
-  RESULT_HEADERS,
-  BOTD_RESULT_PATH,
   AUTO_TOOL_PROB_HEADER,
   SEARCH_BOT_PROB_HEADER,
   VM_PROB_HEADER,
   BROWSER_SPOOFING_PROB_HEADER,
 } from "./constants";
-
-const STATIC_REGEX_EXCLUSION =
-  /\.(avi|flv|mka|mkv|mov|mp4|mpeg|mpg|mp3|flac|ogg|ogm|opus|wav|webm|webp|bmp|gif|ico|jpeg|jpg|png|svg|svgz|swf|eot|otf|ttf|woff|woff2|css|less|js)$/i;
 
 const defaultOptions = {
   useRequestId: true,
@@ -32,11 +28,8 @@ export async function botdEdge(
   if (!token) return;
 
   const { pathname } = req.nextUrl;
-
-  // Light bot detection is not required for static files or for favicon.ico
-  if (STATIC_REGEX_EXCLUSION.test(pathname) && !isFavicon(req)) return;
-
   const headers = new Headers();
+
   const body = {
     headers: getHeadersDict(req.headers),
     path: pathname,
@@ -62,24 +55,14 @@ export async function botdEdge(
   });
 
   let botdRes: Response;
-  const botdStart = Date.now();
 
   try {
     botdRes = (await Promise.race([botdReq, timeoutPromise])) as Response;
-    // We're sending the latency for demo purposes,
-    // this is not something you need to do
-    headers.set("x-botd-latency", `${Date.now() - botdStart}`);
   } catch (err) {
     console.error("Botd failed with:", err);
     return;
   }
   const botdStatus = botdRes.headers.get(REQUEST_STATUS_HEADER);
-
-  console.log(
-    "botd edge debug",
-    botdRes.status,
-    JSON.stringify(Object.fromEntries(botdRes.headers), null, 2),
-  );
 
   switch (botdStatus) {
     case STATUS.ERROR: {
@@ -107,6 +90,7 @@ export async function botdEdge(
       const browserSpoofingProb = Number(
         botdRes.headers.get(BROWSER_SPOOFING_PROB_HEADER),
       );
+
       const status =
         botProb > 0 ||
         searchBotProb > 0 ||
@@ -121,9 +105,7 @@ export async function botdEdge(
         res = NextResponse.next();
         headers.forEach((v, k) => res.headers.set(k, v));
       }
-
       res.cookies.set(COOKIE_NAME, requestId!);
-
       return res;
     }
     default:
@@ -153,9 +135,4 @@ function getHeadersDict(headers: Headers) {
     headersDict[key] = [value];
   }
   return headersDict;
-}
-
-export function isFavicon(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
-  return pathname.endsWith(".ico") && pathname.indexOf("fav") > -1;
 }
