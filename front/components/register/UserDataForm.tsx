@@ -18,6 +18,7 @@ import {
 import { BsFillExclamationCircleFill } from "react-icons/bs";
 import { useRouter } from "next/router";
 import ReactTooltip from "react-tooltip";
+import { CreateUserResponse } from "@modelTypes/createUserResponse";
 
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
@@ -85,12 +86,14 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
   const router = useRouter();
 
   const mutation = useMutation(postRegisterAPI, {
-    onSuccess: (data, variables) => {
+    onSuccess: (data: CreateUserResponse, variables) => {
+      console.log("data : ", data);
+      console.log("variables : ", variables);
       router.push(
         {
           pathname: "/login",
           query: {
-            email: data.email,
+            email: data.user.email,
           },
         },
         "/login",
