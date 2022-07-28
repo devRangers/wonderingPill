@@ -1,10 +1,7 @@
-import Modal from "@modal/Modal";
-import { BUTTON_COLOR, SUB_COLOR } from "@utils/constant";
-import { useFormik } from "formik";
 import { useState } from "react";
-import { useMutation } from "react-query";
-import * as Yup from "yup";
-import { ApplySubmitValues } from "./RegisterForm";
+import { useRouter } from "next/router";
+import { BUTTON_COLOR, SUB_COLOR } from "@utils/constant";
+import { BsFillExclamationCircleFill } from "react-icons/bs";
 import {
   ErrorMessage,
   Form,
@@ -15,8 +12,12 @@ import {
   SelfAuthenticationLine,
   SubmitButton,
 } from "./RegisterForm.style";
-import { BsFillExclamationCircleFill } from "react-icons/bs";
-import { useRouter } from "next/router";
+import { ApplySubmitValues } from "./RegisterForm";
+import { CreateUserResponse } from "@modelTypes/createUserResponse";
+import Modal from "@modal/Modal";
+import { useFormik } from "formik";
+import { useMutation } from "react-query";
+import * as Yup from "yup";
 import ReactTooltip from "react-tooltip";
 
 interface UserDataFormProps {
@@ -85,12 +86,14 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
   const router = useRouter();
 
   const mutation = useMutation(postRegisterAPI, {
-    onSuccess: (data, variables) => {
+    onSuccess: (data: CreateUserResponse, variables) => {
+      console.log("data : ", data);
+      console.log("variables : ", variables);
       router.push(
         {
           pathname: "/login",
           query: {
-            email: data.email,
+            email: data.user.email,
           },
         },
         "/login",
