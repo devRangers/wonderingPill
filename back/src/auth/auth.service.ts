@@ -1,18 +1,18 @@
+import { HttpService } from '@nestjs/axios';
 import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import * as argon from 'argon2';
+import * as config from 'config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { providerType } from './auth-provider.enum';
-import * as argon from 'argon2';
 import { CreateUserDto, SigninUserDto, UseRecapchaDto } from './dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { JwtService } from '@nestjs/jwt';
-import * as config from 'config';
-import { HttpService } from '@nestjs/axios';
 import { JwtPayload, Tokens } from './types';
 
 @Injectable()
@@ -150,10 +150,10 @@ export class AuthService {
     id: string,
     refreshToken: string,
   ): Promise<string | null> {
-    const user = await this.getUserById({ id });
-
-    const isRTMatches = await argon.verify(user.refreshToken, refreshToken);
-    if (!isRTMatches) throw new ForbiddenException('Access Denied');
+    const user = await this.getUserById(id);
+    if (user.refreshToken !== refreshToken) {
+      throw new ForbiddenException('Access Denied');
+    }
 
     const accessToken: string = await this.getAccessToken(id, user.email);
 

@@ -1,13 +1,13 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import * as config from 'config';
-import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
+import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { setupSwagger } from './utils';
+import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
 import { PrismaService } from './prisma/prisma.service';
-import * as cookieParser from 'cookie-parser';
+import { setupSwagger } from './utils';
 
 dotenv.config({
   path: path.resolve(
