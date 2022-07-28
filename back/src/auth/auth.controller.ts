@@ -10,7 +10,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -26,7 +25,7 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { AccessGuard } from 'src/common/guards';
+import { AccessGuard, RefreshGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
 import {
   CreateUserDto,
@@ -88,8 +87,6 @@ export class AuthController {
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SigninResponse> {
-    // token 발행
-
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto);
 
@@ -138,7 +135,7 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Get('refresh')
-  @UseGuards(AuthGuard('refresh'))
+  @UseGuards(RefreshGuard)
   @ApiOperation({
     summary: 'accessToken 재발행 API',
     description: 'refreshToken이 만료되지 않았다면 accessToken을 재발행한다.',
