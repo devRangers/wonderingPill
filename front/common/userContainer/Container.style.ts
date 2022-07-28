@@ -2,7 +2,7 @@ import { styled } from "styletron-react";
 
 export const MainContainer = styled("div", (props: { $bgColor: string }) => ({
   width: "100vw",
-  minHeight: "100vh",
+  height: "calc(var(--vh, 1vh) * 100)",
   display: "grid",
   gridTemplateRows: "1fr 3fr 5fr",
   backgroundColor: props.$bgColor,
