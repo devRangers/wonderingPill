@@ -71,7 +71,7 @@ const FindEmailResultPage: NextPage = () => {
           <LinkButton
             $isWide={isWide}
             $btnColor={BUTTON_COLOR}
-            onClick={() => router.push(ROUTE.REGISTER.link)}>
+            onClick={() => router.push(ROUTE.REGISTER)}>
             회원가입 바로가기
           </LinkButton>
         )}
@@ -84,12 +84,12 @@ const FindEmailResultPage: NextPage = () => {
           onClick={() =>
             router.push(
               {
-                pathname: ROUTE.LOGIN.link,
+                pathname: ROUTE.LOGIN,
                 query: {
                   email: fakeData[0].email,
                 },
               },
-              ROUTE.LOGIN.link,
+              ROUTE.LOGIN,
             )
           }>
           로그인 바로가기
@@ -98,7 +98,7 @@ const FindEmailResultPage: NextPage = () => {
         <LinkButton
           $isWide={isWide}
           $btnColor={BUTTON_COLOR}
-          onClick={() => router.push(ROUTE.PASSWORD_FIND.link)}>
+          onClick={() => router.push(ROUTE.PASSWORD_FIND)}>
           비밀번호 찾기
         </LinkButton>
       </BtnContainer>

@@ -23,7 +23,7 @@ export default async function middleware(req: NextRequest) {
 
   if (res && res.status !== 200) {
     // Bot detected!
-    req.nextUrl.pathname = ROUTE.BLOCK.link;
+    req.nextUrl.pathname = ROUTE.BLOCK;
     const rewrite = NextResponse.rewrite(req.nextUrl);
     // Move Botd headers to the rewrite response
     res.headers.forEach((v, k) => rewrite.headers.set(k, v));

@@ -8,6 +8,11 @@ function Header() {
   const router = useRouter();
   const isLoginPage = router.asPath === ROUTE.LOGIN;
 
+  const linkBtnClickHandler = () => {
+    const url = isLoginPage ? ROUTE.REGISTER : ROUTE.LOGIN;
+    router.push(url);
+  };
+
   return (
     <>
       <Link href="/">
@@ -16,11 +21,9 @@ function Header() {
         </IconBtn>
       </Link>
 
-      <Link href={isLoginPage ? ROUTE.REGISTER : ROUTE.LOGIN}>
-        <LinkBtn>
-          {isLoginPage ? "회원가입 바로가기" : "로그인 바로가기"}
-        </LinkBtn>
-      </Link>
+      <LinkBtn onClick={linkBtnClickHandler}>
+        {isLoginPage ? "회원가입 바로가기" : "로그인 바로가기"}
+      </LinkBtn>
     </>
   );
 }

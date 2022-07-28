@@ -102,13 +102,13 @@ function LoginForm() {
           <div>
             <TextBtn
               type="button"
-              onClick={() => router.push(ROUTE.EMAIL_FIND.link)}>
+              onClick={() => router.push(ROUTE.EMAIL_FIND)}>
               계정 찾기
             </TextBtn>
             /
             <TextBtn
               type="button"
-              onClick={() => router.push(ROUTE.PASSWORD_FIND.link)}>
+              onClick={() => router.push(ROUTE.PASSWORD_FIND)}>
               비밀번호 찾기
             </TextBtn>
           </div>
