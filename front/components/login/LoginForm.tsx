@@ -1,7 +1,8 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
+import { BUTTON_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -27,9 +28,15 @@ interface LoginValues {
   password: string;
 }
 
-const initialValue: LoginValues = { email: "", password: "" };
-
 function LoginForm() {
+  const router = useRouter();
+  const userEmail = router.query?.email as string;
+
+  const initialValue: LoginValues = {
+    email: (userEmail as string) || "",
+    password: "",
+  };
+
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({
@@ -83,7 +90,9 @@ function LoginForm() {
             </ErrorMessage>
           </InputContainer>
 
-          <SubmitBtn $btnColor={BUTTON_COLOR}>로그인하기</SubmitBtn>
+          <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
+            로그인하기
+          </SubmitBtn>
         </ContentContainer>
         <SubBtnContainer>
           <CheckboxContainer>
@@ -91,7 +100,17 @@ function LoginForm() {
             <label htmlFor="auto-login">자동 로그인</label>
           </CheckboxContainer>
           <div>
-            <TextBtn>계정 찾기</TextBtn>/<TextBtn>비밀번호 찾기</TextBtn>
+            <TextBtn
+              type="button"
+              onClick={() => router.push(ROUTE.EMAIL_FIND.link)}>
+              계정 찾기
+            </TextBtn>
+            /
+            <TextBtn
+              type="button"
+              onClick={() => router.push(ROUTE.PASSWORD_FIND.link)}>
+              비밀번호 찾기
+            </TextBtn>
           </div>
         </SubBtnContainer>
       </Form>
