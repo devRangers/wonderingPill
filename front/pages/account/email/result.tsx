@@ -11,9 +11,22 @@ import {
   ResultBox,
   InfoContaniner,
   InfoTitle,
+  NoResultMsg,
   BtnContainer,
   LinkButton,
 } from "@accountComp/result/Result.style";
+
+interface InfoType {
+  name: string;
+  email: string;
+}
+
+const fakeData: InfoType[] = [
+  {
+    name: "테스트계정",
+    email: "jiyu@test.com",
+  },
+];
 
 const FindEmailResultPage: NextPage = () => {
   const isWide = isWideDevice();
@@ -24,26 +37,46 @@ const FindEmailResultPage: NextPage = () => {
         <Title $txtColor={SUB_COLOR}>계정 찾기</Title>
         <SubTitle>회원님의 계정 찾기가 완료되었습니다.</SubTitle>
       </TitleContainer>
+
       <ResultContainer>
         <Description>
           다음 정보로 가입된 계정이
-          <br /> 총 1개 있습니다.
+          <br /> 총 {fakeData.length}개 있습니다.
         </Description>
-        <ResultBox $isWide={isWide}>
-          <InfoContaniner $isWide={isWide}>
-            <InfoTitle>이름</InfoTitle>
-            <p>테스트계정</p>
-          </InfoContaniner>
-          <InfoContaniner $isWide={isWide}>
-            <InfoTitle>계정</InfoTitle>
-            <p>sujeong9158@gmail.com</p>
-          </InfoContaniner>
+
+        <ResultBox $isWide={isWide} $isDivide={fakeData.length > 0}>
+          {fakeData.length > 0 ? (
+            <>
+              <InfoContaniner $isWide={isWide}>
+                <InfoTitle>이름</InfoTitle>
+                <p>{fakeData[0].name}</p>
+              </InfoContaniner>
+              <InfoContaniner $isWide={isWide}>
+                <InfoTitle>계정</InfoTitle>
+                <p>{fakeData[0].email}</p>
+              </InfoContaniner>
+            </>
+          ) : (
+            <NoResultMsg>
+              계정을 찾지 못했습니다.
+              <br />
+              회원이 아니라면 회원가입을 해 주세요.
+            </NoResultMsg>
+          )}
         </ResultBox>
+
+        {fakeData.length === 0 && (
+          <LinkButton $isWide={isWide} $btnColor={BUTTON_COLOR}>
+            회원가입 바로가기
+          </LinkButton>
+        )}
       </ResultContainer>
+
       <BtnContainer $isWide={isWide}>
         <LinkButton $isWide={isWide} $btnColor={BUTTON_COLOR}>
           로그인 바로가기
         </LinkButton>
+
         <LinkButton $isWide={isWide} $btnColor={BUTTON_COLOR}>
           비밀번호 찾기
         </LinkButton>

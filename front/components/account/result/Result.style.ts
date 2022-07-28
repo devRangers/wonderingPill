@@ -45,16 +45,19 @@ export const Description = styled("p", {
   textAlign: "center",
 });
 
-export const ResultBox = styled("div", (props: { $isWide: boolean }) => ({
-  display: "grid",
-  gridTemplateRows: "1fr 1fr",
-  width: props.$isWide ? "70%" : "90%",
-  height: "90%",
-  border: "1px solid #000",
-  justifyItems: "center",
-  alignItems: "center",
-  overflowX: "auto",
-}));
+export const ResultBox = styled(
+  "div",
+  (props: { $isWide: boolean; $isDivide: boolean }) => ({
+    display: "grid",
+    gridTemplateRows: props.$isDivide ? "1fr 1fr" : "",
+    width: props.$isWide ? "70%" : "90%",
+    height: "90%",
+    border: "1px solid #000",
+    justifyItems: "center",
+    alignItems: "center",
+    overflowX: "auto",
+  }),
+);
 
 export const InfoContaniner = styled("div", (props: { $isWide: boolean }) => ({
   display: "grid",
@@ -66,6 +69,11 @@ export const InfoContaniner = styled("div", (props: { $isWide: boolean }) => ({
 export const InfoTitle = styled("p", {
   color: "#3E3E3E",
   fontWeight: "bold",
+});
+
+export const NoResultMsg = styled("p", {
+  width: "90%",
+  lineHeight: "150%",
 });
 
 export const BtnContainer = styled("div", (props: { $isWide: boolean }) => ({
