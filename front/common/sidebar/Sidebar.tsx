@@ -1,10 +1,11 @@
+import { useRouter } from "next/router";
 import {
   MAIN_COLOR,
   ROUTE,
   SIDE_BAR_HEADER_HEIGHT,
   SUB_COLOR,
 } from "@utils/constant";
-import React from "react";
+import { BsArrowLeftShort } from "react-icons/bs";
 import {
   BackGround,
   BtnContainer,
@@ -14,8 +15,6 @@ import {
   SidebarContainer,
   SidebarHeader,
 } from "./Sidebar.style";
-import { BsArrowLeftShort } from "react-icons/bs";
-import { useRouter } from "next/router";
 
 interface SidebarProp {
   openSideBar: boolean;
@@ -51,16 +50,16 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
 };
 
 function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
-  const handleCloseBae = () => {
+  const handleCloseBar = () => {
     closeSideBar();
   };
   const router = useRouter();
   return (
     <>
-      <BackGround $openSideBar={openSideBar} onClick={handleCloseBae} />
+      <BackGround $openSideBar={openSideBar} onClick={handleCloseBar} />
       <SidebarContainer $openSideBar={openSideBar}>
         <SidebarHeader $height={SIDE_BAR_HEADER_HEIGHT} $bgColor={MAIN_COLOR}>
-          <BsArrowLeftShort color={SUB_COLOR} onClick={handleCloseBae} />
+          <BsArrowLeftShort color={SUB_COLOR} onClick={handleCloseBar} />
         </SidebarHeader>
         <SidebarBody $height={SIDE_BAR_HEADER_HEIGHT}>
           <BtnContainer>
@@ -72,7 +71,7 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
           </BtnContainer>
           <LoginBtn
             $bgColor={MAIN_COLOR}
-            onClick={() => router.push(ROUTE.LOGIN.link)}>
+            onClick={() => router.push(ROUTE.LOGIN)}>
             로그인
           </LoginBtn>
         </SidebarBody>

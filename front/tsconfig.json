@@ -21,6 +21,7 @@
       "@modal/*": ["common/modal/*"],
       "@loginComp/*": ["components/login/*"],
       "@accountComp/*": ["components/account/*"],
+      "@mainComp/*": ["components/main/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },

@@ -1,5 +1,4 @@
 import { FOOTER_HEIGHT, MAIN_COLOR } from "@utils/constant";
-import React from "react";
 import { FooterContainer } from "./Footer.style";
 
 function Footer() {

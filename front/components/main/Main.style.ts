@@ -1,10 +1,16 @@
-import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@utils/constant";
 import { styled } from "styletron-react";
 
-export const MainContainer = styled("div", (props: { $bgColor: string }) => ({
-  backgroundColor: props.$bgColor,
-  height: `calc(100vh - (${HEADER_HEIGHT} + ${FOOTER_HEIGHT}))`,
-}));
+export const MainContainer = styled(
+  "div",
+  (props: {
+    $bgColor: string;
+    $headerHeight: string;
+    $footerHeight: string;
+  }) => ({
+    backgroundColor: props.$bgColor,
+    height: `calc(100vh - (${props.$headerHeight} + ${props.$footerHeight}))`,
+  }),
+);
 
 export const MainContent = styled("div", {
   height: "100%",

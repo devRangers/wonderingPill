@@ -1,6 +1,6 @@
 import { MAIN_COLOR } from "@utils/constant";
 import Image from "next/image";
-import React from "react";
+import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@utils/constant";
 import {
   ImageSection,
   MainContainer,
@@ -49,7 +49,10 @@ const MainSectionTitle: { [key in string]: MainSectionValues } = {
 
 function Main() {
   return (
-    <MainContainer $bgColor={MAIN_COLOR}>
+    <MainContainer
+      $bgColor={MAIN_COLOR}
+      $headerHeight={HEADER_HEIGHT}
+      $footerHeight={FOOTER_HEIGHT}>
       <MainContent>
         <ImageSection>
           <Image

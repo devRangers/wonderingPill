@@ -1,5 +1,5 @@
+import Main from "@mainComp/Main";
 import type { NextPage } from "next";
-import Main from "./main";
 
 const Home: NextPage = () => {
   return <Main />;

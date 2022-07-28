@@ -1,28 +1,23 @@
 import "../styles/globals.css";
 import "../styles/reset.css";
-import type { AppProps } from "next/app";
 import { useState } from "react";
+import Head from "next/head";
+import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
+import Header from "common/header/Header";
+import Footer from "common/footer/Footer";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
-import Head from "next/head";
-import Header from "common/header/Header";
 import { ROUTE } from "@utils/constant";
-import { useRouter } from "next/router";
-import Footer from "common/footer/Footer";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
   const router = useRouter();
 
   const checkPathname = (pathname: string) => {
-    if (
-      pathname.includes(ROUTE.LOGIN.link) ||
-      pathname.includes(ROUTE.REGISTER.link) ||
-      pathname.includes("account") ||
-      pathname.includes("error")
-    ) {
+    if (ROUTE.CHECK_PATH.find((path) => pathname.includes(path) === true)) {
       return false;
     }
     return true;

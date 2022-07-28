@@ -7,16 +7,11 @@ export const FOOTER_HEIGHT = "8vh";
 export const SIDE_BAR_HEADER_HEIGHT = "7vh";
 
 export const ROUTE = {
-  LOGIN: {
-    link: "/login",
-  },
-  REGISTER: {
-    link: "/register",
-  },
-  PASSWORD_FIND: {
-    link: "/account/password/find",
-  },
-  PASSWORD_NEW: {
-    link: "/account/password/new",
-  },
+  MAIN: "/",
+  LOGIN: "/login",
+  REGISTER: "/register",
+  PASSWORD_FIND: "/account/password/find",
+  PASSWORD_NEW: "/account/password/new",
+  ERROR: "/error",
+  CHECK_PATH: ["/login", "/register", "/account", "/error"],
 };

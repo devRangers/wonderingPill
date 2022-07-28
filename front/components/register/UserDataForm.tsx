@@ -1,10 +1,7 @@
-import Modal from "@modal/Modal";
-import { BUTTON_COLOR, SUB_COLOR } from "@utils/constant";
-import { useFormik } from "formik";
 import { useState } from "react";
-import { useMutation } from "react-query";
-import * as Yup from "yup";
-import { ApplySubmitValues } from "./RegisterForm";
+import { useRouter } from "next/router";
+import { BUTTON_COLOR, SUB_COLOR } from "@utils/constant";
+import { BsFillExclamationCircleFill } from "react-icons/bs";
 import {
   ErrorMessage,
   Form,
@@ -15,10 +12,13 @@ import {
   SelfAuthenticationLine,
   SubmitButton,
 } from "./RegisterForm.style";
-import { BsFillExclamationCircleFill } from "react-icons/bs";
-import { useRouter } from "next/router";
-import ReactTooltip from "react-tooltip";
+import { ApplySubmitValues } from "./RegisterForm";
 import { CreateUserResponse } from "@modelTypes/createUserResponse";
+import Modal from "@modal/Modal";
+import { useFormik } from "formik";
+import { useMutation } from "react-query";
+import * as Yup from "yup";
+import ReactTooltip from "react-tooltip";
 
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
