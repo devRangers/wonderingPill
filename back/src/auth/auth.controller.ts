@@ -21,12 +21,17 @@ import {
 import { User as UserModel } from '@prisma/client';
 import * as config from 'config';
 import { Response } from 'express';
-import { GetCurrentUserId, Public } from 'src/common/decorators';
-import { GetCurrentUser } from 'src/common/decorators/get.current-user.decorator';
+import {
+  GetCurrentUser,
+  GetCurrentUserId,
+  Public,
+} from 'src/common/decorators';
+import { AccessGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
 import {
   CreateUserDto,
   CreateUserResponse,
+  LogoutResponse,
   RefreshResponse,
   SigninResponse,
   SigninUserDto,
@@ -168,43 +173,41 @@ export class AuthController {
     };
   }
 
-  // user/current
+  @Get('logout')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '로그아웃 API',
+    description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '로그아웃 성공',
+    type: LogoutResponse,
+  })
+  @ApiCookieAuth('refreshToken')
+  @ApiCookieAuth('accessToken')
+  async logout(
+    @GetCurrentUserId() id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<LogoutResponse> {
+    const checkLogout = await this.authService.logout(id);
 
-  // @Get('logout')
-  // @UseGuards(AccessGuard)
-  // @ApiOperation({
-  //   summary: '로그아웃 API',
-  //   description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: '로그아웃 성공',
-  //   type: LogoutResponse,
-  // })
-  // @ApiCookieAuth('refreshToken')
-  // @ApiCookieAuth('accessToken')
-  // async logout(
-  //   @GetCurrentUserId() id: string,
-  //   @Res({ passthrough: true }) res: Response,
-  // ): Promise<LogoutResponse> {
-  //   const checkLogout = await this.authService.logout(id);
+    let message;
+    if (checkLogout) {
+      res.clearCookie('AccessToken');
+      res.clearCookie('RefreshToken');
 
-  //   let message;
-  //   if (checkLogout) {
-  //     res.clearCookie('accessToken');
-  //     res.clearCookie('refreshToken');
-
-  //     message = '로그아웃이 완료되었습니다.';
-  //   } else {
-  //     message = '로그아웃에 실패하였습니다.';
-  //   }
-  //   this.logger.verbose(`User ${id} logout Success!`);
-  //   return {
-  //     statusCode: 200,
-  //     message,
-  //     checkLogout: { checkLogout },
-  //   };
-  // }
+      message = '로그아웃이 완료되었습니다.';
+    } else {
+      message = '로그아웃에 실패하였습니다.';
+    }
+    this.logger.verbose(`User ${id} logout Success!`);
+    return {
+      statusCode: 200,
+      message,
+      checkLogout: { checkLogout },
+    };
+  }
 
   // recaptcha를 guard로 대체 가능! 비용 절감
   // 일단은 api로 놔둠
