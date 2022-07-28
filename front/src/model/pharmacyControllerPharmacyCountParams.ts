@@ -6,8 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SigninUserDto {
-  email: string;
-  password: string;
-  isSignin: boolean;
-}
+export type PharmacyControllerPharmacyCountParams = { phone?: string; name?: string; address?: string; start?: number };
