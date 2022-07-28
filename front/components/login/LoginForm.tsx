@@ -33,7 +33,7 @@ function LoginForm() {
   const userEmail = router.query?.email as string;
 
   const initialValue: LoginValues = {
-    email: (userEmail as string) || "",
+    email: userEmail || "",
     password: "",
   };
 
