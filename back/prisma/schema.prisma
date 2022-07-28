@@ -32,7 +32,7 @@ model PharmacyBookMark {
 }
 
 model User {
-  id               String             @unique @id @default(uuid())
+  id               String             @id @default(uuid())
   email            String?            @unique @db.VarChar(100)
   name             String?            @db.VarChar(20)
   password         String?            @db.VarChar(100)

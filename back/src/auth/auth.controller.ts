@@ -7,9 +7,10 @@ import {
   Post,
   Res,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { User as UserModel } from '@prisma/client';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -17,20 +18,20 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { User as UserModel } from '@prisma/client';
+import * as config from 'config';
+import { Response } from 'express';
+import { GetCurrentUserId, Public } from 'src/common/decorators';
+import { GetCurrentUser } from 'src/common/decorators/get.current-user.decorator';
+import { AuthService } from './auth.service';
 import {
   CreateUserDto,
   CreateUserResponse,
-  LogoutResponse,
   RefreshResponse,
   SigninResponse,
   SigninUserDto,
 } from './dto';
-import { Response } from 'express';
-import * as config from 'config';
 import { Tokens } from './types';
-import { AccessGuard, RefreshGuard } from 'src/common/guards';
-import { GetCurrentUserId, Public } from 'src/common/decorators';
-import { GetCurrentUser } from 'src/common/decorators/get.current-user.decorator';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -41,6 +42,7 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Post('signup')
+  @UsePipes(new ValidationPipe())
   @ApiOperation({
     summary: '유저 생성(회원가입) API',
     description: '유저를 생성한다.',
@@ -82,6 +84,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<SigninResponse> {
     // token 발행
+
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto);
 
@@ -127,43 +130,45 @@ export class AuthController {
     };
   }
 
-  // @Public()
-  // @HttpCode(200)
-  // @Post('refresh')
-  // @UseGuards(RefreshGuard)
-  // @ApiOperation({
-  //   summary: 'accessToken 재발행 API',
-  //   description: 'refreshToken이 만료되지 않았다면 accessToken을 재발행한다.',
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Access Token 발행 성공',
-  //   type: RefreshResponse,
-  // })
-  // @ApiCookieAuth('refreshToken')
-  // @ApiCookieAuth('accessToken')
-  // async refresh(
-  //   @GetCurrentUserId() id: string,
-  //   @GetCurrentUser('refreshToken') refreshToken: string,
-  // ): Promise<RefreshResponse> {
-  //   const accessToken: string = await this.authService.updateAccessToken(
-  //     id,
-  //     refreshToken,
-  //   );
+  @Public()
+  @HttpCode(200)
+  @Get('refresh')
+  @UseGuards(AuthGuard('refresh'))
+  @ApiOperation({
+    summary: 'accessToken 재발행 API',
+    description: 'refreshToken이 만료되지 않았다면 accessToken을 재발행한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Access Token 발행 성공',
+    type: RefreshResponse,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async refresh(
+    @GetCurrentUserId() id: string,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+  ): Promise<RefreshResponse> {
+    const accessToken: string = await this.authService.updateAccessToken(
+      id,
+      refreshToken,
+    );
 
-  //   let message;
-  //   if (accessToken) {
-  //     message = '정상적으로 access token이 발행되었습니다.';
-  //   } else {
-  //     message = '로그인이 유지되지 않습니다.';
-  //   }
-  //   this.logger.verbose(`User ${id} keep login Success!`);
-  //   return {
-  //     statusCode: 200,
-  //     message,
-  //     accessToken: { accessToken },
-  //   };
-  // }
+    let message;
+    if (accessToken) {
+      message = '정상적으로 access token이 발행되었습니다.';
+    } else {
+      message = '로그인이 유지되지 않습니다.';
+    }
+    this.logger.verbose(`User ${id} keep login Success!`);
+    return {
+      statusCode: 200,
+      message,
+      accessToken: { accessToken },
+    };
+  }
+
+  // user/current
 
   // @Get('logout')
   // @UseGuards(AccessGuard)
