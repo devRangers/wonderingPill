@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
 import { isWideDevice } from "@utils/isWideDevice";
-import { MAIN_COLOR, SUB_COLOR, BUTTON_COLOR } from "@utils/constant";
+import { MAIN_COLOR, SUB_COLOR, BUTTON_COLOR, ROUTE } from "@utils/constant";
 import {
   Container,
   TitleContainer,
@@ -29,6 +30,7 @@ const fakeData: InfoType[] = [
 ];
 
 const FindEmailResultPage: NextPage = () => {
+  const router = useRouter();
   const isWide = isWideDevice();
 
   return (
@@ -66,18 +68,37 @@ const FindEmailResultPage: NextPage = () => {
         </ResultBox>
 
         {fakeData.length === 0 && (
-          <LinkButton $isWide={isWide} $btnColor={BUTTON_COLOR}>
+          <LinkButton
+            $isWide={isWide}
+            $btnColor={BUTTON_COLOR}
+            onClick={() => router.push(ROUTE.REGISTER.link)}>
             회원가입 바로가기
           </LinkButton>
         )}
       </ResultContainer>
 
       <BtnContainer $isWide={isWide}>
-        <LinkButton $isWide={isWide} $btnColor={BUTTON_COLOR}>
+        <LinkButton
+          $isWide={isWide}
+          $btnColor={BUTTON_COLOR}
+          onClick={() =>
+            router.push(
+              {
+                pathname: ROUTE.LOGIN.link,
+                query: {
+                  email: fakeData[0].email,
+                },
+              },
+              ROUTE.LOGIN.link,
+            )
+          }>
           로그인 바로가기
         </LinkButton>
 
-        <LinkButton $isWide={isWide} $btnColor={BUTTON_COLOR}>
+        <LinkButton
+          $isWide={isWide}
+          $btnColor={BUTTON_COLOR}
+          onClick={() => router.push(ROUTE.PASSWORD_FIND.link)}>
           비밀번호 찾기
         </LinkButton>
       </BtnContainer>
