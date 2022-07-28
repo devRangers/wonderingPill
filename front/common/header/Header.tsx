@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import Sidebar from "common/sidebar/Sidebar";
+import Sidebar from "@sidebar/Sidebar";
 import { HEADER_HEIGHT, MAIN_COLOR, ROUTE } from "@utils/constant";
 import { BsJustify, BsFillBellFill } from "react-icons/bs";
 import { HeaderEmptyBox, HeaderContainer } from "./Header.style";

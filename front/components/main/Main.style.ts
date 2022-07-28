@@ -32,9 +32,9 @@ export const MainSection = styled("section", {
   borderRadius: "2rem",
 });
 
-export const MainItem = styled("div", {
+export const MainItem = styled("article", {
   display: "flex",
   justifyContent: "center",
-  alignItems: "center",
+  alignItems: "flex-end",
   position: "relative",
 });

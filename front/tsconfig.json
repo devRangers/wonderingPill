@@ -16,12 +16,17 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@footer/*": ["common/footer/*"],
+      "@header/*": ["common/header/*"],
+      "@modal/*": ["common/modal/*"],
+      "@sidebar/*": ["common/sidebar/*"],
       "@utils/*": ["common/utils/*"],
       "@userContainer/*": ["common/userContainer/*"],
-      "@modal/*": ["common/modal/*"],
-      "@loginComp/*": ["components/login/*"],
       "@accountComp/*": ["components/account/*"],
+      "@loginComp/*": ["components/login/*"],
       "@mainComp/*": ["components/main/*"],
+      "@registerComp/*": ["components/register/*"],
+      "@searchComp/*": ["components/search/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },

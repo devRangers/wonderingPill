@@ -13,5 +13,12 @@ export const ROUTE = {
   PASSWORD_FIND: "/account/password/find",
   PASSWORD_NEW: "/account/password/new",
   ERROR: "/error",
-  CHECK_PATH: ["/login", "/register", "/account", "/error"],
 };
+
+export const URL_WITHOUT_HEADER = [
+  ROUTE.LOGIN,
+  ROUTE.REGISTER,
+  ROUTE.PASSWORD_FIND,
+  ROUTE.PASSWORD_NEW,
+  ROUTE.ERROR,
+];

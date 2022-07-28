@@ -4,24 +4,17 @@ import { useState } from "react";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import Header from "common/header/Header";
-import Footer from "common/footer/Footer";
+import Header from "@header/Header";
+import Footer from "@footer/Footer";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
-import { ROUTE } from "@utils/constant";
+import { URL_WITHOUT_HEADER } from "@utils/constant";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
   const router = useRouter();
-
-  const checkPathname = (pathname: string) => {
-    if (ROUTE.CHECK_PATH.find((path) => pathname.includes(path) === true)) {
-      return false;
-    }
-    return true;
-  };
 
   return (
     <StyletronProvider value={styletron}>
@@ -34,9 +27,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             />
           </Head>
 
-          {checkPathname(router.pathname) && <Header />}
+          {!URL_WITHOUT_HEADER.includes(router.pathname) && <Header />}
           <Component {...pageProps} />
-          {checkPathname(router.pathname) && <Footer />}
+          {!URL_WITHOUT_HEADER.includes(router.pathname) && <Footer />}
 
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         </Hydrate>
