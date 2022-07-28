@@ -1,3 +1,4 @@
+import { BsJustify } from "react-icons/bs";
 import { styled } from "styletron-react";
 
 export const HeaderContainer = styled(
@@ -17,6 +18,10 @@ export const HeaderContainer = styled(
     alignItems: "center",
   }),
 );
+
+export const HamburgerBtn = styled(BsJustify, {
+  zIndex: "1",
+});
 
 export const HeaderEmptyBox = styled(
   "header",

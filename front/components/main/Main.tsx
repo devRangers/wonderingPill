@@ -1,6 +1,5 @@
-import { MAIN_COLOR } from "@utils/constant";
 import Image from "next/image";
-import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@utils/constant";
+import { FOOTER_HEIGHT, HEADER_HEIGHT, MAIN_COLOR } from "@utils/constant";
 import {
   ImageSection,
   MainContainer,

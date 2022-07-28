@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import Sidebar from "@sidebar/Sidebar";
 import { HEADER_HEIGHT, MAIN_COLOR, ROUTE } from "@utils/constant";
 import { BsJustify, BsFillBellFill } from "react-icons/bs";
-import { HeaderEmptyBox, HeaderContainer } from "./Header.style";
+import { HeaderEmptyBox, HeaderContainer, HamburgerBtn } from "./Header.style";
 
 function Header() {
   const router = useRouter();
@@ -16,7 +16,7 @@ function Header() {
   return (
     <>
       <HeaderContainer $height={HEADER_HEIGHT} $bgColor={MAIN_COLOR}>
-        <BsJustify onClick={() => setOpenSideBar(true)} />
+        <HamburgerBtn onClick={() => setOpenSideBar(true)} />
         {router.pathname !== ROUTE.MAIN && (
           <Image
             src="/images/register_logo.png"
