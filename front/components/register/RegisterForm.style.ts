@@ -151,7 +151,7 @@ export const AuthenticationInput = styled("input", {
 
 export const SubmitAuthenticationBtn = styled(
   "button",
-  (props: { $btnColor: string }) => ({
+  (props: { $btnColor: string; $isDisabled?: boolean }) => ({
     width: "50px",
     height: "40px",
     border: "none",
@@ -159,6 +159,7 @@ export const SubmitAuthenticationBtn = styled(
 
     backgroundColor: props.$btnColor,
     color: "#fff",
+    opacity: props.$isDisabled ? "0.5" : "1",
   }),
 );
 
@@ -252,4 +253,29 @@ export const ModalContent = styled(
 
 export const ModalButton = styled("button", {
   width: "100%",
+});
+
+// 회원 가입 버튼을 클릭할 시 나오게 될 모달 스타일
+export const NoticeCheckPhoneNumberModal = styled("div", {
+  height: "12rem",
+  padding: "1.5rem",
+
+  display: "grid",
+  gridTemplateRows: "1fr 1.5fr",
+});
+
+export const Mark = styled("div", (props: { $iconColor: string }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  fontSize: "2rem",
+  color: props.$iconColor,
+}));
+
+export const NoticeCheckPhoneNumberBody = styled("div", {
+  fontSize: "1.3rem",
+  fontWeight: "bold",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
 });

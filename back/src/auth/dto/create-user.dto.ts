@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsJSON,
   IsNotEmpty,
+  IsNumber,
   IsString,
   Matches,
   MinLength,
@@ -22,7 +24,7 @@ export class CreateUserDto {
   @IsString()
   @MinLength(8)
   @IsNotEmpty()
-  @Matches(/^[A-Za-z\d!@#$%^&*()]{8,30}$/, {
+  @Matches(/^[A-Za-z\d!@#$%^&*()]{8,20}$/, {
     message: '비밀번호 양식에 맞게 작성하세요.',
   })
   password: string;
@@ -45,4 +47,21 @@ export class CreateUserDto {
     message: '휴대폰번호 양식에 맞게 작성하세요.',
   })
   phone: string;
+}
+
+export class CreateUserResponse {
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  statusCode: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  message: string;
+
+  @IsJSON()
+  @IsNotEmpty()
+  @ApiProperty()
+  user: { id: string; email: string };
 }

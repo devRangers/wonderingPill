@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { BUTTON_COLOR, ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
@@ -17,6 +18,9 @@ import {
   Hyphen,
   BtnContainer,
 } from "./FindEmailForm.style";
+import Recaptcha from "@recaptcha/Recaptcha";
+import Modal from "@modal/Modal";
+import AuthForm from "./AuthForm";
 
 interface FindEmailValues {
   name: string;
@@ -35,6 +39,9 @@ const initialValue: FindEmailValues = {
 };
 
 function FindEmailForm() {
+  const [startVerification, setStartVerification] = useState(false); // ReCaptcha 검증 시점 결정
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({
@@ -57,90 +64,112 @@ function FindEmailForm() {
     }),
     onSubmit: async (values, actions) => {
       // Submit Handler 구현 예정
-      console.log(values);
+      setStartVerification(true);
+
+      // 성공 시 로직
+      // setAuthModalOpen(true);
     },
   });
 
+  const modalCloseHandler = () => {
+    setAuthModalOpen(false);
+  };
+
   return (
-    <Form onSubmit={formik.handleSubmit}>
-      <div>
-        <InputContainer>
-          <Input
-            id="name"
-            name="name"
-            type="text"
-            placeholder="이름"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.name}
-          />
-          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
-            {formik.touched.name && formik.errors.name}
-          </ErrorMessage>
-        </InputContainer>
+    <>
+      <Form onSubmit={formik.handleSubmit}>
+        <div>
+          <InputContainer>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="이름"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.name}
+            />
+            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+              {formik.touched.name && formik.errors.name}
+            </ErrorMessage>
+          </InputContainer>
 
-        <InputContainer>
-          <Input
-            id="birth"
-            name="birth"
-            type="text"
-            maxLength={8}
-            inputMode="numeric"
-            placeholder="생년월일(8자리)"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.birth}
-          />
-          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
-            {formik.touched.birth && formik.errors.birth}
-          </ErrorMessage>
-        </InputContainer>
-      </div>
+          <InputContainer>
+            <Input
+              id="birth"
+              name="birth"
+              type="text"
+              maxLength={8}
+              inputMode="numeric"
+              placeholder="생년월일(8자리)"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.birth}
+            />
+            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+              {formik.touched.birth && formik.errors.birth}
+            </ErrorMessage>
+          </InputContainer>
+        </div>
 
-      <PhoneContainer>
-        <PhoneTitle $txtColor={SUB_COLOR}>휴대폰 번호</PhoneTitle>
+        <PhoneContainer>
+          <PhoneTitle $txtColor={SUB_COLOR}>휴대폰 번호</PhoneTitle>
 
-        <PhoneNumberContainer>
-          <PhoneNumberSelect
-            name="firstPhoneNum"
-            id="firstPhoneNum"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.firstPhoneNum}>
-            <option value="010">010</option>
-            <option value="070">070</option>
-          </PhoneNumberSelect>
-          <Hyphen $txtColor={SUB_COLOR}>―</Hyphen>
+          <PhoneNumberContainer>
+            <PhoneNumberSelect
+              name="firstPhoneNum"
+              id="firstPhoneNum"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.firstPhoneNum}>
+              <option value="010">010</option>
+              <option value="070">070</option>
+            </PhoneNumberSelect>
+            <Hyphen $txtColor={SUB_COLOR}>―</Hyphen>
 
-          <PhoneNumberInput
-            id="middlePhoneNum"
-            name="middlePhoneNum"
-            type="text"
-            maxLength={4}
-            inputMode="tel"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.middlePhoneNum}
-          />
-          <Hyphen $txtColor={SUB_COLOR}>―</Hyphen>
+            <PhoneNumberInput
+              id="middlePhoneNum"
+              name="middlePhoneNum"
+              type="text"
+              maxLength={4}
+              inputMode="tel"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.middlePhoneNum}
+            />
+            <Hyphen $txtColor={SUB_COLOR}>―</Hyphen>
 
-          <PhoneNumberInput
-            id="lastPhoneNum"
-            name="lastPhoneNum"
-            type="text"
-            maxLength={4}
-            inputMode="tel"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.lastPhoneNum}
-          />
-        </PhoneNumberContainer>
-      </PhoneContainer>
+            <PhoneNumberInput
+              id="lastPhoneNum"
+              name="lastPhoneNum"
+              type="text"
+              maxLength={4}
+              inputMode="tel"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.lastPhoneNum}
+            />
+          </PhoneNumberContainer>
+        </PhoneContainer>
 
-      <BtnContainer>
-        <SubmitBtn $btnColor={BUTTON_COLOR}>계정 찾기</SubmitBtn>
-      </BtnContainer>
-    </Form>
+        <BtnContainer>
+          <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
+            계정 찾기
+          </SubmitBtn>
+        </BtnContainer>
+
+        {authModalOpen && (
+          <Modal open={authModalOpen} onClose={modalCloseHandler}>
+            <AuthForm onClose={modalCloseHandler} />
+          </Modal>
+        )}
+      </Form>
+
+      <Recaptcha
+        startVerification={startVerification}
+        setStartVerification={setStartVerification}
+      />
+    </>
   );
 }
 

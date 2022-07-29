@@ -15,8 +15,8 @@ export class BookmarkService {
       },
     });
   }
-  async deleteBookmark(id: number): Promise<void> {
-    const bookmark = await this.getBookmark(id);
+  async deleteBookmark(id: number, userId: string): Promise<void> {
+    const bookmark = await this.getBookmark(id, userId);
     if (!bookmark) {
       throw new ForbiddenException(`Bookmark with id ${id} not found`);
     }
@@ -27,10 +27,10 @@ export class BookmarkService {
     });
   }
 
-  async listBookmark(): Promise<PharmacyBookMark[]> {
+  async listBookmark(userId: string): Promise<PharmacyBookMark[]> {
     return await this.prisma.pharmacyBookMark.findMany({
       where: {
-        user_id: '7fdd64c5-0ef1-49ef-abdc-55f44e048aa5',
+        user_id: userId,
       },
       include: {
         Pharmacy: true,
@@ -38,10 +38,10 @@ export class BookmarkService {
     });
   }
 
-  async getBookmark(id: number): Promise<PharmacyBookMark> {
+  async getBookmark(id: number, userId: string): Promise<PharmacyBookMark> {
     return await this.prisma.pharmacyBookMark.findFirst({
       where: {
-        user_id: '7fdd64c5-0ef1-49ef-abdc-55f44e048aa5',
+        user_id: userId,
         id,
       },
       include: {

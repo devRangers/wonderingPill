@@ -6,31 +6,37 @@ import {
   HttpCode,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { BookmarkService } from './bookmark.service';
 import { PharmacyBookMark } from '@prisma/client';
 import { ApiOperation, ApiTags, ApiParam } from '@nestjs/swagger';
 import { BookmarkCreateDto } from './dto/bookmark.dto';
+import { AccessGuard, RefreshGuard } from 'src/common/guards';
+import { GetCurrentUserId } from 'src/common/decorators';
 @ApiTags('Bookmark API')
 @Controller('bookmark')
 export class BookmarkController {
   constructor(private bookmarkService: BookmarkService) {}
   @ApiOperation({ summary: '북마크 생성' })
   @Post()
+  @UseGuards(RefreshGuard)
   @HttpCode(201)
   createBookmark(
+    @GetCurrentUserId() userId: string,
     @Body() bookmarkCreateDto: BookmarkCreateDto,
   ): Promise<PharmacyBookMark> {
     return this.bookmarkService.createBookmark(
-      bookmarkCreateDto.userId,
+      userId,
       bookmarkCreateDto.pharmacyId,
     );
   }
   @ApiOperation({ summary: '북마크 리스트 조회' })
   @Get('list')
+  @UseGuards(RefreshGuard)
   @HttpCode(200)
-  listBookmark(): Promise<PharmacyBookMark[]> {
-    return this.bookmarkService.listBookmark();
+  listBookmark(@GetCurrentUserId() id: string): Promise<PharmacyBookMark[]> {
+    return this.bookmarkService.listBookmark(id);
   }
 
   @ApiOperation({ summary: '북마크 개별 조회' })
@@ -40,9 +46,13 @@ export class BookmarkController {
     description: '조회할 북마크 ID',
   })
   @Get(':id')
+  @UseGuards(RefreshGuard)
   @HttpCode(200)
-  readBookmark(@Param('id') pharmcyId: number): Promise<PharmacyBookMark> {
-    return this.bookmarkService.getBookmark(pharmcyId);
+  readBookmark(
+    @GetCurrentUserId() userId: string,
+    @Param('id') pharmcyId: number,
+  ): Promise<PharmacyBookMark> {
+    return this.bookmarkService.getBookmark(pharmcyId, userId);
   }
 
   @ApiOperation({ summary: '북마크 삭제 ' })
@@ -52,8 +62,12 @@ export class BookmarkController {
     description: '삭제할 북마크 ID',
   })
   @Delete(':id')
+  @UseGuards(RefreshGuard)
   @HttpCode(204)
-  deleteBookmark(@Param('id') pharmacyId: number): Promise<void> {
-    return this.bookmarkService.deleteBookmark(pharmacyId);
+  deleteBookmark(
+    @GetCurrentUserId() userId: string,
+    @Param('id') pharmacyId: number,
+  ): Promise<void> {
+    return this.bookmarkService.deleteBookmark(pharmacyId, userId);
   }
 }

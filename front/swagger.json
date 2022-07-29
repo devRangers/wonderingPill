@@ -1,22 +1,117 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/": {
+    "/pharmacy": {
       "get": {
-        "operationId": "AppController_getHello",
+        "operationId": "PharmacyController_pharmacyList",
+        "summary": "모든 약국 리스트 조회",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PharmacyResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Pharmacy API"]
+      }
+    },
+    "/pharmacy/search": {
+      "get": {
+        "operationId": "PharmacyController_pharmacySearch",
+        "summary": "약국 검색 API",
+        "parameters": [
+          {
+            "name": "phone",
+            "required": false,
+            "in": "query",
+            "description": "검색할 전화번호",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "검색할 약국 이름",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "address",
+            "required": false,
+            "in": "query",
+            "description": "검색할 주소",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "start",
+            "required": false,
+            "in": "query",
+            "description": "페이지네이션 시작 위치",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PharmacyResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Pharmacy API"]
+      }
+    },
+    "/pharmacy/count": {
+      "get": {
+        "operationId": "PharmacyController_pharmacyCount",
+        "summary": "약국 검색 결과 카운트 API",
+        "parameters": [
+          {
+            "name": "phone",
+            "required": false,
+            "in": "query",
+            "description": "검색할 전화번호",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "검색할 약국 이름",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "address",
+            "required": false,
+            "in": "query",
+            "description": "검색할 주소",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "start",
+            "required": false,
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/PharmacyCountResponse"
                 }
               }
             }
           }
-        }
+        },
+        "tags": ["Pharmacy API"]
       }
     },
     "/auth/signup": {
@@ -29,25 +124,45 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
+              "schema": { "$ref": "#/components/schemas/CreateUserDto" }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "",
+          "200": {
+            "description": "회원가입 성공",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object"
-                }
+                "schema": { "$ref": "#/components/schemas/CreateUserResponse" }
               }
             }
-          },
-          "default": {
-            "description": "회원가입 성공"
+          }
+        },
+        "tags": ["Auth API"]
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "operationId": "AuthController_signinUser",
+        "summary": "유저 로그인 API",
+        "description": "유저의 accessToken, refreshToken을 발행하여 cookie에 저장하고 로그인한다.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SigninUserDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "로그인 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SigninResponse" }
+              }
+            }
           }
         },
         "tags": ["Auth API"]
@@ -63,27 +178,110 @@
   "tags": [],
   "servers": [],
   "components": {
+    "securitySchemes": {
+      "accessToken": {
+        "type": "http",
+        "in": "Header",
+        "name": "auth-cookie",
+        "scheme": "Bearer"
+      },
+      "refreshToken": {
+        "type": "http",
+        "in": "Header",
+        "name": "auth-cookie",
+        "scheme": "Bearer"
+      }
+    },
     "schemas": {
+      "PharmacyResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "description": "고유 ID" },
+          "name": { "type": "string", "description": "이름" },
+          "phone": { "type": "string", "description": "번호" },
+          "address": { "type": "string", "description": "주소" },
+          "monday": { "type": "string", "description": "월요일" },
+          "tuesday": { "type": "string", "description": "화요일" },
+          "wednesday": { "type": "string", "description": "수요일" },
+          "thursday": { "type": "string", "description": "목요일" },
+          "friday": { "type": "string", "description": "금요일" },
+          "saturday": { "type": "string", "description": "토요일" },
+          "sunday": { "type": "string", "description": "일요일" },
+          "holiday": { "type": "string", "description": "공휴일" }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "address",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+          "holiday"
+        ]
+      },
+      "PharmacyCountResponse": {
+        "type": "object",
+        "properties": {
+          "count": { "type": "number", "description": "검색 개수" }
+        },
+        "required": ["count"]
+      },
       "CreateUserDto": {
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "birth": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          }
+          "email": { "type": "string" },
+          "name": { "type": "string" },
+          "password": { "type": "string" },
+          "birth": { "type": "string" },
+          "phone": { "type": "string" }
         },
         "required": ["email", "name", "password", "birth", "phone"]
+      },
+      "CreateUserResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number" },
+          "message": { "type": "string" },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "required": true, "type": "string" },
+              "email": { "required": true, "type": "string" }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "user"]
+      },
+      "SigninUserDto": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "password": { "type": "string" },
+          "isSignin": { "type": "boolean" }
+        },
+        "required": ["email", "password", "isSignin"]
+      },
+      "SigninResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number" },
+          "message": { "type": "string" },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "required": true, "type": "string" },
+              "email": { "required": true, "type": "string" },
+              "name": { "required": true, "type": "string" },
+              "profileImg": { "required": true, "type": "string" }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "user"]
       }
     }
   }
