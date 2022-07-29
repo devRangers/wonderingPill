@@ -1,4 +1,5 @@
 import { styled } from "styletron-react";
+import { boolean } from "yup/lib/locale";
 
 export const Container = styled(
   "div",
@@ -125,8 +126,9 @@ export const DescriptionSecondBox = styled(
 );
 
 export const ModalInner = styled("div", {
+  // width: "80%",
   display: "grid",
-  gridTemplateRows: "1fr 2.5fr 2.5fr 0.5fr",
+  gridTemplateRows: "1fr 2.5fr 2.5fr 0.3fr",
   height: "90vh",
   backgroundColor: "#fff",
   padding: "0.5rem",
@@ -145,13 +147,14 @@ export const ModalTitle = styled("h1", {
 export const ModalGuideBox = styled("div", {});
 export const GuideDescriptionBox = styled(
   "div",
-  (props: { $bgColor: string }) => ({
+  (props: { $bgColor: string; $isWide: boolean }) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
 
     margin: "0 auto",
-    width: "95%",
+    padding: "0.8rem",
+    width: props.$isWide ? "75%" : "95%",
     height: "25%",
 
     borderRadius: "1.5rem",
@@ -161,14 +164,15 @@ export const GuideDescriptionBox = styled(
 );
 export const GuideNumber = styled("p", {
   color: "#fff",
-  flex: "0.15",
+  flex: "0.1",
   textAlign: "center",
 });
 
 export const Guide = styled("p", (props: { $isWide: boolean }) => ({
   color: "#000",
-  flex: "0.85",
-  fontSize: props.$isWide ? "1.2rem" : "15px",
+  flex: "0.9",
+  lineHeight: props.$isWide ? "1.2rem" : "18px",
+  fontSize: props.$isWide ? "1.1rem" : "15px",
 }));
 
 export const GuideImageWrapper = styled("div", {
@@ -181,35 +185,47 @@ export const GuideImageWrapper = styled("div", {
   margin: "1rem auto",
 });
 
-export const GuideTwoImageWrapper = styled("div", {
-  display: "grid",
-  gridTemplateRows: "1fr 0.3fr",
-  gridTemplateColumns: "1fr 1fr",
-  columnGap: "1rem",
-  justifyItems: "center",
-  alignItems: "center",
-  position: "relative",
-  width: "80%",
-  height: "70%",
+export const GuideTwoImageWrapper = styled(
+  "div",
+  (props: { $isWide: boolean }) => ({
+    display: "grid",
+    gridTemplateRows: "1fr 0.3fr",
+    gridTemplateColumns: "1fr 1fr",
+    columnGap: "1rem",
+    justifyItems: "center",
+    alignItems: "center",
+    position: "relative",
+    width: props.$isWide ? "50%" : "80%",
+    height: "70%",
 
-  margin: "0 auto",
-});
+    margin: "0 auto",
+  }),
+);
 
-export const CorrectImage = styled("div", {
-  position: "relative",
-  width: "100%",
-  height: "100%",
-  maxHeight: "7rem",
-  maxWidth: "7rem",
-  border: "1px solid",
-});
-export const WrongImage = styled("div", {
+export const OXImage = styled("div", (props: { $isWide: boolean }) => ({
   position: "relative",
   width: "100%",
   height: "100%",
-  maxHeight: "7rem",
-  maxWidth: "7rem",
+  maxHeight: props.$isWide ? " 8rem" : "6rem",
+  maxWidth: props.$isWide ? " 8rem" : "6rem",
   border: "1px solid",
+}));
+
+export const OX = styled("p", {
+  fontSize: "1.8rem",
 });
 
-export const ModalFooter = styled("div", {});
+export const ModalFooter = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+});
+
+export const CloseBtn = styled("button", {
+  color: "darkgray",
+  fontSize: "1.2rem",
+});
+
+export const CloseWeekendBtn = styled("button", {
+  color: "darkgray",
+  fontSize: "1.1rem",
+});
