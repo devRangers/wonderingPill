@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Provider as StyletronProvider } from "styletron-react";
+import { useAtom } from "jotai";
+import { userAtom } from "@atom/userAtom";
 import { styletron } from "@utils/styletron";
 import { URL_WITHOUT_HEADER } from "@utils/constant";
 import Header from "@header/Header";
@@ -18,8 +20,9 @@ function setScreenSize() {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [queryClient] = useState(() => new QueryClient());
   const router = useRouter();
+  const [, setUser] = useAtom(userAtom);
+  const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
     setScreenSize();
@@ -27,6 +30,20 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       window.removeEventListener("resize", () => setScreenSize());
     };
+  }, []);
+
+  useEffect(() => {
+    async function getUsers() {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/current`,
+        { credentials: "include" },
+      );
+      const result = await res.json();
+      if (result.statusCode === 200) {
+        setUser(result.user);
+      }
+    }
+    getUsers();
   }, []);
 
   return (
