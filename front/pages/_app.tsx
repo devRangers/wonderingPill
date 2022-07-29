@@ -1,16 +1,16 @@
 import "../styles/globals.css";
 import "../styles/reset.css";
-import { useState, useEffect } from "react";
-import Head from "next/head";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import Header from "@header/Header";
-import Footer from "@footer/Footer";
-import { ReactQueryDevtools } from "react-query/devtools";
+import Head from "next/head";
+import { useState, useEffect } from "react";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
 import { URL_WITHOUT_HEADER } from "@utils/constant";
+import Header from "@header/Header";
+import Footer from "@footer/Footer";
 
 function setScreenSize() {
   let vh = window.innerHeight * 0.01;

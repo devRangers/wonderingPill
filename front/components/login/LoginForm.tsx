@@ -38,6 +38,7 @@ const loginHandler = async (data: LoginTypes) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+    credentials: "include",
   });
 
   const result: SigninResponse = await res.json();
