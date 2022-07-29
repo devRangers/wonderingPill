@@ -206,6 +206,32 @@ export class AuthController {
     };
   }
 
+  @Get('current')
+  @UseGuards(RefreshGuard)
+  @ApiOperation({
+    summary: '현재 로그인 API',
+    description: '현재 로그인되어있는 유저를 불러온다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '현재 로그인 유저 조회 성공',
+  })
+  @ApiCookieAuth('refreshToken')
+  @ApiCookieAuth('accessToken')
+  async current(@GetCurrentUserId() id: string) {
+    const user = await this.authService.getUserById(id);
+    return {
+      statusCode: 200,
+      message: '현재 로그인 유저 조회에 성공했습니다.',
+      user: {
+        id,
+        email: user.email,
+        name: user.name,
+        profileImg: user.profileImg,
+      },
+    };
+  }
+
   // recaptcha를 guard로 대체 가능! 비용 절감
   // 일단은 api로 놔둠
   // @HttpCode(200)
