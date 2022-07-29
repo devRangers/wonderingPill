@@ -50,20 +50,18 @@ function Main() {
         </ImageSection>
         <MainSection>
           {Object.entries(MainSectionTitle).map(([key, value], index) => (
-            <>
-              <MainItem key={key}>
-                <Image
-                  src="/images/register_logo.png"
-                  alt={key}
-                  layout="fill"
-                  objectFit="cover"
-                  style={{
-                    borderRadius: "50%",
-                  }}
-                />
-                <h4>{key}</h4>
-              </MainItem>
-            </>
+            <MainItem key={key}>
+              <Image
+                src="/images/register_logo.png"
+                alt={key}
+                layout="fill"
+                objectFit="cover"
+                style={{
+                  borderRadius: "50%",
+                }}
+              />
+              <h4>{key}</h4>
+            </MainItem>
           ))}
         </MainSection>
       </MainContent>

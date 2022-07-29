@@ -12,18 +12,17 @@ export const FindWithImageContainer = styled("div", {
   height: "100%",
   display: "grid",
   gridTemplateRows: "1fr 1fr",
-  width: "80%",
   margin: "auto",
 });
 
-export const Camera = styled("section", {
-  border: "1px solid black",
-});
+export const Camera = styled("section", (props: { $bgColor: string }) => ({
+  backgroundColor: props.$bgColor,
+}));
 
 export const Description = styled("section", {
   display: "grid",
-  gridTemplateRows: "1fr 1fr 1fr 0.6fr",
-  border: "1px solid black",
+  gridTemplateRows: "0.7fr 1fr 1fr 0.3fr",
+  padding: "1.3rem",
 });
 
 export const DescriptionTitle = styled("div", {
@@ -46,6 +45,41 @@ export const Title = styled("span", {
   fontWeight: "bold",
 });
 
-export const DescriptionFirstBox = styled("div", {});
+export const DescriptionFirstBox = styled(
+  "div",
+  (props: { $bgColor: string }) => ({
+    margin: "0.4rem auto",
+    width: "90%",
+    backgroundColor: props.$bgColor,
+    borderRadius: "1.5rem",
+    display: "grid",
+    gridTemplateRows: "1fr",
+    gridTemplateColumns: "0.2fr 0.8fr",
+    alignItems: "center",
+  }),
+);
 
-export const DescriptionSecondBox = styled("div", {});
+export const Number = styled("span", {
+  textAlign: "center",
+  color: "#fff",
+  fontWeight: "bold",
+});
+
+export const DescriptionContent = styled("p", {
+  fontSize: "0.9rem",
+  fontWeight: "bold",
+});
+
+export const DescriptionSecondBox = styled(
+  "div",
+  (props: { $bgColor: string }) => ({
+    margin: "0.4rem auto",
+    width: "90%",
+    backgroundColor: props.$bgColor,
+    borderRadius: "1.5rem",
+    display: "grid",
+    gridTemplateRows: "1fr",
+    gridTemplateColumns: "0.2fr 0.8fr",
+    alignItems: "center",
+  }),
+);
