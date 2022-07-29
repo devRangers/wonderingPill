@@ -42,7 +42,7 @@ model User {
   isDeleted        Boolean?           @default(false)
   createdAt        DateTime?          @default(now()) @db.Date
   birth            String?            @db.VarChar(9)
-  updatedAt        DateTime?          @updatedAt  
+  updatedAt        DateTime?          @updatedAt
   refreshToken     String?            @db.VarChar(500)
   PharmacyBookMark PharmacyBookMark[]
 }
