@@ -1,7 +1,13 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useMutation } from "react-query";
+import { useAtom } from "jotai";
+import { userAtom } from "@atom/userAtom";
+import { SigninResponse } from "@modelTypes/signinResponse";
+import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
 import { BUTTON_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
 import {
   InputContainer,
@@ -23,19 +29,49 @@ import {
   GoogleBtn,
 } from "./LoginForm.style";
 
-interface LoginValues {
-  email: string;
-  password: string;
-}
+type LoginFormValues = Omit<LoginTypes, "isSignin">;
+
+const loginHandler = async (data: LoginTypes) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result: SigninResponse = await res.json();
+  if (result.statusCode >= 400) {
+    throw new Error(result.message);
+  }
+  return result;
+};
 
 function LoginForm() {
   const router = useRouter();
   const userEmail = router.query?.email as string;
 
-  const initialValue: LoginValues = {
+  const [, setUser] = useAtom(userAtom);
+  const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
+
+  const initialValue: LoginFormValues = {
     email: userEmail || "",
     password: "",
   };
+
+  const checkboxHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsAutoLoginChecked(e.target.checked);
+  };
+
+  const loginMutation = useMutation(loginHandler, {
+    onSuccess: (result) => {
+      setUser(result.user);
+      router.push("/");
+    },
+    onError: ({ message }) => {
+      console.log(message);
+    },
+  });
 
   const formik = useFormik({
     initialValues: initialValue,
@@ -52,7 +88,10 @@ function LoginForm() {
     }),
     onSubmit: async (values, actions) => {
       // Submit Handler 구현 예정
-      console.log(values);
+      const dataToSubmit: LoginTypes = Object.assign(values, {
+        isSignin: isAutoLoginChecked,
+      });
+      loginMutation.mutate(dataToSubmit);
     },
   });
 
@@ -96,7 +135,13 @@ function LoginForm() {
         </ContentContainer>
         <SubBtnContainer>
           <CheckboxContainer>
-            <input type="checkbox" name="auto-login" id="auto-login" />
+            <input
+              type="checkbox"
+              name="auto-login"
+              id="auto-login"
+              checked={isAutoLoginChecked}
+              onChange={checkboxHandler}
+            />
             <label htmlFor="auto-login">자동 로그인</label>
           </CheckboxContainer>
           <div>
