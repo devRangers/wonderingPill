@@ -31,9 +31,11 @@ import {
   CreateUserDto,
   CreateUserResponse,
   LogoutResponse,
+  RecapchaResponse,
   RefreshResponse,
   SigninResponse,
   SigninUserDto,
+  UseRecapchaDto,
 } from './dto';
 import { Tokens } from './types';
 
@@ -96,11 +98,17 @@ export class AuthController {
       signinUserDto.email,
       refreshToken,
     );
+    let httpOnlyValue;
+    if (process.env.NODE_ENV === 'production') {
+      httpOnlyValue = true;
+    } else {
+      httpOnlyValue = false;
+    }
 
     // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
-      httpOnly: true,
+      httpOnly: httpOnlyValue,
     });
 
     let maxAge;
@@ -115,7 +123,7 @@ export class AuthController {
     }
     res.cookie('RefreshToken', refreshToken, {
       maxAge,
-      httpOnly: true,
+      httpOnly: httpOnlyValue,
     });
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
@@ -220,6 +228,7 @@ export class AuthController {
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string) {
     const user = await this.authService.getUserById(id);
+    // 현재 로그인한 유저의 accesstoken 확인하고 재발행하는 pipe/guard 필요
     return {
       statusCode: 200,
       message: '현재 로그인 유저 조회에 성공했습니다.',
@@ -234,31 +243,36 @@ export class AuthController {
 
   // recaptcha를 guard로 대체 가능! 비용 절감
   // 일단은 api로 놔둠
-  // @HttpCode(200)
-  // @Post('recaptcha-v3')
-  // @ApiOperation({
-  //   summary: 'Recaptcha v3 요청 API',
-  //   description: 'Recaptcha v3에 인증을 요청하고 판별한다.',
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: '회원가입 성공',
-  //   type: RecapchaResponse,
-  // })
-  // @ApiBody({ type: UseRecapchaDto })
-  // async verifyRecaptchaV3(@Body() useRecapchaDto: UseRecapchaDto) {
-  //   const data = await this.authService.sendRecaptchaV3(useRecapchaDto);
-  //   const checkScore = await this.authService.checkRecaptchaV3(data.score);
+  @HttpCode(200)
+  @Post('recaptcha-v2')
+  @ApiOperation({
+    summary: 'Recaptcha v2 요청 API',
+    description: 'Recaptcha v2에 인증을 요청하고 판별한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원가입 성공',
+    type: RecapchaResponse,
+  })
+  @ApiBody({ type: UseRecapchaDto })
+  async verifyRecaptchaV2(@Body() useRecapchaDto: UseRecapchaDto) {
+    const success = await this.authService.sendRecaptchaV2(useRecapchaDto);
 
-  //   this.logger.verbose(`recaptcha v3 verify human Success!
-  //   Payload: ${JSON.stringify({ checkScore })}`);
+    this.logger.verbose(`recaptcha v3 verify human Success!
+    Payload: ${JSON.stringify({ success })}`);
 
-  //   return {
-  //     statusCode: 200,
-  //     message: '정상적인 트래픽 활동입니다.',
-  //     recaptchav3: { result: checkScore },
-  //   };
-  // }
+    return {
+      statusCode: 200,
+      message: '정상적인 트래픽 활동입니다.',
+      recaptchav2: { success },
+    };
+  }
+
+  // @Post('kakao')
+  // async kakao() {}
+
+  // @Post('google')
+  // async google() {}
 
   // @Post('send-sms')
   // async sendSMS() {}

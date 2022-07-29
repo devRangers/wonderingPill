@@ -36,7 +36,10 @@ async function bootstrap() {
 
   const PORT = process.env.SERVER_PORT || config.get('server').port; // PORT 설정
   setupSwagger(app); // Swagger 설정
-  app.enableCors(); // CORS 설정
+  app.enableCors({
+    // origin: true,
+    credentials: true,
+  }); // CORS 설정
   app.use(cookieParser()); // cookie parser 사용
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
 
