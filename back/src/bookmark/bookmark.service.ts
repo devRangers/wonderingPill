@@ -1,17 +1,31 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PharmacyBookMark } from '@prisma/client';
+import {
+  BookmarkCreateResponseDto,
+  BookmarkListResponseDto,
+} from './dto/bookmark.dto';
 @Injectable()
 export class BookmarkService {
   constructor(private prisma: PrismaService) {}
   async createBookmark(
-    userId: string,
     pharmacyId: number,
-  ): Promise<PharmacyBookMark> {
+    userId: string,
+  ): Promise<BookmarkCreateResponseDto> {
+    const bookmark = await this.getPharmacyBookmark(userId, pharmacyId);
+    console.log(bookmark);
+    if (bookmark) {
+      throw new ForbiddenException(
+        `ID : ${pharmacyId} 인 약국은 이미 북마크에 존재합니다.`,
+      );
+    }
     return await this.prisma.pharmacyBookMark.create({
       data: {
         user_id: userId,
         pharmacy_id: pharmacyId,
+      },
+      select: {
+        id: true,
+        pharmacy_id: true,
       },
     });
   }
@@ -27,24 +41,45 @@ export class BookmarkService {
     });
   }
 
-  async listBookmark(userId: string): Promise<PharmacyBookMark[]> {
+  async listBookmark(userId: string): Promise<BookmarkListResponseDto[]> {
     return await this.prisma.pharmacyBookMark.findMany({
       where: {
         user_id: userId,
       },
-      include: {
+      select: {
+        id: true,
         Pharmacy: true,
       },
     });
   }
 
-  async getBookmark(id: number, userId: string): Promise<PharmacyBookMark> {
+  async getBookmark(
+    id: number,
+    userId: string,
+  ): Promise<BookmarkListResponseDto> {
     return await this.prisma.pharmacyBookMark.findFirst({
       where: {
         user_id: userId,
         id,
       },
-      include: {
+      select: {
+        id: true,
+        Pharmacy: true,
+      },
+    });
+  }
+
+  async getPharmacyBookmark(
+    userId: string,
+    pharmacyId: number,
+  ): Promise<BookmarkListResponseDto> {
+    return await this.prisma.pharmacyBookMark.findFirst({
+      where: {
+        user_id: userId,
+        pharmacy_id: pharmacyId,
+      },
+      select: {
+        id: true,
         Pharmacy: true,
       },
     });
