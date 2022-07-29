@@ -22,7 +22,7 @@ export const SidebarContainer = styled(
     zIndex: "3",
 
     transform: props.$openSideBar ? "translateX(0)" : "translateX(-71vw)",
-    transition: "transform 0.7s",
+    transition: "transform 0.3s",
   }),
 );
 

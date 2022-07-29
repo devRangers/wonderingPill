@@ -4,7 +4,13 @@ import { useRouter } from "next/router";
 import Sidebar from "@sidebar/Sidebar";
 import { HEADER_HEIGHT, MAIN_COLOR, ROUTE } from "@utils/constant";
 import { BsJustify, BsFillBellFill } from "react-icons/bs";
-import { HeaderEmptyBox, HeaderContainer, HamburgerBtn } from "./Header.style";
+import {
+  HeaderEmptyBox,
+  HeaderContainer,
+  HamburgerBtn,
+  ImageWrapper,
+  BellBtn,
+} from "./Header.style";
 
 function Header() {
   const router = useRouter();
@@ -17,16 +23,18 @@ function Header() {
     <>
       <HeaderContainer $height={HEADER_HEIGHT} $bgColor={MAIN_COLOR}>
         <HamburgerBtn onClick={() => setOpenSideBar(true)} />
-        {router.pathname !== ROUTE.MAIN && (
-          <Image
-            src="/images/register_logo.png"
-            alt="wondering-pill-logo"
-            layout="fill"
-            objectFit="contain"
-            priority={true}
-          />
-        )}
-        <BsFillBellFill />
+        <ImageWrapper>
+          {router.pathname !== ROUTE.MAIN && (
+            <Image
+              src="/images/header/logo.png"
+              alt="wondering-pill-logo"
+              layout="fill"
+              objectFit="contain"
+              priority={true}
+            />
+          )}
+        </ImageWrapper>
+        <BellBtn />
       </HeaderContainer>
       <HeaderEmptyBox $height={HEADER_HEIGHT} />
       <Sidebar openSideBar={openSideBar} closeSideBar={closeSideBar} />

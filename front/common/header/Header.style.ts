@@ -1,4 +1,4 @@
-import { BsJustify } from "react-icons/bs";
+import { BsFillBellFill, BsJustify } from "react-icons/bs";
 import { styled } from "styletron-react";
 
 export const HeaderContainer = styled(
@@ -13,14 +13,27 @@ export const HeaderContainer = styled(
     fontSize: "2rem",
     color: "#fff",
 
-    display: "flex",
-    justifyContent: "space-between",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr",
+    justifyItems: "start",
     alignItems: "center",
   }),
 );
 
+export const ImageWrapper = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  position: "relative",
+  width: "100%",
+  height: "100%",
+});
+
 export const HamburgerBtn = styled(BsJustify, {
   zIndex: "1",
+});
+
+export const BellBtn = styled(BsFillBellFill, {
+  justifySelf: "end",
 });
 
 export const HeaderEmptyBox = styled(
