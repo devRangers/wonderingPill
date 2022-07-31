@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { CaptureButton, CaptureContainer } from "./FindWithImage.style";
 
 interface CaptureProp {
@@ -8,7 +8,8 @@ interface CaptureProp {
 function Capture({ cameraOn }: CaptureProp) {
   const [source, setSource] = useState("");
 
-  const handleCapture = (target) => {
+  const handleCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
     if (target.files) {
       if (target.files.length !== 0) {
         const file = target.files[0];
@@ -26,7 +27,7 @@ function Capture({ cameraOn }: CaptureProp) {
         id="icon-button-file"
         type="file"
         capture="environment"
-        onChange={(e) => handleCapture(e.target)}
+        onChange={(e) => handleCapture(e)}
         style={{ display: "none" }}
       />
       <CaptureButton htmlFor="icon-button-file"></CaptureButton>
