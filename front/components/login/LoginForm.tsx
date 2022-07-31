@@ -50,13 +50,16 @@ const loginHandler = async (data: LoginTypes) => {
 
 function LoginForm() {
   const router = useRouter();
-  const userEmail = router.query?.email as string;
+  const userEmail =
+    router.query?.email && typeof router.query?.email === "string"
+      ? router.query.email
+      : "";
 
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
 
   const initialValue: LoginFormValues = {
-    email: userEmail || "",
+    email: userEmail,
     password: "",
   };
 
