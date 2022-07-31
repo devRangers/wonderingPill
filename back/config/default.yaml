@@ -2,3 +2,13 @@ server:
   port: 5000
 db:
   DATABASE_URL:
+jwt:
+  secret:
+  expiresIn:
+jwt-refresh:
+  secret:
+  expiresIn:
+  expiresIn_autosave:
+redis:
+  host:
+  port:

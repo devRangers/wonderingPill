@@ -12,14 +12,14 @@ model Pharmacy {
   name             String?            @db.VarChar(50)
   phone            String?            @db.VarChar(20)
   address          String?
-  monday           String?             @db.VarChar(50)
-  tuesday          String?             @db.VarChar(50)
-  wednesday        String?             @db.VarChar(50)
-  thursday         String?             @db.VarChar(50)
-  friday           String?             @db.VarChar(50)
-  saturday         String?             @db.VarChar(50)
-  sunday           String?             @db.VarChar(50)
-  holiday          String?             @db.VarChar(50)
+  monday           String?            @db.VarChar(50)
+  tuesday          String?            @db.VarChar(50)
+  wednesday        String?            @db.VarChar(50)
+  thursday         String?            @db.VarChar(50)
+  friday           String?            @db.VarChar(50)
+  saturday         String?            @db.VarChar(50)
+  sunday           String?            @db.VarChar(50)
+  holiday          String?            @db.VarChar(50)
   PharmacyBookMark PharmacyBookMark[]
 }
 
@@ -41,7 +41,8 @@ model User {
   profileImg       String?            @default("imageUrl")
   isDeleted        Boolean?           @default(false)
   createdAt        DateTime?          @default(now()) @db.Date
-  updatedAt        DateTime?          @updatedAt
   birth            String?            @db.VarChar(9)
+  updatedAt        DateTime?          @updatedAt  
+  refreshToken     String?            @db.VarChar(500)
   PharmacyBookMark PharmacyBookMark[]
 }

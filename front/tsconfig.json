@@ -22,8 +22,14 @@
       "@userContainer/*": ["common/userContainer/*"],
       "@modal/*": ["common/modal/*"],
       "@recaptcha/*": ["common/recaptcha/*"],
-      "@loginComp/*": ["components/login/*"],
+      "@footer/*": ["common/footer/*"],
+      "@header/*": ["common/header/*"],
+      "@sidebar/*": ["common/sidebar/*"],
       "@accountComp/*": ["components/account/*"],
+      "@loginComp/*": ["components/login/*"],
+      "@mainComp/*": ["components/main/*"],
+      "@registerComp/*": ["components/register/*"],
+      "@searchComp/*": ["components/search/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },

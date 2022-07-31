@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Image from "next/image";
 import { MAIN_COLOR } from "@utils/constant";
 import {
@@ -9,7 +10,6 @@ import {
 import Header from "@userContainer/Header";
 import UserDataForm from "./UserDataForm";
 import Authentication from "./Authentication";
-import { useState } from "react";
 
 export interface ApplySubmitValues {
   phoneNumber: string;
