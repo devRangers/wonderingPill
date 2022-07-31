@@ -6,6 +6,7 @@ export const ERROR_MSG_COLOR = "#bd0000";
 export const HEADER_HEIGHT = "10vh";
 export const FOOTER_HEIGHT = "8vh";
 export const SIDE_BAR_HEADER_HEIGHT = "7vh";
+export const FULL_HEIGHT = "var(--vh, 1vh) * 100";
 
 export const ROUTE = {
   MAIN: "/",

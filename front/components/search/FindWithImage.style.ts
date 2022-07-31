@@ -1,11 +1,14 @@
 import { styled } from "styletron-react";
-import { boolean } from "yup/lib/locale";
 
 export const Container = styled(
   "div",
-  (props: { $headerHeight: string; $footerHeight: string }) => ({
+  (props: {
+    $headerHeight: string;
+    $footerHeight: string;
+    $fullHeight: string;
+  }) => ({
     width: "100vw",
-    height: `calc(var(--vh, 1vh) * 100 - (${props.$headerHeight} + ${props.$footerHeight}))`,
+    height: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
   }),
 );
 

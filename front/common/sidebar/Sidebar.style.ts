@@ -1,24 +1,27 @@
 import { styled } from "styletron-react";
-export const BackGround = styled("div", (props: { $openSideBar: boolean }) => ({
-  position: "fixed",
-  width: "100vw",
-  height: "100vh",
-  top: "0",
-  left: "0",
-  backgroundColor: "black",
-  opacity: "0.4",
-  visibility: props.$openSideBar ? "visible" : "hidden",
-  zIndex: "2",
-}));
+export const BackGround = styled(
+  "div",
+  (props: { $openSideBar: boolean; $fullHeight: string }) => ({
+    position: "fixed",
+    width: "100vw",
+    height: `calc(${props.$fullHeight})`,
+    top: "0",
+    left: "0",
+    backgroundColor: "black",
+    opacity: "0.4",
+    visibility: props.$openSideBar ? "visible" : "hidden",
+    zIndex: "2",
+  }),
+);
 
 export const SidebarContainer = styled(
   "aside",
-  (props: { $openSideBar: boolean }) => ({
+  (props: { $openSideBar: boolean; $fullHeight: string }) => ({
     position: "fixed",
     top: "0",
     left: "0",
     width: "70vw",
-    height: "100vh",
+    height: `calc(${props.$fullHeight})`,
     zIndex: "3",
 
     transform: props.$openSideBar ? "translateX(0)" : "translateX(-71vw)",

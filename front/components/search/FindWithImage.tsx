@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { FOOTER_HEIGHT, HEADER_HEIGHT, MAIN_COLOR } from "@utils/constant";
+import {
+  FOOTER_HEIGHT,
+  FULL_HEIGHT,
+  HEADER_HEIGHT,
+  MAIN_COLOR,
+} from "@utils/constant";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
   Camera,
@@ -31,7 +36,10 @@ function FindWithImage() {
 
   return (
     <>
-      <Container $headerHeight={HEADER_HEIGHT} $footerHeight={FOOTER_HEIGHT}>
+      <Container
+        $headerHeight={HEADER_HEIGHT}
+        $footerHeight={FOOTER_HEIGHT}
+        $fullHeight={FULL_HEIGHT}>
         <FindWithImageContainer $bgColor={MAIN_COLOR} $isWide={isWide}>
           <Camera $bgColor={MAIN_COLOR} $isWide={isWide}>
             <ImageWrapper>

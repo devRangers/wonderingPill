@@ -1,5 +1,6 @@
 import Router, { useRouter } from "next/router";
 import {
+  FULL_HEIGHT,
   MAIN_COLOR,
   ROUTE,
   SIDE_BAR_HEADER_HEIGHT,
@@ -70,8 +71,12 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
   };
   return (
     <>
-      <BackGround $openSideBar={openSideBar} onClick={handleCloseBar} />
-      <SidebarContainer $openSideBar={openSideBar}>
+      <BackGround
+        $openSideBar={openSideBar}
+        $fullHeight={FULL_HEIGHT}
+        onClick={handleCloseBar}
+      />
+      <SidebarContainer $openSideBar={openSideBar} $fullHeight={FULL_HEIGHT}>
         <SidebarHeader $height={SIDE_BAR_HEADER_HEIGHT} $bgColor={MAIN_COLOR}>
           <BsArrowLeftShort color={SUB_COLOR} onClick={handleCloseBar} />
         </SidebarHeader>
