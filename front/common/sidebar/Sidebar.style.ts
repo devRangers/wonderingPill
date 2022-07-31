@@ -35,7 +35,6 @@ export const SidebarHeader = styled(
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
-
     padding: "0.3rem",
     height: props.$height,
     backgroundColor: props.$bgColor,
@@ -43,16 +42,18 @@ export const SidebarHeader = styled(
   }),
 );
 
-export const SidebarBody = styled("div", (props: { $height: string }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between",
-
-  height: `calc(100vh - ${props.$height})`,
-  backgroundColor: "#fff",
-  padding: "1.6rem 1rem",
-}));
+export const SidebarBody = styled(
+  "div",
+  (props: { $height: string; $fullHeight: string }) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: `calc((${props.$fullHeight}) - ${props.$height})`,
+    backgroundColor: "#fff",
+    padding: "1.6rem 1rem",
+  }),
+);
 
 export const BtnContainer = styled("div", {
   textAlign: "center",
