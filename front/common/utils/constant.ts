@@ -15,6 +15,7 @@ export const ROUTE = {
   EMAIL_RESULT: "/account/email/result",
   PASSWORD_FIND: "/account/password/find",
   PASSWORD_NEW: "/account/password/new",
+  SEARCH_IMAGE: "/search/image",
   ERROR: "/error",
   BLOCK: "/blocked",
 };

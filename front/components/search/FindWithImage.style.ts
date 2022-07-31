@@ -25,11 +25,12 @@ export const FindWithImageContainer = styled(
 export const Camera = styled(
   "section",
   (props: { $bgColor: string; $isWide: boolean }) => ({
-    backgroundColor: props.$bgColor,
     display: "flex",
     alignItems: "center",
+    position: "relative",
     margin: "0 auto",
     width: props.$isWide ? "70%" : "100%",
+    backgroundColor: props.$bgColor,
   }),
 );
 
@@ -220,12 +221,31 @@ export const ModalFooter = styled("div", {
   justifyContent: "space-between",
 });
 
-export const CloseBtn = styled("button", {
+export const CloseBtn = styled("button", (props: { $isWide: boolean }) => ({
   color: "darkgray",
-  fontSize: "1.2rem",
+  fontSize: props.$isWide ? "1.2rem" : "0.8rem",
+}));
+
+export const CloseWeekendBtn = styled(
+  "button",
+  (props: { $isWide: boolean }) => ({
+    color: "darkgray",
+    fontSize: props.$isWide ? "1.2rem" : "0.8rem",
+  }),
+);
+
+export const CaptureContainer = styled("div", {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  border: "1px solid black",
+  width: "100%",
+  height: "100%",
 });
 
-export const CloseWeekendBtn = styled("button", {
-  color: "darkgray",
-  fontSize: "1.1rem",
+export const CaptureButton = styled("label", {
+  display: "inline-block",
+  width: "100%",
+  height: "100%",
 });

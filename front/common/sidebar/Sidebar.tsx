@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import {
   MAIN_COLOR,
   ROUTE,
@@ -23,37 +23,51 @@ interface SidebarProp {
 
 interface ButtonTitleValues {
   title: string;
+  pushUrl: string;
 }
 
 const ButtonTitle: { [key in string]: ButtonTitleValues } = {
   findWithPicture: {
     title: "사진으로 찾기",
+    pushUrl: ROUTE.SEARCH_IMAGE,
   },
   findPharmacy: {
     title: "약국 찾기",
+    pushUrl: ROUTE.MAIN,
   },
   searchPill: {
     title: "시제품 약 검색",
+    pushUrl: ROUTE.MAIN,
   },
   searchSymptom: {
     title: "증상으로 검색",
+    pushUrl: ROUTE.MAIN,
   },
   healthChallenge: {
     title: "내 건강 캘린더",
+    pushUrl: ROUTE.MAIN,
   },
   myPage: {
     title: "마이페이지",
+    pushUrl: ROUTE.MAIN,
   },
   guide: {
     title: "설치 가이드",
+    pushUrl: ROUTE.MAIN,
   },
 };
 
 function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
+  const router = useRouter();
+
   const handleCloseBar = () => {
     closeSideBar();
   };
-  const router = useRouter();
+
+  const handleClickBtn = (url: string) => {
+    handleCloseBar();
+    router.push(url);
+  };
   return (
     <>
       <BackGround $openSideBar={openSideBar} onClick={handleCloseBar} />
@@ -64,7 +78,10 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
         <SidebarBody $height={SIDE_BAR_HEADER_HEIGHT}>
           <BtnContainer>
             {Object.entries(ButtonTitle).map(([key, value], index) => (
-              <SidebarBtn key={key} $bgColor={MAIN_COLOR}>
+              <SidebarBtn
+                key={key}
+                $bgColor={MAIN_COLOR}
+                onClick={() => handleClickBtn(value.pushUrl)}>
                 {value.title}
               </SidebarBtn>
             ))}
