@@ -5,7 +5,7 @@ export const Container = styled(
   "div",
   (props: { $headerHeight: string; $footerHeight: string }) => ({
     width: "100vw",
-    height: `calc(100vh - (${props.$headerHeight} + ${props.$footerHeight}))`,
+    height: `calc(var(--vh, 1vh) * 100 - (${props.$headerHeight} + ${props.$footerHeight}))`,
   }),
 );
 
@@ -209,7 +209,6 @@ export const OXImage = styled("div", (props: { $isWide: boolean }) => ({
   height: "100%",
   maxHeight: props.$isWide ? " 8rem" : "6rem",
   maxWidth: props.$isWide ? " 8rem" : "6rem",
-  border: "1px solid",
 }));
 
 export const OX = styled("p", {
@@ -239,7 +238,6 @@ export const CaptureContainer = styled("div", {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  border: "1px solid black",
   width: "100%",
   height: "100%",
 });

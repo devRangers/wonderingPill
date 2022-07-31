@@ -15,13 +15,13 @@ function Capture({ cameraOn }: CaptureProp) {
         const file = target.files[0];
         const newUrl = URL.createObjectURL(file);
         setSource(newUrl);
+        // 이미지를 서버에 보내주면 됨!
       }
     }
   };
 
   return (
     <CaptureContainer>
-      {/* {source && <img src={source} alt={"snap"}></img>} */}
       <input
         accept="image/*"
         id="icon-button-file"

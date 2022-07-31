@@ -8,7 +8,7 @@ export const MainContainer = styled(
     $footerHeight: string;
   }) => ({
     backgroundColor: props.$bgColor,
-    height: `calc(100vh - (${props.$headerHeight} + ${props.$footerHeight}))`,
+    height: `calc(var(--vh, 1vh) * 100 - (${props.$headerHeight} + ${props.$footerHeight}))`,
   }),
 );
 
