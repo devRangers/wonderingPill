@@ -21,16 +21,15 @@ function Capture({ cameraOn }: CaptureProp) {
 
   return (
     <CaptureContainer>
-      {source && <img src={source} alt={"snap"}></img>}
+      {/* {source && <img src={source} alt={"snap"}></img>} */}
       <input
         accept="image/*"
         id="icon-button-file"
         type="file"
-        capture="environment"
-        onChange={(e) => handleCapture(e)}
+        onChange={handleCapture}
         style={{ display: "none" }}
       />
-      <CaptureButton htmlFor="icon-button-file"></CaptureButton>
+      <CaptureButton htmlFor="icon-button-file" />
     </CaptureContainer>
   );
 }
