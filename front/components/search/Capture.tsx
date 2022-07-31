@@ -26,7 +26,7 @@ function Capture({ cameraOn }: CaptureProp) {
         accept="image/*"
         id="icon-button-file"
         type="file"
-        capture="environment"
+        // capture="environment"
         onChange={(e) => handleCapture(e)}
         style={{ display: "none" }}
       />
