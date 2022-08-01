@@ -96,7 +96,7 @@ export const DescriptionFirstBox = styled(
   }),
 );
 
-export const Number = styled("p", {
+export const Numbering = styled("p", {
   textAlign: "center",
   color: "#fff",
   fontWeight: "bold",
@@ -197,7 +197,7 @@ export const GuideTwoImageWrapper = styled(
   }),
 );
 
-export const OXImage = styled("div", (props: { $isWide: boolean }) => ({
+export const PillImage = styled("div", (props: { $isWide: boolean }) => ({
   position: "relative",
   width: "100%",
   height: "100%",
@@ -205,7 +205,7 @@ export const OXImage = styled("div", (props: { $isWide: boolean }) => ({
   maxWidth: props.$isWide ? " 8rem" : "6rem",
 }));
 
-export const OX = styled("p", {
+export const ImageDescription = styled("p", {
   fontSize: "1.8rem",
 });
 

@@ -27,14 +27,15 @@ function Header() {
         </HamburgerBtn>
         <ImageWrapper>
           {router.pathname !== ROUTE.MAIN && (
-            <Image
-              src="/images/header/logo.png"
-              alt="wondering-pill-logo"
-              layout="fill"
-              objectFit="contain"
-              priority={true}
-              onClick={() => router.push(ROUTE.MAIN)}
-            />
+            <button onClick={() => router.push(ROUTE.MAIN)}>
+              <Image
+                src="/images/header/logo.png"
+                alt="wondering-pill-logo"
+                layout="fill"
+                objectFit="contain"
+                priority={true}
+              />
+            </button>
           )}
         </ImageWrapper>
         <BellBtn>

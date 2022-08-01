@@ -32,15 +32,19 @@ export const SidebarContainer = styled(
 export const SidebarHeader = styled(
   "div",
   (props: { $height: string; $bgColor: string }) => ({
-    display: "flex",
-    alignItems: "center",
+    display: "grid",
     justifyContent: "flex-end",
-    padding: "0.3rem",
     height: props.$height,
     backgroundColor: props.$bgColor,
-    fontSize: "2rem",
   }),
 );
+
+export const BackArrow = styled("button", {
+  fontSize: "2rem",
+  alignSelf: "center",
+  width: "2.7rem",
+  height: "2.7rem",
+});
 
 export const SidebarBody = styled(
   "div",

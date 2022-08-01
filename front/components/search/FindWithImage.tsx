@@ -18,7 +18,7 @@ import {
   DescriptionTitle,
   FindWithImageContainer,
   ImageWrapper,
-  Number,
+  Numbering,
   Title,
   TitleLine,
 } from "./FindWithImage.style";
@@ -27,7 +27,6 @@ import Capture from "./Capture";
 
 function FindWithImage() {
   const isWide = isWideDevice();
-  const [cameraOn, setCameraOn] = useState(false);
 
   useEffect(() => {
     // 여기서 이제 일주일동안 안보이기 했는지 체크한다.
@@ -52,7 +51,7 @@ function FindWithImage() {
                 }}
                 priority={true}
               />
-              <Capture cameraOn={cameraOn} />
+              <Capture />
             </ImageWrapper>
           </Camera>
           <DescriptionContainer $isWide={isWide}>
@@ -62,13 +61,13 @@ function FindWithImage() {
                 <Title>사진으로 찾기 이용 방법</Title>
               </DescriptionTitle>
               <DescriptionFirstBox $bgColor={MAIN_COLOR}>
-                <Number>1</Number>
+                <Numbering>1</Numbering>
                 <DescriptionContent>
                   위 일러스트를 클릭하고 알고 싶은 알약 사진을 찍으세요!
                 </DescriptionContent>
               </DescriptionFirstBox>
               <DescriptionSecondBox $bgColor={MAIN_COLOR}>
-                <Number>2</Number>
+                <Numbering>2</Numbering>
                 <DescriptionContent>
                   머신러닝으로 알아낸 알약 이름과
                   <br /> 성분 등을 알아보세요!

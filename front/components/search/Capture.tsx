@@ -1,22 +1,16 @@
 import { useState } from "react";
 import { CaptureButton, CaptureContainer } from "./FindWithImage.style";
 
-interface CaptureProp {
-  cameraOn: boolean;
-}
-
-function Capture({ cameraOn }: CaptureProp) {
+function Capture() {
   const [source, setSource] = useState("");
 
   const handleCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    if (target.files) {
-      if (target.files.length !== 0) {
-        const file = target.files[0];
-        const newUrl = URL.createObjectURL(file);
-        setSource(newUrl);
-        // 이미지를 서버에 보내주면 됨!
-      }
+    const { files } = event.target;
+    if (files?.length) {
+      const file = files[0];
+      const newUrl = URL.createObjectURL(file);
+      setSource(newUrl);
+      // 이미지를 서버에 보내주면 됨!
     }
   };
 
