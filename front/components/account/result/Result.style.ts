@@ -1,12 +1,15 @@
 import { styled } from "styletron-react";
 
-export const Container = styled("div", (props: { $bgColor: string }) => ({
-  width: "100vw",
-  height: "calc(var(--vh, 1vh) * 100)",
-  backgroundColor: props.$bgColor,
-  display: "grid",
-  gridTemplateRows: "1fr 1.4fr 0.6fr",
-}));
+export const Container = styled(
+  "div",
+  (props: { $bgColor: string; $fullHeight: string }) => ({
+    width: "100vw",
+    height: `calc(${props.$fullHeight})`,
+    backgroundColor: props.$bgColor,
+    display: "grid",
+    gridTemplateRows: "1fr 1.4fr 0.6fr",
+  }),
+);
 
 export const TitleContainer = styled("div", {
   display: "grid",

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MAIN_COLOR } from "@utils/constant";
+import { FULL_HEIGHT, MAIN_COLOR } from "@utils/constant";
 import {
   MainContainer,
   HeaderContainer,
@@ -13,7 +13,7 @@ interface UserContainerProps {
 
 function Container({ children }: UserContainerProps) {
   return (
-    <MainContainer $bgColor={MAIN_COLOR}>
+    <MainContainer $bgColor={MAIN_COLOR} $fullHeight={FULL_HEIGHT}>
       <HeaderContainer>
         <Header />
       </HeaderContainer>
