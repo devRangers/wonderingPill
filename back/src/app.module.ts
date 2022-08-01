@@ -7,11 +7,13 @@ import { AccessGuard } from './common/guards';
 import { PharmacyController } from './pharmacy/pharmacy.controller';
 import { PharmacyService } from './pharmacy/pharmacy.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { BookmarkController } from './bookmark/bookmark.controller';
+import { BookmarkService } from './bookmark/bookmark.service';
 import { PrismaService } from './prisma/prisma.service';
-
 @Module({
-  imports: [HttpModule, AuthModule, PrismaModule],
-  controllers: [PharmacyController],
+  imports: [AuthModule, PrismaModule, HttpModule],
+  controllers: [PharmacyController, BookmarkController],
+
   providers: [
     {
       provide: APP_GUARD,
@@ -23,6 +25,7 @@ import { PrismaService } from './prisma/prisma.service';
     },
     PharmacyService,
     PrismaService,
+    BookmarkService,
   ],
   exports: [HttpModule],
 })
