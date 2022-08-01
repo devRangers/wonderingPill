@@ -82,7 +82,7 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
         </SidebarHeader>
         <SidebarBody $height={SIDE_BAR_HEADER_HEIGHT} $fullHeight={FULL_HEIGHT}>
           <BtnContainer>
-            {Object.entries(ButtonTitle).map(([key, value], index) => (
+            {Object.entries(ButtonTitle).map(([key, value]) => (
               <SidebarBtn
                 key={key}
                 $bgColor={MAIN_COLOR}

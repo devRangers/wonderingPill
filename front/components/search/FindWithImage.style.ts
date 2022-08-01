@@ -17,10 +17,8 @@ export const FindWithImageContainer = styled(
   (props: { $bgColor: string; $isWide: boolean }) => ({
     display: "grid",
     gridTemplateRows: "1fr 1fr",
-
     height: "100%",
-    margin: "auto",
-
+    margin: "0 auto",
     backgroundColor: props.$isWide ? props.$bgColor : "transparent",
   }),
 );
@@ -30,7 +28,6 @@ export const Camera = styled(
   (props: { $bgColor: string; $isWide: boolean }) => ({
     display: "flex",
     alignItems: "center",
-    position: "relative",
     margin: "0 auto",
     width: props.$isWide ? "70%" : "100%",
     backgroundColor: props.$bgColor,
@@ -74,7 +71,6 @@ export const TitleLine = styled("div", (props: { $bgColor: string }) => ({
   top: 0,
   width: "35%",
   height: "0.7rem",
-
   backgroundColor: props.$bgColor,
 }));
 
@@ -92,12 +88,10 @@ export const DescriptionFirstBox = styled(
     gridTemplateRows: "1fr",
     gridTemplateColumns: "0.15fr 0.85fr",
     alignItems: "center",
-
     width: "90%",
     margin: "0.4rem auto",
     padding: "0.5rem",
     borderRadius: "1.5rem",
-
     backgroundColor: props.$bgColor,
   }),
 );
@@ -155,14 +149,11 @@ export const GuideDescriptionBox = styled(
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-
     margin: "0 auto",
     padding: "0.8rem",
     width: props.$isWide ? "75%" : "95%",
     height: "25%",
-
     borderRadius: "1.5rem",
-
     backgroundColor: props.$bgColor,
   }),
 );

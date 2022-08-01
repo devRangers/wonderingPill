@@ -1,4 +1,3 @@
-import { BsFillBellFill, BsJustify } from "react-icons/bs";
 import { styled } from "styletron-react";
 
 export const HeaderContainer = styled(
@@ -10,8 +9,6 @@ export const HeaderContainer = styled(
     backgroundColor: props.$bgColor,
 
     padding: "0.7rem",
-    fontSize: "2rem",
-    color: "#fff",
 
     display: "grid",
     gridTemplateColumns: "1fr 1fr 1fr",
@@ -28,11 +25,15 @@ export const ImageWrapper = styled("div", {
   height: "100%",
 });
 
-export const HamburgerBtn = styled(BsJustify, {
+export const HamburgerBtn = styled("button", {
+  fontSize: "2rem",
+  color: "#fff",
   zIndex: "1",
 });
 
-export const BellBtn = styled(BsFillBellFill, {
+export const BellBtn = styled("button", {
+  fontSize: "1.5rem",
+  color: "#fff",
   justifySelf: "end",
 });
 
