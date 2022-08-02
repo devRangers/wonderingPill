@@ -9,14 +9,33 @@ export const HeaderContainer = styled(
     backgroundColor: props.$bgColor,
 
     padding: "0.7rem",
-    fontSize: "2rem",
-    color: "#fff",
 
-    display: "flex",
-    justifyContent: "space-between",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr",
+    justifyItems: "start",
     alignItems: "center",
   }),
 );
+
+export const ImageWrapper = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  position: "relative",
+  width: "100%",
+  height: "100%",
+});
+
+export const HamburgerBtn = styled("button", {
+  fontSize: "2rem",
+  color: "#fff",
+  zIndex: "1",
+});
+
+export const BellBtn = styled("button", {
+  fontSize: "1.5rem",
+  color: "#fff",
+  justifySelf: "end",
+});
 
 export const HeaderEmptyBox = styled(
   "header",

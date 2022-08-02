@@ -1,6 +1,10 @@
-import { MAIN_COLOR } from "@utils/constant";
 import Image from "next/image";
-import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@utils/constant";
+import {
+  FOOTER_HEIGHT,
+  FULL_HEIGHT,
+  HEADER_HEIGHT,
+  MAIN_COLOR,
+} from "@utils/constant";
 import {
   ImageSection,
   MainContainer,
@@ -38,7 +42,8 @@ function Main() {
     <MainContainer
       $bgColor={MAIN_COLOR}
       $headerHeight={HEADER_HEIGHT}
-      $footerHeight={FOOTER_HEIGHT}>
+      $footerHeight={FOOTER_HEIGHT}
+      $fullHeight={FULL_HEIGHT}>
       <MainContent>
         <ImageSection>
           <Image
@@ -51,20 +56,18 @@ function Main() {
         </ImageSection>
         <MainSection>
           {Object.entries(MainSectionTitle).map(([key, value], index) => (
-            <>
-              <MainItem key={key}>
-                <Image
-                  src="/images/register_logo.png"
-                  alt={key}
-                  layout="fill"
-                  objectFit="cover"
-                  style={{
-                    borderRadius: "50%",
-                  }}
-                />
-                <h4>{key}</h4>
-              </MainItem>
-            </>
+            <MainItem key={key}>
+              <Image
+                src="/images/register_logo.png"
+                alt={key}
+                layout="fill"
+                objectFit="cover"
+                style={{
+                  borderRadius: "50%",
+                }}
+              />
+              <h4>{key}</h4>
+            </MainItem>
           ))}
         </MainSection>
       </MainContent>

@@ -1,7 +1,13 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { isWideDevice } from "@utils/isWideDevice";
-import { MAIN_COLOR, SUB_COLOR, BUTTON_COLOR, ROUTE } from "@utils/constant";
+import {
+  MAIN_COLOR,
+  SUB_COLOR,
+  BUTTON_COLOR,
+  ROUTE,
+  FULL_HEIGHT,
+} from "@utils/constant";
 import {
   Container,
   TitleContainer,
@@ -34,7 +40,7 @@ const FindEmailResultPage: NextPage = () => {
   const isWide = isWideDevice();
 
   return (
-    <Container $bgColor={MAIN_COLOR}>
+    <Container $bgColor={MAIN_COLOR} $fullHeight={FULL_HEIGHT}>
       <TitleContainer>
         <Title $txtColor={SUB_COLOR}>계정 찾기</Title>
         <SubTitle>회원님의 계정 찾기가 완료되었습니다.</SubTitle>
