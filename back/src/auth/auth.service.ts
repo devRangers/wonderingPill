@@ -175,6 +175,11 @@ export class AuthService {
       secret: process.env.JWT_SECRET || config.get('jwt').secret,
       expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
     });
+
+    if (!accessToken) {
+      throw new ForbiddenException('accessToken을 생성하지 못했습니다.');
+    }
+
     return accessToken;
   }
 
@@ -217,5 +222,19 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async getPWChangeToken(id: string, email: string) {
+    const token = await this.getAccessToken(id, email);
+    const user = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        changePWToken: token,
+      },
+    });
+    if (!user) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
+    return token;
   }
 }
