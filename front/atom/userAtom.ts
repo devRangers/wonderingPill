@@ -1,4 +1,4 @@
-import { atomWithStorage } from "jotai/utils";
+import { atom } from "jotai";
 import { SigninResponseUser as User } from "@modelTypes/signinResponseUser";
 
 const initialState: User = {
@@ -8,4 +8,4 @@ const initialState: User = {
   profileImg: "",
 };
 
-export const userAtom = atomWithStorage<User>("user", initialState);
+export const userAtom = atom(initialState);
