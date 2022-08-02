@@ -6,9 +6,10 @@ export const MainContainer = styled(
     $bgColor: string;
     $headerHeight: string;
     $footerHeight: string;
+    $fullHeight: string;
   }) => ({
     backgroundColor: props.$bgColor,
-    height: `calc(100vh - (${props.$headerHeight} + ${props.$footerHeight}))`,
+    height: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
   }),
 );
 
