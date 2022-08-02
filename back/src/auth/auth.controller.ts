@@ -98,17 +98,12 @@ export class AuthController {
       signinUserDto.email,
       refreshToken,
     );
-    let httpOnlyValue;
-    if (process.env.NODE_ENV === 'production') {
-      httpOnlyValue = true;
-    } else {
-      httpOnlyValue = false;
-    }
 
     // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
-      httpOnly: httpOnlyValue,
+      httpOnly: true,
+      // secure:true
     });
 
     let maxAge;
@@ -123,7 +118,8 @@ export class AuthController {
     }
     res.cookie('RefreshToken', refreshToken, {
       maxAge,
-      httpOnly: httpOnlyValue,
+      httpOnly: true,
+      // secure:true
     });
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
