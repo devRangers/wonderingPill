@@ -3,17 +3,39 @@ export const SUB_COLOR = "#3C5A93";
 export const BUTTON_COLOR = "#9ADCDD";
 export const ERROR_MSG_COLOR = "#bd0000";
 
+export const HEADER_HEIGHT = "10vh";
+export const FOOTER_HEIGHT = "8vh";
+export const SIDE_BAR_HEADER_HEIGHT = "7vh";
+export const FULL_HEIGHT = "var(--vh, 1vh) * 100";
+
 export const ROUTE = {
-  LOGIN: {
-    link: "/login",
-  },
-  REGISTER: {
-    link: "/register",
-  },
-  PASSWORD_FIND: {
-    link: "/account/password/find",
-  },
-  PASSWORD_NEW: {
-    link: "/account/password/new",
-  },
+  MAIN: "/",
+  LOGIN: "/login",
+  REGISTER: "/register",
+  EMAIL_FIND: "/account/email/find",
+  EMAIL_RESULT: "/account/email/result",
+  PASSWORD_FIND: "/account/password/find",
+  PASSWORD_NEW: "/account/password/new",
+  SEARCH_IMAGE: "/search/image",
+  ERROR: "/error",
+  BLOCK: "/blocked",
 };
+
+export const URL_WITHOUT_HEADER = [
+  ROUTE.LOGIN,
+  ROUTE.REGISTER,
+  ROUTE.EMAIL_FIND,
+  ROUTE.EMAIL_RESULT,
+  ROUTE.PASSWORD_FIND,
+  ROUTE.PASSWORD_NEW,
+  ROUTE.ERROR,
+  ROUTE.BLOCK,
+];
+
+export const URL_WITH_BOTD = [
+  ROUTE.LOGIN,
+  ROUTE.REGISTER,
+  ROUTE.EMAIL_FIND,
+  ROUTE.PASSWORD_FIND,
+  ROUTE.PASSWORD_NEW,
+];

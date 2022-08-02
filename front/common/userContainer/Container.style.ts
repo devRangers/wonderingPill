@@ -1,12 +1,15 @@
 import { styled } from "styletron-react";
 
-export const MainContainer = styled("div", (props: { $bgColor: string }) => ({
-  width: "100vw",
-  minHeight: "100vh",
-  display: "grid",
-  gridTemplateRows: "1fr 3fr 5fr",
-  backgroundColor: props.$bgColor,
-}));
+export const MainContainer = styled(
+  "div",
+  (props: { $bgColor: string; $fullHeight: string }) => ({
+    width: "100vw",
+    height: `calc(${props.$fullHeight})`,
+    display: "grid",
+    gridTemplateRows: "1fr 3fr 5fr",
+    backgroundColor: props.$bgColor,
+  }),
+);
 
 export const HeaderContainer = styled("div", {
   display: "flex",
