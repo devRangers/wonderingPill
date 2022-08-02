@@ -23,6 +23,6 @@ import { PrismaService } from './prisma/prisma.service';
     PrismaService,
     BookmarkService,
   ],
-  exports: [HttpModule],
+  exports: [HttpModule, MailModule],
 })
 export class AppModule {}

@@ -284,6 +284,7 @@ export class AuthController {
   @ApiBody({ type: FindPasswordDto })
   async sendEmail(@Body() findPasswordDto: FindPasswordDto) {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
+    // 토큰 생성해서 보내줘야함
     const result = await this.mailService.sendEmail(user.email, user.name);
     this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
