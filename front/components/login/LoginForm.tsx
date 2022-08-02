@@ -90,8 +90,7 @@ function LoginForm() {
         )
         .required("비밀번호를 입력해 주세요."),
     }),
-    onSubmit: async (values, actions) => {
-      // Submit Handler 구현 예정
+    onSubmit: async (values) => {
       const dataToSubmit: LoginTypes = Object.assign(values, {
         isSignin: isAutoLoginChecked,
       });

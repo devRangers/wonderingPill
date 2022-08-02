@@ -1,7 +1,7 @@
 import { atomWithStorage } from "jotai/utils";
 import { SigninResponseUser as User } from "@modelTypes/signinResponseUser";
 
-const initialState = {
+const initialState: User = {
   id: "",
   email: "",
   name: "",
