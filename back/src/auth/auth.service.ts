@@ -174,12 +174,9 @@ export class AuthService {
   }
 
   async logout(id: string): Promise<boolean> {
-    const user = await this.prisma.user.updateMany({
+    const user = await this.prisma.user.update({
       where: {
         id,
-        refreshToken: {
-          not: null,
-        },
       },
       data: {
         refreshToken: null,
@@ -192,24 +189,16 @@ export class AuthService {
     return true;
   }
 
-  async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {
+  async sendRecaptchaV2(useRecapchaDto: UseRecapchaDto): Promise<any> {
     const result = await this.httpService
       .post(
-        `${process.env.RECAPTCHA_V3_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V3_SECRETKEY}&response=${useRecapchaDto.token}`,
+        `${process.env.RECAPTCHA_V2_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V2_SECRETKEY}&response=${useRecapchaDto.token}`,
       )
       .toPromise();
-    if (!result.data.success || !result) {
-      throw new ForbiddenException('recaptcha-v3 인증 요청에 실패하였습니다.');
-    }
-    return result.data;
-  }
 
-  async checkRecaptchaV3(score: number): Promise<boolean> {
-    if (score < 0.8) {
-      throw new UnauthorizedException(
-        '의심스러운 트래픽 활동이 감지되었습니다.',
-      );
+    if (!result.data.success || !result) {
+      throw new ForbiddenException('의심스러운 트래픽 활동이 감지되었습니다.');
     }
-    return true;
+    return result.data.success;
   }
 }
