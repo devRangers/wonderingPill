@@ -174,7 +174,6 @@ export class AuthService {
   }
 
   async logout(id: string): Promise<boolean> {
-    console.log(id);
     const user = await this.prisma.user.update({
       where: {
         id,
