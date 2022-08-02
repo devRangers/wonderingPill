@@ -9,6 +9,7 @@ import { PharmacyController } from './pharmacy/pharmacy.controller';
 import { PharmacyService } from './pharmacy/pharmacy.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaService } from './prisma/prisma.service';
+
 @Module({
   imports: [AuthModule, PrismaModule, HttpModule],
   controllers: [PharmacyController, BookmarkController],

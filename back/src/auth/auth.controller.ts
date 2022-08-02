@@ -30,6 +30,8 @@ import { AuthService } from './auth.service';
 import {
   CreateUserDto,
   CreateUserResponse,
+  FindPasswordDto,
+  FindPasswordResponse,
   LogoutResponse,
   RecapchaResponse,
   RefreshResponse,
@@ -238,7 +240,7 @@ export class AuthController {
   }
 
   @HttpCode(200)
-  @Post('recaptcha-v2')
+  @Post('recaptcha')
   @ApiOperation({
     summary: 'Recaptcha v2 요청 API',
     description: 'Recaptcha v2에 인증을 요청하고 판별한다.',
@@ -264,8 +266,30 @@ export class AuthController {
     };
   }
 
-  // @Post('send-email')
-  // async sendEmail() {}
+  @HttpCode(200)
+  @Post('send-email')
+  @ApiOperation({
+    summary: '비밀번호 찾기 email 전송 요청 API',
+    description: '비밀번호 찾기를 위해 email을 전송 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'email 전송 성공',
+    type: FindPasswordResponse,
+  })
+  @ApiBody({ type: FindPasswordDto })
+  async sendEmail(@Body() findPasswordDto: FindPasswordDto) {
+    const user: UserModel = await this.authService.findUser(findPasswordDto);
+    const result = await this.authService.sendEmail(user.email, user.name);
+    this.logger.verbose(`User ${user.email} send email to update Success!`);
+    return {
+      statusCode: 200,
+      message: '이메일을 성공적으로 전송했습니다.',
+      result: { result },
+    };
+  }
+
+  // user/update-password
 
   // @Post('kakao')
   // async kakao() {}
