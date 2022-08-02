@@ -8,6 +8,9 @@ export const FOOTER_HEIGHT = "8vh";
 export const SIDE_BAR_HEADER_HEIGHT = "7vh";
 export const FULL_HEIGHT = "var(--vh, 1vh) * 100";
 
+export const SILENT_REFRESH_TIME =
+  Number(process.env.NEXT_PUBLIC_JWT_EXPIRESIN) - 60 * 1000;
+
 export const ROUTE = {
   MAIN: "/",
   LOGIN: "/login",
@@ -31,12 +34,4 @@ export const URL_WITHOUT_HEADER = [
   ROUTE.PASSWORD_NEW,
   ROUTE.ERROR,
   ROUTE.BLOCK,
-];
-
-export const URL_WITH_BOTD = [
-  ROUTE.LOGIN,
-  ROUTE.REGISTER,
-  ROUTE.EMAIL_FIND,
-  ROUTE.PASSWORD_FIND,
-  ROUTE.PASSWORD_NEW,
 ];

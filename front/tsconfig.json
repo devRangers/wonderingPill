@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@lib/*": ["lib/*"],
+      "@atom/*": ["atom/*"],
       "@utils/*": ["common/utils/*"],
       "@userContainer/*": ["common/userContainer/*"],
       "@modal/*": ["common/modal/*"],
