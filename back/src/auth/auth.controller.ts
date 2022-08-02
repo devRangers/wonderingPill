@@ -218,11 +218,13 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: '현재 로그인 유저 조회 성공',
+    type: SigninResponse,
   })
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string) {
     const user = await this.authService.getUserById(id);
+    this.logger.verbose(`Call Current User ${id} Success!`);
     return {
       statusCode: 200,
       message: '현재 로그인 유저 조회에 성공했습니다.',
@@ -235,8 +237,6 @@ export class AuthController {
     };
   }
 
-  // recaptcha를 guard로 대체 가능! 비용 절감
-  // 일단은 api로 놔둠
   @HttpCode(200)
   @Post('recaptcha-v2')
   @ApiOperation({
@@ -245,14 +245,14 @@ export class AuthController {
   })
   @ApiResponse({
     status: 200,
-    description: '회원가입 성공',
+    description: '정상적인 트래픽 확인 성공',
     type: RecapchaResponse,
   })
   @ApiBody({ type: UseRecapchaDto })
   async verifyRecaptchaV2(@Body() useRecapchaDto: UseRecapchaDto) {
     const success = await this.authService.sendRecaptchaV2(useRecapchaDto);
 
-    this.logger.verbose(`recaptcha v3 verify human Success!
+    this.logger.verbose(`recaptcha v2 : Verify human!
     Payload: ${JSON.stringify({ success })}`);
 
     return {
@@ -261,6 +261,9 @@ export class AuthController {
       recaptchav2: { success },
     };
   }
+
+  // @Post('send-email')
+  // async sendEmail() {}
 
   // @Post('kakao')
   // async kakao() {}
@@ -273,10 +276,4 @@ export class AuthController {
 
   // @Post('verify-code')
   // async verifyCode() {}
-
-  // @Get('get-user')
-  // async getUser() {}
-
-  // @Post('send-email')
-  // async sendEmail() {}
 }
