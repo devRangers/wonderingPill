@@ -37,6 +37,10 @@ export const BellBtn = styled("button", {
   justifySelf: "end",
 });
 
+export const Button = styled("button", {
+  position: "relative",
+});
+
 export const HeaderEmptyBox = styled(
   "header",
   (props: { $height: string }) => ({

@@ -1,4 +1,4 @@
-import FilteringSearch from "components/filtering/FilteringSearch";
+import FilteringSearch from "@searchComp/result/Result";
 import React from "react";
 
 function Filter() {
