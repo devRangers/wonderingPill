@@ -5,13 +5,14 @@ import { AuthModule } from './auth/auth.module';
 import { BookmarkController } from './bookmark/bookmark.controller';
 import { BookmarkService } from './bookmark/bookmark.service';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
+import { MailModule } from './mail/mail.module';
 import { PharmacyController } from './pharmacy/pharmacy.controller';
 import { PharmacyService } from './pharmacy/pharmacy.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaService } from './prisma/prisma.service';
 
 @Module({
-  imports: [AuthModule, PrismaModule, HttpModule],
+  imports: [AuthModule, PrismaModule, HttpModule, MailModule],
   controllers: [PharmacyController, BookmarkController],
   providers: [
     {

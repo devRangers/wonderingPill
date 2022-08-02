@@ -26,6 +26,7 @@ import {
   Public,
 } from 'src/common/decorators';
 import { RefreshGuard } from 'src/common/guards';
+import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
   CreateUserDto,
@@ -45,7 +46,10 @@ import { Tokens } from './types';
 @Controller('auth')
 export class AuthController {
   private logger = new Logger(`AuthController`);
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailService: MailService,
+  ) {}
 
   @Public()
   @HttpCode(200)
@@ -280,7 +284,7 @@ export class AuthController {
   @ApiBody({ type: FindPasswordDto })
   async sendEmail(@Body() findPasswordDto: FindPasswordDto) {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
-    const result = await this.authService.sendEmail(user.email, user.name);
+    const result = await this.mailService.sendEmail(user.email, user.name);
     this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
       statusCode: 200,
