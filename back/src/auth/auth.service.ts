@@ -1,4 +1,3 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { HttpService } from '@nestjs/axios';
 import {
   ForbiddenException,
@@ -27,8 +26,8 @@ export class AuthService {
     private prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly httpService: HttpService,
-    private readonly mailerService: MailerService,
-  ) {}
+  ) // private readonly mailerService: MailerService,
+  {}
 
   async getUserByEmail(email): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
@@ -225,14 +224,14 @@ export class AuthService {
     // 토큰 발급
     // 토큰을 db에 저장함 -> redis 연결 후 변경
     // 이메일 전송
-    await this.mailerService.sendMail({
-      to: email,
-      from: process.env.GOOGLE_EMAIL,
-      subject: `[궁금해약] ${name}님 비밀번호를 재설정해주세요.`,
-      html:
-        `<p>안녕하세요. ${name}님<p>아래의 링크를 통해 비밀번호를 재설정하실 수 있습니다.<p>` +
-        `<a href=''></a>` +
-        `<p>감사합니다. devRangers 개발팀 드림<p>`,
-    });
+    // await this.mailerService.sendMail({
+    //   to: email,
+    //   from: process.env.GOOGLE_EMAIL,
+    //   subject: `[궁금해약] ${name}님 비밀번호를 재설정해주세요.`,
+    //   html:
+    //     `<p>안녕하세요. ${name}님<p>아래의 링크를 통해 비밀번호를 재설정하실 수 있습니다.<p>` +
+    //     `<a href=''></a>` +
+    //     `<p>감사합니다. devRangers 개발팀 드림<p>`,
+    // });
   }
 }

@@ -3,11 +3,11 @@ import {
   IsEmail,
   IsJSON,
   IsNotEmpty,
-  IsNumber,
   IsString,
   Matches,
   MinLength,
 } from 'class-validator';
+import { CommonResponseDto } from 'src/common/dto/common.dto';
 
 export class CreateUserDto {
   @IsEmail()
@@ -49,17 +49,7 @@ export class CreateUserDto {
   phone: string;
 }
 
-export class CreateUserResponse {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  statusCode: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  message: string;
-
+export class CreateUserResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()

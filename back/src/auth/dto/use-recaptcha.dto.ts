@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsJSON, IsNotEmpty, IsString } from 'class-validator';
+import { CommonResponseDto } from 'src/common/dto';
 
 export class UseRecapchaDto {
   @IsNotEmpty()
@@ -7,17 +8,7 @@ export class UseRecapchaDto {
   token: string;
 }
 
-export class RecapchaResponse {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  statusCode: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  message: string;
-
+export class RecapchaResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()

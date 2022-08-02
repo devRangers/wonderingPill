@@ -9,6 +9,7 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
+import { CommonResponseDto } from 'src/common/dto';
 
 export class SigninUserDto {
   @IsEmail()
@@ -31,7 +32,7 @@ export class SigninUserDto {
   isSignin: boolean;
 }
 
-export class SigninResponse {
+export class SigninResponse extends CommonResponseDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
@@ -53,29 +54,9 @@ export class SigninResponse {
   };
 }
 
-export class RefreshResponse {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  statusCode: number;
+export class RefreshResponse extends CommonResponseDto {}
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  message: string;
-}
-
-export class LogoutResponse {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  statusCode: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  message: string;
-
+export class LogoutResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()

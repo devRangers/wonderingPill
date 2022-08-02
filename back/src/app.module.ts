@@ -13,7 +13,6 @@ import { PrismaService } from './prisma/prisma.service';
 @Module({
   imports: [AuthModule, PrismaModule, HttpModule],
   controllers: [PharmacyController, BookmarkController],
-
   providers: [
     {
       provide: APP_FILTER,
