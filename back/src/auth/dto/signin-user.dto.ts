@@ -4,7 +4,6 @@ import {
   IsEmail,
   IsJSON,
   IsNotEmpty,
-  IsNumber,
   IsString,
   Matches,
   MinLength,
@@ -33,16 +32,6 @@ export class SigninUserDto {
 }
 
 export class SigninResponse extends CommonResponseDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  statusCode: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  message: string;
-
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()

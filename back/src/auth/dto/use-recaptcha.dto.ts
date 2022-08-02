@@ -12,5 +12,5 @@ export class RecapchaResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()
-  recaptchav3: { result: boolean };
+  recaptchav2: { result: boolean };
 }
