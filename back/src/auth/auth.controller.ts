@@ -190,7 +190,7 @@ export class AuthController {
     @GetCurrentUserId() id: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<LogoutResponse> {
-    const checkLogout = await this.authService.logout(id);
+    const checkLogout: boolean = await this.authService.logout(id);
 
     let message;
     if (checkLogout) {
@@ -223,7 +223,7 @@ export class AuthController {
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string) {
-    const user = await this.authService.getUserById(id);
+    const user: UserModel = await this.authService.getUserById(id);
     this.logger.verbose(`Call Current User ${id} Success!`);
     return {
       statusCode: 200,
@@ -250,7 +250,9 @@ export class AuthController {
   })
   @ApiBody({ type: UseRecapchaDto })
   async verifyRecaptchaV2(@Body() useRecapchaDto: UseRecapchaDto) {
-    const success = await this.authService.sendRecaptchaV2(useRecapchaDto);
+    const success: boolean = await this.authService.sendRecaptchaV2(
+      useRecapchaDto,
+    );
 
     this.logger.verbose(`recaptcha v2 : Verify human!
     Payload: ${JSON.stringify({ success })}`);
