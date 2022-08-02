@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import ReactTooltip from "react-tooltip";
 import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
@@ -86,9 +87,9 @@ function LoginForm() {
       password: Yup.string()
         .matches(
           /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-          "비밀번호는 소문자, 숫자, 특수문자 포함 8자 이상입니다.",
+          "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
         )
-        .required("비밀번호를 입력해 주세요."),
+        .required("소문자, 숫자, 특수문자 포함 8자 이상입니다."),
     }),
     onSubmit: async (values) => {
       const dataToSubmit: LoginTypes = Object.assign(values, {
@@ -126,10 +127,26 @@ function LoginForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.password}
+              data-tip="password-tooltip"
+              data-for="password-tooltip"
+              autoComplete="true"
             />
-            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
-              {formik.touched.password && formik.errors.password}
-            </ErrorMessage>
+            {formik.touched.password && formik.errors.password ? (
+              <>
+                <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+                  비밀번호를 입력해 주세요.
+                </ErrorMessage>
+
+                <ReactTooltip
+                  key="password-tooltip"
+                  id="password-tooltip"
+                  place="top">
+                  {formik.errors.password}
+                </ReactTooltip>
+              </>
+            ) : (
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
+            )}
           </InputContainer>
 
           <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
