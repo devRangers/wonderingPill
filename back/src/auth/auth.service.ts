@@ -174,12 +174,10 @@ export class AuthService {
   }
 
   async logout(id: string): Promise<boolean> {
-    const user = await this.prisma.user.updateMany({
+    console.log(id);
+    const user = await this.prisma.user.update({
       where: {
         id,
-        refreshToken: {
-          not: null,
-        },
       },
       data: {
         refreshToken: null,

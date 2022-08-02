@@ -25,7 +25,7 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { AccessGuard, RefreshGuard } from 'src/common/guards';
+import { RefreshGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
 import {
   CreateUserDto,
@@ -170,12 +170,11 @@ export class AuthController {
     return {
       statusCode: 200,
       message,
-      accessToken: { accessToken },
     };
   }
 
   @Get('logout')
-  @UseGuards(AccessGuard)
+  @UseGuards(RefreshGuard)
   @ApiOperation({
     summary: '로그아웃 API',
     description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
@@ -224,7 +223,6 @@ export class AuthController {
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string) {
     const user = await this.authService.getUserById(id);
-    // 현재 로그인한 유저의 accesstoken 확인하고 재발행하는 pipe/guard 필요
     return {
       statusCode: 200,
       message: '현재 로그인 유저 조회에 성공했습니다.',

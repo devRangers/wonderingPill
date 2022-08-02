@@ -63,13 +63,6 @@ export class RefreshResponse {
   @IsNotEmpty()
   @ApiProperty()
   message: string;
-
-  @IsJSON()
-  @IsNotEmpty()
-  @ApiProperty()
-  accessToken: {
-    accessToken: string | null;
-  };
 }
 
 export class LogoutResponse {
