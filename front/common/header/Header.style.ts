@@ -39,6 +39,8 @@ export const BellBtn = styled("button", {
 
 export const Button = styled("button", {
   position: "relative",
+  width: "100%",
+  height: "100%",
 });
 
 export const HeaderEmptyBox = styled(

@@ -1,16 +1,39 @@
-import { Title } from "@searchComp/FindWithImage.style";
-import { FOOTER_HEIGHT, FULL_HEIGHT, HEADER_HEIGHT } from "@utils/constant";
+import {
+  FOOTER_HEIGHT,
+  FULL_HEIGHT,
+  HEADER_HEIGHT,
+  MAIN_COLOR,
+} from "@utils/constant";
 import React from "react";
 import {
   Bottom,
   Caution,
   Company,
-  Effect,
+  EffectContainer,
   FilteringSearchContainer,
   Keep,
   SideEffect,
   Usage,
+  TitleBox,
+  TitleContainer,
+  Title,
 } from "./Result.style";
+
+const tempData: { [key in string]: string } = {
+  title: "한미아스피린장용정 100밀리그램",
+  effect:
+    "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
+  sideEffect:
+    "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
+  company: "한미약품(주)",
+  usage:
+    "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
+  caution:
+    "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
+  keep: "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
+  bottom:
+    "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
+};
 
 function FilteringSearch() {
   return (
@@ -18,8 +41,12 @@ function FilteringSearch() {
       $headerHeight={HEADER_HEIGHT}
       $footerHeight={FOOTER_HEIGHT}
       $fullHeight={FULL_HEIGHT}>
-      <Title>a</Title>
-      <Effect>b</Effect>
+      <TitleContainer>
+        <TitleBox $bgColor={MAIN_COLOR}>
+          <Title>{tempData.title}</Title>
+        </TitleBox>
+      </TitleContainer>
+      <EffectContainer></EffectContainer>
       <SideEffect>c</SideEffect>
       <Company>d</Company>
       <Usage>e</Usage>
