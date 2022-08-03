@@ -373,7 +373,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "현재 로그인 유저 조회 성공"
+            "description": "현재 로그인 유저 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SigninResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Auth API"],
@@ -385,6 +392,37 @@
             "refreshToken": []
           }
         ]
+      }
+    },
+    "/auth/recaptcha-v2": {
+      "post": {
+        "operationId": "AuthController_verifyRecaptchaV2",
+        "summary": "Recaptcha v2 요청 API",
+        "description": "Recaptcha v2에 인증을 요청하고 판별한다.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UseRecapchaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "정상적인 트래픽 확인 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecapchaResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth API"]
       }
     }
   },
@@ -674,19 +712,9 @@
           },
           "message": {
             "type": "string"
-          },
-          "accessToken": {
-            "type": "object",
-            "properties": {
-              "accessToken": {
-                "required": true,
-                "type": "string",
-                "nullable": true
-              }
-            }
           }
         },
-        "required": ["statusCode", "message", "accessToken"]
+        "required": ["statusCode", "message"]
       },
       "LogoutResponse": {
         "type": "object",
@@ -708,6 +736,36 @@
           }
         },
         "required": ["statusCode", "message", "checkLogout"]
+      },
+      "UseRecapchaDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": ["token"]
+      },
+      "RecapchaResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "recaptchav2": {
+            "type": "object",
+            "properties": {
+              "result": {
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "recaptchav2"]
       }
     }
   }

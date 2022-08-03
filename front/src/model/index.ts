@@ -18,3 +18,6 @@ export * from './logoutResponse';
 export * from './refreshResponse';
 export * from './logoutResponseCheckLogout';
 export * from './bookmarkListResponseDto';
+export * from './recapchaResponseRecaptchav2';
+export * from './useRecapchaDto';
+export * from './recapchaResponse';

@@ -6,7 +6,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface RefreshResponse {
-  statusCode: number;
-  message: string;
+export interface UseRecapchaDto {
+  token: string;
 }
