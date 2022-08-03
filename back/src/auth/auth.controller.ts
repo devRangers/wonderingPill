@@ -25,7 +25,7 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { RefreshGuard } from 'src/common/guards';
+import { RecaptchaGuard, RefreshGuard } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
@@ -34,11 +34,9 @@ import {
   FindPasswordDto,
   FindPasswordResponse,
   LogoutResponse,
-  RecapchaResponse,
   RefreshResponse,
   SigninResponse,
   SigninUserDto,
-  UseRecapchaDto,
 } from './dto';
 import { Tokens } from './types';
 
@@ -80,6 +78,7 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Post('signin')
+  @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '유저 로그인 API',
     description:
@@ -244,34 +243,8 @@ export class AuthController {
   }
 
   @HttpCode(200)
-  @Post('recaptcha')
-  @ApiOperation({
-    summary: 'Recaptcha v2 요청 API',
-    description: 'Recaptcha v2에 인증을 요청하고 판별한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '정상적인 트래픽 확인 성공',
-    type: RecapchaResponse,
-  })
-  @ApiBody({ type: UseRecapchaDto })
-  async verifyRecaptchaV2(@Body() useRecapchaDto: UseRecapchaDto) {
-    const success: boolean = await this.authService.sendRecaptchaV2(
-      useRecapchaDto,
-    );
-
-    this.logger.verbose(`recaptcha v2 : Verify human!
-    Payload: ${JSON.stringify({ success })}`);
-
-    return {
-      statusCode: 200,
-      message: '정상적인 트래픽 활동입니다.',
-      recaptchav2: { success },
-    };
-  }
-
-  @HttpCode(200)
   @Post('send-email')
+  @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '비밀번호 찾기 email 전송 요청 API',
     description: '비밀번호 찾기를 위해 email을 전송 한다.',

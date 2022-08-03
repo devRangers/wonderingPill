@@ -13,12 +13,7 @@ import * as config from 'config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
-import {
-  CreateUserDto,
-  FindPasswordDto,
-  SigninUserDto,
-  UseRecapchaDto,
-} from './dto';
+import { CreateUserDto, FindPasswordDto, SigninUserDto } from './dto';
 import { JwtPayload, Tokens } from './types';
 
 @Injectable()
@@ -152,10 +147,7 @@ export class AuthService {
     return user;
   }
 
-  async updateAccessToken(
-    id: string,
-    refreshToken: string,
-  ): Promise<string | null> {
+  async updateAccessToken(id: string, refreshToken: string): Promise<string> {
     const user = await this.getUserById(id);
     if (user.refreshToken !== refreshToken) {
       throw new ForbiddenException('Access Denied');
@@ -200,19 +192,6 @@ export class AuthService {
     return true;
   }
 
-  async sendRecaptchaV2(useRecapchaDto: UseRecapchaDto): Promise<any> {
-    const result = await this.httpService
-      .post(
-        `${process.env.RECAPTCHA_V2_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V2_SECRETKEY}&response=${useRecapchaDto.token}`,
-      )
-      .toPromise();
-
-    if (!result.data.success || !result) {
-      throw new ForbiddenException('의심스러운 트래픽 활동이 감지되었습니다.');
-    }
-    return result.data.success;
-  }
-
   async findUser(findPasswordDto: FindPasswordDto): Promise<User> {
     const user = await this.getUserByEmail(findPasswordDto.email);
     if (user.name !== findPasswordDto.name) {
@@ -225,9 +204,8 @@ export class AuthService {
     return user;
   }
 
-  async getPWChangeToken(id: string) {
+  async getPWChangeToken(id: string): Promise<string> {
     const token = uuid();
-
     const user = await this.prisma.user.update({
       where: {
         id,

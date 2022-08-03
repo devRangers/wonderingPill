@@ -29,6 +29,11 @@ export class SigninUserDto {
   @IsNotEmpty()
   @ApiProperty()
   isSignin: boolean;
+
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  token: string;
 }
 
 export class SigninResponse extends CommonResponseDto {

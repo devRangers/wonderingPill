@@ -17,6 +17,11 @@ export class FindPasswordDto {
   @IsNotEmpty()
   @ApiProperty()
   birth: string;
+
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  token: string;
 }
 
 export class FindPasswordResponse extends CommonResponseDto {}
