@@ -6,26 +6,32 @@ import {
 } from "@utils/constant";
 import React from "react";
 import {
-  SmallContainer as Bottom,
+  Bottom,
   SmallContainer as Caution,
   CompanyContainer as Company,
-  EffectContainer as Effect,
-  EffectContainer as SideEffect,
+  BigContainer as Effect,
+  BigContainer as SideEffect,
   FilteringSearchContainer,
   SmallContainer as Keep,
-  SmallContainer as Usage,
+  BigContainer as Usage,
   TitleBox,
   TitleContainer,
   Title,
-  EffectBox,
-  EffectTitle,
-  EffectDescription,
+  BigTitle,
+  BigDescription,
   WarningContainer,
   WarningItem,
-  EffectDescriptionContainer,
+  BigDescriptionContainer,
   CompanyBox,
   CompanyTitle,
   CompanyDescriptionContainer,
+  SmallBox,
+  SmallTitle,
+  SmallDescriptionContainer,
+  SmallDescription,
+  BigBox,
+  BottomBox,
+  Button,
 } from "./Result.style";
 
 const tempData: { [key in string]: string } = {
@@ -59,26 +65,6 @@ function FilteringSearch() {
           <Title>{tempData.title}</Title>
         </TitleBox>
       </TitleContainer>
-      <Effect>
-        <EffectBox>
-          <EffectTitle $bgColor={MAIN_COLOR}>효능</EffectTitle>
-          <EffectDescriptionContainer $borderColor={MAIN_COLOR}>
-            <EffectDescription $scrollColor={MAIN_COLOR}>
-              {tempData.effect}
-            </EffectDescription>
-          </EffectDescriptionContainer>
-        </EffectBox>
-      </Effect>
-      <SideEffect>
-        <EffectBox>
-          <EffectTitle $bgColor={MAIN_COLOR}>부작용</EffectTitle>
-          <EffectDescriptionContainer $borderColor={MAIN_COLOR}>
-            <EffectDescription $scrollColor={MAIN_COLOR}>
-              {tempData.effect}
-            </EffectDescription>
-          </EffectDescriptionContainer>
-        </EffectBox>
-      </SideEffect>
       <Company>
         <CompanyBox>
           <CompanyTitle $bgColor={MAIN_COLOR}>업체명</CompanyTitle>
@@ -87,10 +73,61 @@ function FilteringSearch() {
           </CompanyDescriptionContainer>
         </CompanyBox>
       </Company>
-      <Usage>e</Usage>
-      <Caution>f</Caution>
-      <Keep>g</Keep>
-      <Bottom>h</Bottom>
+      <Effect>
+        <BigBox>
+          <BigTitle $bgColor={MAIN_COLOR}>효능</BigTitle>
+          <BigDescriptionContainer $borderColor={MAIN_COLOR}>
+            <BigDescription $scrollColor={MAIN_COLOR}>
+              {tempData.effect}
+            </BigDescription>
+          </BigDescriptionContainer>
+        </BigBox>
+      </Effect>
+      <SideEffect>
+        <BigBox>
+          <BigTitle $bgColor={MAIN_COLOR}>부작용</BigTitle>
+          <BigDescriptionContainer $borderColor={MAIN_COLOR}>
+            <BigDescription $scrollColor={MAIN_COLOR}>
+              {tempData.effect}
+            </BigDescription>
+          </BigDescriptionContainer>
+        </BigBox>
+      </SideEffect>
+      <Usage>
+        <BigBox>
+          <BigTitle $bgColor={MAIN_COLOR}>용법/용량</BigTitle>
+          <BigDescriptionContainer $borderColor={MAIN_COLOR}>
+            <BigDescription $scrollColor={MAIN_COLOR}>
+              {tempData.usage}
+            </BigDescription>
+          </BigDescriptionContainer>
+        </BigBox>
+      </Usage>
+      <Caution>
+        <SmallBox>
+          <SmallTitle $bgColor={MAIN_COLOR}>주의사항</SmallTitle>
+          <SmallDescriptionContainer $borderColor={MAIN_COLOR}>
+            <SmallDescription $scrollColor={MAIN_COLOR}>
+              {tempData.caution}
+            </SmallDescription>
+          </SmallDescriptionContainer>
+        </SmallBox>
+      </Caution>
+      <Keep>
+        <SmallBox>
+          <SmallTitle $bgColor={MAIN_COLOR}>보관법</SmallTitle>
+          <SmallDescriptionContainer $borderColor={MAIN_COLOR}>
+            <SmallDescription $scrollColor={MAIN_COLOR}>
+              {tempData.keep}
+            </SmallDescription>
+          </SmallDescriptionContainer>
+        </SmallBox>
+      </Keep>
+      <Bottom>
+        <BottomBox>
+          <Button $bgColor={MAIN_COLOR}>내 약에 등록하기</Button>
+        </BottomBox>
+      </Bottom>
     </FilteringSearchContainer>
   );
 }
