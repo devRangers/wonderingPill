@@ -2,8 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User as UserModel } from '@prisma/client';
 
 export class UserEntity implements UserModel {
-  refreshToken: string;
-  changePWToken: string;
   @ApiProperty()
   id: string;
 
