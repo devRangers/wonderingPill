@@ -25,17 +25,18 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { RefreshGuard } from 'src/common/guards';
+import { RecaptchaGuard, RefreshGuard } from 'src/common/guards';
+import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
   CreateUserDto,
   CreateUserResponse,
+  FindPasswordDto,
+  FindPasswordResponse,
   LogoutResponse,
-  RecapchaResponse,
   RefreshResponse,
   SigninResponse,
   SigninUserDto,
-  UseRecapchaDto,
 } from './dto';
 import { Tokens } from './types';
 
@@ -43,7 +44,10 @@ import { Tokens } from './types';
 @Controller('auth')
 export class AuthController {
   private logger = new Logger(`AuthController`);
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailService: MailService,
+  ) {}
 
   @Public()
   @HttpCode(200)
@@ -74,6 +78,7 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Post('signin')
+  @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '유저 로그인 API',
     description:
@@ -238,34 +243,35 @@ export class AuthController {
   }
 
   @HttpCode(200)
-  @Post('recaptcha-v2')
+  @Post('send-email')
+  @UseGuards(RecaptchaGuard)
   @ApiOperation({
-    summary: 'Recaptcha v2 요청 API',
-    description: 'Recaptcha v2에 인증을 요청하고 판별한다.',
+    summary: '비밀번호 찾기 email 전송 요청 API',
+    description: '비밀번호 찾기를 위해 email을 전송 한다.',
   })
   @ApiResponse({
     status: 200,
-    description: '정상적인 트래픽 확인 성공',
-    type: RecapchaResponse,
+    description: 'email 전송 성공',
+    type: FindPasswordResponse,
   })
-  @ApiBody({ type: UseRecapchaDto })
-  async verifyRecaptchaV2(@Body() useRecapchaDto: UseRecapchaDto) {
-    const success: boolean = await this.authService.sendRecaptchaV2(
-      useRecapchaDto,
+  @ApiBody({ type: FindPasswordDto })
+  async sendEmail(@Body() findPasswordDto: FindPasswordDto) {
+    const user: UserModel = await this.authService.findUser(findPasswordDto);
+    const token: string = await this.authService.getPWChangeToken(user.id);
+    const result: boolean = await this.mailService.sendEmail(
+      user.email,
+      user.name,
+      token,
     );
-
-    this.logger.verbose(`recaptcha v2 : Verify human!
-    Payload: ${JSON.stringify({ success })}`);
-
+    this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
       statusCode: 200,
-      message: '정상적인 트래픽 활동입니다.',
-      recaptchav2: { success },
+      message: '이메일을 성공적으로 전송했습니다.',
+      result: { result },
     };
   }
 
-  // @Post('send-email')
-  // async sendEmail() {}
+  // user/update-password
 
   // @Post('kakao')
   // async kakao() {}
