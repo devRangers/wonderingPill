@@ -4,11 +4,11 @@ import {
   IsEmail,
   IsJSON,
   IsNotEmpty,
-  IsNumber,
   IsString,
   Matches,
   MinLength,
 } from 'class-validator';
+import { CommonResponseDto } from 'src/common/dto';
 
 export class SigninUserDto {
   @IsEmail()
@@ -29,19 +29,14 @@ export class SigninUserDto {
   @IsNotEmpty()
   @ApiProperty()
   isSignin: boolean;
-}
-
-export class SigninResponse {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  statusCode: number;
 
   @IsString()
-  @IsNotEmpty()
   @ApiProperty()
-  message: string;
+  @IsNotEmpty()
+  token: string;
+}
 
+export class SigninResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()
@@ -53,29 +48,9 @@ export class SigninResponse {
   };
 }
 
-export class RefreshResponse {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  statusCode: number;
+export class RefreshResponse extends CommonResponseDto {}
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  message: string;
-}
-
-export class LogoutResponse {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  statusCode: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  message: string;
-
+export class LogoutResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()
