@@ -228,7 +228,7 @@ export class AuthController {
   })
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
-  async current(@GetCurrentUserId() id: string) {
+  async current(@GetCurrentUserId() id: string): Promise<SigninResponse> {
     const user: UserModel = await this.authService.getUserById(id);
     this.logger.verbose(`Call Current User ${id} Success!`);
     return {
@@ -256,7 +256,9 @@ export class AuthController {
     type: FindPasswordResponse,
   })
   @ApiBody({ type: FindPasswordDto })
-  async sendEmail(@Body() findPasswordDto: FindPasswordDto) {
+  async sendEmail(
+    @Body() findPasswordDto: FindPasswordDto,
+  ): Promise<FindPasswordResponse> {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
     const token: string = await this.authService.getPWChangeToken(user.id);
     const result: boolean = await this.mailService.sendEmail(
@@ -272,7 +274,11 @@ export class AuthController {
     };
   }
 
-  // user/update-password
+  // @Put('change-password')
+  // async changePassword(
+  //   @Param('id') id: string,
+  //   @Body() changePasswordDto: ChangePasswordDto,
+  // ) {}
 
   // @Post('kakao')
   // async kakao() {}
