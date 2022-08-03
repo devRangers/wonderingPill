@@ -1,9 +1,10 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ReactTooltip from "react-tooltip";
+import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
@@ -29,9 +30,8 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
-import ReCaptcha from "@recaptcha/Recaptcha";
 
-type LoginFormValues = Omit<LoginTypes, "isSignin">;
+type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
 const loginHandler = async (data: LoginTypes) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`, {
@@ -57,9 +57,9 @@ function LoginForm() {
       ? router.query.email
       : "";
 
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
-  const [token, setToken] = useState("");
 
   const initialValue: LoginFormValues = {
     email: userEmail,
@@ -94,10 +94,12 @@ function LoginForm() {
         .required("소문자, 숫자, 특수문자 포함 8자 이상입니다."),
     }),
     onSubmit: async (values) => {
+      const token = (await recaptchaRef?.current?.executeAsync()) as string;
       const dataToSubmit: LoginTypes = Object.assign(values, {
         isSignin: isAutoLoginChecked,
         token,
       });
+      recaptchaRef.current?.reset();
       loginMutation.mutate(dataToSubmit);
     },
   });
@@ -182,7 +184,11 @@ function LoginForm() {
           </div>
         </SubBtnContainer>
 
-        <ReCaptcha setToken={setToken} />
+        <ReCAPTCHA
+          ref={recaptchaRef}
+          size="invisible"
+          sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        />
       </Form>
 
       <SnsLoginContainer>
