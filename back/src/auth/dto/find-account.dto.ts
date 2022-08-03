@@ -28,7 +28,7 @@ export class FindPasswordResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()
-  result: { result };
+  result: { result: boolean };
 }
 
 export class ChangePasswordDto {
