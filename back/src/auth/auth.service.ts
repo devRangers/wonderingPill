@@ -48,7 +48,7 @@ export class AuthService {
     return user;
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User | null> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { name, email, password, phone, birth } = createUserDto;
     const hashedPassword = await argon.hash(password);
     try {
@@ -98,7 +98,7 @@ export class AuthService {
     id: string,
     email: string,
     isSignin: boolean,
-  ): Promise<Tokens | null> {
+  ): Promise<Tokens> {
     const jwtPayload: JwtPayload = {
       email,
       sub: id,
@@ -182,18 +182,7 @@ export class AuthService {
   }
 
   async logout(id: string): Promise<boolean> {
-    const user = await this.prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        refreshToken: null,
-      },
-    });
-
-    if (!user) {
-      throw new ForbiddenException('토큰을 삭제하지 못했습니다.');
-    }
+    await this.redisService.delKey('re' + id);
     return true;
   }
 

@@ -22,4 +22,12 @@ export class RedisService {
     const value: string = (await this.cacheManager.get(key)) as string;
     return value;
   }
+
+  async delKey(key: string): Promise<boolean> {
+    const result = await this.cacheManager.del(key);
+    if (result !== 1) {
+      throw new ForbiddenException('Failed Caching');
+    }
+    return true;
+  }
 }
