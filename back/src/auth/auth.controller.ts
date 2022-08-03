@@ -4,7 +4,9 @@ import {
   Get,
   HttpCode,
   Logger,
+  Param,
   Post,
+  Put,
   Res,
   UseGuards,
   UsePipes,
@@ -29,6 +31,7 @@ import { RecaptchaGuard, RefreshGuard } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
+  ChangePasswordDto,
   CreateUserDto,
   CreateUserResponse,
   FindPasswordDto,
@@ -274,11 +277,11 @@ export class AuthController {
     };
   }
 
-  // @Put('change-password')
-  // async changePassword(
-  //   @Param('id') id: string,
-  //   @Body() changePasswordDto: ChangePasswordDto,
-  // ) {}
+  @Put('change-password')
+  async changePassword(
+    @Param('token') token: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {}
 
   // @Post('kakao')
   // async kakao() {}
