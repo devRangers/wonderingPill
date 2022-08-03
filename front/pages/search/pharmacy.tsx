@@ -4,6 +4,8 @@ import {
   FULL_HEIGHT,
   HEADER_HEIGHT,
   MAIN_COLOR,
+  BOX_COLOR,
+  BOX_TITLE_COLOR,
 } from "@utils/constant";
 import {
   PageContainer,
@@ -17,8 +19,10 @@ const SearchPharmPage: NextPage = () => {
       $headerHeight={HEADER_HEIGHT}
       $footerHeight={FOOTER_HEIGHT}
       $fullHeight={FULL_HEIGHT}>
-      <SearchPharmContainer>
-        <SearchPharmTitle>약국 찾기</SearchPharmTitle>
+      <SearchPharmContainer $bgColor={BOX_COLOR}>
+        <SearchPharmTitle $txtColor={BOX_TITLE_COLOR}>
+          약국 찾기
+        </SearchPharmTitle>
       </SearchPharmContainer>
     </PageContainer>
   );

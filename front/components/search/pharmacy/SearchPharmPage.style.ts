@@ -14,15 +14,22 @@ export const PageContainer = styled(
   }),
 );
 
-export const SearchPharmContainer = styled("div", {
-  display: "grid",
-  gridTemplateRows: "1fr 1fr 5fr",
-  alignItems: "center",
-  justifyItems: "center",
-  backgroundColor: "#2A306A",
-});
+export const SearchPharmContainer = styled(
+  "div",
+  (props: { $bgColor: string }) => ({
+    display: "grid",
+    gridTemplateRows: "1fr 1fr 5fr",
+    alignItems: "center",
+    justifyItems: "center",
+    backgroundColor: props.$bgColor,
+    borderRadius: "0 0 15px 15px",
+  }),
+);
 
-export const SearchPharmTitle = styled("h1", {
-  color: "#fff",
-  fontWeight: "bold",
-});
+export const SearchPharmTitle = styled(
+  "h1",
+  (props: { $txtColor: string }) => ({
+    color: props.$txtColor,
+    fontWeight: "bold",
+  }),
+);
