@@ -31,6 +31,7 @@
       "@mainComp/*": ["components/main/*"],
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
+      "@searchPharmComp/*": ["components/search/pharmacy/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },
