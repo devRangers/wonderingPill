@@ -5,7 +5,11 @@ import { Pharmacy } from '@prisma/client';
 export class PharmacyService {
   constructor(private prisma: PrismaService) {}
   async pharmacyList(): Promise<Pharmacy[]> {
-    return await this.prisma.pharmacy.findMany({});
+    return await this.prisma.pharmacy.findMany({
+      include: {
+        PharmacyBookMark: true,
+      },
+    });
   }
 
   async pharmacySearchName(name: string, start?: number): Promise<Pharmacy[]> {

@@ -15,8 +15,8 @@ import {
   ModalInner,
   ModalTitle,
   ModalTitleBox,
-  OX,
-  OXImage,
+  ImageDescription,
+  PillImage,
 } from "./FindWithImage.style";
 import Modal from "@modal/Modal";
 
@@ -52,24 +52,24 @@ function CaptureGuideModal() {
             </Guide>
           </GuideDescriptionBox>
           <GuideTwoImageWrapper $isWide={isWide}>
-            <OXImage $isWide={isWide}>
+            <PillImage $isWide={isWide}>
               <Image
                 src="/images/register_logo.png"
                 layout="fill"
                 objectFit="contain"
                 priority={true}
               />
-            </OXImage>
-            <OXImage $isWide={isWide}>
+            </PillImage>
+            <PillImage $isWide={isWide}>
               <Image
                 src="/images/register_logo.png"
                 layout="fill"
                 objectFit="contain"
                 priority={true}
               />
-            </OXImage>
-            <OX>O</OX>
-            <OX>X</OX>
+            </PillImage>
+            <ImageDescription>O</ImageDescription>
+            <ImageDescription>X</ImageDescription>
           </GuideTwoImageWrapper>
         </ModalGuideBox>
         <ModalFooter>

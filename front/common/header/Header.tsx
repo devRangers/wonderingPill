@@ -1,9 +1,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import Sidebar from "@sidebar/Sidebar";
 import { HEADER_HEIGHT, MAIN_COLOR, ROUTE } from "@utils/constant";
-import { BsJustify, BsFillBellFill } from "react-icons/bs";
+import { BsFillBellFill, BsJustify } from "react-icons/bs";
 import {
   HeaderEmptyBox,
   HeaderContainer,
@@ -11,6 +10,7 @@ import {
   ImageWrapper,
   BellBtn,
 } from "./Header.style";
+import Sidebar from "@sidebar/Sidebar";
 
 function Header() {
   const router = useRouter();
@@ -22,19 +22,25 @@ function Header() {
   return (
     <>
       <HeaderContainer $height={HEADER_HEIGHT} $bgColor={MAIN_COLOR}>
-        <HamburgerBtn onClick={() => setOpenSideBar(true)} />
+        <HamburgerBtn onClick={() => setOpenSideBar(true)}>
+          <BsJustify />
+        </HamburgerBtn>
         <ImageWrapper>
           {router.pathname !== ROUTE.MAIN && (
-            <Image
-              src="/images/header/logo.png"
-              alt="wondering-pill-logo"
-              layout="fill"
-              objectFit="contain"
-              priority={true}
-            />
+            <button onClick={() => router.push(ROUTE.MAIN)}>
+              <Image
+                src="/images/header/logo.png"
+                alt="wondering-pill-logo"
+                layout="fill"
+                objectFit="contain"
+                priority={true}
+              />
+            </button>
           )}
         </ImageWrapper>
-        <BellBtn />
+        <BellBtn>
+          <BsFillBellFill />
+        </BellBtn>
       </HeaderContainer>
       <HeaderEmptyBox $height={HEADER_HEIGHT} />
       <Sidebar openSideBar={openSideBar} closeSideBar={closeSideBar} />

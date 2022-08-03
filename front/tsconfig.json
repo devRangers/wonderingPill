@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@lib/*": ["lib/*"],
+      "@atom/*": ["atom/*"],
       "@utils/*": ["common/utils/*"],
       "@userContainer/*": ["common/userContainer/*"],
       "@modal/*": ["common/modal/*"],
@@ -30,6 +31,7 @@
       "@mainComp/*": ["components/main/*"],
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
+      "@searchPharmComp/*": ["components/search/pharmacy/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },

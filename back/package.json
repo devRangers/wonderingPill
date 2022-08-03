@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "env TZ=Asia/Seoul nest start",
-    "start:dev": "env TZ=Asia/Seoul nest start --watch",
+    "start:dev": "nest start --watch",
     "start:debug": "env TZ=Asia/Seoul nest start --debug --watch",
     "start:prod": "env TZ=Asia/Seoul node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

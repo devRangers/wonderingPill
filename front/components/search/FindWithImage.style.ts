@@ -1,11 +1,14 @@
 import { styled } from "styletron-react";
-import { boolean } from "yup/lib/locale";
 
 export const Container = styled(
   "div",
-  (props: { $headerHeight: string; $footerHeight: string }) => ({
+  (props: {
+    $headerHeight: string;
+    $footerHeight: string;
+    $fullHeight: string;
+  }) => ({
     width: "100vw",
-    height: `calc(100vh - (${props.$headerHeight} + ${props.$footerHeight}))`,
+    height: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
   }),
 );
 
@@ -14,10 +17,8 @@ export const FindWithImageContainer = styled(
   (props: { $bgColor: string; $isWide: boolean }) => ({
     display: "grid",
     gridTemplateRows: "1fr 1fr",
-
     height: "100%",
-    margin: "auto",
-
+    margin: "0 auto",
     backgroundColor: props.$isWide ? props.$bgColor : "transparent",
   }),
 );
@@ -27,7 +28,6 @@ export const Camera = styled(
   (props: { $bgColor: string; $isWide: boolean }) => ({
     display: "flex",
     alignItems: "center",
-    position: "relative",
     margin: "0 auto",
     width: props.$isWide ? "70%" : "100%",
     backgroundColor: props.$bgColor,
@@ -71,7 +71,6 @@ export const TitleLine = styled("div", (props: { $bgColor: string }) => ({
   top: 0,
   width: "35%",
   height: "0.7rem",
-
   backgroundColor: props.$bgColor,
 }));
 
@@ -89,17 +88,15 @@ export const DescriptionFirstBox = styled(
     gridTemplateRows: "1fr",
     gridTemplateColumns: "0.15fr 0.85fr",
     alignItems: "center",
-
     width: "90%",
     margin: "0.4rem auto",
     padding: "0.5rem",
     borderRadius: "1.5rem",
-
     backgroundColor: props.$bgColor,
   }),
 );
 
-export const Number = styled("p", {
+export const Numbering = styled("p", {
   textAlign: "center",
   color: "#fff",
   fontWeight: "bold",
@@ -152,14 +149,11 @@ export const GuideDescriptionBox = styled(
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-
     margin: "0 auto",
     padding: "0.8rem",
     width: props.$isWide ? "75%" : "95%",
     height: "25%",
-
     borderRadius: "1.5rem",
-
     backgroundColor: props.$bgColor,
   }),
 );
@@ -203,16 +197,15 @@ export const GuideTwoImageWrapper = styled(
   }),
 );
 
-export const OXImage = styled("div", (props: { $isWide: boolean }) => ({
+export const PillImage = styled("div", (props: { $isWide: boolean }) => ({
   position: "relative",
   width: "100%",
   height: "100%",
   maxHeight: props.$isWide ? " 8rem" : "6rem",
   maxWidth: props.$isWide ? " 8rem" : "6rem",
-  border: "1px solid",
 }));
 
-export const OX = styled("p", {
+export const ImageDescription = styled("p", {
   fontSize: "1.8rem",
 });
 
@@ -239,7 +232,6 @@ export const CaptureContainer = styled("div", {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  border: "1px solid black",
   width: "100%",
   height: "100%",
 });

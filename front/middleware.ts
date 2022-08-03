@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { botdEdge } from "@lib/botd";
-import { ROUTE, URL_WITH_BOTD } from "@utils/constant";
+import { ROUTE } from "@utils/constant";
 
 export const config = {
-  matcher: URL_WITH_BOTD,
+  matcher: [
+    "/login",
+    "/register",
+    "/account/email/find",
+    "/account/password/find",
+    "/account/password/new",
+  ],
 };
 
 export default async function middleware(req: NextRequest) {
