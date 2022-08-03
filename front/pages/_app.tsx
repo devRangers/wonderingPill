@@ -73,7 +73,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // refresh token이 있을 경우 access token 주기적으로 재발급
   useEffect(() => {
-    const timer = setInterval(() => getAccessToken(), SILENT_REFRESH_TIME);
+    const timer = setInterval(() => {
+      if (document.hasFocus()) getAccessToken();
+    }, SILENT_REFRESH_TIME);
 
     return () => {
       clearInterval(timer);
