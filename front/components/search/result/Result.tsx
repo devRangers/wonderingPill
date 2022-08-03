@@ -31,7 +31,10 @@ import {
   SmallDescription,
   BigBox,
   BottomBox,
-  Button,
+  RegisterButton,
+  ModalContainer,
+  CautionModalButton,
+  SearchOtherPill,
 } from "./Result.style";
 
 const tempData: { [key in string]: string } = {
@@ -125,7 +128,15 @@ function FilteringSearch() {
       </Keep>
       <Bottom>
         <BottomBox>
-          <Button $bgColor={MAIN_COLOR}>내 약에 등록하기</Button>
+          <RegisterButton $bgColor={MAIN_COLOR}>
+            내 약에 등록하기
+          </RegisterButton>
+          <ModalContainer>
+            <CautionModalButton $color={MAIN_COLOR}>
+              주의사항 더보기
+            </CautionModalButton>
+            <SearchOtherPill $color={MAIN_COLOR}>다른 약 검색</SearchOtherPill>
+          </ModalContainer>
         </BottomBox>
       </Bottom>
     </FilteringSearchContainer>

@@ -8,10 +8,9 @@ export const FilteringSearchContainer = styled(
     $fullHeight: string;
   }) => ({
     display: "grid",
-    gridTemplateRows: "1.3fr 0.7fr 1.3fr 1.3fr 1.3fr 0.7fr 0.7fr 1fr",
+    gridTemplateRows: "1.3fr 0.7fr 1.3fr 1.3fr 1.3fr 0.7fr 0.7fr 1.2fr",
     gap: "0.5rem",
     minHeight: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
-    border: "1px solid",
     maxWidth: "32rem",
     margin: "0 auto",
   }),
@@ -222,24 +221,45 @@ export const Bottom = styled("div", {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  height: "60%",
 });
 
 export const BottomBox = styled("div", {
   display: "flex",
-  justifyContent: "flex-end",
+  flexDirection: "column",
+  alignItems: "flex-end",
   width: "85%",
   maxWidth: "26rem",
   height: "100%",
 });
 
-export const Button = styled("div", (props: { $bgColor: string }) => ({
+export const RegisterButton = styled("div", (props: { $bgColor: string }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   width: "50%",
-  height: "60%",
+  height: "40%",
+  minHeight: "2.7rem",
   borderRadius: "1.5rem",
   backgroundColor: props.$bgColor,
   color: "#fff",
+}));
+
+export const ModalContainer = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  height: "80%",
+});
+
+export const CautionModalButton = styled(
+  "div",
+  (props: { $color: string }) => ({
+    color: props.$color,
+    fontSize: "0.8rem",
+  }),
+);
+export const SearchOtherPill = styled("div", (props: { $color: string }) => ({
+  color: props.$color,
+  fontSize: "0.8rem",
 }));
