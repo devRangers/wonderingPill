@@ -32,7 +32,7 @@ function KakaoMap() {
     window.kakao.maps.load(() => {
       const options = {
         center: new window.kakao.maps.LatLng(coords.latitude, coords.longitude),
-        level: 5,
+        level: 3,
       };
       const map = new window.kakao.maps.Map(mapRef.current, options);
     });
