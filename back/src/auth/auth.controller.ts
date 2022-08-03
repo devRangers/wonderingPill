@@ -25,15 +25,17 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { AccessGuard, RefreshGuard } from 'src/common/guards';
+import { RefreshGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
 import {
   CreateUserDto,
   CreateUserResponse,
   LogoutResponse,
+  RecapchaResponse,
   RefreshResponse,
   SigninResponse,
   SigninUserDto,
+  UseRecapchaDto,
 } from './dto';
 import { Tokens } from './types';
 
@@ -101,6 +103,7 @@ export class AuthController {
     res.cookie('AccessToken', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
       httpOnly: true,
+      // secure:true
     });
 
     let maxAge;
@@ -116,6 +119,7 @@ export class AuthController {
     res.cookie('RefreshToken', refreshToken, {
       maxAge,
       httpOnly: true,
+      // secure:true
     });
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
@@ -166,12 +170,11 @@ export class AuthController {
     return {
       statusCode: 200,
       message,
-      accessToken: { accessToken },
     };
   }
 
   @Get('logout')
-  @UseGuards(AccessGuard)
+  @UseGuards(RefreshGuard)
   @ApiOperation({
     summary: '로그아웃 API',
     description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
@@ -187,7 +190,7 @@ export class AuthController {
     @GetCurrentUserId() id: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<LogoutResponse> {
-    const checkLogout = await this.authService.logout(id);
+    const checkLogout: boolean = await this.authService.logout(id);
 
     let message;
     if (checkLogout) {
@@ -215,11 +218,13 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: '현재 로그인 유저 조회 성공',
+    type: SigninResponse,
   })
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string) {
-    const user = await this.authService.getUserById(id);
+    const user: UserModel = await this.authService.getUserById(id);
+    this.logger.verbose(`Call Current User ${id} Success!`);
     return {
       statusCode: 200,
       message: '현재 로그인 유저 조회에 성공했습니다.',
@@ -232,43 +237,45 @@ export class AuthController {
     };
   }
 
-  // recaptcha를 guard로 대체 가능! 비용 절감
-  // 일단은 api로 놔둠
-  // @HttpCode(200)
-  // @Post('recaptcha-v3')
-  // @ApiOperation({
-  //   summary: 'Recaptcha v3 요청 API',
-  //   description: 'Recaptcha v3에 인증을 요청하고 판별한다.',
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: '회원가입 성공',
-  //   type: RecapchaResponse,
-  // })
-  // @ApiBody({ type: UseRecapchaDto })
-  // async verifyRecaptchaV3(@Body() useRecapchaDto: UseRecapchaDto) {
-  //   const data = await this.authService.sendRecaptchaV3(useRecapchaDto);
-  //   const checkScore = await this.authService.checkRecaptchaV3(data.score);
+  @HttpCode(200)
+  @Post('recaptcha-v2')
+  @ApiOperation({
+    summary: 'Recaptcha v2 요청 API',
+    description: 'Recaptcha v2에 인증을 요청하고 판별한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '정상적인 트래픽 확인 성공',
+    type: RecapchaResponse,
+  })
+  @ApiBody({ type: UseRecapchaDto })
+  async verifyRecaptchaV2(@Body() useRecapchaDto: UseRecapchaDto) {
+    const success: boolean = await this.authService.sendRecaptchaV2(
+      useRecapchaDto,
+    );
 
-  //   this.logger.verbose(`recaptcha v3 verify human Success!
-  //   Payload: ${JSON.stringify({ checkScore })}`);
+    this.logger.verbose(`recaptcha v2 : Verify human!
+    Payload: ${JSON.stringify({ success })}`);
 
-  //   return {
-  //     statusCode: 200,
-  //     message: '정상적인 트래픽 활동입니다.',
-  //     recaptchav3: { result: checkScore },
-  //   };
-  // }
+    return {
+      statusCode: 200,
+      message: '정상적인 트래픽 활동입니다.',
+      recaptchav2: { success },
+    };
+  }
+
+  // @Post('send-email')
+  // async sendEmail() {}
+
+  // @Post('kakao')
+  // async kakao() {}
+
+  // @Post('google')
+  // async google() {}
 
   // @Post('send-sms')
   // async sendSMS() {}
 
   // @Post('verify-code')
   // async verifyCode() {}
-
-  // @Get('get-user')
-  // async getUser() {}
-
-  // @Post('send-email')
-  // async sendEmail() {}
 }
