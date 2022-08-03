@@ -76,7 +76,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     const timer = setInterval(() => getAccessToken(), SILENT_REFRESH_TIME);
 
     return () => {
-      clearTimeout(timer);
+      clearInterval(timer);
     };
   }, []);
 
