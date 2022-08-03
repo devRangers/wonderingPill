@@ -6,17 +6,26 @@ import {
 } from "@utils/constant";
 import React from "react";
 import {
-  Bottom,
-  Caution,
-  Company,
-  EffectContainer,
+  SmallContainer as Bottom,
+  SmallContainer as Caution,
+  CompanyContainer as Company,
+  EffectContainer as Effect,
+  EffectContainer as SideEffect,
   FilteringSearchContainer,
-  Keep,
-  SideEffect,
-  Usage,
+  SmallContainer as Keep,
+  SmallContainer as Usage,
   TitleBox,
   TitleContainer,
   Title,
+  EffectBox,
+  EffectTitle,
+  EffectDescription,
+  WarningContainer,
+  WarningItem,
+  EffectDescriptionContainer,
+  CompanyBox,
+  CompanyTitle,
+  CompanyDescriptionContainer,
 } from "./Result.style";
 
 const tempData: { [key in string]: string } = {
@@ -43,12 +52,41 @@ function FilteringSearch() {
       $fullHeight={FULL_HEIGHT}>
       <TitleContainer>
         <TitleBox $bgColor={MAIN_COLOR}>
+          {/* <WarningContainer>
+            <WarningItem>덜위험</WarningItem>
+            <WarningItem>위험</WarningItem>
+          </WarningContainer> */}
           <Title>{tempData.title}</Title>
         </TitleBox>
       </TitleContainer>
-      <EffectContainer></EffectContainer>
-      <SideEffect>c</SideEffect>
-      <Company>d</Company>
+      <Effect>
+        <EffectBox>
+          <EffectTitle $bgColor={MAIN_COLOR}>효능</EffectTitle>
+          <EffectDescriptionContainer $borderColor={MAIN_COLOR}>
+            <EffectDescription $scrollColor={MAIN_COLOR}>
+              {tempData.effect}
+            </EffectDescription>
+          </EffectDescriptionContainer>
+        </EffectBox>
+      </Effect>
+      <SideEffect>
+        <EffectBox>
+          <EffectTitle $bgColor={MAIN_COLOR}>부작용</EffectTitle>
+          <EffectDescriptionContainer $borderColor={MAIN_COLOR}>
+            <EffectDescription $scrollColor={MAIN_COLOR}>
+              {tempData.effect}
+            </EffectDescription>
+          </EffectDescriptionContainer>
+        </EffectBox>
+      </SideEffect>
+      <Company>
+        <CompanyBox>
+          <CompanyTitle $bgColor={MAIN_COLOR}>업체명</CompanyTitle>
+          <CompanyDescriptionContainer $borderColor={MAIN_COLOR}>
+            {tempData.company}
+          </CompanyDescriptionContainer>
+        </CompanyBox>
+      </Company>
       <Usage>e</Usage>
       <Caution>f</Caution>
       <Keep>g</Keep>

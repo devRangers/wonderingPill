@@ -14,6 +14,7 @@ export const HeaderContainer = styled(
     gridTemplateColumns: "1fr 1fr 1fr",
     justifyItems: "start",
     alignItems: "center",
+    zIndex: "1",
   }),
 );
 
