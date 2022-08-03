@@ -21,3 +21,5 @@ export * from './bookmarkListResponseDto';
 export * from './recapchaResponseRecaptchav2';
 export * from './useRecapchaDto';
 export * from './recapchaResponse';
+export * from './findPasswordDto';
+export * from './findPasswordResponse';
