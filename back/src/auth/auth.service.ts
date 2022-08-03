@@ -205,7 +205,7 @@ export class AuthService {
   }
 
   async getPWChangeToken(id: string): Promise<string> {
-    const token = uuid();
+    const token: string = uuid().toString();
     const user = await this.prisma.user.update({
       where: {
         id,

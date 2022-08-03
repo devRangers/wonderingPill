@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User as UserModel } from '@prisma/client';
 
 export class UserEntity implements UserModel {
-  PWChangeToken: string;
   @ApiProperty()
   id: string;
 

@@ -8,7 +8,7 @@ export class MailService {
 
   async sendEmail(email: string, name: string, token: string) {
     const mailUrl = '/api/v1/mails';
-    // 비밀번호 변경 페이지에 토큰 유효기간을 같이 보내기
+    // 비밀번호 변경 페이지에 토큰 유효기간을 같이 보내기 : redis
     const result = await this.httpService
       .post(
         `${process.env.MAIL_API_DOMAIN}${mailUrl}`,
