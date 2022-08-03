@@ -29,6 +29,7 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
+import ReCaptcha from "@recaptcha/Recaptcha";
 
 type LoginFormValues = Omit<LoginTypes, "isSignin">;
 
@@ -58,6 +59,7 @@ function LoginForm() {
 
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
+  const [token, setToken] = useState("");
 
   const initialValue: LoginFormValues = {
     email: userEmail,
@@ -94,6 +96,7 @@ function LoginForm() {
     onSubmit: async (values) => {
       const dataToSubmit: LoginTypes = Object.assign(values, {
         isSignin: isAutoLoginChecked,
+        token,
       });
       loginMutation.mutate(dataToSubmit);
     },
@@ -178,6 +181,8 @@ function LoginForm() {
             </TextBtn>
           </div>
         </SubBtnContainer>
+
+        <ReCaptcha setToken={setToken} />
       </Form>
 
       <SnsLoginContainer>

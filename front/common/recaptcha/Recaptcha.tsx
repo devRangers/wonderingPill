@@ -2,26 +2,20 @@ import { useEffect, useRef, Dispatch, SetStateAction } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
 interface ReCaptchaProps {
-  startVerification: boolean;
-  setStartVerification: Dispatch<SetStateAction<boolean>>;
+  setToken: Dispatch<SetStateAction<string>>;
 }
 
-function ReCaptcha({
-  startVerification,
-  setStartVerification,
-}: ReCaptchaProps) {
+function ReCaptcha({ setToken }: ReCaptchaProps) {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   useEffect(() => {
     const getToken = async () => {
       const token = (await recaptchaRef?.current?.executeAsync()) as string;
-      recaptchaRef?.current?.reset();
+      setToken(token);
+      recaptchaRef.current?.reset();
     };
-    if (startVerification) {
-      getToken();
-      setStartVerification(false);
-    }
-  }, [startVerification]);
+    getToken();
+  }, []);
 
   return (
     <ReCAPTCHA
