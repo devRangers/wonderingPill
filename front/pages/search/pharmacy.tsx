@@ -5,18 +5,17 @@ import {
   HEADER_HEIGHT,
   MAIN_COLOR,
   BOX_COLOR,
-  BOX_TITLE_COLOR,
 } from "@utils/constant";
 import {
   PageContainer,
   SearchPharmContainer,
-  SearchPharmTitle,
   SearchContainer,
   SearchSelect,
   SearchOption,
   SearchInput,
   SearchBtn,
 } from "@searchPharmComp/SearchPharmPage.style";
+import KakaoMap from "@searchPharmComp/KakaoMap";
 
 const SearchPharmPage: NextPage = () => {
   return (
@@ -25,9 +24,6 @@ const SearchPharmPage: NextPage = () => {
       $footerHeight={FOOTER_HEIGHT}
       $fullHeight={FULL_HEIGHT}>
       <SearchPharmContainer $bgColor={BOX_COLOR}>
-        <SearchPharmTitle $txtColor={BOX_TITLE_COLOR}>
-          약국 찾기
-        </SearchPharmTitle>
         <SearchContainer>
           <SearchSelect $bgColor={MAIN_COLOR}>
             <SearchOption value="지역">지역</SearchOption>
@@ -36,6 +32,8 @@ const SearchPharmPage: NextPage = () => {
           <SearchInput type="text" />
           <SearchBtn $bgColor={MAIN_COLOR}>검색</SearchBtn>
         </SearchContainer>
+
+        <KakaoMap />
       </SearchPharmContainer>
     </PageContainer>
   );
