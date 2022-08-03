@@ -284,10 +284,7 @@ export class AuthController {
   @ApiBody({ type: FindPasswordDto })
   async sendEmail(@Body() findPasswordDto: FindPasswordDto) {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
-    const token: string = await this.authService.getPWChangeToken(
-      user.id,
-      user.email,
-    );
+    const token: string = await this.authService.getPWChangeToken(user.id);
     const result: boolean = await this.mailService.sendEmail(
       user.email,
       user.name,
@@ -297,7 +294,7 @@ export class AuthController {
     return {
       statusCode: 200,
       message: '이메일을 성공적으로 전송했습니다.',
-      result: { result, token },
+      result: { result },
     };
   }
 

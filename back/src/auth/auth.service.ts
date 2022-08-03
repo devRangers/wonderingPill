@@ -11,6 +11,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import * as config from 'config';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
 import {
   CreateUserDto,
@@ -224,8 +225,9 @@ export class AuthService {
     return user;
   }
 
-  async getPWChangeToken(id: string, email: string) {
-    const token = await this.getAccessToken(id, email);
+  async getPWChangeToken(id: string) {
+    const token = uuid();
+
     const user = await this.prisma.user.update({
       where: {
         id,
