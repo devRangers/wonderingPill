@@ -11,6 +11,7 @@ import { PharmacyController } from './pharmacy/pharmacy.controller';
 import { PharmacyService } from './pharmacy/pharmacy.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaService } from './prisma/prisma.service';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PrismaService } from './prisma/prisma.service';
       ttl: 10,
       limit: 5,
     }),
+    RedisModule,
   ],
   controllers: [PharmacyController, BookmarkController],
   providers: [
