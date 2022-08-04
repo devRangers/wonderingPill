@@ -25,7 +25,7 @@ export const SearchPharmContainer = styled(
   }),
 );
 
-export const SearchContainer = styled("div", {
+export const SearchContainer = styled("form", {
   width: "95%",
   height: "70%",
   display: "grid",
