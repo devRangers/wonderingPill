@@ -19,7 +19,7 @@ import {
 import KakaoMap from "@searchPharmComp/KakaoMap";
 
 const SearchPharmPage: NextPage = () => {
-  const [option, setOption] = useState("name");
+  const [option, setOption] = useState("address");
   const [inputText, setInputText] = useState("");
   const [keyword, setKeyword] = useState("");
 
@@ -44,8 +44,8 @@ const SearchPharmPage: NextPage = () => {
       <SearchPharmContainer $bgColor={BOX_COLOR}>
         <SearchContainer onSubmit={onSubmitHandler}>
           <SearchSelect $bgColor={MAIN_COLOR} onChange={selectChangeHandler}>
-            <SearchOption value="name">이름</SearchOption>
             <SearchOption value="address">지역</SearchOption>
+            <SearchOption value="name">이름</SearchOption>
           </SearchSelect>
           <SearchInput
             type="text"
