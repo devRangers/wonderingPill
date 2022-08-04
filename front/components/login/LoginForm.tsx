@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useRef } from "react";
 import { useFormik } from "formik";
@@ -194,14 +195,16 @@ function LoginForm() {
       <SnsLoginContainer>
         <SnsTitle>간편로그인</SnsTitle>
         <SnsBtnContainer>
-          <KakaoBtn>
-            <Image
-              src="/images/sns/kakao.png"
-              alt="kakao-login"
-              width="45"
-              height="45"
-            />
-          </KakaoBtn>
+          <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/kakao`}>
+            <KakaoBtn>
+              <Image
+                src="/images/sns/kakao.png"
+                alt="kakao-login"
+                width="45"
+                height="45"
+              />
+            </KakaoBtn>
+          </Link>
 
           <GoogleBtn>
             <Image
