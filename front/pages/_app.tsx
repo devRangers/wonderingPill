@@ -26,7 +26,6 @@ const getAccessToken = async () => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/refresh`,
       {
-        headers: { Origin: `${process.env.NEXT_PUBLIC_CLIENT_URL}` },
         credentials: "include",
       },
     );
@@ -58,7 +57,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/current`,
           {
-            headers: { Origin: `${process.env.NEXT_PUBLIC_CLIENT_URL}` },
             credentials: "include",
           },
         );
