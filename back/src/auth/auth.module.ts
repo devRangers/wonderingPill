@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisModule } from 'src/redis/redis.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtRefreshStrategy, JwtStrategy } from './strategy';
+import { JwtRefreshStrategy, JwtStrategy, KakaoStrategy } from './strategy';
 
 @Module({
   imports: [
@@ -16,7 +16,13 @@ import { JwtRefreshStrategy, JwtStrategy } from './strategy';
     RedisModule,
   ],
   controllers: [AuthController],
-  providers: [PrismaService, AuthService, JwtStrategy, JwtRefreshStrategy],
-  exports: [JwtStrategy, JwtRefreshStrategy],
+  providers: [
+    PrismaService,
+    AuthService,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    KakaoStrategy,
+  ],
+  exports: [JwtStrategy, JwtRefreshStrategy, KakaoStrategy],
 })
 export class AuthModule {}

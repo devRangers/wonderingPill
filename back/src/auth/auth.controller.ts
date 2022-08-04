@@ -3,10 +3,10 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Logger,
-  Param,
   Post,
-  Put,
+  Req,
   Res,
   UseGuards,
   UsePipes,
@@ -19,6 +19,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { User as UserModel } from '@prisma/client';
 import * as config from 'config';
 import { Response } from 'express';
@@ -27,15 +28,20 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { AccessGuard, RecaptchaGuard, RefreshGuard } from 'src/common/guards';
+import {
+  AccessGuard,
+  KakaoGuard,
+  RecaptchaGuard,
+  RefreshGuard,
+} from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
-  ChangePasswordDto,
   CreateUserDto,
   CreateUserResponse,
   FindPasswordDto,
   FindPasswordResponse,
+  KakaoLoginDto,
   LogoutResponse,
   RefreshResponse,
   SigninResponse,
@@ -81,6 +87,7 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Post('signin')
+  @Throttle(5, 1)
   @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '유저 로그인 API',
@@ -255,6 +262,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('send-email')
+  @Throttle(5, 360)
   @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '비밀번호 찾기 email 전송 요청 API',
@@ -284,14 +292,51 @@ export class AuthController {
     };
   }
 
-  @Put('change-password')
-  async changePassword(
-    @Param('token') token: string,
-    @Body() changePasswordDto: ChangePasswordDto,
-  ) {}
+  // @Put('change-password')
+  // async changePassword(
+  //   @Param('token') token: string,
+  //   @Body() changePasswordDto: ChangePasswordDto,
+  // ) {}
 
-  // @Post('kakao')
-  // async kakao() {}
+  @HttpCode(200)
+  @Throttle(5, 1)
+  @Get('kakao')
+  @ApiOperation({
+    summary: 'kakao 로그인 API',
+    description: 'kakao 로그인을 요청 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'kakao 로그인 요청 성공',
+  })
+  @ApiBody({})
+  @UseGuards(KakaoGuard)
+  async callKakao() {
+    return HttpStatus.OK;
+  }
+
+  @UseGuards(KakaoGuard)
+  @Get('kakao-redirect')
+  async kakaoLogin(@Req() req, @Res({ passthrough: true }) res) {
+    const { accessToken, refreshToken }: Tokens =
+      await this.authService.kakaoLogin(req.user as KakaoLoginDto);
+
+    // tokens cookie 저장
+    res.cookie('AccessToken', accessToken, {
+      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      httpOnly: true,
+      // secure:true
+    });
+    res.cookie('RefreshToken', refreshToken, {
+      maxAge:
+        process.env.JWT_REFRESH_EXPIRESIN ||
+        config.get('jwt-refresh').expiresIn,
+      httpOnly: true,
+      // secure:true
+    });
+
+    res.redirect(`${process.env.CLIENT_URL}/`);
+  }
 
   // @Post('google')
   // async google() {}

@@ -20,8 +20,8 @@ import { RedisModule } from './redis/redis.module';
     HttpModule,
     MailModule,
     ThrottlerModule.forRoot({
-      ttl: 10,
-      limit: 5,
+      ttl: 1,
+      limit: 30,
     }),
     RedisModule,
   ],
