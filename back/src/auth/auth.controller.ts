@@ -25,11 +25,14 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { AccessGuard, RefreshGuard } from 'src/common/guards';
+import { RecaptchaGuard, RefreshGuard } from 'src/common/guards';
+import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
   CreateUserDto,
   CreateUserResponse,
+  FindPasswordDto,
+  FindPasswordResponse,
   LogoutResponse,
   RefreshResponse,
   SigninResponse,
@@ -41,7 +44,10 @@ import { Tokens } from './types';
 @Controller('auth')
 export class AuthController {
   private logger = new Logger(`AuthController`);
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailService: MailService,
+  ) {}
 
   @Public()
   @HttpCode(200)
@@ -72,6 +78,7 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Post('signin')
+  @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '유저 로그인 API',
     description:
@@ -101,6 +108,7 @@ export class AuthController {
     res.cookie('AccessToken', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
       httpOnly: true,
+      // secure:true
     });
 
     let maxAge;
@@ -116,6 +124,7 @@ export class AuthController {
     res.cookie('RefreshToken', refreshToken, {
       maxAge,
       httpOnly: true,
+      // secure:true
     });
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
@@ -166,12 +175,11 @@ export class AuthController {
     return {
       statusCode: 200,
       message,
-      accessToken: { accessToken },
     };
   }
 
   @Get('logout')
-  @UseGuards(AccessGuard)
+  @UseGuards(RefreshGuard)
   @ApiOperation({
     summary: '로그아웃 API',
     description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
@@ -187,7 +195,7 @@ export class AuthController {
     @GetCurrentUserId() id: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<LogoutResponse> {
-    const checkLogout = await this.authService.logout(id);
+    const checkLogout: boolean = await this.authService.logout(id);
 
     let message;
     if (checkLogout) {
@@ -215,11 +223,13 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: '현재 로그인 유저 조회 성공',
+    type: SigninResponse,
   })
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string) {
-    const user = await this.authService.getUserById(id);
+    const user: UserModel = await this.authService.getUserById(id);
+    this.logger.verbose(`Call Current User ${id} Success!`);
     return {
       statusCode: 200,
       message: '현재 로그인 유저 조회에 성공했습니다.',
@@ -232,43 +242,46 @@ export class AuthController {
     };
   }
 
-  // recaptcha를 guard로 대체 가능! 비용 절감
-  // 일단은 api로 놔둠
-  // @HttpCode(200)
-  // @Post('recaptcha-v3')
-  // @ApiOperation({
-  //   summary: 'Recaptcha v3 요청 API',
-  //   description: 'Recaptcha v3에 인증을 요청하고 판별한다.',
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: '회원가입 성공',
-  //   type: RecapchaResponse,
-  // })
-  // @ApiBody({ type: UseRecapchaDto })
-  // async verifyRecaptchaV3(@Body() useRecapchaDto: UseRecapchaDto) {
-  //   const data = await this.authService.sendRecaptchaV3(useRecapchaDto);
-  //   const checkScore = await this.authService.checkRecaptchaV3(data.score);
+  @HttpCode(200)
+  @Post('send-email')
+  @UseGuards(RecaptchaGuard)
+  @ApiOperation({
+    summary: '비밀번호 찾기 email 전송 요청 API',
+    description: '비밀번호 찾기를 위해 email을 전송 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'email 전송 성공',
+    type: FindPasswordResponse,
+  })
+  @ApiBody({ type: FindPasswordDto })
+  async sendEmail(@Body() findPasswordDto: FindPasswordDto) {
+    const user: UserModel = await this.authService.findUser(findPasswordDto);
+    const token: string = await this.authService.getPWChangeToken(user.id);
+    const result: boolean = await this.mailService.sendEmail(
+      user.email,
+      user.name,
+      token,
+    );
+    this.logger.verbose(`User ${user.email} send email to update Success!`);
+    return {
+      statusCode: 200,
+      message: '이메일을 성공적으로 전송했습니다.',
+      result: { result },
+    };
+  }
 
-  //   this.logger.verbose(`recaptcha v3 verify human Success!
-  //   Payload: ${JSON.stringify({ checkScore })}`);
+  // user/update-password
 
-  //   return {
-  //     statusCode: 200,
-  //     message: '정상적인 트래픽 활동입니다.',
-  //     recaptchav3: { result: checkScore },
-  //   };
-  // }
+  // @Post('kakao')
+  // async kakao() {}
+
+  // @Post('google')
+  // async google() {}
 
   // @Post('send-sms')
   // async sendSMS() {}
 
   // @Post('verify-code')
   // async verifyCode() {}
-
-  // @Get('get-user')
-  // async getUser() {}
-
-  // @Post('send-email')
-  // async sendEmail() {}
 }

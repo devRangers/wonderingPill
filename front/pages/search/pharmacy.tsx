@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { useState } from "react";
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
@@ -18,22 +19,45 @@ import {
 import KakaoMap from "@searchPharmComp/KakaoMap";
 
 const SearchPharmPage: NextPage = () => {
+  const [option, setOption] = useState("address");
+  const [inputText, setInputText] = useState("");
+  const [keyword, setKeyword] = useState("");
+
+  const selectChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setOption(e.target.value);
+  };
+
+  const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputText(e.target.value);
+  };
+
+  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setKeyword(inputText);
+  };
+
   return (
     <PageContainer
       $headerHeight={HEADER_HEIGHT}
       $footerHeight={FOOTER_HEIGHT}
       $fullHeight={FULL_HEIGHT}>
       <SearchPharmContainer $bgColor={BOX_COLOR}>
-        <SearchContainer>
-          <SearchSelect $bgColor={MAIN_COLOR}>
-            <SearchOption value="지역">지역</SearchOption>
-            <SearchOption value="이름">이름</SearchOption>
+        <SearchContainer onSubmit={onSubmitHandler}>
+          <SearchSelect $bgColor={MAIN_COLOR} onChange={selectChangeHandler}>
+            <SearchOption value="address">지역</SearchOption>
+            <SearchOption value="name">이름</SearchOption>
           </SearchSelect>
-          <SearchInput type="text" />
-          <SearchBtn $bgColor={MAIN_COLOR}>검색</SearchBtn>
+          <SearchInput
+            type="text"
+            value={inputText}
+            onChange={inputChangeHandler}
+          />
+          <SearchBtn type="submit" $bgColor={MAIN_COLOR}>
+            검색
+          </SearchBtn>
         </SearchContainer>
 
-        <KakaoMap />
+        <KakaoMap keyword={keyword} option={option} />
       </SearchPharmContainer>
     </PageContainer>
   );

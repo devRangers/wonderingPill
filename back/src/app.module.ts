@@ -1,24 +1,20 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
+import { BookmarkController } from './bookmark/bookmark.controller';
+import { BookmarkService } from './bookmark/bookmark.service';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
-import { AccessGuard } from './common/guards';
+import { MailModule } from './mail/mail.module';
 import { PharmacyController } from './pharmacy/pharmacy.controller';
 import { PharmacyService } from './pharmacy/pharmacy.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { BookmarkController } from './bookmark/bookmark.controller';
-import { BookmarkService } from './bookmark/bookmark.service';
 import { PrismaService } from './prisma/prisma.service';
-@Module({
-  imports: [AuthModule, PrismaModule, HttpModule],
-  controllers: [PharmacyController, BookmarkController],
 
+@Module({
+  imports: [AuthModule, PrismaModule, HttpModule, MailModule],
+  controllers: [PharmacyController, BookmarkController],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AccessGuard,
-    },
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
@@ -27,6 +23,6 @@ import { PrismaService } from './prisma/prisma.service';
     PrismaService,
     BookmarkService,
   ],
-  exports: [HttpModule],
+  exports: [HttpModule, MailModule],
 })
 export class AppModule {}
