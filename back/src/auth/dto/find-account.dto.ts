@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsJSON, IsNotEmpty, IsString } from 'class-validator';
 import { CommonResponseDto } from 'src/common/dto';
 
 export class FindPasswordDto {
@@ -24,4 +24,16 @@ export class FindPasswordDto {
   token: string;
 }
 
-export class FindPasswordResponse extends CommonResponseDto {}
+export class FindPasswordResponse extends CommonResponseDto {
+  @IsJSON()
+  @IsNotEmpty()
+  @ApiProperty()
+  result: { result: boolean };
+}
+
+export class ChangePasswordDto {
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  password: string;
+}
