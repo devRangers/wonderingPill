@@ -373,7 +373,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "현재 로그인 유저 조회 성공"
+            "description": "현재 로그인 유저 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SigninResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Auth API"],
@@ -385,6 +392,37 @@
             "refreshToken": []
           }
         ]
+      }
+    },
+    "/auth/send-email": {
+      "post": {
+        "operationId": "AuthController_sendEmail",
+        "summary": "비밀번호 찾기 email 전송 요청 API",
+        "description": "비밀번호 찾기를 위해 email을 전송 한다.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "email 전송 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindPasswordResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth API"]
       }
     }
   },
@@ -629,9 +667,12 @@
           },
           "isSignin": {
             "type": "boolean"
+          },
+          "token": {
+            "type": "string"
           }
         },
-        "required": ["email", "password", "isSignin"]
+        "required": ["email", "password", "isSignin", "token"]
       },
       "SigninResponse": {
         "type": "object",
@@ -674,19 +715,9 @@
           },
           "message": {
             "type": "string"
-          },
-          "accessToken": {
-            "type": "object",
-            "properties": {
-              "accessToken": {
-                "required": true,
-                "type": "string",
-                "nullable": true
-              }
-            }
           }
         },
-        "required": ["statusCode", "message", "accessToken"]
+        "required": ["statusCode", "message"]
       },
       "LogoutResponse": {
         "type": "object",
@@ -708,6 +739,36 @@
           }
         },
         "required": ["statusCode", "message", "checkLogout"]
+      },
+      "FindPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "birth": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "name", "birth", "token"]
+      },
+      "FindPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["statusCode", "message"]
       }
     }
   }

@@ -56,7 +56,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/current`,
-          { credentials: "include" },
+          {
+            credentials: "include",
+          },
         );
         const result: CurrentUserResponse = await res.json();
 
@@ -73,10 +75,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // refresh token이 있을 경우 access token 주기적으로 재발급
   useEffect(() => {
-    const timer = setInterval(() => getAccessToken(), SILENT_REFRESH_TIME);
+    const timer = setInterval(() => {
+      if (document.hasFocus()) getAccessToken();
+    }, SILENT_REFRESH_TIME);
 
     return () => {
-      clearTimeout(timer);
+      clearInterval(timer);
     };
   }, []);
 

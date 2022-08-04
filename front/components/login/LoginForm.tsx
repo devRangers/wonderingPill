@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import ReactTooltip from "react-tooltip";
+import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
@@ -29,7 +31,7 @@ import {
   GoogleBtn,
 } from "./LoginForm.style";
 
-type LoginFormValues = Omit<LoginTypes, "isSignin">;
+type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
 const loginHandler = async (data: LoginTypes) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`, {
@@ -55,6 +57,7 @@ function LoginForm() {
       ? router.query.email
       : "";
 
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
 
@@ -86,14 +89,17 @@ function LoginForm() {
       password: Yup.string()
         .matches(
           /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-          "비밀번호는 소문자, 숫자, 특수문자 포함 8자 이상입니다.",
+          "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
         )
-        .required("비밀번호를 입력해 주세요."),
+        .required("소문자, 숫자, 특수문자 포함 8자 이상입니다."),
     }),
     onSubmit: async (values) => {
+      const token = (await recaptchaRef?.current?.executeAsync()) as string;
       const dataToSubmit: LoginTypes = Object.assign(values, {
         isSignin: isAutoLoginChecked,
+        token,
       });
+      recaptchaRef.current?.reset();
       loginMutation.mutate(dataToSubmit);
     },
   });
@@ -126,10 +132,26 @@ function LoginForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.password}
+              data-tip="password-tooltip"
+              data-for="password-tooltip"
+              autoComplete="true"
             />
-            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
-              {formik.touched.password && formik.errors.password}
-            </ErrorMessage>
+            {formik.touched.password && formik.errors.password ? (
+              <>
+                <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+                  비밀번호를 입력해 주세요.
+                </ErrorMessage>
+
+                <ReactTooltip
+                  key="password-tooltip"
+                  id="password-tooltip"
+                  place="top">
+                  {formik.errors.password}
+                </ReactTooltip>
+              </>
+            ) : (
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
+            )}
           </InputContainer>
 
           <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
@@ -161,6 +183,12 @@ function LoginForm() {
             </TextBtn>
           </div>
         </SubBtnContainer>
+
+        <ReCAPTCHA
+          ref={recaptchaRef}
+          size="invisible"
+          sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        />
       </Form>
 
       <SnsLoginContainer>
