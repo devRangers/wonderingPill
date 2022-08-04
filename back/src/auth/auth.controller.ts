@@ -27,7 +27,7 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { RecaptchaGuard, RefreshGuard } from 'src/common/guards';
+import { AccessGuard, RecaptchaGuard, RefreshGuard } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
@@ -161,6 +161,7 @@ export class AuthController {
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async refresh(
+    @Res({ passthrough: true }) res: Response,
     @GetCurrentUserId() id: string,
     @GetCurrentUser('refreshToken') refreshToken: string,
   ): Promise<RefreshResponse> {
@@ -168,6 +169,12 @@ export class AuthController {
       id,
       refreshToken,
     );
+
+    res.cookie('AccessToken', accessToken, {
+      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      httpOnly: true,
+      // secure:true
+    });
 
     let message;
     if (accessToken) {
@@ -183,7 +190,7 @@ export class AuthController {
   }
 
   @Get('logout')
-  @UseGuards(RefreshGuard)
+  @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '로그아웃 API',
     description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
@@ -219,7 +226,7 @@ export class AuthController {
   }
 
   @Get('current')
-  @UseGuards(RefreshGuard)
+  @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '현재 로그인 API',
     description: '현재 로그인되어있는 유저를 불러온다.',
