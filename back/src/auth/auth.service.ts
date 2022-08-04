@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import {
   ForbiddenException,
   Injectable,
@@ -11,6 +10,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import * as config from 'config';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { RedisService } from 'src/redis/redis.service';
 import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
 import { CreateUserDto, FindPasswordDto, SigninUserDto } from './dto';
@@ -21,7 +21,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly httpService: HttpService,
+    private readonly redisService: RedisService,
   ) {}
 
   async getUserByEmail(email): Promise<User> {
@@ -48,7 +48,7 @@ export class AuthService {
     return user;
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User | null> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { name, email, password, phone, birth } = createUserDto;
     const hashedPassword = await argon.hash(password);
     try {
@@ -75,10 +75,9 @@ export class AuthService {
     }
   }
 
-  async localSignin(signinUserDto: SigninUserDto): Promise<Tokens | null> {
+  async localSignin(signinUserDto: SigninUserDto, user: User): Promise<Tokens> {
     try {
       const { email, password, isSignin } = signinUserDto;
-      const user = await this.getUserByEmail(email);
 
       const isPwMatching = await argon.verify(user.password, password);
       if (!isPwMatching)
@@ -99,7 +98,7 @@ export class AuthService {
     id: string,
     email: string,
     isSignin: boolean,
-  ): Promise<Tokens | null> {
+  ): Promise<Tokens> {
     const jwtPayload: JwtPayload = {
       email,
       sub: id,
@@ -128,34 +127,40 @@ export class AuthService {
   }
 
   async saveRefreshToken(
-    email: string,
+    id: string,
+    isSignin: boolean,
     refreshToken: string,
-  ): Promise<User | null> {
-    const user = await this.prisma.user.update({
-      where: {
-        email,
-      },
-      data: {
-        refreshToken,
-      },
-    });
+  ): Promise<boolean> {
+    let ttl;
+    if (isSignin) {
+      ttl = Number(process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE) / 1000;
+    } else {
+      ttl = Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000;
+    }
+    const result = await this.redisService.setKey(
+      're' + id,
+      process.env.REFRESHTOKEN_KEY + refreshToken,
+      ttl,
+    );
 
-    if (!user) {
+    if (!result) {
       throw new ForbiddenException('refresh token이 저장되지 않았습니다.');
     }
 
-    return user;
+    return result;
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
     const user = await this.getUserById(id);
-    if (user.refreshToken !== refreshToken) {
+    const result = await (
+      await this.redisService.getKey('re' + id)
+    ).slice(process.env.REFRESHTOKEN_KEY.length);
+
+    if (result !== refreshToken) {
       throw new ForbiddenException('Access Denied');
     }
 
     const accessToken: string = await this.getAccessToken(id, user.email);
-
-    await this.saveRefreshToken(user.email, refreshToken);
     return accessToken;
   }
 
@@ -177,18 +182,7 @@ export class AuthService {
   }
 
   async logout(id: string): Promise<boolean> {
-    const user = await this.prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        refreshToken: null,
-      },
-    });
-
-    if (!user) {
-      throw new ForbiddenException('토큰을 삭제하지 못했습니다.');
-    }
+    await this.redisService.delKey('re' + id);
     return true;
   }
 
@@ -205,16 +199,13 @@ export class AuthService {
   }
 
   async getPWChangeToken(id: string): Promise<string> {
-    const token = uuid();
-    const user = await this.prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        changePWToken: token,
-      },
-    });
-    if (!user) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
+    const token: string = uuid().toString();
+    const result = await this.redisService.setKey(
+      'pw' + id,
+      process.env.CHANGE_PASSWORD_KEY + token,
+      Number(process.env.PW_TOKEN_TTL),
+    );
+    if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
     return token;
   }
 }

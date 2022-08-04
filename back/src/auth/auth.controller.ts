@@ -4,7 +4,9 @@ import {
   Get,
   HttpCode,
   Logger,
+  Param,
   Post,
+  Put,
   Res,
   UseGuards,
   UsePipes,
@@ -25,10 +27,11 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { RecaptchaGuard, RefreshGuard } from 'src/common/guards';
+import { AccessGuard, RecaptchaGuard, RefreshGuard } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
+  ChangePasswordDto,
   CreateUserDto,
   CreateUserResponse,
   FindPasswordDto,
@@ -94,13 +97,14 @@ export class AuthController {
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SigninResponse> {
+    const user = await this.authService.getUserByEmail(signinUserDto.email);
     const { accessToken, refreshToken }: Tokens =
-      await this.authService.localSignin(signinUserDto);
+      await this.authService.localSignin(signinUserDto, user);
 
     // redis: save refresh-token
-    // 일단은 db에 저장
-    const user: UserModel = await this.authService.saveRefreshToken(
-      signinUserDto.email,
+    await this.authService.saveRefreshToken(
+      user.id,
+      signinUserDto.isSignin,
       refreshToken,
     );
 
@@ -157,6 +161,7 @@ export class AuthController {
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async refresh(
+    @Res({ passthrough: true }) res: Response,
     @GetCurrentUserId() id: string,
     @GetCurrentUser('refreshToken') refreshToken: string,
   ): Promise<RefreshResponse> {
@@ -164,6 +169,12 @@ export class AuthController {
       id,
       refreshToken,
     );
+
+    res.cookie('AccessToken', accessToken, {
+      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      httpOnly: true,
+      // secure:true
+    });
 
     let message;
     if (accessToken) {
@@ -179,7 +190,7 @@ export class AuthController {
   }
 
   @Get('logout')
-  @UseGuards(RefreshGuard)
+  @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '로그아웃 API',
     description: 'refreshToken과 accessToken을 삭제하고 로그아웃한다.',
@@ -215,7 +226,7 @@ export class AuthController {
   }
 
   @Get('current')
-  @UseGuards(RefreshGuard)
+  @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '현재 로그인 API',
     description: '현재 로그인되어있는 유저를 불러온다.',
@@ -227,7 +238,7 @@ export class AuthController {
   })
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
-  async current(@GetCurrentUserId() id: string) {
+  async current(@GetCurrentUserId() id: string): Promise<SigninResponse> {
     const user: UserModel = await this.authService.getUserById(id);
     this.logger.verbose(`Call Current User ${id} Success!`);
     return {
@@ -255,7 +266,9 @@ export class AuthController {
     type: FindPasswordResponse,
   })
   @ApiBody({ type: FindPasswordDto })
-  async sendEmail(@Body() findPasswordDto: FindPasswordDto) {
+  async sendEmail(
+    @Body() findPasswordDto: FindPasswordDto,
+  ): Promise<FindPasswordResponse> {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
     const token: string = await this.authService.getPWChangeToken(user.id);
     const result: boolean = await this.mailService.sendEmail(
@@ -271,7 +284,11 @@ export class AuthController {
     };
   }
 
-  // user/update-password
+  @Put('change-password')
+  async changePassword(
+    @Param('token') token: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {}
 
   // @Post('kakao')
   // async kakao() {}
