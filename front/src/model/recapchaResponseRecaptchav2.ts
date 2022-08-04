@@ -6,9 +6,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SigninUserDto {
-  email: string;
-  password: string;
-  isSignin: boolean;
-  token: string;
-}
+export type RecapchaResponseRecaptchav2 = {
+  result?: boolean;
+};
