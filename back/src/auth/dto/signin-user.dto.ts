@@ -58,3 +58,37 @@ export class LogoutResponse extends CommonResponseDto {
     checkLogout: boolean;
   };
 }
+
+export class KakaoLoginDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  name: string;
+
+  @IsString()
+  @ApiProperty()
+  email: string;
+
+  @IsString()
+  @ApiProperty()
+  profileImg: string;
+
+  @IsString()
+  @ApiProperty()
+  birth: string;
+
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  password: string;
+
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  accessToken: string;
+
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  refreshToken: string;
+}

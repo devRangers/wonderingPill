@@ -13,7 +13,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
 import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
-import { CreateUserDto, FindPasswordDto, SigninUserDto } from './dto';
+import {
+  CreateUserDto,
+  FindPasswordDto,
+  KakaoLoginDto,
+  SigninUserDto,
+} from './dto';
 import { JwtPayload, Tokens } from './types';
 
 @Injectable()
@@ -24,7 +29,7 @@ export class AuthService {
     private readonly redisService: RedisService,
   ) {}
 
-  async getUserByEmail(email): Promise<User> {
+  async getUserByEmail(email: string): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -36,7 +41,7 @@ export class AuthService {
     return user;
   }
 
-  async getUserById(id): Promise<User> {
+  async getUserById(id: string): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -50,9 +55,9 @@ export class AuthService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { name, email, password, phone, birth } = createUserDto;
-    const hashedPassword = await argon.hash(password);
+    const hashedPassword: string = await argon.hash(password);
     try {
-      const newUser = await this.prisma.user.create({
+      const newUser: User = await this.prisma.user.create({
         data: {
           name,
           password: hashedPassword,
@@ -79,11 +84,11 @@ export class AuthService {
     try {
       const { email, password, isSignin } = signinUserDto;
 
-      const isPwMatching = await argon.verify(user.password, password);
+      const isPwMatching: boolean = await argon.verify(user.password, password);
       if (!isPwMatching)
         throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
 
-      const { accessToken, refreshToken } = await this.getTokens(
+      const { accessToken, refreshToken }: Tokens = await this.getTokens(
         user.id,
         email,
         isSignin,
@@ -104,7 +109,7 @@ export class AuthService {
       sub: id,
     };
 
-    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret: process.env.JWT_SECRET || config.get('jwt').secret,
       expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
     });
@@ -118,7 +123,7 @@ export class AuthService {
         process.env.JWT_REFRESH_EXPIRESIN ||
         config.get('jwt-refresh').expiresIn;
     }
-    const refreshToken = await this.jwtService.signAsync(jwtPayload, {
+    const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret:
         process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
       expiresIn,
@@ -137,7 +142,7 @@ export class AuthService {
     } else {
       ttl = Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000;
     }
-    const result = await this.redisService.setKey(
+    const result: boolean = await this.redisService.setKey(
       're' + id,
       process.env.REFRESHTOKEN_KEY + refreshToken,
       ttl,
@@ -151,8 +156,8 @@ export class AuthService {
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
-    const user = await this.getUserById(id);
-    const result = await (
+    const user: User = await this.getUserById(id);
+    const result: string = await (
       await this.redisService.getKey('re' + id)
     ).slice(process.env.REFRESHTOKEN_KEY.length);
 
@@ -169,7 +174,7 @@ export class AuthService {
       sub: id,
       email: email,
     };
-    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret: process.env.JWT_SECRET || config.get('jwt').secret,
       expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
     });
@@ -187,7 +192,7 @@ export class AuthService {
   }
 
   async findUser(findPasswordDto: FindPasswordDto): Promise<User> {
-    const user = await this.getUserByEmail(findPasswordDto.email);
+    const user: User = await this.getUserByEmail(findPasswordDto.email);
     if (user.name !== findPasswordDto.name) {
       throw new ForbiddenException('회원이 존재하지 않습니다.');
     }
@@ -200,12 +205,43 @@ export class AuthService {
 
   async getPWChangeToken(id: string): Promise<string> {
     const token: string = uuid().toString();
-    const result = await this.redisService.setKey(
+    const result: boolean = await this.redisService.setKey(
       'pw' + id,
       process.env.CHANGE_PASSWORD_KEY + token,
       Number(process.env.PW_TOKEN_TTL),
     );
     if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
     return token;
+  }
+
+  async kakaoLogin(kakaoLoginDto: KakaoLoginDto) {
+    const user: User = await this.createOauthUser(kakaoLoginDto);
+    const { accessToken, refreshToken } = kakaoLoginDto;
+
+    // redis 저장
+    await this.redisService.setKey(
+      'ka' + user.id,
+      process.env.REFRESHTOKEN_KEY + refreshToken,
+      Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+    );
+
+    return { accessToken, refreshToken };
+  }
+
+  async createOauthUser(payload) {
+    const newUser: User = await this.prisma.user.create({
+      data: {
+        name: payload.name,
+        password: payload.password,
+        birth: payload.birth,
+        email: payload.email,
+        provider: providerType.KAKAO,
+      },
+    });
+
+    if (!newUser) {
+      throw new ForbiddenException('회원 정보를 저장하지 못했습니다.');
+    }
+    return newUser;
   }
 }
