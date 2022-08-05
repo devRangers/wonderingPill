@@ -1,5 +1,4 @@
-import { useRef, useEffect, Dispatch, SetStateAction } from "react";
-import { useQuery } from "react-query";
+import { useRef, useEffect } from "react";
 import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
 import { Map } from "./SearchPharmPage.style";
 
@@ -8,59 +7,19 @@ declare global {
     kakao: any;
   }
 }
+
 interface KakaoMapProps {
-  keyword: string;
-  option: string;
-  isSubmitBtnClicked: boolean;
-  setIsSubmitBtnClicked: Dispatch<SetStateAction<boolean>>;
+  pharmList: PharmacyResponse[];
 }
 
 let map: any;
 
-const searchPharm = async (keyword: string, option: string) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/pharmacy/search?${option}=${keyword}`,
-  );
-  const result = await res.json();
-  return result;
-};
-
-function KakaoMap({
-  keyword,
-  option,
-  isSubmitBtnClicked,
-  setIsSubmitBtnClicked,
-}: KakaoMapProps) {
+function KakaoMap({ pharmList }: KakaoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-
-  useQuery("searchPharm", () => searchPharm(keyword, option), {
-    enabled: !!keyword && isSubmitBtnClicked,
-    onSuccess: (data) => {
-      setIsSubmitBtnClicked(false);
-
-      const geocoder = new window.kakao.maps.services.Geocoder();
-      const bounds = new window.kakao.maps.LatLngBounds();
-
-      data.map((pharm: PharmacyResponse) => {
-        geocoder.addressSearch(pharm.address, (result: any, status: any) => {
-          if (status === window.kakao.maps.services.Status.OK) {
-            const marker = new window.kakao.maps.Marker({
-              map: map,
-              position: new window.kakao.maps.LatLng(result[0].y, result[0].x),
-            });
-            bounds.extend(
-              new window.kakao.maps.LatLng(result[0].y, result[0].x),
-            );
-          }
-          map.setBounds(bounds);
-        });
-      });
-    },
-  });
 
   useEffect(() => {
     window.kakao.maps.load(() => {
-      if (navigator.geolocation) {
+      if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
           const options = {
             center: new window.kakao.maps.LatLng(
@@ -80,6 +39,24 @@ function KakaoMap({
       }
     });
   }, []);
+
+  useEffect(() => {
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    const bounds = new window.kakao.maps.LatLngBounds();
+
+    pharmList.map((pharm) => {
+      geocoder.addressSearch(pharm.address, (result: any, status: any) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          const marker = new window.kakao.maps.Marker({
+            map: map,
+            position: new window.kakao.maps.LatLng(result[0].y, result[0].x),
+          });
+          bounds.extend(new window.kakao.maps.LatLng(result[0].y, result[0].x));
+        }
+        map.setBounds(bounds);
+      });
+    });
+  }, [pharmList]);
 
   return <Map id="map" ref={mapRef} />;
 }
