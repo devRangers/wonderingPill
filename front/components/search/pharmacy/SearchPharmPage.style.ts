@@ -8,7 +8,6 @@ export const PageContainer = styled(
     $fullHeight: string;
   }) => ({
     width: "100vw",
-    minHeight: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
     display: "grid",
     gridTemplateRows: "1.2fr 1fr",
   }),
