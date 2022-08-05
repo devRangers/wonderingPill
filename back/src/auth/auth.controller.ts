@@ -30,6 +30,7 @@ import {
 } from 'src/common/decorators';
 import {
   AccessGuard,
+  GoogleGuard,
   KakaoGuard,
   RecaptchaGuard,
   RefreshGuard,
@@ -41,8 +42,8 @@ import {
   CreateUserResponse,
   FindPasswordDto,
   FindPasswordResponse,
-  KakaoLoginDto,
   LogoutResponse,
+  OauthLoginDto,
   RefreshResponse,
   SigninResponse,
   SigninUserDto,
@@ -319,7 +320,7 @@ export class AuthController {
   @Get('kakao-redirect')
   async kakaoLogin(@Req() req, @Res({ passthrough: true }) res) {
     const { accessToken, refreshToken }: Tokens =
-      await this.authService.kakaoLogin(req.user as KakaoLoginDto);
+      await this.authService.kakaoLogin(req.user as OauthLoginDto);
 
     // tokens cookie 저장
     res.cookie('AccessToken', accessToken, {
@@ -338,8 +339,35 @@ export class AuthController {
     res.redirect(`${process.env.CLIENT_URL}/`);
   }
 
-  // @Post('google')
-  // async google() {}
+  @Get('google')
+  @UseGuards(GoogleGuard)
+  async google() {
+    return HttpStatus.OK;
+  }
+
+  @UseGuards(GoogleGuard)
+  @Get('google-redirect')
+  async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
+    console.log(req.user);
+    const { accessToken, refreshToken }: Tokens =
+      await this.authService.googleLogin(req.user as OauthLoginDto);
+    console.log(accessToken, refreshToken);
+    // tokens cookie 저장
+    res.cookie('AccessToken', accessToken, {
+      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      httpOnly: true,
+      // secure:true
+    });
+    res.cookie('RefreshToken', refreshToken, {
+      maxAge:
+        process.env.JWT_REFRESH_EXPIRESIN ||
+        config.get('jwt-refresh').expiresIn,
+      httpOnly: true,
+      // secure:true
+    });
+
+    res.redirect(`${process.env.CLIENT_URL}/`);
+  }
 
   // @Post('send-sms')
   // async sendSMS() {}

@@ -40,6 +40,7 @@
     "config": "^3.3.7",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.1",
+    "googleapis": "^105.0.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",

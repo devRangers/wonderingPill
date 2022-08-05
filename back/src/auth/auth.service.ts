@@ -16,7 +16,7 @@ import { providerType } from './auth-provider.enum';
 import {
   CreateUserDto,
   FindPasswordDto,
-  KakaoLoginDto,
+  OauthLoginDto,
   SigninUserDto,
 } from './dto';
 import { JwtPayload, Tokens } from './types';
@@ -214,8 +214,8 @@ export class AuthService {
     return token;
   }
 
-  async kakaoLogin(kakaoLoginDto: KakaoLoginDto) {
-    const user: User = await this.createOauthUser(kakaoLoginDto);
+  async kakaoLogin(kakaoLoginDto: OauthLoginDto) {
+    const user: User = await this.createOauthUser(kakaoLoginDto, 'kakao');
     const { accessToken, refreshToken } = kakaoLoginDto;
 
     // redis 저장
@@ -228,14 +228,17 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async createOauthUser(payload) {
+  async createOauthUser(payload, type: string) {
+    let provider;
+    if (type === 'kakao') provider = providerType.KAKAO;
+    else provider = providerType.GOOGLE;
+
     const newUser: User = await this.prisma.user.create({
       data: {
         name: payload.name,
         password: payload.password,
-        birth: payload.birth,
         email: payload.email,
-        provider: providerType.KAKAO,
+        provider,
       },
     });
 
@@ -243,5 +246,20 @@ export class AuthService {
       throw new ForbiddenException('회원 정보를 저장하지 못했습니다.');
     }
     return newUser;
+  }
+
+  async googleLogin(googleLoginDto: OauthLoginDto) {
+    const user: User = await this.createOauthUser(googleLoginDto, 'google');
+
+    const { accessToken, refreshToken } = googleLoginDto;
+
+    // redis 저장
+    await this.redisService.setKey(
+      'go' + user.id,
+      process.env.REFRESHTOKEN_KEY + refreshToken,
+      Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+    );
+
+    return { accessToken, refreshToken };
   }
 }

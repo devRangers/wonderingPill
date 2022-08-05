@@ -7,6 +7,7 @@ import { RedisModule } from 'src/redis/redis.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtRefreshStrategy, JwtStrategy, KakaoStrategy } from './strategy';
+import { GoogleStrategy } from './strategy/google.strategy';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { JwtRefreshStrategy, JwtStrategy, KakaoStrategy } from './strategy';
     JwtStrategy,
     JwtRefreshStrategy,
     KakaoStrategy,
+    GoogleStrategy,
   ],
-  exports: [JwtStrategy, JwtRefreshStrategy, KakaoStrategy],
+  exports: [JwtStrategy, JwtRefreshStrategy, KakaoStrategy, GoogleStrategy],
 })
 export class AuthModule {}

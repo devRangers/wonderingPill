@@ -59,7 +59,7 @@ export class LogoutResponse extends CommonResponseDto {
   };
 }
 
-export class KakaoLoginDto {
+export class OauthLoginDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -72,10 +72,6 @@ export class KakaoLoginDto {
   @IsString()
   @ApiProperty()
   profileImg: string;
-
-  @IsString()
-  @ApiProperty()
-  birth: string;
 
   @IsString()
   @ApiProperty()
