@@ -9,16 +9,19 @@ import { JwtPayload } from '../types';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
-      usernameField: 'email',
-      passwordField: 'password',
-      passReqToCallback: true,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          return req?.cookies?.AccessToken;
+          const accessToken = req?.cookies?.AccessToken;
+          if (!accessToken) {
+            return null;
+          }
+          return accessToken;
         },
       ]),
       secretOrKey: process.env.JWT_SECRET || config.get('jwt').expiresIn,
       ignoreExpiration: true,
+      usernameField: 'email',
+      passwordField: 'password',
     });
   }
 

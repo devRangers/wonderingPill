@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
 import { Map } from "./SearchPharmPage.style";
 
 declare global {
@@ -6,26 +7,19 @@ declare global {
     kakao: any;
   }
 }
+
 interface KakaoMapProps {
-  keyword: string;
-  option: string;
+  pharmList: PharmacyResponse[];
 }
 
 let map: any;
 
-function KakaoMap({ keyword, option }: KakaoMapProps) {
+function KakaoMap({ pharmList }: KakaoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-
-  const displayMarker = (place: any) => {
-    const marker = new window.kakao.maps.Marker({
-      map: map,
-      position: new window.kakao.maps.LatLng(place.y, place.x),
-    });
-  };
 
   useEffect(() => {
     window.kakao.maps.load(() => {
-      if (navigator.geolocation) {
+      if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
           const options = {
             center: new window.kakao.maps.LatLng(
@@ -47,47 +41,22 @@ function KakaoMap({ keyword, option }: KakaoMapProps) {
   }, []);
 
   useEffect(() => {
-    if (!!keyword && option === "name") {
-      const ps = new window.kakao.maps.services.Places();
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    const bounds = new window.kakao.maps.LatLngBounds();
 
-      ps.keywordSearch(keyword, (data: any, status: any, pagination: any) => {
+    pharmList.map((pharm) => {
+      geocoder.addressSearch(pharm.address, (result: any, status: any) => {
         if (status === window.kakao.maps.services.Status.OK) {
-          const bounds = new window.kakao.maps.LatLngBounds();
-
-          for (var i = 0; i < data.length; i++) {
-            displayMarker(data[i]);
-            bounds.extend(new window.kakao.maps.LatLng(data[i].y, data[i].x));
-          }
-          map.setBounds(bounds);
+          const marker = new window.kakao.maps.Marker({
+            map: map,
+            position: new window.kakao.maps.LatLng(result[0].y, result[0].x),
+          });
+          bounds.extend(new window.kakao.maps.LatLng(result[0].y, result[0].x));
         }
+        map.setBounds(bounds);
       });
-    } else if (!!keyword && option === "address") {
-      const geocoder = new window.kakao.maps.services.Geocoder();
-
-      geocoder.addressSearch(keyword, (result: any, status: any) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const moveLatLon = new window.kakao.maps.LatLng(
-            result[0].y,
-            result[0].x,
-          );
-          map.panTo(moveLatLon);
-        }
-        const ps = new window.kakao.maps.services.Places(map);
-
-        ps.categorySearch(
-          "PM9",
-          (data: any, status: any, pagination: any) => {
-            if (status === window.kakao.maps.services.Status.OK) {
-              for (let i = 0; i < data.length; i++) {
-                displayMarker(data[i]);
-              }
-            }
-          },
-          { useMapBounds: true },
-        );
-      });
-    }
-  }, [keyword]);
+    });
+  }, [pharmList]);
 
   return <Map id="map" ref={mapRef} />;
 }

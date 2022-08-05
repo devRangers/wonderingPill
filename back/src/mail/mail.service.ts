@@ -8,7 +8,7 @@ export class MailService {
 
   async sendEmail(email: string, name: string, token: string) {
     const mailUrl = '/api/v1/mails';
-    // 비밀번호 변경 페이지에 토큰 유효기간을 같이 보내기
+    // 비밀번호 변경 페이지에 토큰 유효기간을 같이 보내기 : redis
     const result = await this.httpService
       .post(
         `${process.env.MAIL_API_DOMAIN}${mailUrl}`,
@@ -18,7 +18,7 @@ export class MailService {
           title: `[궁금해약] ${name} 님 비밀번호를 재설정해주세요.`,
           body:
             `<p>안녕하세요. ${name} 님<p>아래의 링크를 통해 비밀번호를 재설정하실 수 있습니다.<p>` +
-            `<a href='${process.env.CLIENT_URL}:${process.env.CLIENT_PORT}/account/password/new/${token}'>비밀번호 재설정하기</a>` +
+            `<a href='${process.env.CLIENT_URL}/account/password/new/${token}'>비밀번호 재설정하기</a>` +
             `<p>감사합니다. <p>devRangers 개발팀 드림<p>`,
           recipients: [{ address: email, name, type: 'R' }],
         },

@@ -1,5 +1,7 @@
 import type { NextPage } from "next";
 import { useState } from "react";
+import { useQuery } from "react-query";
+import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
@@ -18,10 +20,28 @@ import {
 } from "@searchPharmComp/SearchPharmPage.style";
 import KakaoMap from "@searchPharmComp/KakaoMap";
 
+const searchPharm = async (keyword: string, option: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/pharmacy/search?${option}=${keyword}`,
+  );
+  const result: PharmacyResponse[] = await res.json();
+  return result;
+};
+
 const SearchPharmPage: NextPage = () => {
   const [option, setOption] = useState("address");
   const [inputText, setInputText] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [isSubmitBtnClicked, setIsSubmitBtnClicked] = useState(false);
+  const [pharmList, setPharmList] = useState<PharmacyResponse[]>([]);
+
+  useQuery("searchPharm", () => searchPharm(keyword, option), {
+    enabled: !!keyword && isSubmitBtnClicked,
+    onSuccess: (data) => {
+      setIsSubmitBtnClicked(false);
+      setPharmList(data);
+    },
+  });
 
   const selectChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setOption(e.target.value);
@@ -33,6 +53,7 @@ const SearchPharmPage: NextPage = () => {
 
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitBtnClicked(true);
     setKeyword(inputText);
   };
 
@@ -57,7 +78,7 @@ const SearchPharmPage: NextPage = () => {
           </SearchBtn>
         </SearchContainer>
 
-        <KakaoMap keyword={keyword} option={option} />
+        <KakaoMap pharmList={pharmList} />
       </SearchPharmContainer>
     </PageContainer>
   );
