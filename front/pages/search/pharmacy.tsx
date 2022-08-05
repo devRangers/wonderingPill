@@ -22,6 +22,7 @@ const SearchPharmPage: NextPage = () => {
   const [option, setOption] = useState("address");
   const [inputText, setInputText] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [isSubmitBtnClicked, setIsSubmitBtnClicked] = useState(false);
 
   const selectChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setOption(e.target.value);
@@ -33,6 +34,7 @@ const SearchPharmPage: NextPage = () => {
 
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitBtnClicked(true);
     setKeyword(inputText);
   };
 
@@ -57,7 +59,12 @@ const SearchPharmPage: NextPage = () => {
           </SearchBtn>
         </SearchContainer>
 
-        <KakaoMap keyword={keyword} option={option} />
+        <KakaoMap
+          keyword={keyword}
+          option={option}
+          isSubmitBtnClicked={isSubmitBtnClicked}
+          setIsSubmitBtnClicked={setIsSubmitBtnClicked}
+        />
       </SearchPharmContainer>
     </PageContainer>
   );
