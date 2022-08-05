@@ -301,6 +301,7 @@ export class AuthController {
   @HttpCode(200)
   @Throttle(5, 1)
   @Get('kakao')
+  @UseGuards(KakaoGuard)
   @ApiOperation({
     summary: 'kakao 로그인 API',
     description: 'kakao 로그인을 요청 한다.',
@@ -309,15 +310,15 @@ export class AuthController {
     status: 200,
     description: 'kakao 로그인 요청 성공',
   })
-  @ApiBody({})
-  @UseGuards(KakaoGuard)
-  async callKakao() {
+  async kakao() {
     return HttpStatus.OK;
   }
 
-  @UseGuards(KakaoGuard)
   @Get('kakao-redirect')
-  async kakaoLogin(@Req() req, @Res({ passthrough: true }) res) {
+  @HttpCode(200)
+  @UseGuards(KakaoGuard)
+  async kakaoLogin(@Req() req, @Res({ passthrough: true }) res: Response) {
+    console.log(req.user);
     const { accessToken, refreshToken }: Tokens =
       await this.authService.kakaoLogin(req.user as KakaoLoginDto);
 
@@ -334,8 +335,9 @@ export class AuthController {
       httpOnly: true,
       // secure:true
     });
-
+    this.logger.verbose(`User Kakao Login Success!`);
     res.redirect(`${process.env.CLIENT_URL}/`);
+    res.end();
   }
 
   // @Post('google')
