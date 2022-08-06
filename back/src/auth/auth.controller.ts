@@ -340,6 +340,15 @@ export class AuthController {
   }
 
   @Get('google')
+  @Throttle(5, 1)
+  @ApiOperation({
+    summary: 'google 로그인 API',
+    description: 'google 로그인을 요청 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'google 로그인 요청 성공',
+  })
   @UseGuards(GoogleGuard)
   async google() {
     return HttpStatus.OK;
@@ -348,11 +357,9 @@ export class AuthController {
   @UseGuards(GoogleGuard)
   @Get('google-redirect')
   async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
-    console.log(req.user);
     const { accessToken, refreshToken }: Tokens =
       await this.authService.googleLogin(req.user as OauthLoginDto);
-    console.log(accessToken, refreshToken);
-    // tokens cookie 저장
+
     res.cookie('AccessToken', accessToken, {
       maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
       httpOnly: true,
@@ -367,6 +374,7 @@ export class AuthController {
     });
 
     res.redirect(`${process.env.CLIENT_URL}/`);
+    res.end();
   }
 
   // @Post('send-sms')

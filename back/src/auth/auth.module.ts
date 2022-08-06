@@ -11,7 +11,12 @@ import { GoogleStrategy } from './strategy/google.strategy';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({
+      accessType: 'offline',
+      prompt: 'consent',
+      approval_prompt: 'force',
+      defaultStrategy: 'jwt',
+    }),
     JwtModule.register({}),
     HttpModule,
     RedisModule,

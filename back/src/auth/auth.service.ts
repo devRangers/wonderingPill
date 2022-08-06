@@ -228,11 +228,10 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async createOauthUser(payload, type: string) {
+  async createOauthUser(payload: OauthLoginDto, type: string) {
     let provider;
     if (type === 'kakao') provider = providerType.KAKAO;
     else provider = providerType.GOOGLE;
-
     const newUser: User = await this.prisma.user.create({
       data: {
         name: payload.name,

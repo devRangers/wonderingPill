@@ -14,32 +14,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  async validate(
-    // @Req() req,
-    accessToken: string,
-    refreshToken: string,
-    profile,
-  ) {
+  async validate(accessToken: string, refreshToken: string, profile) {
     const { id, name, emails, photos } = profile;
     const password = await argon.hash(id);
-
-    // const { query: { error, code } = {} } = req;
-    // var auth = new google.auth.OAuth2(
-    //   process.env.GOOGLE_CLIENT_ID,
-    //   process.env.GOOGLE_CLIENT_PASSWORD,
-    //   'https://developers.google.com/oauthplayground',
-    // );
-
-    // const { tokens } = await auth.getToken(code);
-    // console.log(auth.refresh_token);
-
-    // auth.setCredentials({
-    //   access_token: refresh_token,
-    //   refresh_token: refreshToken,
-    // });
-
-    console.log(refreshToken);
-
     const payload = {
       password,
       name: name.givenName,
