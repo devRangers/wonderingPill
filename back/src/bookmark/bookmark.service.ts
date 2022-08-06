@@ -4,7 +4,8 @@ import {
   BookmarkCreateResponse,
   BookmarkGetResponse,
   BookmarkListResponse,
-} from './dto/bookmark.dto';
+} from './interface/bookmark.interface';
+
 @Injectable()
 export class BookmarkService {
   constructor(private prisma: PrismaService) {}

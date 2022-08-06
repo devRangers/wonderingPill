@@ -13,12 +13,12 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { RefreshGuard } from 'src/common/guards';
 import { BookmarkService } from './bookmark.service';
+import { BookmarkCreateDto } from './dto/bookmark.dto';
 import {
-  BookmarkCreateDto,
   BookmarkCreateResponse,
   BookmarkGetResponse,
   BookmarkListResponse,
-} from './dto/bookmark.dto';
+} from './interface/bookmark.interface';
 @ApiTags('Bookmark API')
 @Controller('bookmark')
 export class BookmarkController {
