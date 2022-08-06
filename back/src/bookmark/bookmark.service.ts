@@ -1,8 +1,9 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
-  BookmarkCreateResponseDto,
-  BookmarkListResponseDto,
+  BookmarkCreateResponse,
+  BookmarkGetResponse,
+  BookmarkListResponse,
 } from './dto/bookmark.dto';
 @Injectable()
 export class BookmarkService {
@@ -10,15 +11,14 @@ export class BookmarkService {
   async createBookmark(
     pharmacyId: number,
     userId: string,
-  ): Promise<BookmarkCreateResponseDto> {
+  ): Promise<BookmarkCreateResponse> {
     const bookmark = await this.getPharmacyBookmark(userId, pharmacyId);
-    console.log(bookmark);
     if (bookmark) {
       throw new ForbiddenException(
         `ID : ${pharmacyId} 인 약국은 이미 북마크에 존재합니다.`,
       );
     }
-    return await this.prisma.pharmacyBookMark.create({
+    const createMark = await this.prisma.pharmacyBookMark.create({
       data: {
         user_id: userId,
         pharmacy_id: pharmacyId,
@@ -28,6 +28,12 @@ export class BookmarkService {
         pharmacy_id: true,
       },
     });
+    const body = {
+      statusCode: 200,
+      message: '북마크 생성 완료',
+      bookmark: createMark,
+    };
+    return body;
   }
   async deleteBookmark(id: number, userId: string): Promise<void> {
     const bookmark = await this.getBookmark(id, userId);
@@ -41,8 +47,8 @@ export class BookmarkService {
     });
   }
 
-  async listBookmark(userId: string): Promise<BookmarkListResponseDto[]> {
-    return await this.prisma.pharmacyBookMark.findMany({
+  async listBookmark(userId: string): Promise<BookmarkListResponse> {
+    const bookmark = await this.prisma.pharmacyBookMark.findMany({
       where: {
         user_id: userId,
       },
@@ -51,13 +57,16 @@ export class BookmarkService {
         Pharmacy: true,
       },
     });
+    const body = {
+      statusCode: 200,
+      message: '리스트 조회 성공',
+      bookmark,
+    };
+    return body;
   }
 
-  async getBookmark(
-    id: number,
-    userId: string,
-  ): Promise<BookmarkListResponseDto> {
-    return await this.prisma.pharmacyBookMark.findFirst({
+  async getBookmark(id: number, userId: string): Promise<BookmarkGetResponse> {
+    const bookmark = await this.prisma.pharmacyBookMark.findFirst({
       where: {
         user_id: userId,
         id,
@@ -67,13 +76,19 @@ export class BookmarkService {
         Pharmacy: true,
       },
     });
+    const body = {
+      statusCode: 200,
+      message: '리스트 조회 성공',
+      bookmark,
+    };
+    return body;
   }
 
   async getPharmacyBookmark(
     userId: string,
     pharmacyId: number,
-  ): Promise<BookmarkListResponseDto> {
-    return await this.prisma.pharmacyBookMark.findFirst({
+  ): Promise<BookmarkGetResponse> {
+    const bookmark = await this.prisma.pharmacyBookMark.findFirst({
       where: {
         user_id: userId,
         pharmacy_id: pharmacyId,
@@ -83,5 +98,11 @@ export class BookmarkService {
         Pharmacy: true,
       },
     });
+    const body = {
+      statusCode: 200,
+      message: '리스트 조회 성공',
+      bookmark,
+    };
+    return body;
   }
 }

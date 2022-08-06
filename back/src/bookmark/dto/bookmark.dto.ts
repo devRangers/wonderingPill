@@ -1,56 +1,61 @@
-import { IsString, IsNumber, IsObject } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber } from 'class-validator';
+import { CommonResponseDto } from 'src/common/dto';
 export class BookmarkCreateDto {
   @IsNumber()
   @Type(() => Number)
   readonly pharmacyId: number;
 }
 
-export class BookmarkResponseDto {
-  @ApiProperty()
-  @IsNumber()
-  @Type(() => Number)
-  readonly id: number;
-  @ApiProperty()
-  @IsString()
-  readonly userId: string;
-  @ApiProperty()
-  @IsNumber()
-  @Type(() => Number)
-  readonly pharmacyId: number;
+export interface BookmarkResponse extends CommonResponseDto {
+  id: number;
+  userId: string;
+  pharmacyId: number;
 }
 
-export class BookmarkListResponseDto {
-  @ApiProperty()
-  @IsNumber()
-  @Type(() => Number)
-  readonly id: number;
-  @ApiProperty()
-  @IsObject()
-  readonly Pharmacy: {
+export interface BookmarkListResponse extends CommonResponseDto {
+  bookmark: {
     id: number;
-    name: string;
-    phone: string;
-    address: string;
-    monday: string;
-    tuesday: string;
-    wednesday: string;
-    thursday: string;
-    friday: string;
-    saturday: string;
-    sunday: string;
-    holiday: string;
+    Pharmacy: {
+      id: number;
+      name: string;
+      phone: string;
+      address: string;
+      monday: string;
+      tuesday: string;
+      wednesday: string;
+      thursday: string;
+      friday: string;
+      saturday: string;
+      sunday: string;
+      holiday: string;
+    };
+  }[];
+}
+
+export interface BookmarkGetResponse extends CommonResponseDto {
+  bookmark: {
+    id: number;
+    Pharmacy: {
+      id: number;
+      name: string;
+      phone: string;
+      address: string;
+      monday: string;
+      tuesday: string;
+      wednesday: string;
+      thursday: string;
+      friday: string;
+      saturday: string;
+      sunday: string;
+      holiday: string;
+    };
   };
 }
 
-export class BookmarkCreateResponseDto {
-  @ApiProperty()
-  @IsNumber()
-  @Type(() => Number)
-  id: number;
-  @ApiProperty()
-  @IsNumber()
-  @Type(() => Number)
-  pharmacy_id: number;
+export interface BookmarkCreateResponse extends CommonResponseDto {
+  bookmark: {
+    id: number;
+    pharmacy_id: number;
+  };
 }
