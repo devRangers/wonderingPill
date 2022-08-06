@@ -9,15 +9,16 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { BookmarkService } from './bookmark.service';
-import { ApiOperation, ApiTags, ApiParam, ApiResponse } from '@nestjs/swagger';
-import {
-  BookmarkCreateDto,
-  BookmarkCreateResponseDto,
-  BookmarkListResponseDto,
-} from './dto/bookmark.dto';
-import { RefreshGuard } from 'src/common/guards';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetCurrentUserId } from 'src/common/decorators';
+import { RefreshGuard } from 'src/common/guards';
+import { BookmarkService } from './bookmark.service';
+import { BookmarkCreateDto } from './dto/bookmark.dto';
+import {
+  BookmarkCreateResponse,
+  BookmarkGetResponse,
+  BookmarkListResponse,
+} from './interface/bookmark.interface';
 @ApiTags('Bookmark API')
 @Controller('bookmark')
 export class BookmarkController {
@@ -36,7 +37,7 @@ export class BookmarkController {
   async createBookmark(
     @GetCurrentUserId() userId: string,
     @Body() bookmarkCreateDto: BookmarkCreateDto,
-  ): Promise<BookmarkCreateResponseDto> {
+  ): Promise<BookmarkCreateResponse> {
     this.logger.verbose(
       `Bookmark ${bookmarkCreateDto.pharmacyId} Created Success!`,
     );
@@ -52,12 +53,11 @@ export class BookmarkController {
   @ApiResponse({
     status: 200,
     description: '조회 성공',
-    type: BookmarkListResponseDto,
   })
   @HttpCode(200)
   async listBookmark(
     @GetCurrentUserId() id: string,
-  ): Promise<BookmarkListResponseDto[]> {
+  ): Promise<BookmarkListResponse> {
     this.logger.verbose(`Bookmark ${id} list view Success!`);
     return this.bookmarkService.listBookmark(id);
   }
@@ -74,13 +74,12 @@ export class BookmarkController {
   @ApiResponse({
     status: 200,
     description: '조회 성공',
-    type: BookmarkListResponseDto,
   })
   @HttpCode(200)
   async readBookmark(
     @GetCurrentUserId() userId: string,
     @Param('id') pharmcyId: number,
-  ): Promise<BookmarkListResponseDto> {
+  ): Promise<BookmarkGetResponse> {
     this.logger.verbose(`Bookmark ${pharmcyId} Read Success!`);
     return this.bookmarkService.getBookmark(pharmcyId, userId);
   }
