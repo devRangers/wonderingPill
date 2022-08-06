@@ -14,15 +14,6 @@ import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
-    AuthModule,
-    PrismaModule,
-    HttpModule,
-    MailModule,
-    ThrottlerModule.forRoot({
-      ttl: 10,
-      limit: 5,
-    }),
-    RedisModule,
     ConfigModule.forRoot({
       envFilePath: ['.development.env', '.env'],
       isGlobal: true,
@@ -55,6 +46,15 @@ import { RedisModule } from './redis/redis.module';
         GOOGLE_REDIRECT: Joi.string().required(),
       }),
     }),
+    AuthModule,
+    PrismaModule,
+    HttpModule,
+    MailModule,
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 5,
+    }),
+    RedisModule,
     BookmarkModule,
     PharmacyModule,
   ],
