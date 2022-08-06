@@ -3,14 +3,11 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
-import { BookmarkController } from './bookmark/bookmark.controller';
-import { BookmarkService } from './bookmark/bookmark.service';
+import { BookmarkModule } from './bookmark/bookmark.module';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
 import { MailModule } from './mail/mail.module';
-import { PharmacyController } from './pharmacy/pharmacy.controller';
-import { PharmacyService } from './pharmacy/pharmacy.service';
+import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { PrismaService } from './prisma/prisma.service';
 import { RedisModule } from './redis/redis.module';
 
 @Module({
@@ -24,8 +21,10 @@ import { RedisModule } from './redis/redis.module';
       limit: 30,
     }),
     RedisModule,
+    BookmarkModule,
+    PharmacyModule,
   ],
-  controllers: [PharmacyController, BookmarkController],
+  controllers: [],
   providers: [
     {
       provide: APP_FILTER,
@@ -35,9 +34,6 @@ import { RedisModule } from './redis/redis.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    PharmacyService,
-    PrismaService,
-    BookmarkService,
   ],
   exports: [HttpModule, MailModule, ThrottlerModule],
 })
