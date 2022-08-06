@@ -13,7 +13,7 @@ dotenv.config({
   path: path.resolve(
     process.env.NODE_ENV === 'production'
       ? '.production.env'
-      : process.env.NODE_ENV === 'stage'
+      : process.env.NODE_ENV === 'development'
       ? '.env'
       : '.development.env',
   ),
@@ -45,7 +45,7 @@ async function bootstrap() {
 
   await app.listen(PORT);
 
-  if (process.env.NODE_ENV === 'stage') {
+  if (process.env.NODE_ENV === 'development') {
     Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
   }
 }
