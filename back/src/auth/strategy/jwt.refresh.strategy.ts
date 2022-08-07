@@ -1,13 +1,13 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import * as config from 'config';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload, JwtPayloadWithRT } from '../types';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
@@ -18,8 +18,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
           return refreshToken;
         },
       ]),
-      secretOrKey:
-        process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+      secretOrKey: configService.get('JWT_REFRESH_SECRET'),
       passReqToCallback: true,
       usernameField: 'email',
       passwordField: 'password',

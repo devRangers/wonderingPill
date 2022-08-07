@@ -4,14 +4,13 @@ import {
   Get,
   HttpCode,
   Logger,
-  Param,
   Post,
-  Put,
   Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -20,7 +19,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User as UserModel } from '@prisma/client';
-import * as config from 'config';
 import { Response } from 'express';
 import {
   GetCurrentUser,
@@ -31,7 +29,6 @@ import { AccessGuard, RecaptchaGuard, RefreshGuard } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { AuthService } from './auth.service';
 import {
-  ChangePasswordDto,
   CreateUserDto,
   CreateUserResponse,
   FindPasswordDto,
@@ -50,8 +47,8 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly mailService: MailService,
+    private readonly configService: ConfigService,
   ) {}
-
   @Public()
   @HttpCode(200)
   @Post('signup')
@@ -110,20 +107,16 @@ export class AuthController {
 
     // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
-      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
       // secure:true
     });
 
     let maxAge;
     if (signinUserDto.isSignin) {
-      maxAge =
-        process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
-        config.get('jwt-refresh').expiresIn_autosave;
+      maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
     } else {
-      maxAge =
-        process.env.JWT_REFRESH_EXPIRESIN ||
-        config.get('jwt-refresh').expiresIn;
+      maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN');
     }
     res.cookie('RefreshToken', refreshToken, {
       maxAge,
@@ -171,7 +164,7 @@ export class AuthController {
     );
 
     res.cookie('AccessToken', accessToken, {
-      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
       // secure:true
     });
@@ -284,11 +277,11 @@ export class AuthController {
     };
   }
 
-  @Put('change-password')
-  async changePassword(
-    @Param('token') token: string,
-    @Body() changePasswordDto: ChangePasswordDto,
-  ) {}
+  // @Put('change-password')
+  // async changePassword(
+  //   @Param('token') token: string,
+  //   @Body() changePasswordDto: ChangePasswordDto,
+  // ) {}
 
   // @Post('kakao')
   // async kakao() {}
