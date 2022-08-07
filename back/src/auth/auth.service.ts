@@ -4,11 +4,11 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
-import * as config from 'config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
 import { v4 as uuid } from 'uuid';
@@ -27,6 +27,7 @@ export class AuthService {
     private prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
   ) {}
 
   async getUserByEmail(email: string): Promise<User> {
@@ -109,23 +110,18 @@ export class AuthService {
       sub: id,
     };
 
-    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
-      secret: process.env.JWT_SECRET || config.get('jwt').secret,
-      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
     let expiresIn;
     if (isSignin) {
-      expiresIn =
-        process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
-        config.get('jwt-refresh').expiresIn_autosave;
+      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
     } else {
-      expiresIn =
-        process.env.JWT_REFRESH_EXPIRESIN ||
-        config.get('jwt-refresh').expiresIn;
+      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
     }
-    const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
-      secret:
-        process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+    const refreshToken = await this.jwtService.signAsync(jwtPayload, {
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn,
     });
     return { accessToken, refreshToken };
@@ -138,13 +134,15 @@ export class AuthService {
   ): Promise<boolean> {
     let ttl;
     if (isSignin) {
-      ttl = Number(process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE) / 1000;
+      ttl = Number(
+        this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE') / 1000,
+      );
     } else {
-      ttl = Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000;
+      ttl = Number(this.configService.get('JWT_REFRESH_EXPIRESIN') / 1000);
     }
     const result: boolean = await this.redisService.setKey(
       're' + id,
-      process.env.REFRESHTOKEN_KEY + refreshToken,
+      this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
       ttl,
     );
 
@@ -159,7 +157,7 @@ export class AuthService {
     const user: User = await this.getUserById(id);
     const result: string = await (
       await this.redisService.getKey('re' + id)
-    ).slice(process.env.REFRESHTOKEN_KEY.length);
+    ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
 
     if (result !== refreshToken) {
       throw new ForbiddenException('Access Denied');
@@ -174,9 +172,9 @@ export class AuthService {
       sub: id,
       email: email,
     };
-    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
-      secret: process.env.JWT_SECRET || config.get('jwt').secret,
-      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
 
     if (!accessToken) {
@@ -207,8 +205,8 @@ export class AuthService {
     const token: string = uuid().toString();
     const result: boolean = await this.redisService.setKey(
       'pw' + id,
-      process.env.CHANGE_PASSWORD_KEY + token,
-      Number(process.env.PW_TOKEN_TTL),
+      this.configService.get('CHANGE_PASSWORD_KEY') + token,
+      Number(this.configService.get('PW_TOKEN_TTL')),
     );
     if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
     return token;
