@@ -31,7 +31,6 @@ import {
 import {
   AccessGuard,
   GoogleGuard,
-  KakaoGuard,
   RecaptchaGuard,
   RefreshGuard,
 } from 'src/common/guards';
@@ -145,6 +144,7 @@ export class AuthController {
         email: user.email,
         name: user.name,
         profileImg: user.profileImg,
+        provider: user.provider,
       },
     };
   }
@@ -253,6 +253,7 @@ export class AuthController {
         email: user.email,
         name: user.name,
         profileImg: user.profileImg,
+        provider: user.provider,
       },
     };
   }
@@ -295,43 +296,43 @@ export class AuthController {
   //   @Body() changePasswordDto: ChangePasswordDto,
   // ) {}
 
-  @HttpCode(200)
-  @Throttle(5, 1)
-  @Get('kakao')
-  @ApiOperation({
-    summary: 'kakao 로그인 API',
-    description: 'kakao 로그인을 요청 한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'kakao 로그인 요청 성공',
-  })
-  @ApiBody({})
-  @UseGuards(KakaoGuard)
-  async callKakao() {
-    return HttpStatus.OK;
-  }
+  // @HttpCode(200)
+  // @Throttle(5, 1)
+  // @Get('kakao')
+  // @ApiOperation({
+  //   summary: 'kakao 로그인 API',
+  //   description: 'kakao 로그인을 요청 한다.',
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'kakao 로그인 요청 성공',
+  // })
+  // @ApiBody({})
+  // @UseGuards(KakaoGuard)
+  // async callKakao() {
+  //   return HttpStatus.OK;
+  // }
 
-  @UseGuards(KakaoGuard)
-  @Get('kakao-redirect')
-  async kakaoLogin(@Req() req, @Res({ passthrough: true }) res) {
-    const { accessToken, refreshToken }: Tokens =
-      await this.authService.kakaoLogin(req.user as OauthLoginDto);
+  // @UseGuards(KakaoGuard)
+  // @Get('kakao-redirect')
+  // async kakaoLogin(@Req() req, @Res({ passthrough: true }) res) {
+  //   const { accessToken, refreshToken }: Tokens =
+  //     await this.authService.kakaoLogin(req.user as OauthLoginDto);
 
-    // tokens cookie 저장
-    res.cookie('AccessToken', accessToken, {
-      maxAge: this.configService.get('JWT_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
-    res.cookie('RefreshToken', refreshToken, {
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
+  //   // tokens cookie 저장
+  //   res.cookie('AccessToken', accessToken, {
+  //     maxAge: this.configService.get('JWT_EXPIRESIN'),
+  //     httpOnly: true,
+  //     // secure:true
+  //   });
+  //   res.cookie('RefreshToken', refreshToken, {
+  //     maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
+  //     httpOnly: true,
+  //     // secure:true
+  //   });
 
-    res.redirect(`${process.env.CLIENT_URL}/`);
-  }
+  //   res.redirect(`${process.env.CLIENT_URL}/`);
+  // }
 
   @Get('google')
   @Throttle(5, 1)

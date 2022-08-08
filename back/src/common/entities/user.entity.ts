@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User as UserModel } from '@prisma/client';
+import { providerType } from 'src/auth/auth-provider.enum';
 
 export class UserEntity implements UserModel {
   @ApiProperty()
@@ -18,7 +19,7 @@ export class UserEntity implements UserModel {
   phone: string;
 
   @ApiProperty()
-  provider: string;
+  provider: providerType;
 
   @ApiProperty()
   profileImg: string;

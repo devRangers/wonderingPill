@@ -1,7 +1,7 @@
 version: '3'
 services:
   backend_server:
-    image: sujeong7474/wonderingpill-back:latest
+    image: ghcr.io/parksujeong74/wonderingpill-back:latest
     restart: 'on-failure'
     ports:
       - 5000:5000

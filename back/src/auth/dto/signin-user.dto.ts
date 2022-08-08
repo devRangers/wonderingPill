@@ -45,6 +45,7 @@ export class SigninResponse extends CommonResponseDto {
     email: string;
     name: string;
     profileImg: string;
+    provider: string;
   };
 }
 
