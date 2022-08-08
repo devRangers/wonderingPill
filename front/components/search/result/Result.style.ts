@@ -263,3 +263,112 @@ export const SearchOtherPill = styled("div", (props: { $color: string }) => ({
   color: props.$color,
   fontSize: "0.8rem",
 }));
+
+export const ModalInnerContainer = styled("section", {
+  minHeight: "90vh",
+  maxWidth: "30rem",
+  display: "grid",
+  gridTemplateRows: "0.11fr 0.42fr 0.42fr 0.05fr",
+  gap: "0.5rem",
+  padding: "1rem",
+  margin: "0 auto",
+});
+
+export const ModalTopContainer = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+});
+
+export const ModalTitleWrapper = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  flex: "0.6",
+});
+
+export const ModalTitle = styled("h1", (props: { $color: string }) => ({
+  fontSize: "1.2rem",
+  fontWeight: "bold",
+  color: props.$color,
+}));
+
+export const ModalSubTitleWrapper = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  flex: "0.4",
+});
+
+export const ModalSubTitle = styled("h5", {
+  fontSize: "0.8rem",
+  fontWeight: "bold",
+  color: "gray",
+});
+
+export const ModalContentContainer = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  alignItems: "center",
+});
+
+export const ModalContentTitle = styled(
+  "div",
+  (props: { $bgColor: string }) => ({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "50%",
+    height: "14%",
+    borderRadius: "8px",
+    backgroundColor: props.$bgColor,
+    color: "#fff",
+  }),
+);
+
+export const ModalContent = styled(
+  "div",
+  (props: { $borderColor: string }) => ({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "80%",
+    height: "80%",
+    border: `1px solid ${props.$borderColor}`,
+  }),
+);
+
+export const ModalContentScroll = styled(
+  "div",
+  (props: { $scrollColor: string }) => ({
+    width: "100%",
+    height: "90%",
+    padding: "0 0.2rem 0 0.6rem",
+    wordBreak: "break-word",
+    overflowY: "auto",
+
+    "::-webkit-scrollbar": {
+      backgroundColor: "transparent",
+      width: "0.9rem",
+    },
+    "::-webkit-scrollbar-thumb": {
+      backgroundColor: props.$scrollColor,
+      borderRadius: "20px",
+    },
+  }),
+);
+
+export const ModalBottom = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-end",
+});
+
+export const CloseModalBtn = styled("button", {
+  width: "100%",
+  // height: "100%",
+  color: "gray",
+  fontSize: "1rem",
+});

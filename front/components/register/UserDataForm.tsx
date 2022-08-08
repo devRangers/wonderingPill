@@ -87,8 +87,6 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
 
   const mutation = useMutation(postRegisterAPI, {
     onSuccess: (data: CreateUserResponse, variables) => {
-      console.log("data : ", data);
-      console.log("variables : ", variables);
       router.push(
         {
           pathname: "/login",
@@ -101,8 +99,6 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
     },
     onError: (error, variables, context) => {
       // An error happened!
-      console.log("error: ", error);
-      console.log("variables:", variables);
       setOpenModal((cur) => {
         const temp = [...cur];
         temp[2] = !temp[2];
