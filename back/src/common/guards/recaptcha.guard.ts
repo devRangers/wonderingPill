@@ -4,37 +4,31 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
-  UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class RecapchaGuard implements CanActivate {
-  constructor(private readonly httpService: HttpService) {}
-  async canActivate(context: ExecutionContext): Promise<any> {
+export class RecaptchaGuard implements CanActivate {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const { body } = context.switchToHttp().getRequest();
+
     const { data } = await this.httpService
       .post(
-        `${process.env.RECAPTCHA_V3_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V3_SECRETKEY}&response=${body.recaptchaValue}`,
+        `https://www.google.com/recaptcha/api/siteverify?response=${
+          body.token
+        }&secret=${this.configService.get('RECAPTCHA_V2_SECRETKEY')}`,
       )
       .toPromise();
 
-    if (!data.success || !data) {
-      throw new ForbiddenException('recaptcha-v3 인증 요청에 실패하였습니다.');
+    if (!data.success) {
+      throw new ForbiddenException('비정상적인 트래픽 활동이 감지되었습니다.');
     }
 
-    if (data.score < 0.8) {
-      throw new UnauthorizedException(
-        '의심스러운 트래픽 활동이 감지되었습니다.',
-      );
-    }
-
-    return {
-      statusCode: 200,
-      message: '정상적인 트래픽 활동입니다.',
-      recaptchav3: { result: true },
-    };
+    return true;
   }
 }
-
-export const RecapchaAuth = () => UseGuards(RecapchaGuard);

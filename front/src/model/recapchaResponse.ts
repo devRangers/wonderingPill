@@ -5,8 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
+import type { RecapchaResponseRecaptchav2 } from './recapchaResponseRecaptchav2';
 
-export interface RefreshResponse {
+export interface RecapchaResponse {
   statusCode: number;
   message: string;
+  recaptchav2: RecapchaResponseRecaptchav2;
 }

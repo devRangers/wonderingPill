@@ -1,5 +1,5 @@
-import { User as UserModel } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { User as UserModel } from '@prisma/client';
 
 export class UserEntity implements UserModel {
   @ApiProperty()
@@ -34,8 +34,4 @@ export class UserEntity implements UserModel {
 
   @ApiProperty()
   updatedAt: Date;
-
-  // redis로 옮기기 전까지 DB에 저장
-  @ApiProperty()
-  refreshToken: string;
 }

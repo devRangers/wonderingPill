@@ -6,9 +6,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SigninUserDto {
+export interface FindPasswordDto {
   email: string;
-  password: string;
-  isSignin: boolean;
+  name: string;
+  birth: string;
   token: string;
 }

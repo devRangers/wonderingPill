@@ -1,18 +1,19 @@
-import { HttpService } from '@nestjs/axios';
 import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
-import * as config from 'config';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { RedisService } from 'src/redis/redis.service';
+import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
-import { CreateUserDto, SigninUserDto, UseRecapchaDto } from './dto';
+import { CreateUserDto, FindPasswordDto, SigninUserDto } from './dto';
 import { JwtPayload, Tokens } from './types';
 
 @Injectable()
@@ -20,7 +21,8 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly httpService: HttpService,
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
   ) {}
 
   async getUserByEmail(email): Promise<User> {
@@ -47,7 +49,7 @@ export class AuthService {
     return user;
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User | null> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { name, email, password, phone, birth } = createUserDto;
     const hashedPassword = await argon.hash(password);
     try {
@@ -74,10 +76,9 @@ export class AuthService {
     }
   }
 
-  async localSignin(signinUserDto: SigninUserDto): Promise<Tokens | null> {
+  async localSignin(signinUserDto: SigninUserDto, user: User): Promise<Tokens> {
     try {
       const { email, password, isSignin } = signinUserDto;
-      const user = await this.getUserByEmail(email);
 
       const isPwMatching = await argon.verify(user.password, password);
       if (!isPwMatching)
@@ -98,66 +99,66 @@ export class AuthService {
     id: string,
     email: string,
     isSignin: boolean,
-  ): Promise<Tokens | null> {
+  ): Promise<Tokens> {
     const jwtPayload: JwtPayload = {
       email,
       sub: id,
     };
 
     const accessToken = await this.jwtService.signAsync(jwtPayload, {
-      secret: process.env.JWT_SECRET || config.get('jwt').secret,
-      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
     let expiresIn;
     if (isSignin) {
-      expiresIn =
-        process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
-        config.get('jwt-refresh').expiresIn_autosave;
+      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
     } else {
-      expiresIn =
-        process.env.JWT_REFRESH_EXPIRESIN ||
-        config.get('jwt-refresh').expiresIn;
+      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
     }
     const refreshToken = await this.jwtService.signAsync(jwtPayload, {
-      secret:
-        process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn,
     });
     return { accessToken, refreshToken };
   }
 
   async saveRefreshToken(
-    email: string,
+    id: string,
+    isSignin: boolean,
     refreshToken: string,
-  ): Promise<User | null> {
-    const user = await this.prisma.user.update({
-      where: {
-        email,
-      },
-      data: {
-        refreshToken,
-      },
-    });
+  ): Promise<boolean> {
+    let ttl;
+    if (isSignin) {
+      ttl = Number(
+        this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE') / 1000,
+      );
+    } else {
+      ttl = Number(this.configService.get('JWT_REFRESH_EXPIRESIN') / 1000);
+    }
+    const result = await this.redisService.setKey(
+      're' + id,
+      this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
+      ttl,
+    );
 
-    if (!user) {
+    if (!result) {
       throw new ForbiddenException('refresh token이 저장되지 않았습니다.');
     }
 
-    return user;
+    return result;
   }
 
-  async updateAccessToken(
-    id: string,
-    refreshToken: string,
-  ): Promise<string | null> {
+  async updateAccessToken(id: string, refreshToken: string): Promise<string> {
     const user = await this.getUserById(id);
-    if (user.refreshToken !== refreshToken) {
+    const result = await (
+      await this.redisService.getKey('re' + id)
+    ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
+
+    if (result !== refreshToken) {
       throw new ForbiddenException('Access Denied');
     }
 
     const accessToken: string = await this.getAccessToken(id, user.email);
-
-    await this.saveRefreshToken(user.email, refreshToken);
     return accessToken;
   }
 
@@ -167,49 +168,42 @@ export class AuthService {
       email: email,
     };
     const accessToken = await this.jwtService.signAsync(jwtPayload, {
-      secret: process.env.JWT_SECRET || config.get('jwt').secret,
-      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
+
+    if (!accessToken) {
+      throw new ForbiddenException('accessToken을 생성하지 못했습니다.');
+    }
+
     return accessToken;
   }
 
   async logout(id: string): Promise<boolean> {
-    const user = await this.prisma.user.updateMany({
-      where: {
-        id,
-        refreshToken: {
-          not: null,
-        },
-      },
-      data: {
-        refreshToken: null,
-      },
-    });
-
-    if (!user) {
-      throw new ForbiddenException('토큰을 삭제하지 못했습니다.');
-    }
+    await this.redisService.delKey('re' + id);
     return true;
   }
 
-  async sendRecaptchaV3(useRecapchaDto: UseRecapchaDto): Promise<any> {
-    const result = await this.httpService
-      .post(
-        `${process.env.RECAPTCHA_V3_PUBLIC_URL}?secret=${process.env.RECAPTCHA_V3_SECRETKEY}&response=${useRecapchaDto.token}`,
-      )
-      .toPromise();
-    if (!result.data.success || !result) {
-      throw new ForbiddenException('recaptcha-v3 인증 요청에 실패하였습니다.');
+  async findUser(findPasswordDto: FindPasswordDto): Promise<User> {
+    const user = await this.getUserByEmail(findPasswordDto.email);
+    if (user.name !== findPasswordDto.name) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
     }
-    return result.data;
+    if (user.birth !== findPasswordDto.birth) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    }
+
+    return user;
   }
 
-  async checkRecaptchaV3(score: number): Promise<boolean> {
-    if (score < 0.8) {
-      throw new UnauthorizedException(
-        '의심스러운 트래픽 활동이 감지되었습니다.',
-      );
-    }
-    return true;
+  async getPWChangeToken(id: string): Promise<string> {
+    const token: string = uuid().toString();
+    const result = await this.redisService.setKey(
+      'pw' + id,
+      this.configService.get('CHANGE_PASSWORD_KEY') + token,
+      Number(this.configService.get('PW_TOKEN_TTL')),
+    );
+    if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
+    return token;
   }
 }
