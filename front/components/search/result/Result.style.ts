@@ -348,6 +348,8 @@ export const ModalContentScroll = styled(
     padding: "0 0.2rem 0 0.6rem",
     wordBreak: "break-word",
     overflowY: "auto",
+    fontSize: "0.9rem",
+    lineHeight: "1.1rem",
 
     "::-webkit-scrollbar": {
       backgroundColor: "transparent",
@@ -368,7 +370,6 @@ export const ModalBottom = styled("div", {
 
 export const CloseModalBtn = styled("button", {
   width: "100%",
-  // height: "100%",
   color: "gray",
   fontSize: "1rem",
 });
