@@ -14,10 +14,27 @@ import {
   PharmSubInfo,
   IconBtn,
 } from "./SearchPharmPage.style";
+import Modal from "@modal/Modal";
+import PharmInfoModal from "./PharmInfoModal";
 
 interface PharmListProps {
   pharmList: PharmacyResponse[];
 }
+
+const initialInfoValues: PharmacyResponse = {
+  id: 0,
+  name: "",
+  phone: "",
+  address: "",
+  monday: "",
+  tuesday: "",
+  wednesday: "",
+  thursday: "",
+  friday: "",
+  saturday: "",
+  sunday: "",
+  holiday: "",
+};
 
 const settings = {
   arrows: false,
@@ -34,32 +51,53 @@ const settings = {
 function PharmList({ pharmList }: PharmListProps) {
   const [css] = useStyletron();
   const temp = useMediaQuery({ query: "(min-height : 800px)" });
+
   const [isLong, setIsLong] = useState(false);
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
+  const [selectedPharmInfo, setSelectedPharmInfo] =
+    useState<PharmacyResponse>(initialInfoValues);
+
+  const selectPharmHandler = (info: PharmacyResponse) => {
+    setSelectedPharmInfo(info);
+    setInfoModalOpen(true);
+  };
 
   useEffect(() => {
     setIsLong(temp);
   }, [isLong]);
 
   return (
-    <PharmInfoContainer $isLong={isLong}>
-      <Slider
-        {...settings}
-        className={css({
-          height: "90%",
-        })}>
-        {pharmList.map((item) => (
-          <div key={item.id}>
-            <PharmInfo $borderColor={MAIN_COLOR} $isLong={isLong}>
-              <PharmName>{item.name}</PharmName>
-              <PharmSubInfo>{item.phone}</PharmSubInfo>
-              <IconBtn>
-                <AiOutlineHeart />
-              </IconBtn>
-            </PharmInfo>
-          </div>
-        ))}
-      </Slider>
-    </PharmInfoContainer>
+    <>
+      <PharmInfoContainer $isLong={isLong}>
+        <Slider
+          {...settings}
+          className={css({
+            height: "90%",
+          })}>
+          {pharmList.map((item) => (
+            <div key={item.id}>
+              <PharmInfo $borderColor={MAIN_COLOR} $isLong={isLong}>
+                <PharmName onClick={() => selectPharmHandler(item)}>
+                  {item.name}
+                </PharmName>
+                <PharmSubInfo>{item.phone}</PharmSubInfo>
+                <IconBtn>
+                  <AiOutlineHeart />
+                </IconBtn>
+              </PharmInfo>
+            </div>
+          ))}
+        </Slider>
+      </PharmInfoContainer>
+      {infoModalOpen && (
+        <Modal open={infoModalOpen} onClose={() => setInfoModalOpen(false)}>
+          <PharmInfoModal
+            selectedPharmInfo={selectedPharmInfo}
+            onClose={() => setInfoModalOpen(false)}
+          />
+        </Modal>
+      )}
+    </>
   );
 }
 
