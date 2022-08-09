@@ -1,12 +1,11 @@
 import { Controller, Get, HttpCode, Query } from '@nestjs/common';
-import { PharmacyService } from './pharmacy.service';
-import { Pharmacy } from '@prisma/client';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PharmacyQueryDto } from './dto/pharmacy.search.dto';
 import {
-  PharmacyQueryDto,
-  PharmacyResponse,
   PharmacyCountResponse,
-} from './dto/pharmacy.search.dto';
-import { ApiOperation, ApiQuery, ApiTags, ApiResponse } from '@nestjs/swagger';
+  PharmacyListResponse,
+} from './interface/pharmacy.interface';
+import { PharmacyService } from './pharmacy.service';
 @ApiTags('Pharmacy API')
 @Controller('pharmacy')
 export class PharmacyController {
@@ -15,12 +14,12 @@ export class PharmacyController {
   @ApiResponse({
     status: 200,
     description: '조회 성공',
-    type: PharmacyResponse,
   })
   @Get()
   @HttpCode(200)
-  async pharmacyList(): Promise<Pharmacy[]> {
-    return this.pharmacyService.pharmacyList();
+  async pharmacyList(): Promise<PharmacyListResponse> {
+    const pharmacy = this.pharmacyService.pharmacyList();
+    return pharmacy;
   }
 
   @ApiOperation({ summary: '약국 검색 API' })
@@ -47,11 +46,12 @@ export class PharmacyController {
   @ApiResponse({
     status: 200,
     description: '조회 성공',
-    type: PharmacyResponse,
   })
   @Get('search')
   @HttpCode(200)
-  async pharmacySearch(@Query() query: PharmacyQueryDto): Promise<Pharmacy[]> {
+  async pharmacySearch(
+    @Query() query: PharmacyQueryDto,
+  ): Promise<PharmacyListResponse> {
     const { phone, name, address, start } = query;
     if (phone) {
       return await this.pharmacyService.pharmacySearchPhone(phone, start);
@@ -81,26 +81,19 @@ export class PharmacyController {
   @ApiResponse({
     status: 200,
     description: '조회 성공',
-    type: PharmacyCountResponse,
   })
   @Get('count')
   @HttpCode(200)
   async pharmacyCount(
     @Query() query: PharmacyQueryDto,
-  ): Promise<{ count: number }> {
+  ): Promise<PharmacyCountResponse> {
     const { phone, name, address } = query;
     if (phone) {
-      const count = await this.pharmacyService.pharmacyCountPhone(phone);
-      const body = { count };
-      return body;
+      return await this.pharmacyService.pharmacyCountPhone(phone);
     } else if (name) {
-      const count = await this.pharmacyService.pharmacyCountName(name);
-      const body = { count };
-      return body;
+      return await this.pharmacyService.pharmacyCountName(name);
     } else if (address) {
-      const count = await this.pharmacyService.pharmacyCountAddress(address);
-      const body = { count };
-      return body;
+      return await this.pharmacyService.pharmacyCountAddress(address);
     }
   }
 }
