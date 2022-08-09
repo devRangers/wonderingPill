@@ -51,6 +51,17 @@ function KakaoMap({ pharmList }: KakaoMapProps) {
             map: map,
             position: new window.kakao.maps.LatLng(result[0].y, result[0].x),
           });
+
+          const iwContent = `<div style="padding: 8px 1px; font-size:0.7rem;">${pharm.name}</div>`;
+          const infowindow = new window.kakao.maps.InfoWindow({
+            content: iwContent,
+            removable: true,
+          });
+
+          window.kakao.maps.event.addListener(marker, "click", function () {
+            infowindow.open(map, marker);
+          });
+
           bounds.extend(new window.kakao.maps.LatLng(result[0].y, result[0].x));
         }
         map.setBounds(bounds);
