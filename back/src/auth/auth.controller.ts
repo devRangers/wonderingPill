@@ -5,7 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
+  Param,
   Post,
+  Put,
   Req,
   Res,
   UseGuards,
@@ -28,6 +30,7 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
+import { CommonResponseDto } from 'src/common/dto';
 import {
   AccessGuard,
   GoogleGuard,
@@ -35,15 +38,16 @@ import {
   RefreshGuard,
 } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
+import { RedisService } from 'src/redis/redis.service';
 import { AuthService } from './auth.service';
 import {
+  ChangePasswordDto,
   CreateUserDto,
   CreateUserResponse,
   FindPasswordDto,
   FindPasswordResponse,
   LogoutResponse,
   OauthLoginDto,
-  RefreshResponse,
   SigninResponse,
   SigninUserDto,
 } from './dto';
@@ -57,6 +61,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
   ) {}
   @Public()
   @HttpCode(200)
@@ -160,7 +165,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Access Token 발행 성공',
-    type: RefreshResponse,
+    type: CommonResponseDto,
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
@@ -168,7 +173,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @GetCurrentUserId() id: string,
     @GetCurrentUser('refreshToken') refreshToken: string,
-  ): Promise<RefreshResponse> {
+  ): Promise<CommonResponseDto> {
     const accessToken: string = await this.authService.updateAccessToken(
       id,
       refreshToken,
@@ -276,7 +281,7 @@ export class AuthController {
     @Body() findPasswordDto: FindPasswordDto,
   ): Promise<FindPasswordResponse> {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
-    const token: string = await this.authService.getPWChangeToken(user.id);
+    const token: string = await this.authService.setPWChangeToken(user.id);
     const result: boolean = await this.mailService.sendEmail(
       user.email,
       user.name,
@@ -290,11 +295,53 @@ export class AuthController {
     };
   }
 
-  // @Put('change-password')
-  // async changePassword(
-  //   @Param('token') token: string,
-  //   @Body() changePasswordDto: ChangePasswordDto,
-  // ) {}
+  @HttpCode(200)
+  @ApiOperation({
+    summary: '비밀번호 변경 토큰 유효 검사 API',
+    description: '비밀번호 변경 토큰이 유효한지 검사 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '토큰 검사 성공',
+    type: CommonResponseDto,
+  })
+  @Get('change-password/check')
+  async checkPWToken(
+    @Param('email') email: string,
+  ): Promise<CommonResponseDto> {
+    const user: UserModel = await this.authService.getUserByEmail(email);
+    await this.redisService.getKey('pw' + user.id);
+    return {
+      statusCode: 200,
+      message: '토큰의 유효기간이 만료되지 않았습니다.',
+    };
+  }
+
+  @HttpCode(200)
+  @Put('change-password')
+  @ApiOperation({
+    summary: '비밀번호 변경 API',
+    description: '비밀번호를 변경 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '비밀번호 변경 성공',
+    type: CommonResponseDto,
+  })
+  @ApiBody({ type: ChangePasswordDto })
+  async changePassword(
+    @Param('email') email: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ): Promise<CommonResponseDto> {
+    const user: UserModel = await this.authService.changePassword(
+      email,
+      changePasswordDto,
+    );
+    return {
+      statusCode: 200,
+      message: '비밀번호가 변경되었습니다.',
+    };
+  }
 
   // @HttpCode(200)
   // @Throttle(5, 1)

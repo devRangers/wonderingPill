@@ -20,6 +20,9 @@ export class RedisService {
 
   async getKey(key: string): Promise<string> {
     const value: string = (await this.cacheManager.get(key)) as string;
+    if (!value) {
+      throw new ForbiddenException('토큰이 존재하지 않습니다.');
+    }
     return value;
   }
 

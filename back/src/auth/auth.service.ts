@@ -14,6 +14,7 @@ import { RedisService } from 'src/redis/redis.service';
 import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
 import {
+  ChangePasswordDto,
   CreateUserDto,
   FindPasswordDto,
   OauthLoginDto,
@@ -201,7 +202,7 @@ export class AuthService {
     return user;
   }
 
-  async getPWChangeToken(id: string): Promise<string> {
+  async setPWChangeToken(id: string): Promise<string> {
     const token: string = uuid().toString();
     const result: boolean = await this.redisService.setKey(
       'pw' + id,
@@ -212,19 +213,19 @@ export class AuthService {
     return token;
   }
 
-  async kakaoLogin(kakaoLoginDto: OauthLoginDto) {
-    const user: User = await this.createOauthUser(kakaoLoginDto, 'kakao');
-    const { accessToken, refreshToken } = kakaoLoginDto;
+  // async kakaoLogin(kakaoLoginDto: OauthLoginDto) {
+  //   const user: User = await this.createOauthUser(kakaoLoginDto, 'kakao');
+  //   const { accessToken, refreshToken } = kakaoLoginDto;
 
-    // redis 저장
-    await this.redisService.setKey(
-      'ka' + user.id,
-      process.env.REFRESHTOKEN_KEY + refreshToken,
-      Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
-    );
+  //   // redis 저장
+  //   await this.redisService.setKey(
+  //     'ka' + user.id,
+  //     process.env.REFRESHTOKEN_KEY + refreshToken,
+  //     Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+  //   );
 
-    return { accessToken, refreshToken };
-  }
+  //   return { accessToken, refreshToken };
+  // }
 
   async createOauthUser(payload: OauthLoginDto, type: string) {
     let provider;
@@ -258,5 +259,15 @@ export class AuthService {
     );
 
     return { accessToken, refreshToken };
+  }
+
+  async changePassword(email, changePasswordDto: ChangePasswordDto) {
+    const user: User = await this.prisma.user.update({
+      where: { email },
+      data: {
+        password: changePasswordDto.password,
+      },
+    });
+    return user;
   }
 }

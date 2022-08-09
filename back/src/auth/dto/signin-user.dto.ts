@@ -49,8 +49,6 @@ export class SigninResponse extends CommonResponseDto {
   };
 }
 
-export class RefreshResponse extends CommonResponseDto {}
-
 export class LogoutResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
