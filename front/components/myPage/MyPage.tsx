@@ -4,7 +4,12 @@ import {
   HEADER_HEIGHT,
   MAIN_COLOR,
 } from "@utils/constant";
-import { Container, InnerContainer } from "./MyPage.style";
+import {
+  Container,
+  InnerContainer,
+  Profile,
+  ProfileContainer,
+} from "./MyPage.style";
 
 function MyPage() {
   return (
@@ -13,7 +18,11 @@ function MyPage() {
       $headerHeight={HEADER_HEIGHT}
       $footerHeight={FOOTER_HEIGHT}
       $fullHeight={FULL_HEIGHT}>
-      <InnerContainer></InnerContainer>
+      <InnerContainer>
+        <ProfileContainer>
+          <Profile></Profile>
+        </ProfileContainer>
+      </InnerContainer>
     </Container>
   );
 }
