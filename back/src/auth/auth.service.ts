@@ -262,10 +262,11 @@ export class AuthService {
   }
 
   async changePassword(email, changePasswordDto: ChangePasswordDto) {
+    const hashedPassword: string = await argon.hash(changePasswordDto.password);
     const user: User = await this.prisma.user.update({
       where: { email },
       data: {
-        password: changePasswordDto.password,
+        password: hashedPassword,
       },
     });
     return user;

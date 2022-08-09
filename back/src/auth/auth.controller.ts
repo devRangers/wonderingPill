@@ -5,9 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
-  Param,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -307,7 +307,7 @@ export class AuthController {
   })
   @Get('change-password/check')
   async checkPWToken(
-    @Param('email') email: string,
+    @Query('email') email: string,
   ): Promise<CommonResponseDto> {
     const user: UserModel = await this.authService.getUserByEmail(email);
     await this.redisService.getKey('pw' + user.id);
@@ -330,13 +330,10 @@ export class AuthController {
   })
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(
-    @Param('email') email: string,
+    @Query('email') email: string,
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<CommonResponseDto> {
-    const user: UserModel = await this.authService.changePassword(
-      email,
-      changePasswordDto,
-    );
+    await this.authService.changePassword(email, changePasswordDto);
     return {
       statusCode: 200,
       message: '비밀번호가 변경되었습니다.',
