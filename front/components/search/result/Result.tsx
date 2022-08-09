@@ -19,8 +19,6 @@ import {
   Title,
   BigTitle,
   BigDescription,
-  WarningContainer,
-  WarningItem,
   BigDescriptionContainer,
   CompanyBox,
   CompanyTitle,
@@ -68,10 +66,6 @@ function FilteringSearch() {
         $fullHeight={FULL_HEIGHT}>
         <TitleContainer>
           <TitleBox $bgColor={MAIN_COLOR}>
-            {/* <WarningContainer>
-            <WarningItem>덜위험</WarningItem>
-            <WarningItem>위험</WarningItem>
-          </WarningContainer> */}
             <Title>{tempData.title}</Title>
           </TitleBox>
         </TitleContainer>
