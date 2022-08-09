@@ -13,7 +13,11 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { RefreshGuard } from 'src/common/guards';
 import { BookmarkService } from './bookmark.service';
-import { BookmarkCreateDto } from './dto/bookmark.dto';
+import {
+  BookmarkCreateDto,
+  BookmarkGetResponseDto,
+  BookmarkListResponseDto,
+} from './dto/bookmark.dto';
 import {
   BookmarkCreateResponse,
   BookmarkGetResponse,
@@ -30,7 +34,7 @@ export class BookmarkController {
   @ApiOperation({ summary: '북마크 생성 API' })
   @ApiResponse({
     status: 200,
-    description: '조회 성공',
+    description: '생성 성공',
     type: BookmarkCreateDto,
   })
   @HttpCode(201)
@@ -53,6 +57,7 @@ export class BookmarkController {
   @ApiResponse({
     status: 200,
     description: '조회 성공',
+    type: BookmarkListResponseDto,
   })
   @HttpCode(200)
   async listBookmark(
@@ -74,6 +79,7 @@ export class BookmarkController {
   @ApiResponse({
     status: 200,
     description: '조회 성공',
+    type: BookmarkGetResponseDto,
   })
   @HttpCode(200)
   async readBookmark(
