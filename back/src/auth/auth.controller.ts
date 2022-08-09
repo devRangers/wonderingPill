@@ -311,6 +311,7 @@ export class AuthController {
   ): Promise<CommonResponseDto> {
     const user: UserModel = await this.authService.getUserByEmail(email);
     await this.redisService.getKey('pw' + user.id);
+    this.logger.verbose(`User ${user.email} check pw token Success!`);
     return {
       statusCode: 200,
       message: '토큰의 유효기간이 만료되지 않았습니다.',
@@ -334,6 +335,7 @@ export class AuthController {
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<CommonResponseDto> {
     await this.authService.changePassword(email, changePasswordDto);
+    this.logger.verbose(`User ${email} update password Success!`);
     return {
       statusCode: 200,
       message: '비밀번호가 변경되었습니다.',
