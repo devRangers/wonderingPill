@@ -1,7 +1,10 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useState, useEffect } from "react";
 import Slider from "react-slick";
+import { useMediaQuery } from "react-responsive";
 import { useStyletron } from "styletron-react";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { MAIN_COLOR } from "@utils/constant";
 import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
 import {
@@ -25,47 +28,36 @@ const settings = {
   slidesToScroll: 1,
   swipeToSlide: true,
   rows: 2,
+  adaptiveHeight: true,
 };
 
 function PharmList({ pharmList }: PharmListProps) {
   const [css] = useStyletron();
+  const temp = useMediaQuery({ query: "(min-height : 800px)" });
+  const [isLong, setIsLong] = useState(false);
+
+  useEffect(() => {
+    setIsLong(temp);
+  }, [isLong]);
+
   return (
-    <PharmInfoContainer>
+    <PharmInfoContainer $isLong={isLong}>
       <Slider
         {...settings}
         className={css({
-          border: "1px solid red",
-          display: "flex",
-          height: "auto",
+          height: "90%",
         })}>
-        {/* {pharmList.map((item, idx) => (
-          <PharmInfo key={item.id} $borderColor={MAIN_COLOR}>
-            <PharmName>{item.name}</PharmName>
-            <PharmSubInfo>{item.phone}</PharmSubInfo>
-            <IconBtn>like</IconBtn>
-          </PharmInfo>
-        ))} */}
-
-        <PharmInfo key={1} $borderColor={MAIN_COLOR}>
-          <PharmName>양재뿌리약국</PharmName>
-          <PharmSubInfo>02-272-4561</PharmSubInfo>
-          <IconBtn>like</IconBtn>
-        </PharmInfo>
-        <PharmInfo key={2} $borderColor={MAIN_COLOR}>
-          <PharmName>양재뿌리약국</PharmName>
-          <PharmSubInfo>02-272-4561</PharmSubInfo>
-          <IconBtn>like</IconBtn>
-        </PharmInfo>
-        <PharmInfo key={3} $borderColor={MAIN_COLOR}>
-          <PharmName>양재뿌리약국</PharmName>
-          <PharmSubInfo>02-272-4561</PharmSubInfo>
-          <IconBtn>like</IconBtn>
-        </PharmInfo>
-        <PharmInfo key={4} $borderColor={MAIN_COLOR}>
-          <PharmName>양재뿌리약국</PharmName>
-          <PharmSubInfo>02-272-4561</PharmSubInfo>
-          <IconBtn>like</IconBtn>
-        </PharmInfo>
+        {pharmList.map((item) => (
+          <div key={item.id}>
+            <PharmInfo $borderColor={MAIN_COLOR} $isLong={isLong}>
+              <PharmName>{item.name}</PharmName>
+              <PharmSubInfo>{item.phone}</PharmSubInfo>
+              <IconBtn>
+                <AiOutlineHeart />
+              </IconBtn>
+            </PharmInfo>
+          </div>
+        ))}
       </Slider>
     </PharmInfoContainer>
   );

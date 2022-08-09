@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
+import { PharmacyResponse as PharmacyType } from "@modelTypes/pharmacyResponse";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
   FOOTER_HEIGHT,
@@ -26,11 +26,17 @@ import {
 import KakaoMap from "@searchPharmComp/KakaoMap";
 import PharmList from "@searchPharmComp/PharmList";
 
+interface PharmacyResponse {
+  statusCode: number;
+  message: string;
+  pharmacy: PharmacyType[];
+}
+
 const searchPharm = async (keyword: string, option: string) => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_URL}/pharmacy/search?${option}=${keyword}`,
   );
-  const result: PharmacyResponse[] = await res.json();
+  const result: PharmacyResponse = await res.json();
   return result;
 };
 
@@ -41,13 +47,13 @@ const SearchPharmPage: NextPage = () => {
   const [inputText, setInputText] = useState("");
   const [keyword, setKeyword] = useState("");
   const [isSubmitBtnClicked, setIsSubmitBtnClicked] = useState(false);
-  const [pharmList, setPharmList] = useState<PharmacyResponse[]>([]);
+  const [pharmList, setPharmList] = useState<PharmacyType[]>([]);
 
   useQuery("searchPharm", () => searchPharm(keyword, option), {
     enabled: !!keyword && isSubmitBtnClicked,
     onSuccess: (data) => {
       setIsSubmitBtnClicked(false);
-      setPharmList(data);
+      setPharmList(data.pharmacy);
     },
   });
 
@@ -95,7 +101,7 @@ const SearchPharmPage: NextPage = () => {
           <Dot $bgColor="#28C131" />
         </PharmListBoxHeader>
         <PharmListBoxBody>
-          <PharmList pharmList={pharmList} />
+          {pharmList.length > 0 && <PharmList pharmList={pharmList} />}
         </PharmListBoxBody>
       </PharmListBox>
     </PageContainer>

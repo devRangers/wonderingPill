@@ -108,31 +108,42 @@ export const PharmListBoxBody = styled("div", {
   justifyContent: "center",
 });
 
-export const PharmInfoContainer = styled("div", {
-  width: "90%",
-  height: "90%",
-});
+export const PharmInfoContainer = styled(
+  "div",
+  (props: { $isLong: boolean }) => ({
+    width: "90%",
+    height: props.$isLong ? "80%" : "90%",
+  }),
+);
 
-export const PharmInfo = styled("div", (props: { $borderColor: string }) => ({
-  border: `2px solid ${props.$borderColor}`,
-  display: "grid !important",
-  gridTemplateRows: "2fr 1fr",
-  gridTemplateColumns: "2fr 1fr",
-}));
+export const PharmInfo = styled(
+  "div",
+  (props: { $borderColor: string; $isLong: boolean }) => ({
+    border: `2px solid ${props.$borderColor}`,
+    width: "90%",
+    display: "grid",
+    gridTemplateRows: "1fr 1fr",
+    gridTemplateColumns: "1.7fr 1fr",
+    alignItems: "center",
+    margin: props.$isLong ? "0 auto 20px auto" : "0 auto 10px auto",
+  }),
+);
 
 export const PharmName = styled("h1", {
   fontWeight: "bold",
-  fontSize: "1rem",
+  padding: "0 10px",
 });
 
 export const PharmSubInfo = styled("p", {
-  fontSize: "0.9rem",
+  fontSize: "0.8rem",
   color: "#717171",
-  textAlign: "center",
+  padding: "0 5px",
   justifySelf: "end",
 });
 
 export const IconBtn = styled("button", {
+  fontSize: "1.2rem",
   gridColumnStart: 2,
   gridRowStart: 2,
+  justifySelf: "end",
 });
