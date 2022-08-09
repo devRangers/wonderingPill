@@ -1,4 +1,5 @@
 import { MAIN_COLOR } from "@utils/constant";
+import { BsFillTelephoneFill } from "react-icons/bs";
 import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
 import {
   Container,
@@ -26,7 +27,11 @@ function PharmInfoModal({ onClose, selectedPharmInfo }: PharmInfoModalProps) {
       </InfoContaniner>
       <InfoContaniner>
         <InfoTitle $bgColor={MAIN_COLOR}>전화번호</InfoTitle>
-        <InfoContent $borderColor={MAIN_COLOR}>{phone}</InfoContent>
+        <InfoContent $borderColor={MAIN_COLOR}>
+          <a href={`tel:${phone}`}>
+            {phone} <BsFillTelephoneFill />
+          </a>
+        </InfoContent>
       </InfoContaniner>
       <InfoContaniner>
         <InfoTitle $bgColor={MAIN_COLOR}>영업시간</InfoTitle>
