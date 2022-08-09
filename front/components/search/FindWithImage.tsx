@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   FOOTER_HEIGHT,
@@ -23,9 +23,15 @@ import {
 } from "./FindWithImage.style";
 import CaptureGuideModal from "./CaptureGuideModal";
 import Capture from "./Capture";
+import Modal from "@modal/Modal";
 
 function FindWithImage() {
   const isWide = isWideDevice();
+  const [modalOpen, setModalOpen] = useState(true);
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   useEffect(() => {
     // 여기서 이제 일주일동안 안보이기 했는지 체크한다.
@@ -76,7 +82,11 @@ function FindWithImage() {
           </DescriptionContainer>
         </FindWithImageContainer>
       </Container>
-      <CaptureGuideModal />
+      {modalOpen && (
+        <Modal open={modalOpen} onClose={handleCloseModal}>
+          <CaptureGuideModal handleCloseModal={handleCloseModal} />
+        </Modal>
+      )}
     </>
   );
 }

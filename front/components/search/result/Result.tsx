@@ -35,6 +35,7 @@ import {
   SearchOtherPill,
 } from "./Result.style";
 import ResultModal from "./ResultModal";
+import Modal from "@modal/Modal";
 
 const tempData: { [key in string]: string } = {
   title: "한미아스피린장용정 100밀리그램",
@@ -54,8 +55,8 @@ const tempData: { [key in string]: string } = {
 
 function FilteringSearch() {
   const [modalOpen, setModalOpen] = useState(false);
-  const handleModalOpen = (open: boolean) => {
-    setModalOpen(open);
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   return (
@@ -146,7 +147,9 @@ function FilteringSearch() {
         </Bottom>
       </FilteringSearchContainer>
       {modalOpen && (
-        <ResultModal modalOpen={modalOpen} handleModalOpen={handleModalOpen} />
+        <Modal open={modalOpen} onClose={handleCloseModal}>
+          <ResultModal handleCloseModal={handleCloseModal} />
+        </Modal>
       )}
     </>
   );

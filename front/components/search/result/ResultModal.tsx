@@ -18,12 +18,11 @@ import {
   ModalContentScroll,
 } from "./Result.style";
 
-interface ResultModalProps {
-  modalOpen: boolean;
-  handleModalOpen: (open: boolean) => void;
+interface ResultModalProp {
+  handleCloseModal: () => void;
 }
 
-function ResultModal({ modalOpen, handleModalOpen }: ResultModalProps) {
+function ResultModal({ handleCloseModal }: ResultModalProp) {
   const tempModalData: { [key in string]: string } = {
     cautionContent:
       "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
@@ -31,39 +30,35 @@ function ResultModal({ modalOpen, handleModalOpen }: ResultModalProps) {
       "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
   };
   return (
-    <Modal open={modalOpen} onClose={() => handleModalOpen(false)}>
-      <ModalInnerContainer>
-        <ModalTopContainer>
-          <ModalTitleWrapper>
-            <ModalTitle $color={SUB_COLOR}>복용시 주의사항</ModalTitle>
-          </ModalTitleWrapper>
-          <ModalSubTitleWrapper>
-            <ModalSubTitle>반드시 약사와의 상담 후 복용해주세요!</ModalSubTitle>
-          </ModalSubTitleWrapper>
-        </ModalTopContainer>
-        <ModalCautionContainer>
-          <ModalCaution $bgColor={MAIN_COLOR}>주의사항</ModalCaution>
-          <ModalCautionContent $borderColor={MAIN_COLOR}>
-            <ModalContentScroll $scrollColor={MAIN_COLOR}>
-              {tempModalData.cautionContent}
-            </ModalContentScroll>
-          </ModalCautionContent>
-        </ModalCautionContainer>
-        <ModalInteractionContainer>
-          <ModalInteraction $bgColor={MAIN_COLOR}>상호작용</ModalInteraction>
-          <ModalInteractionContent $borderColor={MAIN_COLOR}>
-            <ModalContentScroll $scrollColor={MAIN_COLOR}>
-              {tempModalData.interactionContent}
-            </ModalContentScroll>
-          </ModalInteractionContent>
-        </ModalInteractionContainer>
-        <ModalBottom>
-          <CloseModalBtn onClick={() => handleModalOpen(false)}>
-            닫기
-          </CloseModalBtn>
-        </ModalBottom>
-      </ModalInnerContainer>
-    </Modal>
+    <ModalInnerContainer>
+      <ModalTopContainer>
+        <ModalTitleWrapper>
+          <ModalTitle $color={SUB_COLOR}>복용시 주의사항</ModalTitle>
+        </ModalTitleWrapper>
+        <ModalSubTitleWrapper>
+          <ModalSubTitle>반드시 약사와의 상담 후 복용해주세요!</ModalSubTitle>
+        </ModalSubTitleWrapper>
+      </ModalTopContainer>
+      <ModalCautionContainer>
+        <ModalCaution $bgColor={MAIN_COLOR}>주의사항</ModalCaution>
+        <ModalCautionContent $borderColor={MAIN_COLOR}>
+          <ModalContentScroll $scrollColor={MAIN_COLOR}>
+            {tempModalData.cautionContent}
+          </ModalContentScroll>
+        </ModalCautionContent>
+      </ModalCautionContainer>
+      <ModalInteractionContainer>
+        <ModalInteraction $bgColor={MAIN_COLOR}>상호작용</ModalInteraction>
+        <ModalInteractionContent $borderColor={MAIN_COLOR}>
+          <ModalContentScroll $scrollColor={MAIN_COLOR}>
+            {tempModalData.interactionContent}
+          </ModalContentScroll>
+        </ModalInteractionContent>
+      </ModalInteractionContainer>
+      <ModalBottom>
+        <CloseModalBtn onClick={handleCloseModal}>닫기</CloseModalBtn>
+      </ModalBottom>
+    </ModalInnerContainer>
   );
 }
 
