@@ -1,13 +1,10 @@
 import { useState } from "react";
-
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
   HEADER_HEIGHT,
   MAIN_COLOR,
-  SUB_COLOR,
 } from "@utils/constant";
-import React from "react";
 import {
   Bottom,
   SmallContainer as Caution,
@@ -38,21 +35,6 @@ import {
   ModalContainer,
   CautionModalButton,
   SearchOtherPill,
-  ModalInnerContainer,
-  ModalTopContainer,
-  ModalTitleWrapper,
-  ModalSubTitleWrapper,
-  ModalTitle,
-  ModalSubTitle,
-  ModalContentContainer as ModalCautionContainer,
-  ModalContentContainer as ModalInteractionContainer,
-  ModalContentTitle as ModalCaution,
-  ModalContentTitle as ModalInteraction,
-  ModalContent as ModalCautionContent,
-  ModalContent as ModalInteractionContent,
-  ModalBottom,
-  CloseModalBtn,
-  ModalContentScroll,
 } from "./Result.style";
 import ResultModal from "./ResultModal";
 
@@ -72,13 +54,12 @@ const tempData: { [key in string]: string } = {
     "한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램한미아스피린장용정 100밀리그램",
 };
 
-
-
 function FilteringSearch() {
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = (open: boolean) => {
-    setModalOpen(open)
-  }
+    setModalOpen(open);
+  };
+
   return (
     <>
       <FilteringSearchContainer
