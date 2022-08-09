@@ -1,7 +1,0 @@
-server:
-  port: 5000
-
-db:
-  type: 'postgres'
-  port: 5432
-  database: 'postgres'

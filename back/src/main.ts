@@ -1,24 +1,17 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import * as config from 'config';
-import { HttpExceptionFilter } from './pipes/HttpExceptionFilter.filter';
-
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-
-dotenv.config({
-  path: path.resolve(
-    process.env.NODE_ENV === 'production'
-      ? '.production.env'
-      : process.env.NODE_ENV === 'stage'
-      ? '.env'
-      : '.development.env',
-  ),
-});
+import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
+import { PrismaService } from './prisma/prisma.service';
+import { setupSwagger } from './utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService);
+  const PORT = configService.get('SERVER_PORT');
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -28,12 +21,21 @@ async function bootstrap() {
     }),
   );
 
-  // PORT 설정
-  const PORT = process.env.SERVER_PORT || config.get('server').port;
-  app.enableCors(); // CORS 설정
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app);
+
+  setupSwagger(app);
+  app.enableCors({
+    origin: `${configService.get('CLIENT_URL')}`,
+    credentials: true,
+  });
+  app.use(cookieParser());
   app.useGlobalFilters(new HttpExceptionFilter()); // 전역 예외 필터
+
   await app.listen(PORT);
-  
-  Logger.log(`Application running on port ${PORT}`);
+
+  if (configService.get('NODE_ENV') === 'development') {
+    Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
+  }
 }
 bootstrap();

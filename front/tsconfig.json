@@ -14,9 +14,23 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
-      "@utils/*": ["common/utils/*"]
+      "@lib/*": ["lib/*"],
+      "@atom/*": ["atom/*"],
+      "@utils/*": ["common/utils/*"],
+      "@userContainer/*": ["common/userContainer/*"],
+      "@modal/*": ["common/modal/*"],
+      "@footer/*": ["common/footer/*"],
+      "@header/*": ["common/header/*"],
+      "@sidebar/*": ["common/sidebar/*"],
+      "@accountComp/*": ["components/account/*"],
+      "@loginComp/*": ["components/login/*"],
+      "@mainComp/*": ["components/main/*"],
+      "@registerComp/*": ["components/register/*"],
+      "@searchComp/*": ["components/search/*"],
+      "@modelTypes/*": ["src/model/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
