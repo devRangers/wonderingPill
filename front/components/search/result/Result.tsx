@@ -145,7 +145,9 @@ function FilteringSearch() {
           </BottomBox>
         </Bottom>
       </FilteringSearchContainer>
-      <ResultModal modalOpen={modalOpen} handleModalOpen={handleModalOpen} />
+      {modalOpen && (
+        <ResultModal modalOpen={modalOpen} handleModalOpen={handleModalOpen} />
+      )}
     </>
   );
 }
