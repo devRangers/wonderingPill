@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
+import { isWideDevice } from "@utils/isWideDevice";
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
@@ -17,8 +18,13 @@ import {
   SearchOption,
   SearchInput,
   SearchBtn,
+  PharmListBox,
+  PharmListBoxHeader,
+  Dot,
+  PharmListBoxBody,
 } from "@searchPharmComp/SearchPharmPage.style";
 import KakaoMap from "@searchPharmComp/KakaoMap";
+import PharmList from "@searchPharmComp/PharmList";
 
 const searchPharm = async (keyword: string, option: string) => {
   const res = await fetch(
@@ -29,6 +35,8 @@ const searchPharm = async (keyword: string, option: string) => {
 };
 
 const SearchPharmPage: NextPage = () => {
+  const isWide = isWideDevice();
+
   const [option, setOption] = useState("address");
   const [inputText, setInputText] = useState("");
   const [keyword, setKeyword] = useState("");
@@ -80,6 +88,16 @@ const SearchPharmPage: NextPage = () => {
 
         <KakaoMap pharmList={pharmList} />
       </SearchPharmContainer>
+      <PharmListBox $bgColor={MAIN_COLOR}>
+        <PharmListBoxHeader $isWide={isWide}>
+          <Dot $bgColor="#FB4646" />
+          <Dot $bgColor="#FEB024" />
+          <Dot $bgColor="#28C131" />
+        </PharmListBoxHeader>
+        <PharmListBoxBody>
+          <PharmList pharmList={pharmList} />
+        </PharmListBoxBody>
+      </PharmListBox>
     </PageContainer>
   );
 };
