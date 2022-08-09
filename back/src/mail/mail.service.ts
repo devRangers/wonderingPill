@@ -10,7 +10,7 @@ export class MailService {
     private readonly configService: ConfigService,
   ) {}
 
-  async sendEmail(email: string, name: string, token: string) {
+  async sendEmail(email: string, name: string) {
     const mailUrl = '/api/v1/mails';
     const result = await this.httpService
       .post(

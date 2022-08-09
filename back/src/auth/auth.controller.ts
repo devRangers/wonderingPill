@@ -5,9 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
+  Param,
   Post,
   Put,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -281,11 +281,10 @@ export class AuthController {
     @Body() findPasswordDto: FindPasswordDto,
   ): Promise<FindPasswordResponse> {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
-    const token: string = await this.authService.setPWChangeToken(user.id);
+    await this.authService.setPWChangeToken(user.id);
     const result: boolean = await this.mailService.sendEmail(
       user.email,
       user.name,
-      token,
     );
     this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
@@ -307,7 +306,7 @@ export class AuthController {
   })
   @Get('change-password/check')
   async checkPWToken(
-    @Query('email') email: string,
+    @Param('email') email: string,
   ): Promise<CommonResponseDto> {
     const user: UserModel = await this.authService.getUserByEmail(email);
     await this.redisService.getKey('pw' + user.id);
@@ -331,7 +330,7 @@ export class AuthController {
   })
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(
-    @Query('email') email: string,
+    @Param('email') email: string,
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<CommonResponseDto> {
     await this.authService.changePassword(email, changePasswordDto);
