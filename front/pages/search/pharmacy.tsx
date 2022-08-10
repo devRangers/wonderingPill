@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import { useState } from "react";
+import * as Api from "@api";
 import { useQuery } from "react-query";
 import { PharmacyResponse as PharmacyType } from "@modelTypes/pharmacyResponse";
 import { isWideDevice } from "@utils/isWideDevice";
@@ -33,9 +34,7 @@ interface PharmacyResponse {
 }
 
 const searchPharm = async (keyword: string, option: string) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/pharmacy/search?${option}=${keyword}`,
-  );
+  const res = await Api.get(`/pharmacy/search?${option}=${keyword}`);
   const result: PharmacyResponse = await res.json();
   return result;
 };
