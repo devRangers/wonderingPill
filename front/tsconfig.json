@@ -31,7 +31,7 @@
       "@mainComp/*": ["components/main/*"],
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
-      "@resultComp/*": ["components/search/result*"],
+      "@resultComp/*": ["components/search/result/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },
