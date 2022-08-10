@@ -15,7 +15,12 @@ import { RedisModule } from './redis/redis.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.development.env', '.env'],
+      envFilePath:
+        process.env.NODE_ENV === 'production'
+          ? '.production.env'
+          : process.env.NODE_ENV === 'development'
+          ? '.development.env'
+          : '.env',
       isGlobal: true,
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('development', 'production').required(),

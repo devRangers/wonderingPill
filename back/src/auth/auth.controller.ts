@@ -56,7 +56,7 @@ import { Tokens } from './types';
 @ApiTags('Auth API')
 @Controller('auth')
 export class AuthController {
-  private logger = new Logger(`AuthController`);
+  private readonly logger = new Logger(`AuthController`);
   constructor(
     private readonly authService: AuthService,
     private readonly mailService: MailService,
@@ -364,7 +364,6 @@ export class AuthController {
   //   const { accessToken, refreshToken }: Tokens =
   //     await this.authService.kakaoLogin(req.user as OauthLoginDto);
 
-  //   // tokens cookie 저장
   //   res.cookie('AccessToken', accessToken, {
   //     maxAge: this.configService.get('JWT_EXPIRESIN'),
   //     httpOnly: true,
@@ -377,6 +376,7 @@ export class AuthController {
   //   });
 
   //   res.redirect(`${process.env.CLIENT_URL}/`);
+  //   res.end();
   // }
 
   @Get('google')
@@ -415,9 +415,9 @@ export class AuthController {
     res.end();
   }
 
-  // @Post('send-sms')
-  // async sendSMS() {}
+  @Post('send-sms')
+  async sendSMS() {}
 
-  // @Post('verify-code')
-  // async verifyCode() {}
+  @Post('verify-code')
+  async verifyCode() {}
 }
