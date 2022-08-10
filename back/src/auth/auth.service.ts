@@ -111,7 +111,7 @@ export class AuthService {
       sub: id,
     };
 
-    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
@@ -121,7 +121,7 @@ export class AuthService {
     } else {
       expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
     }
-    const refreshToken = await this.jwtService.signAsync(jwtPayload, {
+    const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn,
     });
@@ -173,7 +173,7 @@ export class AuthService {
       sub: id,
       email: email,
     };
-    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
@@ -227,7 +227,7 @@ export class AuthService {
   //   return { accessToken, refreshToken };
   // }
 
-  async createOauthUser(payload: OauthLoginDto, type: string) {
+  async createOauthUser(payload: OauthLoginDto, type: string): Promise<User> {
     let provider;
     if (type === 'kakao') provider = providerType.KAKAO;
     else provider = providerType.GOOGLE;
@@ -246,7 +246,7 @@ export class AuthService {
     return newUser;
   }
 
-  async googleLogin(googleLoginDto: OauthLoginDto) {
+  async googleLogin(googleLoginDto: OauthLoginDto): Promise<Tokens> {
     const user: User = await this.createOauthUser(googleLoginDto, 'google');
 
     const { accessToken, refreshToken } = googleLoginDto;
@@ -261,7 +261,10 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async changePassword(email, changePasswordDto: ChangePasswordDto) {
+  async changePassword(
+    email,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<User> {
     const hashedPassword: string = await argon.hash(changePasswordDto.password);
     const user: User = await this.prisma.user.update({
       where: { email },

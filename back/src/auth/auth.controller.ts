@@ -109,7 +109,9 @@ export class AuthController {
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SigninResponse> {
-    const user = await this.authService.getUserByEmail(signinUserDto.email);
+    const user: UserModel = await this.authService.getUserByEmail(
+      signinUserDto.email,
+    );
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto, user);
 
