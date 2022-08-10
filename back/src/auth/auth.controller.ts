@@ -415,9 +415,9 @@ export class AuthController {
     res.end();
   }
 
-  @Post('send-sms')
-  async sendSMS() {}
+  // @Post('send-sms')
+  // async sendSMS() {}
 
-  @Post('verify-code')
-  async verifyCode() {}
+  // @Post('verify-code')
+  // async verifyCode() {}
 }
