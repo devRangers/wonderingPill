@@ -30,6 +30,7 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
+import Link from "next/link";
 
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
@@ -194,23 +195,27 @@ function LoginForm() {
       <SnsLoginContainer>
         <SnsTitle>간편로그인</SnsTitle>
         <SnsBtnContainer>
-          <KakaoBtn>
-            <Image
-              src="/images/sns/kakao.png"
-              alt="kakao-login"
-              width="45"
-              height="45"
-            />
-          </KakaoBtn>
+          <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/kakao`}>
+            <KakaoBtn>
+              <Image
+                src="/images/sns/kakao.png"
+                alt="kakao-login"
+                width="45"
+                height="45"
+              />
+            </KakaoBtn>
+          </Link>
 
-          <GoogleBtn>
-            <Image
-              src="/images/sns/google.png"
-              alt="google-login"
-              width="25"
-              height="25"
-            />
-          </GoogleBtn>
+          <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google`}>
+            <GoogleBtn>
+              <Image
+                src="/images/sns/google.png"
+                alt="google-login"
+                width="25"
+                height="25"
+              />
+            </GoogleBtn>
+          </Link>
         </SnsBtnContainer>
       </SnsLoginContainer>
     </LoginFormContainer>

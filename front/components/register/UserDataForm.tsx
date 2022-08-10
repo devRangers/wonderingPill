@@ -55,7 +55,7 @@ const userInitialValue: RegisterValues = {
 type PostUserData = Omit<RegisterValues, "checkPassword">;
 
 const postRegisterAPI = async (data: PostUserData) => {
-  const res = await fetch("http://localhost:5000/auth/signup", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -87,8 +87,6 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
 
   const mutation = useMutation(postRegisterAPI, {
     onSuccess: (data: CreateUserResponse, variables) => {
-      console.log("data : ", data);
-      console.log("variables : ", variables);
       router.push(
         {
           pathname: "/login",
@@ -101,8 +99,6 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
     },
     onError: (error, variables, context) => {
       // An error happened!
-      console.log("error: ", error);
-      console.log("variables:", variables);
       setOpenModal((cur) => {
         const temp = [...cur];
         temp[2] = !temp[2];
