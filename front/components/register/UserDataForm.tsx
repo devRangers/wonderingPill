@@ -61,6 +61,7 @@ const postRegisterAPI = async (data: PostUserData) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+    credentials: "include",
   });
   const result = await res.json();
   if (result.statusCode >= 400) {
@@ -86,7 +87,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
   const router = useRouter();
 
   const mutation = useMutation(postRegisterAPI, {
-    onSuccess: (data: CreateUserResponse, variables) => {
+    onSuccess: (data: CreateUserResponse) => {
       router.push(
         {
           pathname: "/login",
