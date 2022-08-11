@@ -11,6 +11,7 @@ import { MailModule } from './mail/mail.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { RedisModule } from './redis/redis.module';
     RedisModule,
     BookmarkModule,
     PharmacyModule,
+    SmsModule,
   ],
   controllers: [],
   providers: [

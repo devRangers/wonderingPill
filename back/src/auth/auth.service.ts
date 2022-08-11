@@ -16,6 +16,7 @@ import { providerType } from './auth-provider.enum';
 import {
   ChangePasswordDto,
   CreateUserDto,
+  FindAccountDto,
   FindPasswordDto,
   OauthLoginDto,
   SigninUserDto,
@@ -200,6 +201,25 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async findUserByPhone(findAccountDto: FindAccountDto): Promise<User> {
+    const { name, birth, phone } = findAccountDto;
+    const user: User[] = await this.prisma.user.findMany({
+      where: {
+        AND: {
+          name,
+          birth,
+          phone,
+        },
+      },
+    });
+
+    if (!user || user.length !== 1) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    }
+
+    return user.pop();
   }
 
   async setPWChangeToken(id: string): Promise<string> {

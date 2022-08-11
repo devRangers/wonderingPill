@@ -44,6 +44,7 @@ import {
   ChangePasswordDto,
   CreateUserDto,
   CreateUserResponse,
+  FindAccountDto,
   FindPasswordDto,
   FindPasswordResponse,
   LogoutResponse,
@@ -63,6 +64,7 @@ export class AuthController {
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
   ) {}
+
   @Public()
   @HttpCode(200)
   @Post('signup')
@@ -343,6 +345,77 @@ export class AuthController {
     };
   }
 
+  @HttpCode(200)
+  @Get('google')
+  @Throttle(5, 1)
+  @ApiOperation({
+    summary: 'google 로그인 API',
+    description: 'google 로그인을 요청 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'google 로그인 요청 성공',
+  })
+  @UseGuards(GoogleGuard)
+  async google() {
+    return HttpStatus.OK;
+  }
+
+  @UseGuards(GoogleGuard)
+  @Get('google-redirect')
+  async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
+    const { accessToken, refreshToken }: Tokens =
+      await this.authService.googleLogin(req.user as OauthLoginDto);
+
+    res.cookie('AccessToken', accessToken, {
+      maxAge: this.configService.get('JWT_EXPIRESIN'),
+      httpOnly: true,
+      // secure:true
+    });
+    res.cookie('RefreshToken', refreshToken, {
+      maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
+      httpOnly: true,
+      // secure:true
+    });
+
+    res.redirect(`${process.env.CLIENT_URL}/`);
+    res.end();
+  }
+
+  @HttpCode(200)
+  @Throttle(5, 360)
+  // @UseGuards(RecaptchaGuard)
+  @Post('send-sms')
+  @ApiOperation({
+    summary: '계정 찾기 / 회원가입의 휴대폰 본인인증 API',
+    description:
+      '계정 찾기 / 회원가입에서 휴대폰 SMS 인증번호로 본인인증 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'SMS 전송 성공',
+    type: CommonResponseDto,
+  })
+  @ApiBody({ type: CommonResponseDto })
+  async sendSMS(@Body() findAccountDto: FindAccountDto) {
+    const user: UserModel = await this.authService.findUserByPhone(
+      findAccountDto,
+    );
+    console.log(user);
+    // 메일 전송
+    this.logger.verbose(`User ${user.email} send email to update Success!`);
+    return {
+      statusCode: 200,
+      message: '이메일을 성공적으로 전송했습니다.',
+    };
+  }
+
+  // @Post('verify-code')
+  // async verifyCode() {}
+
+  //@Get('find-account')
+  // async findAccount() {}
+
   // @HttpCode(200)
   // @Throttle(5, 1)
   // @Get('kakao')
@@ -380,46 +453,4 @@ export class AuthController {
   //   res.redirect(`${process.env.CLIENT_URL}/`);
   //   res.end();
   // }
-
-  @Get('google')
-  @Throttle(5, 1)
-  @ApiOperation({
-    summary: 'google 로그인 API',
-    description: 'google 로그인을 요청 한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'google 로그인 요청 성공',
-  })
-  @UseGuards(GoogleGuard)
-  async google() {
-    return HttpStatus.OK;
-  }
-
-  @UseGuards(GoogleGuard)
-  @Get('google-redirect')
-  async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
-    const { accessToken, refreshToken }: Tokens =
-      await this.authService.googleLogin(req.user as OauthLoginDto);
-
-    res.cookie('AccessToken', accessToken, {
-      maxAge: this.configService.get('JWT_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
-    res.cookie('RefreshToken', refreshToken, {
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
-
-    res.redirect(`${process.env.CLIENT_URL}/`);
-    res.end();
-  }
-
-  // @Post('send-sms')
-  // async sendSMS() {}
-
-  // @Post('verify-code')
-  // async verifyCode() {}
 }
