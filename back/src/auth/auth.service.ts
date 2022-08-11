@@ -266,12 +266,19 @@ export class AuthService {
     return newUser;
   }
 
-  async googleLogin(googleLoginDto: OauthLoginDto): Promise<Tokens> {
-    const user: User = await this.createOauthUser(googleLoginDto, 'google');
+  async googleLogin(googleLoginDto: OauthLoginDto, res): Promise<Tokens> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { email: googleLoginDto.email },
+    });
+
+    if (!user) {
+      await this.createOauthUser(googleLoginDto, 'google');
+    } else if (user.provider !== 'GOOGLE') {
+      res.status(403).redirect(`${process.env.CLIENT_URL}/login?error=google`);
+    }
 
     const { accessToken, refreshToken } = googleLoginDto;
 
-    // redis 저장
     await this.redisService.setKey(
       'go' + user.id,
       process.env.REFRESHTOKEN_KEY + refreshToken,

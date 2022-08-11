@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Redirect,
   Req,
   Res,
   UseGuards,
@@ -363,9 +364,10 @@ export class AuthController {
 
   @UseGuards(GoogleGuard)
   @Get('google-redirect')
+  @Redirect(`${process.env.CLIENT_URL}/login`, 403)
   async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
     const { accessToken, refreshToken }: Tokens =
-      await this.authService.googleLogin(req.user as OauthLoginDto);
+      await this.authService.googleLogin(req.user as OauthLoginDto, res);
 
     res.cookie('AccessToken', accessToken, {
       maxAge: this.configService.get('JWT_EXPIRESIN'),
