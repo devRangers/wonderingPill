@@ -407,7 +407,7 @@ export class AuthController {
     );
 
     const number = Math.floor(Math.random() * 1000000);
-    const verifyCode = number.toString().padStart(6, '0');
+    const verifyCode: string = number.toString().padStart(6, '0');
 
     await this.redisService.setKey('sms' + user.id, verifyCode, 180);
     await this.smsService.sendSMSByTwilio(user.phone, verifyCode);

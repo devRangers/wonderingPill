@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TwilioService } from 'nestjs-twilio';
@@ -6,7 +5,6 @@ import { TwilioService } from 'nestjs-twilio';
 @Injectable()
 export class SmsService {
   constructor(
-    private readonly httpService: HttpService,
     private readonly configService: ConfigService,
     private readonly twilioService: TwilioService,
   ) {}
