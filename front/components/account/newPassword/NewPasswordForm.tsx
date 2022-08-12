@@ -43,6 +43,7 @@ function NewPasswordForm() {
         <Input
           id="password"
           type="password"
+          autoComplete="true"
           {...newPasswordFormik.getFieldProps("password")}
           placeholder="새로운 비밀번호"
         />
@@ -59,6 +60,7 @@ function NewPasswordForm() {
         <Input
           id="checkPassword"
           type="password"
+          autoComplete="true"
           {...newPasswordFormik.getFieldProps("checkPassword")}
           placeholder="비밀번호 확인"
         />
@@ -80,3 +82,7 @@ function NewPasswordForm() {
 }
 
 export default NewPasswordForm;
+
+export async function getServerSideProps() {
+  const result = await fetch();
+}

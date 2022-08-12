@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,6 +9,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
+import * as Api from "@api";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
 import { BUTTON_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
@@ -30,21 +32,13 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
-import Link from "next/link";
 
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
 const loginHandler = async (data: LoginTypes) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-    credentials: "include",
-  });
-
+  const res = await Api.post<LoginTypes>("/auth/signin", data);
   const result: SigninResponse = await res.json();
+
   if (result.statusCode >= 400) {
     throw new Error(result.message);
   }

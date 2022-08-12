@@ -19,6 +19,7 @@ import { useFormik } from "formik";
 import { useMutation } from "react-query";
 import * as Yup from "yup";
 import ReactTooltip from "react-tooltip";
+import * as Api from "@api";
 
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
@@ -55,6 +56,7 @@ const userInitialValue: RegisterValues = {
 type PostUserData = Omit<RegisterValues, "checkPassword">;
 
 const postRegisterAPI = async (data: PostUserData) => {
+<<<<<<< HEAD
   const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signup`, {
     method: "POST",
     headers: {
@@ -64,6 +66,10 @@ const postRegisterAPI = async (data: PostUserData) => {
     credentials: "include",
   });
   const result = await res.json();
+=======
+  const res = await Api.post<PostUserData>("/auth/signup", data);
+  const result: CreateUserResponse = await res.json();
+>>>>>>> 187df62cd97de4a43cf7e3ad96a9673f6b9621d7
   if (result.statusCode >= 400) {
     throw new Error(result.message);
   }
@@ -87,7 +93,11 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
   const router = useRouter();
 
   const mutation = useMutation(postRegisterAPI, {
+<<<<<<< HEAD
     onSuccess: (data: CreateUserResponse) => {
+=======
+    onSuccess: (data, variables) => {
+>>>>>>> 187df62cd97de4a43cf7e3ad96a9673f6b9621d7
       router.push(
         {
           pathname: "/login",

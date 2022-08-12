@@ -56,3 +56,13 @@ export const FindBtn = styled("button", (props: { $bgColor: string }) => ({
   fontWeight: "bold",
   color: "#fff",
 }));
+
+export const ModalInner = styled("div", {
+  height: "8rem",
+  padding: "1.5rem",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  fontSize: "1.3rem",
+  fontWeight: "bold",
+});
