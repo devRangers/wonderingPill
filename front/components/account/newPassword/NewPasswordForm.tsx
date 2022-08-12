@@ -1,4 +1,3 @@
-import { GetServerSideProps } from "next";
 import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -9,7 +8,6 @@ import {
   ErrorMessage,
 } from "@userContainer/Container.style";
 import { Form } from "../findPassword/FindPasswordForm.style";
-import { get } from "@api";
 
 interface NewPasswordValues {
   password: string;
@@ -88,16 +86,5 @@ function NewPasswordForm({ data }: NewPasswordFormProp) {
     </Form>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await get("/auth/change-password/check");
-  const result = await res.json();
-
-  return {
-    props: {
-      result,
-    },
-  };
-};
 
 export default NewPasswordForm;
