@@ -3,15 +3,18 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Logger,
   Param,
   Post,
   Put,
+  Req,
   Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -19,16 +22,23 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { User as UserModel } from '@prisma/client';
-import * as config from 'config';
 import { Response } from 'express';
 import {
   GetCurrentUser,
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { AccessGuard, RecaptchaGuard, RefreshGuard } from 'src/common/guards';
+import { CommonResponseDto } from 'src/common/dto';
+import {
+  AccessGuard,
+  GoogleGuard,
+  RecaptchaGuard,
+  RefreshGuard,
+} from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
+import { RedisService } from 'src/redis/redis.service';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -37,7 +47,7 @@ import {
   FindPasswordDto,
   FindPasswordResponse,
   LogoutResponse,
-  RefreshResponse,
+  OauthLoginDto,
   SigninResponse,
   SigninUserDto,
 } from './dto';
@@ -50,8 +60,9 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly mailService: MailService,
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
   ) {}
-
   @Public()
   @HttpCode(200)
   @Post('signup')
@@ -81,6 +92,7 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Post('signin')
+  @Throttle(5, 1)
   @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '유저 로그인 API',
@@ -110,20 +122,16 @@ export class AuthController {
 
     // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
-      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
       // secure:true
     });
 
     let maxAge;
     if (signinUserDto.isSignin) {
-      maxAge =
-        process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
-        config.get('jwt-refresh').expiresIn_autosave;
+      maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
     } else {
-      maxAge =
-        process.env.JWT_REFRESH_EXPIRESIN ||
-        config.get('jwt-refresh').expiresIn;
+      maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN');
     }
     res.cookie('RefreshToken', refreshToken, {
       maxAge,
@@ -141,6 +149,7 @@ export class AuthController {
         email: user.email,
         name: user.name,
         profileImg: user.profileImg,
+        provider: user.provider,
       },
     };
   }
@@ -156,7 +165,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Access Token 발행 성공',
-    type: RefreshResponse,
+    type: CommonResponseDto,
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
@@ -164,14 +173,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @GetCurrentUserId() id: string,
     @GetCurrentUser('refreshToken') refreshToken: string,
-  ): Promise<RefreshResponse> {
+  ): Promise<CommonResponseDto> {
     const accessToken: string = await this.authService.updateAccessToken(
       id,
       refreshToken,
     );
 
     res.cookie('AccessToken', accessToken, {
-      maxAge: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
       // secure:true
     });
@@ -249,12 +258,14 @@ export class AuthController {
         email: user.email,
         name: user.name,
         profileImg: user.profileImg,
+        provider: user.provider,
       },
     };
   }
 
   @HttpCode(200)
   @Post('send-email')
+  @Throttle(5, 360)
   @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '비밀번호 찾기 email 전송 요청 API',
@@ -270,11 +281,10 @@ export class AuthController {
     @Body() findPasswordDto: FindPasswordDto,
   ): Promise<FindPasswordResponse> {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
-    const token: string = await this.authService.getPWChangeToken(user.id);
+    await this.authService.setPWChangeToken(user.id);
     const result: boolean = await this.mailService.sendEmail(
       user.email,
       user.name,
-      token,
     );
     this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
@@ -284,17 +294,126 @@ export class AuthController {
     };
   }
 
+  @HttpCode(200)
+  @ApiOperation({
+    summary: '비밀번호 변경 토큰 유효 검사 API',
+    description: '비밀번호 변경 토큰이 유효한지 검사 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '토큰 검사 성공',
+    type: CommonResponseDto,
+  })
+  @Get('change-password/check')
+  async checkPWToken(
+    @Param('email') email: string,
+  ): Promise<CommonResponseDto> {
+    const user: UserModel = await this.authService.getUserByEmail(email);
+    await this.redisService.getKey('pw' + user.id);
+    this.logger.verbose(`User ${user.email} check pw token Success!`);
+    return {
+      statusCode: 200,
+      message: '토큰의 유효기간이 만료되지 않았습니다.',
+    };
+  }
+
+  @HttpCode(200)
   @Put('change-password')
+  @ApiOperation({
+    summary: '비밀번호 변경 API',
+    description: '비밀번호를 변경 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '비밀번호 변경 성공',
+    type: CommonResponseDto,
+  })
+  @ApiBody({ type: ChangePasswordDto })
   async changePassword(
-    @Param('token') token: string,
+    @Param('email') email: string,
     @Body() changePasswordDto: ChangePasswordDto,
-  ) {}
+  ): Promise<CommonResponseDto> {
+    await this.authService.changePassword(email, changePasswordDto);
+    this.logger.verbose(`User ${email} update password Success!`);
+    return {
+      statusCode: 200,
+      message: '비밀번호가 변경되었습니다.',
+    };
+  }
 
-  // @Post('kakao')
-  // async kakao() {}
+  // @HttpCode(200)
+  // @Throttle(5, 1)
+  // @Get('kakao')
+  // @ApiOperation({
+  //   summary: 'kakao 로그인 API',
+  //   description: 'kakao 로그인을 요청 한다.',
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'kakao 로그인 요청 성공',
+  // })
+  // @ApiBody({})
+  // @UseGuards(KakaoGuard)
+  // async callKakao() {
+  //   return HttpStatus.OK;
+  // }
 
-  // @Post('google')
-  // async google() {}
+  // @UseGuards(KakaoGuard)
+  // @Get('kakao-redirect')
+  // async kakaoLogin(@Req() req, @Res({ passthrough: true }) res) {
+  //   const { accessToken, refreshToken }: Tokens =
+  //     await this.authService.kakaoLogin(req.user as OauthLoginDto);
+
+  //   // tokens cookie 저장
+  //   res.cookie('AccessToken', accessToken, {
+  //     maxAge: this.configService.get('JWT_EXPIRESIN'),
+  //     httpOnly: true,
+  //     // secure:true
+  //   });
+  //   res.cookie('RefreshToken', refreshToken, {
+  //     maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
+  //     httpOnly: true,
+  //     // secure:true
+  //   });
+
+  //   res.redirect(`${process.env.CLIENT_URL}/`);
+  // }
+
+  @Get('google')
+  @Throttle(5, 1)
+  @ApiOperation({
+    summary: 'google 로그인 API',
+    description: 'google 로그인을 요청 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'google 로그인 요청 성공',
+  })
+  @UseGuards(GoogleGuard)
+  async google() {
+    return HttpStatus.OK;
+  }
+
+  @UseGuards(GoogleGuard)
+  @Get('google-redirect')
+  async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
+    const { accessToken, refreshToken }: Tokens =
+      await this.authService.googleLogin(req.user as OauthLoginDto);
+
+    res.cookie('AccessToken', accessToken, {
+      maxAge: this.configService.get('JWT_EXPIRESIN'),
+      httpOnly: true,
+      // secure:true
+    });
+    res.cookie('RefreshToken', refreshToken, {
+      maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
+      httpOnly: true,
+      // secure:true
+    });
+
+    res.redirect(`${process.env.CLIENT_URL}/`);
+    res.end();
+  }
 
   // @Post('send-sms')
   // async sendSMS() {}

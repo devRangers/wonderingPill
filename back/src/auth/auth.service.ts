@@ -4,16 +4,22 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
-import * as config from 'config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
 import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
-import { CreateUserDto, FindPasswordDto, SigninUserDto } from './dto';
+import {
+  ChangePasswordDto,
+  CreateUserDto,
+  FindPasswordDto,
+  OauthLoginDto,
+  SigninUserDto,
+} from './dto';
 import { JwtPayload, Tokens } from './types';
 
 @Injectable()
@@ -22,9 +28,10 @@ export class AuthService {
     private prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
   ) {}
 
-  async getUserByEmail(email): Promise<User> {
+  async getUserByEmail(email: string): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -36,7 +43,7 @@ export class AuthService {
     return user;
   }
 
-  async getUserById(id): Promise<User> {
+  async getUserById(id: string): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -50,9 +57,9 @@ export class AuthService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { name, email, password, phone, birth } = createUserDto;
-    const hashedPassword = await argon.hash(password);
+    const hashedPassword: string = await argon.hash(password);
     try {
-      const newUser = await this.prisma.user.create({
+      const newUser: User = await this.prisma.user.create({
         data: {
           name,
           password: hashedPassword,
@@ -79,11 +86,11 @@ export class AuthService {
     try {
       const { email, password, isSignin } = signinUserDto;
 
-      const isPwMatching = await argon.verify(user.password, password);
+      const isPwMatching: boolean = await argon.verify(user.password, password);
       if (!isPwMatching)
         throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
 
-      const { accessToken, refreshToken } = await this.getTokens(
+      const { accessToken, refreshToken }: Tokens = await this.getTokens(
         user.id,
         email,
         isSignin,
@@ -105,22 +112,17 @@ export class AuthService {
     };
 
     const accessToken = await this.jwtService.signAsync(jwtPayload, {
-      secret: process.env.JWT_SECRET || config.get('jwt').secret,
-      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
     let expiresIn;
     if (isSignin) {
-      expiresIn =
-        process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE ||
-        config.get('jwt-refresh').expiresIn_autosave;
+      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
     } else {
-      expiresIn =
-        process.env.JWT_REFRESH_EXPIRESIN ||
-        config.get('jwt-refresh').expiresIn;
+      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
     }
     const refreshToken = await this.jwtService.signAsync(jwtPayload, {
-      secret:
-        process.env.JWT_REFRESH_SECRET || config.get('jwt-refresh').secret,
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn,
     });
     return { accessToken, refreshToken };
@@ -133,13 +135,15 @@ export class AuthService {
   ): Promise<boolean> {
     let ttl;
     if (isSignin) {
-      ttl = Number(process.env.JWT_REFRESH_EXPIRESIN_AUTOSAVE) / 1000;
+      ttl = Number(
+        this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE') / 1000,
+      );
     } else {
-      ttl = Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000;
+      ttl = Number(this.configService.get('JWT_REFRESH_EXPIRESIN') / 1000);
     }
-    const result = await this.redisService.setKey(
+    const result: boolean = await this.redisService.setKey(
       're' + id,
-      process.env.REFRESHTOKEN_KEY + refreshToken,
+      this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
       ttl,
     );
 
@@ -151,10 +155,10 @@ export class AuthService {
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
-    const user = await this.getUserById(id);
-    const result = await (
+    const user: User = await this.getUserById(id);
+    const result: string = await (
       await this.redisService.getKey('re' + id)
-    ).slice(process.env.REFRESHTOKEN_KEY.length);
+    ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
 
     if (result !== refreshToken) {
       throw new ForbiddenException('Access Denied');
@@ -170,8 +174,8 @@ export class AuthService {
       email: email,
     };
     const accessToken = await this.jwtService.signAsync(jwtPayload, {
-      secret: process.env.JWT_SECRET || config.get('jwt').secret,
-      expiresIn: process.env.JWT_EXPIRESIN || config.get('jwt').expiresIn,
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
 
     if (!accessToken) {
@@ -187,7 +191,7 @@ export class AuthService {
   }
 
   async findUser(findPasswordDto: FindPasswordDto): Promise<User> {
-    const user = await this.getUserByEmail(findPasswordDto.email);
+    const user: User = await this.getUserByEmail(findPasswordDto.email);
     if (user.name !== findPasswordDto.name) {
       throw new ForbiddenException('회원이 존재하지 않습니다.');
     }
@@ -198,14 +202,73 @@ export class AuthService {
     return user;
   }
 
-  async getPWChangeToken(id: string): Promise<string> {
+  async setPWChangeToken(id: string): Promise<string> {
     const token: string = uuid().toString();
-    const result = await this.redisService.setKey(
+    const result: boolean = await this.redisService.setKey(
       'pw' + id,
-      process.env.CHANGE_PASSWORD_KEY + token,
-      Number(process.env.PW_TOKEN_TTL),
+      this.configService.get('CHANGE_PASSWORD_KEY') + token,
+      Number(this.configService.get('PW_TOKEN_TTL')),
     );
     if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
     return token;
+  }
+
+  // async kakaoLogin(kakaoLoginDto: OauthLoginDto) {
+  //   const user: User = await this.createOauthUser(kakaoLoginDto, 'kakao');
+  //   const { accessToken, refreshToken } = kakaoLoginDto;
+
+  //   // redis 저장
+  //   await this.redisService.setKey(
+  //     'ka' + user.id,
+  //     process.env.REFRESHTOKEN_KEY + refreshToken,
+  //     Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+  //   );
+
+  //   return { accessToken, refreshToken };
+  // }
+
+  async createOauthUser(payload: OauthLoginDto, type: string) {
+    let provider;
+    if (type === 'kakao') provider = providerType.KAKAO;
+    else provider = providerType.GOOGLE;
+    const newUser: User = await this.prisma.user.create({
+      data: {
+        name: payload.name,
+        password: payload.password,
+        email: payload.email,
+        provider,
+      },
+    });
+
+    if (!newUser) {
+      throw new ForbiddenException('회원 정보를 저장하지 못했습니다.');
+    }
+    return newUser;
+  }
+
+  async googleLogin(googleLoginDto: OauthLoginDto) {
+    const user: User = await this.createOauthUser(googleLoginDto, 'google');
+
+    const { accessToken, refreshToken } = googleLoginDto;
+
+    // redis 저장
+    await this.redisService.setKey(
+      'go' + user.id,
+      process.env.REFRESHTOKEN_KEY + refreshToken,
+      Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+    );
+
+    return { accessToken, refreshToken };
+  }
+
+  async changePassword(email, changePasswordDto: ChangePasswordDto) {
+    const hashedPassword: string = await argon.hash(changePasswordDto.password);
+    const user: User = await this.prisma.user.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
+      },
+    });
+    return user;
   }
 }

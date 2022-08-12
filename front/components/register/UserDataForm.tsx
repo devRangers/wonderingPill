@@ -19,6 +19,7 @@ import { useFormik } from "formik";
 import { useMutation } from "react-query";
 import * as Yup from "yup";
 import ReactTooltip from "react-tooltip";
+import * as Api from "@api";
 
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
@@ -55,14 +56,8 @@ const userInitialValue: RegisterValues = {
 type PostUserData = Omit<RegisterValues, "checkPassword">;
 
 const postRegisterAPI = async (data: PostUserData) => {
-  const res = await fetch("http://localhost:5000/auth/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  const result = await res.json();
+  const res = await Api.post<PostUserData>("/auth/signup", data);
+  const result: CreateUserResponse = await res.json();
   if (result.statusCode >= 400) {
     throw new Error(result.message);
   }
@@ -86,9 +81,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
   const router = useRouter();
 
   const mutation = useMutation(postRegisterAPI, {
-    onSuccess: (data: CreateUserResponse, variables) => {
-      console.log("data : ", data);
-      console.log("variables : ", variables);
+    onSuccess: (data, variables) => {
       router.push(
         {
           pathname: "/login",
@@ -101,8 +94,6 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
     },
     onError: (error, variables, context) => {
       // An error happened!
-      console.log("error: ", error);
-      console.log("variables:", variables);
       setOpenModal((cur) => {
         const temp = [...cur];
         temp[2] = !temp[2];

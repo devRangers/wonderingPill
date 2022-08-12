@@ -7,12 +7,13 @@ import { useState, useEffect } from "react";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Provider as StyletronProvider } from "styletron-react";
+import { styletron } from "@utils/styletron";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
-import { styletron } from "@utils/styletron";
-import { URL_WITHOUT_HEADER, SILENT_REFRESH_TIME } from "@utils/constant";
+import * as Api from "@api";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
 import { RefreshResponse } from "@modelTypes/refreshResponse";
+import { URL_WITHOUT_HEADER, SILENT_REFRESH_TIME } from "@utils/constant";
 import Header from "@header/Header";
 import Footer from "@footer/Footer";
 
@@ -23,12 +24,8 @@ const setScreenSize = () => {
 
 const getAccessToken = async () => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/refresh`,
-      {
-        credentials: "include",
-      },
-    );
+    const res = await Api.get("/auth/refresh");
+
     const result: RefreshResponse = await res.json();
 
     if (result.statusCode >= 400) {
@@ -54,12 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function getUsers() {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/current`,
-          {
-            credentials: "include",
-          },
-        );
+        const res = await Api.get("/auth/current");
         const result: CurrentUserResponse = await res.json();
 
         if (result.statusCode === 200) {
