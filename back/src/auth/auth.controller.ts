@@ -22,6 +22,8 @@ import {
   ApiBody,
   ApiCookieAuth,
   ApiOperation,
+  ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -49,6 +51,7 @@ import {
   CreateUserDto,
   CreateUserResponse,
   FindAccountDto,
+  FindAccountResponse,
   FindPasswordDto,
   FindPasswordResponse,
   LogoutResponse,
@@ -311,18 +314,29 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: '토큰 검사 성공',
-    type: CommonResponseDto,
+    type: FindPasswordResponse,
+  })
+  @ApiParam({
+    name: 'email',
+    required: true,
+    description: '이메일',
+  })
+  @ApiParam({
+    name: 'email',
+    required: true,
+    description: '이메일',
   })
   @Get('change-password/check')
   async checkPWToken(
     @Param('email') email: string,
-  ): Promise<CommonResponseDto> {
+  ): Promise<FindPasswordResponse> {
     const user: UserModel = await this.authService.getUserByEmail(email);
     await this.redisService.getKey('pw' + user.id);
     this.logger.verbose(`User ${user.email} check pw token Success!`);
     return {
       statusCode: 200,
       message: '토큰의 유효기간이 만료되지 않았습니다.',
+      result: { result: true },
     };
   }
 
@@ -336,6 +350,11 @@ export class AuthController {
     status: 200,
     description: '비밀번호 변경 성공',
     type: CommonResponseDto,
+  })
+  @ApiParam({
+    name: 'email',
+    required: true,
+    description: '이메일',
   })
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(
@@ -402,8 +421,10 @@ export class AuthController {
     description: 'SMS 전송 성공',
     type: CommonResponseDto,
   })
-  @ApiBody({ type: CommonResponseDto })
-  async sendSMS(@Body() findAccountDto: FindAccountDto) {
+  @ApiBody({ type: FindAccountDto })
+  async sendSMS(
+    @Body() findAccountDto: FindAccountDto,
+  ): Promise<CommonResponseDto> {
     const user: UserModel = await this.authService.findUserByPhone(
       findAccountDto,
     );
@@ -421,20 +442,45 @@ export class AuthController {
     };
   }
 
+  @HttpCode(200)
   @Get('verify-code')
-  async verifyCode(@Query() code: string, email: string) {
+  @ApiOperation({
+    summary: '인증번호 확인 API',
+    description: '인증번호가 일치하는지 확인 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '인증번호 확인 성공',
+    type: FindAccountResponse,
+  })
+  @ApiQuery({
+    name: 'code',
+    required: true,
+    description: '인증번호',
+  })
+  @ApiQuery({
+    name: 'email',
+    required: true,
+    description: '이메일',
+  })
+  async verifyCode(
+    @Query() code: string,
+    email: string,
+  ): Promise<FindAccountResponse> {
     const user: UserModel = await this.authService.getUserByEmail(email);
     const saveCode = await this.redisService.getKey('sms' + user.id);
 
     if (saveCode !== code) {
       throw new ForbiddenException('인증번호가 일치하지 않습니다.');
     } else {
-      return { statusCode: 200, message: '인증번호가 일치합니다.' };
+      this.logger.verbose(`User ${user.email} verify code Success!`);
+      return {
+        statusCode: 200,
+        message: '인증번호가 일치합니다.',
+        user: { name: user.name, email: user.email },
+      };
     }
   }
-
-  //@Get('find-account')
-  // async findAccount() {}
 
   // @HttpCode(200)
   // @Throttle(5, 1)

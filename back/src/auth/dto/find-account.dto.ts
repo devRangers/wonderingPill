@@ -77,3 +77,10 @@ export class FindAccountDto {
   })
   phone: string;
 }
+
+export class FindAccountResponse extends CommonResponseDto {
+  @IsJSON()
+  @IsNotEmpty()
+  @ApiProperty()
+  user: { name: string; email: string };
+}
