@@ -49,6 +49,7 @@ function FindWithImage() {
             <ImageWrapper>
               <Image
                 src="/images/register_logo.png"
+                alt="사진으로 찾기"
                 layout="fill"
                 objectFit="contain"
                 style={{

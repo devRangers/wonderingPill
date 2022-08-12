@@ -39,6 +39,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
         <GuideImageWrapper>
           <Image
             src="/images/register_logo.png"
+            alt="알약 사진 가이드"
             layout="fill"
             objectFit="contain"
             priority={true}
@@ -56,6 +57,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
           <PillImage $isWide={isWide}>
             <Image
               src="/images/register_logo.png"
+              alt="알약 사진 가이드"
               layout="fill"
               objectFit="contain"
               priority={true}
@@ -64,6 +66,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
           <PillImage $isWide={isWide}>
             <Image
               src="/images/register_logo.png"
+              alt="알약 사진 가이드"
               layout="fill"
               objectFit="contain"
               priority={true}
