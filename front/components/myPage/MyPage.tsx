@@ -7,7 +7,6 @@ import {
   MAIN_COLOR,
 } from "@utils/constant";
 import {
-  Container,
   InnerContainer,
   Profile,
   SocialLoginState,
@@ -20,14 +19,11 @@ import {
   UserState,
   UserStateWrapper,
 } from "./MyPage.style";
+import Container from "common/container/Container";
 
 function MyPage() {
   return (
-    <Container
-      $bgColor={MAIN_COLOR}
-      $headerHeight={HEADER_HEIGHT}
-      $footerHeight={FOOTER_HEIGHT}
-      $fullHeight={FULL_HEIGHT}>
+    <Container>
       <InnerContainer>
         <UserInfoContainer>
           <Profile>
