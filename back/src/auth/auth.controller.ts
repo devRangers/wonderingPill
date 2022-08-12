@@ -54,6 +54,7 @@ import {
   FindAccountResponse,
   FindPasswordDto,
   FindPasswordResponse,
+  FindUserResponse,
   LogoutResponse,
   OauthLoginDto,
   SigninResponse,
@@ -425,17 +426,18 @@ export class AuthController {
   async sendSMS(
     @Body() findAccountDto: FindAccountDto,
   ): Promise<CommonResponseDto> {
-    const user: UserModel = await this.authService.findUserByPhone(
-      findAccountDto,
-    );
-
     const number = Math.floor(Math.random() * 1000000);
     const verifyCode: string = number.toString().padStart(6, '0');
 
-    await this.redisService.setKey('sms' + user.id, verifyCode, 300);
-    await this.smsService.sendSMSByTwilio(user.phone, verifyCode);
+    await this.redisService.setKey(
+      'sms' + findAccountDto.phone,
+      verifyCode,
+      300,
+    );
 
-    this.logger.verbose(`User ${user.phone} send sms Success!`);
+    await this.smsService.sendSMSByTwilio(findAccountDto.phone, verifyCode);
+
+    this.logger.verbose(`User ${findAccountDto.phone} send sms Success!`);
     return {
       statusCode: 200,
       message: 'SMS을 성공적으로 전송했습니다.',
@@ -451,7 +453,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: '인증번호 확인 성공',
-    type: FindAccountResponse,
+    type: FindUserResponse,
   })
   @ApiQuery({
     name: 'code',
@@ -459,25 +461,65 @@ export class AuthController {
     description: '인증번호',
   })
   @ApiQuery({
-    name: 'email',
+    name: 'phone',
     required: true,
-    description: '이메일',
+    description: '전화번호',
   })
-  async verifyCode(@Query() query): Promise<FindAccountResponse> {
-    const { email, code } = query;
-    const user: UserModel = await this.authService.getUserByEmail(email);
-    const saveCode = await this.redisService.getKey('sms' + user.id);
+  async verifyCode(@Query() query): Promise<FindUserResponse> {
+    const { phone, code } = query;
+
+    const saveCode = await this.redisService.getKey('sms' + phone);
 
     if (saveCode !== code) {
       throw new ForbiddenException('인증번호가 일치하지 않습니다.');
     } else {
-      this.logger.verbose(`User ${user.email} verify code Success!`);
+      const user: UserModel = await this.authService.getUserByPhone(phone);
+      this.logger.verbose(`User ${user.phone} verify code Success!`);
       return {
         statusCode: 200,
         message: '인증번호가 일치합니다.',
-        user: { name: user.name, email: user.email },
+        user: { id: user.id },
       };
     }
+  }
+
+  @HttpCode(200)
+  @ApiParam({
+    name: 'phone',
+    required: true,
+    description: '전화번호',
+  })
+  @ApiOperation({
+    summary: '계정 찾기 API',
+    description: '계정을 찾는다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '계정 찾기 성공',
+    type: FindAccountResponse,
+  })
+  @Get('find-account')
+  async getAccount(
+    @Param('phone') phone: string,
+  ): Promise<FindAccountResponse> {
+    const user: UserModel = await this.authService.getUserByPhone(phone);
+
+    let name;
+    let email;
+
+    if (!user) {
+      name = '';
+      email = '';
+    } else {
+      name = user.name;
+      email = user.email;
+    }
+
+    return {
+      statusCode: 200,
+      message: '계정을 찾았습니다.',
+      user: { name, email },
+    };
   }
 
   // @HttpCode(200)

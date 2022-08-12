@@ -84,3 +84,10 @@ export class FindAccountResponse extends CommonResponseDto {
   @ApiProperty()
   user: { name: string; email: string };
 }
+
+export class FindUserResponse extends CommonResponseDto {
+  @IsJSON()
+  @IsNotEmpty()
+  @ApiProperty()
+  user: { id: string };
+}

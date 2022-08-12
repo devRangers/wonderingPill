@@ -56,6 +56,14 @@ export class AuthService {
     return user;
   }
 
+  async getUserByPhone(phone: string): Promise<User> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { phone },
+    });
+
+    return user;
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { name, email, password, phone, birth } = createUserDto;
     const hashedPassword: string = await argon.hash(password);
