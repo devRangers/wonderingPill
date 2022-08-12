@@ -32,6 +32,7 @@
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
       "@resultComp/*": ["components/search/result/*"],
+      "@searchPharmComp/*": ["components/search/pharmacy/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },
