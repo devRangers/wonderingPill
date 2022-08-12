@@ -405,16 +405,17 @@ export class AuthController {
     const user: UserModel = await this.authService.findUserByPhone(
       findAccountDto,
     );
-    console.log(user);
-    // redis에 저장
-    // 메일 전송
+
     const number = Math.floor(Math.random() * 1000000);
     const verifyCode = number.toString().padStart(6, '0');
-    await this.smsService.sendSMS(user.phone, verifyCode);
-    this.logger.verbose(`User ${user.email} send email to update Success!`);
+
+    await this.redisService.setKey('sms' + user.id, verifyCode, 180);
+    await this.smsService.sendSMSByTwilio(user.phone, verifyCode);
+
+    this.logger.verbose(`User ${user.phone} send sms Success!`);
     return {
       statusCode: 200,
-      message: '이메일을 성공적으로 전송했습니다.',
+      message: 'SMS을 성공적으로 전송했습니다.',
     };
   }
 
