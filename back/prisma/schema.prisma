@@ -37,6 +37,10 @@ model User {
   name             String?            @db.VarChar(20)
   password         String?            @db.VarChar(100)
   phone            String?            @db.VarChar(20)
+<<<<<<< HEAD
+=======
+  provider         Provider?          @default(LOCAL)
+>>>>>>> 187df62cd97de4a43cf7e3ad96a9673f6b9621d7
   profileImg       String?            @default("imageUrl")
   isDeleted        Boolean?           @default(false)
   createdAt        DateTime?          @default(now()) @db.Date
@@ -50,4 +54,8 @@ enum Provider {
   GOOGLE
   KAKAO
   LOCAL
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 187df62cd97de4a43cf7e3ad96a9673f6b9621d7

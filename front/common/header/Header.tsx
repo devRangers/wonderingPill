@@ -9,6 +9,7 @@ import {
   HamburgerBtn,
   ImageWrapper,
   BellBtn,
+  Button,
 } from "./Header.style";
 import Sidebar from "@sidebar/Sidebar";
 
@@ -27,7 +28,7 @@ function Header() {
         </HamburgerBtn>
         <ImageWrapper>
           {router.pathname !== ROUTE.MAIN && (
-            <button onClick={() => router.push(ROUTE.MAIN)}>
+            <Button onClick={() => router.push(ROUTE.MAIN)}>
               <Image
                 src="/images/header/logo.png"
                 alt="wondering-pill-logo"
@@ -35,7 +36,7 @@ function Header() {
                 objectFit="contain"
                 priority={true}
               />
-            </button>
+            </Button>
           )}
         </ImageWrapper>
         <BellBtn>

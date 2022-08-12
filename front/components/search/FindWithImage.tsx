@@ -13,8 +13,7 @@ import {
   Description,
   DescriptionContainer,
   DescriptionContent,
-  DescriptionFirstBox,
-  DescriptionSecondBox,
+  DescriptionBox,
   DescriptionTitle,
   FindWithImageContainer,
   ImageWrapper,
@@ -24,9 +23,15 @@ import {
 } from "./FindWithImage.style";
 import CaptureGuideModal from "./CaptureGuideModal";
 import Capture from "./Capture";
+import Modal from "@modal/Modal";
 
 function FindWithImage() {
   const isWide = isWideDevice();
+  const [modalOpen, setModalOpen] = useState(true);
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   useEffect(() => {
     // 여기서 이제 일주일동안 안보이기 했는지 체크한다.
@@ -60,24 +65,28 @@ function FindWithImage() {
                 <TitleLine $bgColor={MAIN_COLOR} />
                 <Title>사진으로 찾기 이용 방법</Title>
               </DescriptionTitle>
-              <DescriptionFirstBox $bgColor={MAIN_COLOR}>
+              <DescriptionBox $bgColor={MAIN_COLOR}>
                 <Numbering>1</Numbering>
                 <DescriptionContent>
                   위 일러스트를 클릭하고 알고 싶은 알약 사진을 찍으세요!
                 </DescriptionContent>
-              </DescriptionFirstBox>
-              <DescriptionSecondBox $bgColor={MAIN_COLOR}>
+              </DescriptionBox>
+              <DescriptionBox $bgColor={MAIN_COLOR}>
                 <Numbering>2</Numbering>
                 <DescriptionContent>
                   머신러닝으로 알아낸 알약 이름과
                   <br /> 성분 등을 알아보세요!
                 </DescriptionContent>
-              </DescriptionSecondBox>
+              </DescriptionBox>
             </Description>
           </DescriptionContainer>
         </FindWithImageContainer>
       </Container>
-      <CaptureGuideModal />
+      {modalOpen && (
+        <Modal open={modalOpen} onClose={handleCloseModal}>
+          <CaptureGuideModal handleCloseModal={handleCloseModal} />
+        </Modal>
+      )}
     </>
   );
 }

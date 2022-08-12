@@ -45,10 +45,9 @@ export class SigninResponse extends CommonResponseDto {
     email: string;
     name: string;
     profileImg: string;
+    provider: string;
   };
 }
-
-export class RefreshResponse extends CommonResponseDto {}
 
 export class LogoutResponse extends CommonResponseDto {
   @IsJSON()
@@ -57,4 +56,34 @@ export class LogoutResponse extends CommonResponseDto {
   checkLogout: {
     checkLogout: boolean;
   };
+}
+
+export class OauthLoginDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  name: string;
+
+  @IsString()
+  @ApiProperty()
+  email: string;
+
+  @IsString()
+  @ApiProperty()
+  profileImg: string;
+
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  password: string;
+
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  accessToken: string;
+
+  @IsString()
+  @ApiProperty()
+  @IsNotEmpty()
+  refreshToken: string;
 }

@@ -19,6 +19,7 @@
     "paths": {
       "@lib/*": ["lib/*"],
       "@atom/*": ["atom/*"],
+      "@api": ["api/api"],
       "@utils/*": ["common/utils/*"],
       "@userContainer/*": ["common/userContainer/*"],
       "@modal/*": ["common/modal/*"],
@@ -30,6 +31,7 @@
       "@mainComp/*": ["components/main/*"],
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
+      "@resultComp/*": ["components/search/result/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },

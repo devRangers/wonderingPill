@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,6 +9,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
+import * as Api from "@api";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
 import { BUTTON_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
@@ -34,16 +36,9 @@ import {
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
 const loginHandler = async (data: LoginTypes) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-    credentials: "include",
-  });
-
+  const res = await Api.post<LoginTypes>("/auth/signin", data);
   const result: SigninResponse = await res.json();
+
   if (result.statusCode >= 400) {
     throw new Error(result.message);
   }
@@ -194,23 +189,27 @@ function LoginForm() {
       <SnsLoginContainer>
         <SnsTitle>간편로그인</SnsTitle>
         <SnsBtnContainer>
-          <KakaoBtn>
-            <Image
-              src="/images/sns/kakao.png"
-              alt="kakao-login"
-              width="45"
-              height="45"
-            />
-          </KakaoBtn>
+          <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/kakao`}>
+            <KakaoBtn>
+              <Image
+                src="/images/sns/kakao.png"
+                alt="kakao-login"
+                width="45"
+                height="45"
+              />
+            </KakaoBtn>
+          </Link>
 
-          <GoogleBtn>
-            <Image
-              src="/images/sns/google.png"
-              alt="google-login"
-              width="25"
-              height="25"
-            />
-          </GoogleBtn>
+          <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google`}>
+            <GoogleBtn>
+              <Image
+                src="/images/sns/google.png"
+                alt="google-login"
+                width="25"
+                height="25"
+              />
+            </GoogleBtn>
+          </Link>
         </SnsBtnContainer>
       </SnsLoginContainer>
     </LoginFormContainer>
