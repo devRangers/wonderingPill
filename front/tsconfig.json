@@ -35,6 +35,6 @@
       "@modelTypes/*": ["src/model/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "firebase/index.js"],
   "exclude": ["node_modules"]
 }
