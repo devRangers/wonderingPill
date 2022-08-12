@@ -8,6 +8,8 @@ import {
 } from "@utils/constant";
 import {
   InnerContainer,
+  MedicationClip,
+  MedicationContainer,
   Profile,
   SocialLoginState,
   UserInfo,
@@ -56,6 +58,9 @@ function MyPage() {
             </UserStateWrapper>
           </UserInfo>
         </UserInfoContainer>
+        <MedicationContainer $borderColor={BORDER_COLOR}>
+          <MedicationClip $bgColor={BORDER_COLOR}>관심 약국</MedicationClip>
+        </MedicationContainer>
       </InnerContainer>
     </Container>
   );

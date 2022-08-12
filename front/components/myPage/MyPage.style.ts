@@ -67,3 +67,20 @@ export const UserInfoItem = styled("p", {
   fontSize: "0.9rem",
   color: "gray",
 });
+
+export const MedicationContainer = styled(
+  "div",
+  (props: { $borderColor: string }) => ({
+    border: `1px solid ${props.$borderColor}`,
+    borderRadius: "10px",
+  }),
+);
+
+export const MedicationClip = styled("div", (props: { $bgColor: string }) => ({
+  position: "relative",
+  width: "7rem",
+  height: "2rem",
+  borderRadius: "1rem",
+  transform: "translate(0.1rem, -1rem)",
+  backgroundColor: props.$bgColor,
+}));
