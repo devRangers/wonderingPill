@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -8,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Redirect,
   Req,
   Res,
@@ -388,7 +390,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Throttle(5, 360)
-  // @UseGuards(RecaptchaGuard)
+  @UseGuards(RecaptchaGuard)
   @Post('send-sms')
   @ApiOperation({
     summary: '계정 찾기 / 회원가입의 휴대폰 본인인증 API',
@@ -409,7 +411,7 @@ export class AuthController {
     const number = Math.floor(Math.random() * 1000000);
     const verifyCode: string = number.toString().padStart(6, '0');
 
-    await this.redisService.setKey('sms' + user.id, verifyCode, 180);
+    await this.redisService.setKey('sms' + user.id, verifyCode, 300);
     await this.smsService.sendSMSByTwilio(user.phone, verifyCode);
 
     this.logger.verbose(`User ${user.phone} send sms Success!`);
@@ -419,8 +421,17 @@ export class AuthController {
     };
   }
 
-  // @Post('verify-code')
-  // async verifyCode() {}
+  @Get('verify-code')
+  async verifyCode(@Query() code: string, email: string) {
+    const user: UserModel = await this.authService.getUserByEmail(email);
+    const saveCode = await this.redisService.getKey('sms' + user.id);
+
+    if (saveCode !== code) {
+      throw new ForbiddenException('인증번호가 일치하지 않습니다.');
+    } else {
+      return { statusCode: 200, message: '인증번호가 일치합니다.' };
+    }
+  }
 
   //@Get('find-account')
   // async findAccount() {}
