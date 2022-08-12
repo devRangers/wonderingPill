@@ -463,10 +463,8 @@ export class AuthController {
     required: true,
     description: '이메일',
   })
-  async verifyCode(
-    @Query() code: string,
-    email: string,
-  ): Promise<FindAccountResponse> {
+  async verifyCode(@Query() query): Promise<FindAccountResponse> {
+    const { email, code } = query;
     const user: UserModel = await this.authService.getUserByEmail(email);
     const saveCode = await this.redisService.getKey('sms' + user.id);
 
