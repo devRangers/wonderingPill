@@ -76,6 +76,6 @@ import { SmsModule } from './sms/sms.module';
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [HttpModule, MailModule, ThrottlerModule, ConfigModule],
+  exports: [HttpModule, MailModule, SmsModule, ThrottlerModule, ConfigModule],
 })
 export class AppModule {}

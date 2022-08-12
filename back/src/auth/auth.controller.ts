@@ -40,6 +40,7 @@ import {
 } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { RedisService } from 'src/redis/redis.service';
+import { SmsService } from 'src/sms/sms.service';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -64,6 +65,7 @@ export class AuthController {
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
+    private readonly smsService: SmsService,
   ) {}
 
   @Public()
@@ -404,7 +406,11 @@ export class AuthController {
       findAccountDto,
     );
     console.log(user);
+    // redis에 저장
     // 메일 전송
+    const number = Math.floor(Math.random() * 1000000);
+    const verifyCode = number.toString().padStart(6, '0');
+    await this.smsService.sendSMS(user.phone, verifyCode);
     this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
       statusCode: 200,

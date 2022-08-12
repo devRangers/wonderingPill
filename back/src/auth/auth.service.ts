@@ -274,7 +274,7 @@ export class AuthService {
     if (!user) {
       await this.createOauthUser(googleLoginDto, 'google');
     } else if (user.provider !== 'GOOGLE') {
-      res.status(403).redirect(`${process.env.CLIENT_URL}/login?error=google`);
+      res.status(403).redirect(`${process.env.CLIENT_URL}/login/error`);
     }
 
     const { accessToken, refreshToken } = googleLoginDto;
