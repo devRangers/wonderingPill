@@ -11,6 +11,7 @@ import { ErrorMessage, Form, ModalInner } from "./FindPasswordForm.style";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
 import Modal from "@modal/Modal";
+import { post } from "@api";
 
 interface FindPasswordFormValues {
   email: string;
@@ -28,17 +29,7 @@ type AuthEmail = FindPasswordFormValues & {
 };
 
 const postAuthEmail = async (data: AuthEmail) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/send-email`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-      credentials: "include",
-    },
-  );
+  const res = await post("/auth/send-email", data);
   const result = await res.json();
 
   if (result.statusCode >= 400) {
@@ -144,7 +135,9 @@ function FindPasswordForm() {
       </ReCAPTCHA>
       {isModalOpen && (
         <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <ModalInner>이메일을 확인 해 주세요.</ModalInner>
+          <ModalInner>
+            이메일이 전송 되었습니다. 이메일을 확인 해 주세요.
+          </ModalInner>
         </Modal>
       )}
     </>

@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,6 +9,7 @@ import {
   ErrorMessage,
 } from "@userContainer/Container.style";
 import { Form } from "../findPassword/FindPasswordForm.style";
+import { get } from "@api";
 
 interface NewPasswordValues {
   password: string;
@@ -19,7 +21,13 @@ const findPasswordInitialValue: NewPasswordValues = {
   checkPassword: "",
 };
 
-function NewPasswordForm() {
+interface NewPasswordFormProp {
+  data: boolean;
+}
+
+function NewPasswordForm({ data }: NewPasswordFormProp) {
+  console.log("data ", data);
+
   const newPasswordFormik = useFormik({
     initialValues: findPasswordInitialValue,
     validationSchema: Yup.object({
@@ -81,8 +89,15 @@ function NewPasswordForm() {
   );
 }
 
-export default NewPasswordForm;
+export const getServerSideProps: GetServerSideProps = async () => {
+  const res = await get("/auth/change-password/check");
+  const result = await res.json();
 
-export async function getServerSideProps() {
-  const result = await fetch();
-}
+  return {
+    props: {
+      result,
+    },
+  };
+};
+
+export default NewPasswordForm;
