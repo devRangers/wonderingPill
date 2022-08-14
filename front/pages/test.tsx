@@ -1,29 +1,10 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import messaging from "../firebase";
+import { firebaseCloudMessaging } from "../firebase";
 import { getToken } from "firebase/messaging";
 
 const Test: NextPage = () => {
   const router = useRouter();
-
-  getToken(messaging, {
-    vapidKey: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_VAPID_KEY,
-  })
-    .then((currentToken) => {
-      if (currentToken) {
-        console.log(currentToken);
-      } else {
-        // Show permission request UI
-        console.log(
-          "No registration token available. Request permission to generate one.",
-        );
-        // ...
-      }
-    })
-    .catch((err) => {
-      console.log("An error occurred while retrieving token. ", err);
-      // ...
-    });
 
   const sendMessage = () => {
     const title = "궁금해 약";
