@@ -7,9 +7,9 @@ import {
   MAIN_COLOR,
 } from "@utils/constant";
 import {
+  ContentClip,
+  ContentContainer,
   InnerContainer,
-  MedicationClip,
-  MedicationContainer,
   Profile,
   SocialLoginState,
   UserInfo,
@@ -58,9 +58,12 @@ function MyPage() {
             </UserStateWrapper>
           </UserInfo>
         </UserInfoContainer>
-        <MedicationContainer $borderColor={BORDER_COLOR}>
-          <MedicationClip $bgColor={BORDER_COLOR}>관심 약국</MedicationClip>
-        </MedicationContainer>
+        <ContentContainer $borderColor={BORDER_COLOR}>
+          <ContentClip $bgColor={BORDER_COLOR}>복용약</ContentClip>
+        </ContentContainer>
+        <ContentContainer $borderColor={BORDER_COLOR}>
+          <ContentClip $bgColor={BORDER_COLOR}>관심 약국</ContentClip>
+        </ContentContainer>
       </InnerContainer>
     </Container>
   );

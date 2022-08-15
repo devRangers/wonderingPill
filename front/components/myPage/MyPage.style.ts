@@ -1,9 +1,10 @@
 import { styled } from "styletron-react";
 
 export const InnerContainer = styled("div", {
+  height: "100%",
   display: "grid",
   gridTemplateRows: "0.6fr 1.3fr 1fr 0.3fr",
-  gap: "1rem",
+  gap: "1.5rem",
 });
 
 export const UserInfoContainer = styled("div", {
@@ -68,7 +69,7 @@ export const UserInfoItem = styled("p", {
   color: "gray",
 });
 
-export const MedicationContainer = styled(
+export const ContentContainer = styled(
   "div",
   (props: { $borderColor: string }) => ({
     border: `1px solid ${props.$borderColor}`,
@@ -76,11 +77,16 @@ export const MedicationContainer = styled(
   }),
 );
 
-export const MedicationClip = styled("div", (props: { $bgColor: string }) => ({
+export const ContentClip = styled("div", (props: { $bgColor: string }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
   position: "relative",
   width: "7rem",
-  height: "2rem",
-  borderRadius: "1rem",
+  height: "1.8rem",
   transform: "translate(0.1rem, -1rem)",
   backgroundColor: props.$bgColor,
+  borderRadius: "1rem",
+  fontWeight: "bold",
+  fontSize: "1.1rem",
 }));
