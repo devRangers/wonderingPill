@@ -5,13 +5,13 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
-import config from './config/config';
-import { validation } from './config/validation';
 import { MailModule } from './mail/mail.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { SmsModule } from './sms/sms.module';
+import { validation } from './utils';
+import config from './utils/config';
 
 @Module({
   imports: [
