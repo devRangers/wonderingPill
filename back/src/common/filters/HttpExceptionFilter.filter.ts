@@ -19,7 +19,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception = new InternalServerErrorException();
     }
 
-    const response = (exception as HttpException).getResponse();
+    const response: any = (exception as HttpException).getResponse();
 
     const log = {
       timestamp: new Date(),
