@@ -31,5 +31,5 @@ export const validation: Joi.Schema = Joi.object({
   SMS_ACCOUNT_TOKEN: Joi.string().required(),
   SMS_PHONE_NUMBER: Joi.string().required(),
 }).options({
-  abortEarly: false,
+  abortEarly: true,
 });
