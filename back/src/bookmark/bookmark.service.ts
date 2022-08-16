@@ -13,7 +13,7 @@ export class BookmarkService {
     pharmacyId: number,
     userId: string,
   ): Promise<BookmarkCreateResponse> {
-    const bookmark = await this.getPharmacyBookmark(userId, pharmacyId);
+    const { bookmark } = await this.getPharmacyBookmark(userId, pharmacyId);
     if (bookmark) {
       throw new ForbiddenException(
         `ID : ${pharmacyId} 인 약국은 이미 북마크에 존재합니다.`,

@@ -15,9 +15,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // 어떤 decorator도 없는 property의 object 제외
-      forbidNonWhitelisted: true, // 이상한걸 보내면 request를 막음
-      transform: true, // 원하는 타입으로 변환
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 

@@ -7,6 +7,7 @@ import {
   Logger,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -107,4 +108,9 @@ export class BookmarkController {
     this.logger.verbose(`Bookmark ${pharmacyId} Delete Success!`);
     await this.bookmarkService.deleteBookmark(pharmacyId, userId);
   }
+
+  @Put()
+  @UseGuards(RefreshGuard)
+  @ApiOperation({ summary: '북마크 생성 및 삭제' })
+  async CreateOrDelete(@GetCurrentUserId() userId: string) {}
 }
