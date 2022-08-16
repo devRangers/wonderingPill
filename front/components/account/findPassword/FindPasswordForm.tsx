@@ -12,6 +12,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
 import Modal from "@modal/Modal";
 import { post } from "@api";
+import { FindPasswordResponse } from "@modelTypes/findPasswordResponse";
 
 interface FindPasswordFormValues {
   email: string;
@@ -28,28 +29,22 @@ type AuthEmail = FindPasswordFormValues & {
   token: string;
 };
 
-const postAuthEmail = async (data: AuthEmail) => {
-  const res = await post("/auth/send-email", data);
-  const result = await res.json();
-
-  if (result.statusCode >= 400) {
-    throw new Error(result.message);
-  }
-  return result;
-};
-
 function FindPasswordForm() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const mutation = useMutation(postAuthEmail, {
-    onSuccess: (data) => {
-      setIsModalOpen(true);
+  const mutation = useMutation(
+    (data: AuthEmail) =>
+      post<FindPasswordResponse, AuthEmail>("/auth/send-email", data),
+    {
+      onSuccess: (data) => {
+        setIsModalOpen(true);
+      },
+      onError: (error: any) => {
+        throw new Error(error);
+      },
     },
-    onError: (error: any) => {
-      throw new Error(error);
-    },
-  });
+  );
 
   const findPasswordFormik = useFormik({
     initialValues: findPasswordFormInitialValue,

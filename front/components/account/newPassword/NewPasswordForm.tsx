@@ -24,8 +24,6 @@ interface NewPasswordFormProp {
 }
 
 function NewPasswordForm({ data }: NewPasswordFormProp) {
-  console.log("data ", data);
-
   const newPasswordFormik = useFormik({
     initialValues: findPasswordInitialValue,
     validationSchema: Yup.object({

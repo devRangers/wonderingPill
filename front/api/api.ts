@@ -7,11 +7,11 @@ const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
 const get = async <T extends Response>(endpoint: string) => {
   const url = baseUrl + endpoint;
-
   const res = await fetch(url, {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
+
   const result: T = await res.json();
 
   if (result.statusCode >= 400) throw new Error(result.message);
