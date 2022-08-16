@@ -3,7 +3,7 @@ import { styled } from "styletron-react";
 export const InnerContainer = styled("div", {
   height: "100%",
   display: "grid",
-  gridTemplateRows: "0.6fr 1.3fr 1fr 0.3fr",
+  gridTemplateRows: "0.6fr 1.2fr 1.11fr 0.15fr",
   gap: "1.5rem",
 });
 
@@ -16,12 +16,12 @@ export const UserInfoContainer = styled("div", {
 
 export const Profile = styled("div", {
   position: "relative",
-  width: "80%",
-  height: "80%",
-  minWidth: "4.5rem",
-  minHeight: "4.5rem",
-  maxWidth: "6rem",
-  maxHeight: "6rem",
+  width: "70%",
+  height: "70%",
+  minWidth: "3.5rem",
+  minHeight: "3.5rem",
+  maxWidth: "5rem",
+  maxHeight: "5rem",
   margin: "auto",
 });
 
