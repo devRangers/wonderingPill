@@ -55,27 +55,6 @@ const userInitialValue: RegisterValues = {
 
 type PostUserData = Omit<RegisterValues, "checkPassword">;
 
-const postRegisterAPI = async (data: PostUserData) => {
-<<<<<<< HEAD
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signup`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-    credentials: "include",
-  });
-  const result = await res.json();
-=======
-  const res = await Api.post<PostUserData>("/auth/signup", data);
-  const result: CreateUserResponse = await res.json();
->>>>>>> 187df62cd97de4a43cf7e3ad96a9673f6b9621d7
-  if (result.statusCode >= 400) {
-    throw new Error(result.message);
-  }
-  return result;
-};
-
 const modalText: { [key in string]: ModalValue } = {
   selfAuthModal: {
     content: "본인 인증을 진행해주세요.",
@@ -92,31 +71,31 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
   const [openModal, setOpenModal] = useState([false, false, false]);
   const router = useRouter();
 
-  const mutation = useMutation(postRegisterAPI, {
-<<<<<<< HEAD
-    onSuccess: (data: CreateUserResponse) => {
-=======
-    onSuccess: (data, variables) => {
->>>>>>> 187df62cd97de4a43cf7e3ad96a9673f6b9621d7
-      router.push(
-        {
-          pathname: "/login",
-          query: {
-            email: data.user.email,
+  const mutation = useMutation(
+    (data: PostUserData) =>
+      Api.post<CreateUserResponse, PostUserData>("/auth/signup", data),
+    {
+      onSuccess: (data, variables) => {
+        router.push(
+          {
+            pathname: "/login",
+            query: {
+              email: data.user.email,
+            },
           },
-        },
-        "/login",
-      );
+          "/login",
+        );
+      },
+      onError: (error, variables, context) => {
+        // An error happened!
+        setOpenModal((cur) => {
+          const temp = [...cur];
+          temp[2] = !temp[2];
+          return temp;
+        });
+      },
     },
-    onError: (error, variables, context) => {
-      // An error happened!
-      setOpenModal((cur) => {
-        const temp = [...cur];
-        temp[2] = !temp[2];
-        return temp;
-      });
-    },
-  });
+  );
 
   const userDataFormik = useFormik({
     initialValues: userInitialValue,
