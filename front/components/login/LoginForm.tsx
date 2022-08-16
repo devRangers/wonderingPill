@@ -35,16 +35,6 @@ import {
 
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
-const loginHandler = async (data: LoginTypes) => {
-  const res = await Api.post<LoginTypes>("/auth/signin", data);
-  const result: SigninResponse = await res.json();
-
-  if (result.statusCode >= 400) {
-    throw new Error(result.message);
-  }
-  return result;
-};
-
 function LoginForm() {
   const router = useRouter();
   const userEmail =
@@ -65,15 +55,20 @@ function LoginForm() {
     setIsAutoLoginChecked(e.target.checked);
   };
 
-  const loginMutation = useMutation(loginHandler, {
-    onSuccess: (result) => {
-      setUser(result.user);
-      router.push("/");
+  const loginMutation = useMutation(
+    (data: LoginTypes) =>
+      Api.post<SigninResponse, LoginTypes>("/auth/signin", data),
+    {
+      onSuccess: ({ user }) => {
+        console.log(user);
+        setUser(user);
+        router.push("/");
+      },
+      onError: ({ message }) => {
+        console.log(message);
+      },
     },
-    onError: ({ message }) => {
-      console.log(message);
-    },
-  });
+  );
 
   const formik = useFormik({
     initialValues: initialValue,

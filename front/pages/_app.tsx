@@ -4,6 +4,8 @@ import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useState, useEffect } from "react";
+import firebase from "firebase/app";
+import "firebase/messaging";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Provider as StyletronProvider } from "styletron-react";
@@ -17,28 +19,31 @@ import { URL_WITHOUT_HEADER, SILENT_REFRESH_TIME } from "@utils/constant";
 import Header from "@header/Header";
 import Footer from "@footer/Footer";
 
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+};
+
 const setScreenSize = () => {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
-};
-
-const getAccessToken = async () => {
-  try {
-    const res = await Api.get("/auth/refresh");
-
-    const result: RefreshResponse = await res.json();
-
-    if (result.statusCode >= 400) {
-      throw new Error(result.message);
-    }
-    return result;
-  } catch (err) {}
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [, setUser] = useAtom(userAtom);
   const [queryClient] = useState(() => new QueryClient());
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  } else {
+    firebase.app();
+  }
 
   useEffect(() => {
     setScreenSize();
@@ -51,15 +56,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function getUsers() {
       try {
-        const res = await Api.get("/auth/current");
-        const result: CurrentUserResponse = await res.json();
-
-        if (result.statusCode === 200) {
-          setUser(result.user);
-          getAccessToken();
-        } else {
-          throw new Error(result.message);
-        }
+        const { user } = await Api.get<CurrentUserResponse>("/auth/current");
+        setUser(user);
+        Api.get<RefreshResponse>("/auth/refresh");
       } catch (err) {}
     }
     getUsers();
@@ -68,7 +67,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   // refresh token이 있을 경우 access token 주기적으로 재발급
   useEffect(() => {
     const timer = setInterval(() => {
-      if (document.hasFocus()) getAccessToken();
+      if (document.hasFocus()) Api.get<RefreshResponse>("/auth/refresh");
     }, SILENT_REFRESH_TIME);
 
     return () => {
