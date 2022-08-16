@@ -16,6 +16,7 @@ import { providerType } from './auth-provider.enum';
 import {
   ChangePasswordDto,
   CreateUserDto,
+  FindAccountDto,
   FindPasswordDto,
   OauthLoginDto,
   SigninUserDto,
@@ -51,6 +52,14 @@ export class AuthService {
     if (!user) {
       throw new ForbiddenException('회원이 존재하지 않습니다.');
     }
+
+    return user;
+  }
+
+  async getUserByPhone(phone: string): Promise<User> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { phone },
+    });
 
     return user;
   }
@@ -111,7 +120,7 @@ export class AuthService {
       sub: id,
     };
 
-    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
@@ -121,7 +130,7 @@ export class AuthService {
     } else {
       expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
     }
-    const refreshToken = await this.jwtService.signAsync(jwtPayload, {
+    const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn,
     });
@@ -173,7 +182,7 @@ export class AuthService {
       sub: id,
       email: email,
     };
-    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_EXPIRESIN'),
     });
@@ -202,6 +211,25 @@ export class AuthService {
     return user;
   }
 
+  async findUserByPhone(findAccountDto: FindAccountDto): Promise<User> {
+    const { name, birth, phone } = findAccountDto;
+    const user: User[] = await this.prisma.user.findMany({
+      where: {
+        AND: {
+          name,
+          birth,
+          phone,
+        },
+      },
+    });
+
+    if (!user || user.length !== 1) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    }
+
+    return user.pop();
+  }
+
   async setPWChangeToken(id: string): Promise<string> {
     const token: string = uuid().toString();
     const result: boolean = await this.redisService.setKey(
@@ -227,7 +255,7 @@ export class AuthService {
   //   return { accessToken, refreshToken };
   // }
 
-  async createOauthUser(payload: OauthLoginDto, type: string) {
+  async createOauthUser(payload: OauthLoginDto, type: string): Promise<User> {
     let provider;
     if (type === 'kakao') provider = providerType.KAKAO;
     else provider = providerType.GOOGLE;
@@ -246,12 +274,19 @@ export class AuthService {
     return newUser;
   }
 
-  async googleLogin(googleLoginDto: OauthLoginDto) {
-    const user: User = await this.createOauthUser(googleLoginDto, 'google');
+  async googleLogin(googleLoginDto: OauthLoginDto, res): Promise<Tokens> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { email: googleLoginDto.email },
+    });
+
+    if (!user) {
+      await this.createOauthUser(googleLoginDto, 'google');
+    } else if (user.provider !== 'GOOGLE') {
+      res.status(403).redirect(`${process.env.CLIENT_URL}/login/error`);
+    }
 
     const { accessToken, refreshToken } = googleLoginDto;
 
-    // redis 저장
     await this.redisService.setKey(
       'go' + user.id,
       process.env.REFRESHTOKEN_KEY + refreshToken,
@@ -261,7 +296,10 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async changePassword(email, changePasswordDto: ChangePasswordDto) {
+  async changePassword(
+    email,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<User> {
     const hashedPassword: string = await argon.hash(changePasswordDto.password);
     const user: User = await this.prisma.user.update({
       where: { email },
