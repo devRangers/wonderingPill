@@ -29,26 +29,26 @@ import {
 export class BookmarkController {
   private logger = new Logger(`BookmarkController`);
   constructor(private bookmarkService: BookmarkService) {}
-  @ApiOperation({ summary: '북마크 생성' })
-  @Post()
+  @ApiOperation({ summary: '북마크 생성 혹은 삭제' })
+  @Put()
   @UseGuards(RefreshGuard)
-  @ApiOperation({ summary: '북마크 생성 API' })
+  @ApiOperation({ summary: '북마크 생성 혹은 삭제 API' })
   @ApiResponse({
     status: 200,
-    description: '생성 성공',
+    description: '생성 혹은 삭제 성공',
     type: BookmarkCreateDto,
   })
   @HttpCode(201)
   async createBookmark(
     @GetCurrentUserId() userId: string,
     @Body() bookmarkCreateDto: BookmarkCreateDto,
-  ): Promise<BookmarkCreateResponse> {
+  ): Promise<BookmarkCreateResponse | void> {
     this.logger.verbose(
-      `Bookmark ${bookmarkCreateDto.pharmacyId} Created Success!`,
+      `Bookmark ${bookmarkCreateDto.pharmacyId} Created Or Delete Success!`,
     );
-    return this.bookmarkService.createBookmark(
-      bookmarkCreateDto.pharmacyId,
+    return this.bookmarkService.createOrDeleteBookmark(
       userId,
+      bookmarkCreateDto.pharmacyId,
     );
   }
   @ApiOperation({ summary: '북마크 리스트 조회' })
@@ -91,26 +91,21 @@ export class BookmarkController {
     return this.bookmarkService.getBookmark(pharmcyId, userId);
   }
 
-  @ApiOperation({ summary: '북마크 삭제 ' })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: '삭제할 북마크 ID',
-  })
-  @Delete(':id')
-  @UseGuards(RefreshGuard)
-  @ApiOperation({ summary: '북마크 삭제 API' })
-  @HttpCode(204)
-  async deleteBookmark(
-    @GetCurrentUserId() userId: string,
-    @Param('id') pharmacyId: number,
-  ): Promise<void> {
-    this.logger.verbose(`Bookmark ${pharmacyId} Delete Success!`);
-    await this.bookmarkService.deleteBookmark(pharmacyId, userId);
-  }
-
-  @Put()
-  @UseGuards(RefreshGuard)
-  @ApiOperation({ summary: '북마크 생성 및 삭제' })
-  async CreateOrDelete(@GetCurrentUserId() userId: string) {}
+  // @ApiOperation({ summary: '북마크 삭제 ' })
+  // @ApiParam({
+  //   name: 'id',
+  //   required: true,
+  //   description: '삭제할 북마크 ID',
+  // })
+  // @Delete(':id')
+  // @UseGuards(RefreshGuard)
+  // @ApiOperation({ summary: '북마크 삭제 API' })
+  // @HttpCode(204)
+  // async deleteBookmark(
+  //   @GetCurrentUserId() userId: string,
+  //   @Param('id') pharmacyId: number,
+  // ): Promise<void> {
+  //   this.logger.verbose(`Bookmark ${pharmacyId} Delete Success!`);
+  //   await this.bookmarkService.deleteBookmark(pharmacyId, userId);
+  // }
 }
