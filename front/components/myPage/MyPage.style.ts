@@ -3,7 +3,7 @@ import { styled } from "styletron-react";
 export const InnerContainer = styled("div", {
   height: "100%",
   display: "grid",
-  gridTemplateRows: "0.6fr 1.2fr 1.11fr 0.15fr",
+  gridTemplateRows: "0.6fr 1.1fr 1fr 0.15fr",
   gap: "1.5rem",
 });
 
@@ -79,8 +79,14 @@ export const UserInfoItem = styled("p", {
 export const ContentContainer = styled(
   "div",
   (props: { $borderColor: string }) => ({
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    padding: "1rem 1rem",
     border: `1px solid ${props.$borderColor}`,
     borderRadius: "10px",
+    backgroundColor: "#F5F5F5",
   }),
 );
 
@@ -88,12 +94,35 @@ export const ContentClip = styled("div", (props: { $bgColor: string }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  position: "relative",
+  position: "absolute",
   width: "7rem",
   height: "1.8rem",
+  left: "0",
+  top: "0",
   transform: "translate(0.1rem, -1rem)",
   backgroundColor: props.$bgColor,
   borderRadius: "1rem",
   fontWeight: "bold",
   fontSize: "1.1rem",
 }));
+
+export const MedicineBadgeContainer = styled("div", {
+  width: "100%",
+  height: "90%",
+  maxHeight: "11rem",
+  overflowY: "scroll",
+});
+
+export const PharmarcyContainer = styled("div", {
+  display: "grid",
+  gridTemplateRows: "1fr 1fr",
+  gap: "0.4rem",
+  justifyItems: "center",
+  width: "85%",
+  height: "90%",
+  maxHeight: "8rem",
+  overflowY: "scroll",
+  padding: "0.5rem",
+  margin: "0 auto",
+  border: "1px solid",
+});
