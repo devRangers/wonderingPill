@@ -4,7 +4,7 @@ import {
   MAIN_COLOR,
   ROUTE,
   SIDE_BAR_HEADER_HEIGHT,
-  SUB_COLOR,
+  ACCENT_COLOR,
 } from "@utils/constant";
 import { BsArrowLeftShort } from "react-icons/bs";
 import {
@@ -76,7 +76,7 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
       <SidebarContainer $openSideBar={openSideBar} $fullHeight={FULL_HEIGHT}>
         <SidebarHeader $height={SIDE_BAR_HEADER_HEIGHT} $bgColor={MAIN_COLOR}>
           <BackArrow onClick={closeSideBar}>
-            <BsArrowLeftShort color={SUB_COLOR} />
+            <BsArrowLeftShort color={ACCENT_COLOR} />
           </BackArrow>
         </SidebarHeader>
         <SidebarBody $height={SIDE_BAR_HEADER_HEIGHT} $fullHeight={FULL_HEIGHT}>

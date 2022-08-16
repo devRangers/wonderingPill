@@ -1,6 +1,6 @@
 import Container from "@container/Container";
 import Capture from "@capture/Capture";
-import { BUTTON_COLOR as BORDER_COLOR } from "@utils/constant";
+import { SUB_COLOR } from "@utils/constant";
 import {
   ContentClip,
   ContentContainer,
@@ -38,7 +38,7 @@ function MyPage() {
           </Profile>
           <UserInfo>
             <UserNameWrapper>
-              <UserName $borderColor={BORDER_COLOR}>테스트 계정 님!</UserName>
+              <UserName $borderColor={SUB_COLOR}>테스트 계정 님!</UserName>
               <SocialLoginState>카카오로그인</SocialLoginState>
             </UserNameWrapper>
             <UserStateWrapper>
@@ -57,16 +57,16 @@ function MyPage() {
             </UserStateWrapper>
           </UserInfo>
         </UserInfoContainer>
-        <ContentContainer $borderColor={BORDER_COLOR}>
-          <ContentClip $bgColor={BORDER_COLOR}>복용약</ContentClip>
+        <ContentContainer $borderColor={SUB_COLOR}>
+          <ContentClip $bgColor={SUB_COLOR}>복용약</ContentClip>
           <MedicineBadgeContainer>
             {Object.entries(medicinesName).map(([key, value], index) => (
               <Medicine key={key} name={value} />
             ))}
           </MedicineBadgeContainer>
         </ContentContainer>
-        <ContentContainer $borderColor={BORDER_COLOR}>
-          <ContentClip $bgColor={BORDER_COLOR}>관심 약국</ContentClip>
+        <ContentContainer $borderColor={SUB_COLOR}>
+          <ContentClip $bgColor={SUB_COLOR}>관심 약국</ContentClip>
           <PharmarcyContainer>
             <Pharmarcy />
             <Pharmarcy />
