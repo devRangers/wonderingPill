@@ -34,11 +34,11 @@ export class BookmarkController {
   @UseGuards(RefreshGuard)
   @ApiOperation({ summary: '북마크 생성 혹은 삭제 API' })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: '생성 혹은 삭제 성공',
     type: BookmarkCreateDto,
   })
-  @HttpCode(201)
+  @HttpCode(204)
   async createBookmark(
     @GetCurrentUserId() userId: string,
     @Body() bookmarkCreateDto: BookmarkCreateDto,
