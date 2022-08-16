@@ -1,9 +1,6 @@
 import Image from "next/image";
 import { useState } from "react";
-import {
-  CaptureButton,
-  CaptureContainer,
-} from "@searchComp/FindWithImage.style";
+import { CaptureContainer, CaptureButton } from "./Capture.style";
 
 function Capture() {
   const [source, setSource] = useState("");
