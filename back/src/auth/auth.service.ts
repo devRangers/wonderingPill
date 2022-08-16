@@ -47,23 +47,31 @@ export class AuthService {
   }
 
   async getUserById(id: string): Promise<User> {
-    const user: User = await this.prisma.user.findUnique({
-      where: { id },
-    });
+    try {
+      const user: User = await this.prisma.user.findUnique({
+        where: { id },
+      });
 
-    if (!user) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
+      if (!user) {
+        throw new ForbiddenException('회원이 존재하지 않습니다.');
+      }
+
+      return user;
+    } catch {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
     }
-
-    return user;
   }
 
   async getUserByPhone(phone: string): Promise<User> {
-    const user: User = await this.prisma.user.findUnique({
-      where: { phone },
-    });
+    try {
+      const user: User = await this.prisma.user.findUnique({
+        where: { phone },
+      });
 
-    return user;
+      return user;
+    } catch {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
+    }
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -299,6 +307,8 @@ export class AuthService {
         process.env.REFRESHTOKEN_KEY + refreshToken,
         Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
       );
+
+      console.log(accessToken, refreshToken);
 
       return { accessToken, refreshToken };
     } catch (error) {

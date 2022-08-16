@@ -530,6 +530,10 @@ export class AuthController {
     };
   }
 
+  // 이메일 인증
+  // 이메일이 유효한지 검사하기
+  // 인증번호? 아니면 비밀번호 변경 이메일에서 멘트만 바꾸기
+
   // @HttpCode(200)
   // @Throttle(5, 1)
   // @Get('kakao')
