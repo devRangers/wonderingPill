@@ -118,22 +118,25 @@ export class AuthService {
       email,
       sub: id,
     };
-
-    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
-      secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_EXPIRESIN'),
-    });
-    let expiresIn;
-    if (isSignin) {
-      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
-    } else {
-      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
+    try {
+      const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
+        secret: this.configService.get('JWT_SECRET'),
+        expiresIn: this.configService.get('JWT_EXPIRESIN'),
+      });
+      let expiresIn;
+      if (isSignin) {
+        expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
+      } else {
+        expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
+      }
+      const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        expiresIn,
+      });
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new ForbiddenException('토큰 생성에 실패했습니다.');
     }
-    const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
-      secret: this.configService.get('JWT_REFRESH_SECRET'),
-      expiresIn,
-    });
-    return { accessToken, refreshToken };
   }
 
   async saveRefreshToken(
@@ -149,31 +152,35 @@ export class AuthService {
     } else {
       ttl = Number(this.configService.get('JWT_REFRESH_EXPIRESIN') / 1000);
     }
-    const result: boolean = await this.redisService.setKey(
-      're' + id,
-      this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
-      ttl,
-    );
+    try {
+      const result: boolean = await this.redisService.setKey(
+        're' + id,
+        this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
+        ttl,
+      );
 
-    if (!result) {
+      return result;
+    } catch (error) {
       throw new ForbiddenException('refresh token이 저장되지 않았습니다.');
     }
-
-    return result;
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
     const user: User = await this.getUserById(id);
-    const result: string = await (
-      await this.redisService.getKey('re' + id)
-    ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
+    try {
+      const result: string = await (
+        await this.redisService.getKey('re' + id)
+      ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
 
-    if (result !== refreshToken) {
-      throw new ForbiddenException('Access Denied');
+      if (result !== refreshToken) {
+        throw new ForbiddenException('Access Denied');
+      }
+
+      const accessToken: string = await this.getAccessToken(id, user.email);
+      return accessToken;
+    } catch (error) {
+      throw new ForbiddenException('엑세스 토큰 발급을 실패했습니다.');
     }
-
-    const accessToken: string = await this.getAccessToken(id, user.email);
-    return accessToken;
   }
 
   async getAccessToken(id: string, email: string): Promise<string> {
@@ -181,62 +188,75 @@ export class AuthService {
       sub: id,
       email: email,
     };
-    const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
-      secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_EXPIRESIN'),
-    });
+    try {
+      const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
+        secret: this.configService.get('JWT_SECRET'),
+        expiresIn: this.configService.get('JWT_EXPIRESIN'),
+      });
 
-    if (!accessToken) {
+      return accessToken;
+    } catch (error) {
       throw new ForbiddenException('accessToken을 생성하지 못했습니다.');
     }
-
-    return accessToken;
   }
 
   async logout(id: string): Promise<boolean> {
-    await this.redisService.delKey('re' + id);
-    return true;
+    try {
+      await this.redisService.delKey('re' + id);
+      return true;
+    } catch (error) {
+      throw new ForbiddenException('로그아웃을 실패했습니다.');
+    }
   }
 
   async findUser(findPasswordDto: FindPasswordDto): Promise<User> {
-    const user: User = await this.getUserByEmail(findPasswordDto.email);
-    if (user.name !== findPasswordDto.name) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
-    }
-    if (user.birth !== findPasswordDto.birth) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
-    }
+    try {
+      const user: User = await this.getUserByEmail(findPasswordDto.email);
+      if (user.name !== findPasswordDto.name) {
+        throw new ForbiddenException('회원이 존재하지 않습니다.');
+      }
 
-    return user;
+      return user;
+    } catch (error) {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
+    }
   }
 
   async findUserByPhone(findAccountDto: FindAccountDto): Promise<User> {
     const { name, birth, phone } = findAccountDto;
-    const user: User[] = await this.prisma.user.findMany({
-      where: {
-        AND: {
-          name,
-          birth,
-          phone,
+    try {
+      const user: User[] = await this.prisma.user.findMany({
+        where: {
+          AND: {
+            name,
+            birth,
+            phone,
+          },
         },
-      },
-    });
+      });
 
-    if (!user || user.length !== 1) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
+      if (!user || user.length !== 1) {
+        throw new ForbiddenException('회원이 존재하지 않습니다.');
+      }
+
+      return user.pop();
+    } catch (error) {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
     }
-
-    return user.pop();
   }
 
   async setPWChangeToken(id: string, token: string): Promise<string> {
-    const result: boolean = await this.redisService.setKey(
-      'pw' + id,
-      this.configService.get('CHANGE_PASSWORD_KEY') + token,
-      Number(this.configService.get('PW_TOKEN_TTL')),
-    );
-    if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
-    return token;
+    try {
+      const result: boolean = await this.redisService.setKey(
+        'pw' + id,
+        this.configService.get('CHANGE_PASSWORD_KEY') + token,
+        Number(this.configService.get('PW_TOKEN_TTL')),
+      );
+      if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
+      return token;
+    } catch (error) {
+      throw new ForbiddenException('토큰을 저장할때 에러가 발생했습니다.');
+    }
   }
 
   // async kakaoLogin(kakaoLoginDto: OauthLoginDto) {
@@ -257,19 +277,19 @@ export class AuthService {
     let provider;
     if (type === 'kakao') provider = providerType.KAKAO;
     else provider = providerType.GOOGLE;
-    const newUser: User = await this.prisma.user.create({
-      data: {
-        name: payload.name,
-        password: payload.password,
-        email: payload.email,
-        provider,
-      },
-    });
-
-    if (!newUser) {
+    try {
+      const newUser: User = await this.prisma.user.create({
+        data: {
+          name: payload.name,
+          password: payload.password,
+          email: payload.email,
+          provider,
+        },
+      });
+      return newUser;
+    } catch (error) {
       throw new ForbiddenException('회원 정보를 저장하지 못했습니다.');
     }
-    return newUser;
   }
 
   async googleLogin(googleLoginDto: OauthLoginDto, res): Promise<Tokens> {
@@ -277,34 +297,44 @@ export class AuthService {
       where: { email: googleLoginDto.email },
     });
 
-    if (!user) {
-      await this.createOauthUser(googleLoginDto, 'google');
-    } else if (user.provider !== 'GOOGLE') {
-      res.status(403).redirect(`${process.env.CLIENT_URL}/login/error`);
+    try {
+      if (!user) {
+        await this.createOauthUser(googleLoginDto, 'google');
+      } else if (user.provider !== 'GOOGLE') {
+        res.status(403).redirect(`${process.env.CLIENT_URL}/login/error`);
+      }
+
+      const { accessToken, refreshToken } = googleLoginDto;
+
+      await this.redisService.setKey(
+        'go' + user.id,
+        process.env.REFRESHTOKEN_KEY + refreshToken,
+        Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+      );
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new ForbiddenException('구글 로그인 중에 문제 발생!');
     }
-
-    const { accessToken, refreshToken } = googleLoginDto;
-
-    await this.redisService.setKey(
-      'go' + user.id,
-      process.env.REFRESHTOKEN_KEY + refreshToken,
-      Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
-    );
-
-    return { accessToken, refreshToken };
   }
 
   async changePassword(
     email,
     changePasswordDto: ChangePasswordDto,
   ): Promise<User> {
-    const hashedPassword: string = await argon.hash(changePasswordDto.password);
-    const user: User = await this.prisma.user.update({
-      where: { email },
-      data: {
-        password: hashedPassword,
-      },
-    });
-    return user;
+    try {
+      const hashedPassword: string = await argon.hash(
+        changePasswordDto.password,
+      );
+      const user: User = await this.prisma.user.update({
+        where: { email },
+        data: {
+          password: hashedPassword,
+        },
+      });
+      return user;
+    } catch (error) {
+      throw new ForbiddenException('비밀번호를 변경하지 못했습니다.');
+    }
   }
 }

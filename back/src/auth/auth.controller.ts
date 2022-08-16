@@ -134,7 +134,6 @@ export class AuthController {
       refreshToken,
     );
 
-    // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
       maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
