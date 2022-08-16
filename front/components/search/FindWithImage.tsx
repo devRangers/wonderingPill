@@ -22,7 +22,7 @@ import {
   TitleLine,
 } from "./FindWithImage.style";
 import CaptureGuideModal from "./CaptureGuideModal";
-import Capture from "./Capture";
+import Capture from "../../common/capture/Capture";
 import Modal from "@modal/Modal";
 
 function FindWithImage() {
