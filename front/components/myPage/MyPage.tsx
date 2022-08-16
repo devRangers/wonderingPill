@@ -1,3 +1,5 @@
+import Container from "@container/Container";
+import Capture from "@capture/Capture";
 import { BUTTON_COLOR as BORDER_COLOR } from "@utils/constant";
 import {
   ContentClip,
@@ -16,11 +18,7 @@ import {
   UserState,
   UserStateWrapper,
 } from "./MyPage.style";
-import Container from "common/container/Container";
-import Capture from "common/capture/Capture";
-import { useState } from "react";
 import Medicine from "./medicine/Medicine";
-import { MedicineBadge } from "./medicine/Medicine.style";
 import Pharmarcy from "./pharmarcy/Pharmarcy";
 
 const medicinesName: { [key in string]: string } = {
@@ -70,8 +68,8 @@ function MyPage() {
         <ContentContainer $borderColor={BORDER_COLOR}>
           <ContentClip $bgColor={BORDER_COLOR}>관심 약국</ContentClip>
           <PharmarcyContainer>
-            <Pharmarcy></Pharmarcy>
-            <Pharmarcy></Pharmarcy>
+            <Pharmarcy />
+            <Pharmarcy />
           </PharmarcyContainer>
         </ContentContainer>
       </InnerContainer>

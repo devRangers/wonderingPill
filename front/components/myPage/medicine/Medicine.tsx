@@ -1,4 +1,3 @@
-import React from "react";
 import { BUTTON_COLOR as BORDER_COLOR, MAIN_COLOR } from "@utils/constant";
 import { AlarmButton, MedicineBadge } from "./Medicine.style";
 

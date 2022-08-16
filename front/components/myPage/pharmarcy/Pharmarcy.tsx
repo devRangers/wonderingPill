@@ -1,4 +1,3 @@
-import React from "react";
 import { PharmarcyContainer } from "./Pharmarcy.style";
 
 function Pharmarcy() {

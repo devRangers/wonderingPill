@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
   CaptureButton,
   CaptureContainer,
-} from "../../components/search/FindWithImage.style";
+} from "@searchComp/FindWithImage.style";
 
 function Capture() {
   const [source, setSource] = useState("");
