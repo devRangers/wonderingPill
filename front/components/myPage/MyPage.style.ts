@@ -16,6 +16,13 @@ export const UserInfoContainer = styled("div", {
 
 export const Profile = styled("div", {
   position: "relative",
+  width: "80%",
+  height: "80%",
+  minWidth: "4.5rem",
+  minHeight: "4.5rem",
+  maxWidth: "6rem",
+  maxHeight: "6rem",
+  margin: "auto",
 });
 
 export const UserInfo = styled("div", {

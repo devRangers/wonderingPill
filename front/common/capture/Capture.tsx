@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useState } from "react";
 import {
   CaptureButton,
@@ -18,16 +19,28 @@ function Capture() {
   };
 
   return (
-    <CaptureContainer>
-      <input
-        accept="image/*"
-        id="icon-button-file"
-        type="file"
-        onChange={handleCapture}
-        style={{ display: "none" }}
+    <>
+      <Image
+        src={source ? source : "/images/register_logo.png"}
+        alt="wondering-pill-logo"
+        layout="fill"
+        objectFit="cover"
+        style={{
+          borderRadius: "50%",
+        }}
+        priority={true}
       />
-      <CaptureButton htmlFor="icon-button-file" />
-    </CaptureContainer>
+      <CaptureContainer>
+        <input
+          accept="image/*"
+          id="icon-button-file"
+          type="file"
+          onChange={handleCapture}
+          style={{ display: "none" }}
+        />
+        <CaptureButton htmlFor="icon-button-file" />
+      </CaptureContainer>
+    </>
   );
 }
 

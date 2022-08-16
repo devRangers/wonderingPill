@@ -47,15 +47,6 @@ function FindWithImage() {
         <FindWithImageContainer $bgColor={MAIN_COLOR} $isWide={isWide}>
           <Camera $bgColor={MAIN_COLOR} $isWide={isWide}>
             <ImageWrapper>
-              <Image
-                src="/images/register_logo.png"
-                layout="fill"
-                objectFit="contain"
-                style={{
-                  borderRadius: "50%",
-                }}
-                priority={true}
-              />
               <Capture />
             </ImageWrapper>
           </Camera>

@@ -22,6 +22,7 @@ import {
   UserStateWrapper,
 } from "./MyPage.style";
 import Container from "common/container/Container";
+import Capture from "common/capture/Capture";
 
 function MyPage() {
   return (
@@ -29,13 +30,7 @@ function MyPage() {
       <InnerContainer>
         <UserInfoContainer>
           <Profile>
-            <Image
-              src="/images/register_logo.png"
-              alt="wondering-pill-logo"
-              layout="fill"
-              objectFit="cover"
-              priority={true}
-            />
+            <Capture />
           </Profile>
           <UserInfo>
             <UserNameWrapper>
