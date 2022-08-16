@@ -3,7 +3,6 @@ export const SUB_COLOR = "#9ADCDD";
 export const ACCENT_COLOR = "#3C5A93";
 export const ERROR_MSG_COLOR = "#bd0000";
 export const BOX_COLOR = "#2A306A";
-export const BOX_TITLE_COLOR = "#05C9FF";
 
 export const HEADER_HEIGHT = "10vh";
 export const FOOTER_HEIGHT = "8vh";
