@@ -127,7 +127,6 @@ export class AuthController {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto, user);
 
-    // redis: save refresh-token
     await this.authService.saveRefreshToken(
       user.id,
       signinUserDto.isSignin,

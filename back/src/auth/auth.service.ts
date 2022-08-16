@@ -1,7 +1,6 @@
 import {
   ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -32,15 +31,19 @@ export class AuthService {
   ) {}
 
   async getUserByEmail(email: string): Promise<User> {
-    const user: User = await this.prisma.user.findUnique({
-      where: { email },
-    });
+    try {
+      const user: User = await this.prisma.user.findUnique({
+        where: { email },
+      });
 
-    if (!user) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
+      if (!user) {
+        throw new ForbiddenException('회원이 존재하지 않습니다.');
+      }
+
+      return user;
+    } catch {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
     }
-
-    return user;
   }
 
   async getUserById(id: string): Promise<User> {
@@ -85,7 +88,7 @@ export class AuthService {
           throw new ForbiddenException('이미 존재하는 이메일입니다.');
         }
       } else {
-        throw new InternalServerErrorException();
+        throw new ForbiddenException('회원을 저장하지 못했습니다.');
       }
     }
   }
@@ -215,7 +218,6 @@ export class AuthService {
       if (user.name !== findPasswordDto.name) {
         throw new ForbiddenException('회원이 존재하지 않습니다.');
       }
-
       return user;
     } catch (error) {
       throw new ForbiddenException('회원을 찾지 못했습니다.');
@@ -258,20 +260,6 @@ export class AuthService {
       throw new ForbiddenException('토큰을 저장할때 에러가 발생했습니다.');
     }
   }
-
-  // async kakaoLogin(kakaoLoginDto: OauthLoginDto) {
-  //   const user: User = await this.createOauthUser(kakaoLoginDto, 'kakao');
-  //   const { accessToken, refreshToken } = kakaoLoginDto;
-
-  //   // redis 저장
-  //   await this.redisService.setKey(
-  //     'ka' + user.id,
-  //     process.env.REFRESHTOKEN_KEY + refreshToken,
-  //     Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
-  //   );
-
-  //   return { accessToken, refreshToken };
-  // }
 
   async createOauthUser(payload: OauthLoginDto, type: string): Promise<User> {
     let provider;
@@ -337,4 +325,18 @@ export class AuthService {
       throw new ForbiddenException('비밀번호를 변경하지 못했습니다.');
     }
   }
+
+  // async kakaoLogin(kakaoLoginDto: OauthLoginDto) {
+  //   const user: User = await this.createOauthUser(kakaoLoginDto, 'kakao');
+  //   const { accessToken, refreshToken } = kakaoLoginDto;
+
+  //   // redis 저장
+  //   await this.redisService.setKey(
+  //     'ka' + user.id,
+  //     process.env.REFRESHTOKEN_KEY + refreshToken,
+  //     Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+  //   );
+
+  //   return { accessToken, refreshToken };
+  // }
 }
