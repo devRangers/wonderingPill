@@ -22,19 +22,6 @@ const setScreenSize = () => {
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 };
 
-const getAccessToken = async () => {
-  try {
-    const res = await Api.get("/auth/refresh");
-
-    const result: RefreshResponse = await res.json();
-
-    if (result.statusCode >= 400) {
-      throw new Error(result.message);
-    }
-    return result;
-  } catch (err) {}
-};
-
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [, setUser] = useAtom(userAtom);
@@ -51,15 +38,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function getUsers() {
       try {
-        const res = await Api.get("/auth/current");
-        const result: CurrentUserResponse = await res.json();
-
-        if (result.statusCode === 200) {
-          setUser(result.user);
-          getAccessToken();
-        } else {
-          throw new Error(result.message);
-        }
+        const { user } = await Api.get<CurrentUserResponse>("/auth/current");
+        setUser(user);
+        Api.get<RefreshResponse>("/auth/refresh");
       } catch (err) {}
     }
     getUsers();
@@ -68,7 +49,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   // refresh token이 있을 경우 access token 주기적으로 재발급
   useEffect(() => {
     const timer = setInterval(() => {
-      if (document.hasFocus()) getAccessToken();
+      if (document.hasFocus()) Api.get<RefreshResponse>("/auth/refresh");
     }, SILENT_REFRESH_TIME);
 
     return () => {
