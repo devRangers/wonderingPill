@@ -36,13 +36,13 @@ model User {
   email            String?            @unique @db.VarChar(100)
   name             String?            @db.VarChar(20)
   password         String?            @db.VarChar(100)
-  phone            String?            @db.VarChar(20)
-  provider         Provider?          @default(LOCAL)
+  phone            String?            @unique @db.VarChar(20)
   profileImg       String?            @default("imageUrl")
   isDeleted        Boolean?           @default(false)
   createdAt        DateTime?          @default(now()) @db.Date
   birth            String?            @db.VarChar(9)
   updatedAt        DateTime?          @updatedAt
+  provider         Provider?          @default(LOCAL)
   PharmacyBookMark PharmacyBookMark[]
 }
 
