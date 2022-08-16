@@ -45,6 +45,7 @@ import {
 import { MailService } from 'src/mail/mail.service';
 import { RedisService } from 'src/redis/redis.service';
 import { SmsService } from 'src/sms/sms.service';
+import { v4 as uuid } from 'uuid';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -126,14 +127,12 @@ export class AuthController {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto, user);
 
-    // redis: save refresh-token
     await this.authService.saveRefreshToken(
       user.id,
       signinUserDto.isSignin,
       refreshToken,
     );
 
-    // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
       maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
@@ -294,11 +293,15 @@ export class AuthController {
     @Body() findPasswordDto: FindPasswordDto,
   ): Promise<FindPasswordResponse> {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
-    await this.authService.setPWChangeToken(user.id);
+    const passwordToken: string = uuid().toString();
+    await this.authService.setPWChangeToken(user.id, passwordToken);
+
     const result: boolean = await this.mailService.sendEmail(
       user.email,
       user.name,
+      passwordToken,
     );
+
     this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
       statusCode: 200,
@@ -317,22 +320,27 @@ export class AuthController {
     description: '토큰 검사 성공',
     type: FindPasswordResponse,
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'email',
     required: true,
     description: '이메일',
   })
-  @ApiParam({
-    name: 'email',
+  @ApiQuery({
+    name: 'token',
     required: true,
-    description: '이메일',
+    description: '비밀번호 토큰',
   })
   @Get('change-password/check')
-  async checkPWToken(
-    @Param('email') email: string,
-  ): Promise<FindPasswordResponse> {
-    const user: UserModel = await this.authService.getUserByEmail(email);
-    await this.redisService.getKey('pw' + user.id);
+  async checkPWToken(@Query() query): Promise<FindPasswordResponse> {
+    const user: UserModel = await this.authService.getUserByEmail(query.email);
+    const token: string = await this.redisService.getKey('pw' + user.id);
+
+    if (
+      query.token !==
+      token.slice(this.configService.get('CHANGE_PASSWORD_KEY').length)
+    ) {
+      throw new ForbiddenException('토큰이 일치하지 않습니다.');
+    }
     this.logger.verbose(`User ${user.email} check pw token Success!`);
     return {
       statusCode: 200,
@@ -342,7 +350,7 @@ export class AuthController {
   }
 
   @HttpCode(200)
-  @Put('change-password')
+  @Put('change-password/:email')
   @ApiOperation({
     summary: '비밀번호 변경 API',
     description: '비밀번호를 변경 한다.',
@@ -521,6 +529,10 @@ export class AuthController {
       user: { name, email },
     };
   }
+
+  // 이메일 인증
+  // 이메일이 유효한지 검사하기
+  // 인증번호? 아니면 비밀번호 변경 이메일에서 멘트만 바꾸기
 
   // @HttpCode(200)
   // @Throttle(5, 1)
