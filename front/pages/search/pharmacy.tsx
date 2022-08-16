@@ -33,12 +33,6 @@ interface PharmacyResponse {
   pharmacy: PharmacyType[];
 }
 
-const searchPharm = async (keyword: string, option: string) => {
-  const res = await Api.get(`/pharmacy/search?${option}=${keyword}`);
-  const result: PharmacyResponse = await res.json();
-  return result;
-};
-
 const SearchPharmPage: NextPage = () => {
   const isWide = isWideDevice();
 
@@ -48,13 +42,17 @@ const SearchPharmPage: NextPage = () => {
   const [isSubmitBtnClicked, setIsSubmitBtnClicked] = useState(false);
   const [pharmList, setPharmList] = useState<PharmacyType[]>([]);
 
-  useQuery("searchPharm", () => searchPharm(keyword, option), {
-    enabled: !!keyword && isSubmitBtnClicked,
-    onSuccess: (data) => {
-      setIsSubmitBtnClicked(false);
-      setPharmList(data.pharmacy);
+  useQuery(
+    "searchPharm",
+    () => Api.get<PharmacyResponse>(`/pharmacy/search?${option}=${keyword}`),
+    {
+      enabled: !!keyword && isSubmitBtnClicked,
+      onSuccess: (data) => {
+        setIsSubmitBtnClicked(false);
+        setPharmList(data.pharmacy);
+      },
     },
-  });
+  );
 
   const selectChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setOption(e.target.value);
