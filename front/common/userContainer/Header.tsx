@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { SUB_COLOR, ROUTE } from "@utils/constant";
+import { ACCENT_COLOR, ROUTE } from "@utils/constant";
 import { AiOutlineLeft } from "react-icons/ai";
 import { IconBtn, LinkBtn } from "./Container.style";
 
@@ -16,12 +16,12 @@ function Header() {
   return (
     <>
       <Link href="/">
-        <IconBtn $btnColor={SUB_COLOR}>
+        <IconBtn $btnColor={ACCENT_COLOR}>
           <AiOutlineLeft />
         </IconBtn>
       </Link>
 
-      <LinkBtn onClick={linkBtnClickHandler}>
+      <LinkBtn onClick={linkBtnClickHandler} $btnColor={ACCENT_COLOR}>
         {isLoginPage ? "회원가입 바로가기" : "로그인 바로가기"}
       </LinkBtn>
     </>
