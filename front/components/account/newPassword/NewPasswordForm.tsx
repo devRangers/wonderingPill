@@ -1,4 +1,4 @@
-import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
+import { SUB_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -72,7 +72,7 @@ function NewPasswordForm() {
         )}
       </InputContainer>
 
-      <ChangeBtn type="submit" $btnColor={BUTTON_COLOR}>
+      <ChangeBtn type="submit" $btnColor={SUB_COLOR}>
         비밀번호 변경
       </ChangeBtn>
     </Form>

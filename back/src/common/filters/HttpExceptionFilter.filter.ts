@@ -1,4 +1,11 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 
 @Catch()
@@ -12,18 +19,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception = new InternalServerErrorException();
     }
 
-    const response = (exception as HttpException).getResponse();
+    const response: any = (exception as HttpException).getResponse();
 
     const log = {
       timestamp: new Date(),
       url: req.url,
       response,
-    }
+    };
 
     Logger.log(log);
 
-    res
-      .status((exception as HttpException).getStatus())
-      .json(response);
+    res.status((exception as HttpException).getStatus()).json(response);
   }
 }

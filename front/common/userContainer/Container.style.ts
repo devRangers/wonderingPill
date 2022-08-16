@@ -29,13 +29,13 @@ export const IconBtn = styled("button", (props: { $btnColor: string }) => ({
   alignItems: "center",
 }));
 
-export const LinkBtn = styled("button", {
+export const LinkBtn = styled("button", (props: { $btnColor: string }) => ({
   border: 0,
   borderRadius: "25px",
   padding: "0.2rem 0.8rem",
-  backgroundColor: "#567BC4",
+  backgroundColor: props.$btnColor,
   color: "#fff",
-});
+}));
 
 export const LogoContainer = styled("div", {
   position: "relative",
