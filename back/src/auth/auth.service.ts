@@ -11,7 +11,6 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
-import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
 import {
   ChangePasswordDto,
@@ -230,8 +229,7 @@ export class AuthService {
     return user.pop();
   }
 
-  async setPWChangeToken(id: string): Promise<string> {
-    const token: string = uuid().toString();
+  async setPWChangeToken(id: string, token: string): Promise<string> {
     const result: boolean = await this.redisService.setKey(
       'pw' + id,
       this.configService.get('CHANGE_PASSWORD_KEY') + token,
