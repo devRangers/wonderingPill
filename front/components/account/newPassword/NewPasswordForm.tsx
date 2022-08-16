@@ -1,6 +1,4 @@
 import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import {
   InputContainer,
   Input,
@@ -8,6 +6,8 @@ import {
   ErrorMessage,
 } from "@userContainer/Container.style";
 import { Form } from "../findPassword/FindPasswordForm.style";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 interface NewPasswordValues {
   password: string;

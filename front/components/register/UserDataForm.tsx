@@ -15,11 +15,11 @@ import {
 import { ApplySubmitValues } from "./RegisterForm";
 import { CreateUserResponse } from "@modelTypes/createUserResponse";
 import Modal from "@modal/Modal";
+import * as Api from "@api";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
 import * as Yup from "yup";
 import ReactTooltip from "react-tooltip";
-import * as Api from "@api";
 
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
