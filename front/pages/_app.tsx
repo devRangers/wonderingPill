@@ -4,6 +4,8 @@ import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useState, useEffect } from "react";
+import firebase from "firebase/app";
+import "firebase/messaging";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Provider as StyletronProvider } from "styletron-react";
@@ -17,6 +19,16 @@ import { URL_WITHOUT_HEADER, SILENT_REFRESH_TIME } from "@utils/constant";
 import Header from "@header/Header";
 import Footer from "@footer/Footer";
 
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+};
+
 const setScreenSize = () => {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -26,6 +38,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [, setUser] = useAtom(userAtom);
   const [queryClient] = useState(() => new QueryClient());
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  } else {
+    firebase.app();
+  }
 
   useEffect(() => {
     setScreenSize();

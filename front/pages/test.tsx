@@ -1,10 +1,35 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { firebaseCloudMessaging } from "../firebase";
-import { getToken } from "firebase/messaging";
+import { useEffect } from "react";
+import firebase from "firebase/app";
+import "firebase/messaging";
 
 const Test: NextPage = () => {
   const router = useRouter();
+
+  useEffect(() => {
+    const messaging = firebase.messaging();
+    messaging
+      .getToken({
+        vapidKey: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_VAPID_KEY,
+      })
+      .then((currentToken) => {
+        if (currentToken) {
+          // Send the token to your server and update the UI if necessary
+          // ...
+        } else {
+          // Show permission request UI
+          console.log(
+            "No registration token available. Request permission to generate one.",
+          );
+          // ...
+        }
+      })
+      .catch((err) => {
+        console.log("An error occurred while retrieving token. ", err);
+        // ...
+      });
+  }, []);
 
   const sendMessage = () => {
     const title = "궁금해 약";
