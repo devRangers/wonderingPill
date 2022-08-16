@@ -7,15 +7,27 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DeleteUserResponse } from './dto';
+import {
+  ApiCookieAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { User } from '@prisma/client';
+import { AuthService } from 'src/auth/auth.service';
+import { MailService } from 'src/mail/mail.service';
+import { DeleteUserResponse, SendInquiryDto, SendInquiryResponse } from './dto';
 import { UsersService } from './users.service';
 
 @ApiTags('Users API')
 @Controller('users')
 export class UsersController {
   private readonly logger = new Logger(`UsersController`);
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly mailService: MailService,
+    private readonly authService: AuthService,
+  ) {}
 
   // 마이페이지 프로필 사진 업로드 : 외부 스토리지 연결
   @Post('upload-profileImg')
@@ -23,8 +35,6 @@ export class UsersController {
     const user = await this.usersService.uploadProfile(img);
     console.log(user);
   }
-
-  // 고객 센터
 
   @HttpCode(200)
   @Patch('delete-user/:id')
@@ -37,6 +47,8 @@ export class UsersController {
     description: '회원탈퇴 성공',
     type: DeleteUserResponse,
   })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
   async deleteUser(@Param('id') id: string): Promise<DeleteUserResponse> {
     await this.usersService.deleteUser(id);
     this.logger.verbose(`User ${id} delete Success!`);
@@ -44,6 +56,27 @@ export class UsersController {
       statusCode: 200,
       message: '회원탈퇴가 완료되었습니다.',
       result: { result: true },
+    };
+  }
+
+  // 고객 센터
+  @Post('send-email')
+  async sendEmail(
+    @Body() sendInquiryDto: SendInquiryDto,
+  ): Promise<SendInquiryResponse> {
+    const user: User = await this.authService.getUserById(sendInquiryDto.id);
+    const result: boolean = await this.mailService.sendInquiry(
+      user.email,
+      user.name,
+      sendInquiryDto.description,
+    );
+
+    this.logger.verbose(`User ${user.email} send inquiry Success!`);
+
+    return {
+      statusCode: 200,
+      message: '문의를 성공적으로 전송했습니다.',
+      result: { result },
     };
   }
 
