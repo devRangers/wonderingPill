@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useMutation } from "react-query";
+import * as Api from "@api";
+import { FindAccountResponse } from "@modelTypes/findAccountResponse";
+import { FindAccountDto as FindAccountValues } from "@modelTypes/findAccountDto";
 import { ERROR_MSG_COLOR, SUB_COLOR, ACCENT_COLOR } from "@utils/constant";
 import {
   InputContainer,
@@ -18,7 +23,6 @@ import {
   Hyphen,
   BtnContainer,
 } from "./FindEmailForm.style";
-import Recaptcha from "@recaptcha/Recaptcha";
 import Modal from "@modal/Modal";
 import AuthForm from "./AuthForm";
 
@@ -39,8 +43,22 @@ const initialValue: FindEmailValues = {
 };
 
 function FindEmailForm() {
-  const [startVerification, setStartVerification] = useState(false); // ReCaptcha 검증 시점 결정
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
   const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const findEmailMutation = useMutation(
+    (data: FindAccountValues) =>
+      Api.post<FindAccountResponse, FindAccountValues>("/auth/send-sms", data),
+    {
+      onSuccess: (data) => {
+        setAuthModalOpen(true);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    },
+  );
 
   const formik = useFormik({
     initialValues: initialValue,
@@ -62,12 +80,22 @@ function FindEmailForm() {
         .matches(/^[0-9]{4}$/, "유효하지 않은 번호입니다.")
         .required("휴대폰 번호를 입력해 주세요."),
     }),
-    onSubmit: async (values, actions) => {
-      // Submit Handler 구현 예정
-      setStartVerification(true);
-
-      // 성공 시 로직
-      // setAuthModalOpen(true);
+    onSubmit: async ({
+      name,
+      birth,
+      firstPhoneNum,
+      middlePhoneNum,
+      lastPhoneNum,
+    }) => {
+      const token = (await recaptchaRef?.current?.executeAsync()) as string;
+      const dataToSubmit = {
+        name,
+        birth,
+        token,
+        phone: firstPhoneNum + middlePhoneNum + lastPhoneNum,
+      };
+      recaptchaRef.current?.reset();
+      findEmailMutation.mutate(dataToSubmit);
     },
   });
 
@@ -164,10 +192,10 @@ function FindEmailForm() {
           </Modal>
         )}
       </Form>
-
-      <Recaptcha
-        startVerification={startVerification}
-        setStartVerification={setStartVerification}
+      <ReCAPTCHA
+        ref={recaptchaRef}
+        size="invisible"
+        sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
       />
     </>
   );
