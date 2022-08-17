@@ -5,25 +5,25 @@ import { get } from "@api";
 import { FindPasswordResponse } from "@modelTypes/findPasswordResponse";
 
 interface NewPasswordProp {
-  data: boolean;
+  isValidToken: boolean;
 }
 
-function NewPassword({ data }: NewPasswordProp) {
+function NewPassword({ isValidToken }: NewPasswordProp) {
   return (
     <Container>
-      <NewPasswordForm data={data} />
+      <NewPasswordForm isValidToken={isValidToken} />
     </Container>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const res = await get<FindPasswordResponse>(
-    `/auth/change-password/check/${context.query.email}`,
+    `/auth/change-password/check?token=${context.query.token}&email=${context.query.email}`,
   );
-  const data = res.result.result;
+  const isValidToken = res.result.result;
   return {
     props: {
-      data,
+      isValidToken,
     },
   };
 };
