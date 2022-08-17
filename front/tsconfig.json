@@ -34,6 +34,7 @@
       "@myPage/*": ["components/myPage*"],
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
+      "@searchPharmComp/*": ["components/search/pharmacy/*"],
       "@resultComp/*": ["components/search/result/*"],
       "@modelTypes/*": ["src/model/*"]
     }
