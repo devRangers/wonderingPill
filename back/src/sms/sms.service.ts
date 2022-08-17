@@ -10,16 +10,20 @@ export class SmsService {
   ) {}
 
   async sendSMSByTwilio(phone: string, verifyCode: string): Promise<boolean> {
-    const result = await this.twilioService.client.messages.create({
-      body: `[궁금해약] 인증번호입니다.[${verifyCode}]`,
-      from: this.configService.get('SMS_PHONE_NUMBER'),
-      to: '+82' + phone,
-    });
+    try {
+      const result = await this.twilioService.client.messages.create({
+        body: `[궁금해약] 인증번호입니다.[${verifyCode}]`,
+        from: this.configService.get('SMS_PHONE_NUMBER'),
+        to: '+82' + phone,
+      });
 
-    if (result.errorCode !== null) {
+      if (result.errorCode !== null) {
+        throw new ForbiddenException('SMS 전송에 문제가 생겼습니다.');
+      }
+
+      return true;
+    } catch (error) {
       throw new ForbiddenException('SMS 전송에 문제가 생겼습니다.');
     }
-
-    return true;
   }
 }
