@@ -432,6 +432,7 @@ export class AuthController {
   async sendSMS(
     @Body() findAccountDto: FindAccountDto,
   ): Promise<CommonResponseDto> {
+    await this.authService.findUserByPhone(findAccountDto);
     const number = Math.floor(Math.random() * 1000000);
     const verifyCode: string = number.toString().padStart(6, '0');
 
@@ -504,11 +505,9 @@ export class AuthController {
     description: '계정 찾기 성공',
     type: FindAccountResponse,
   })
-  @Get('find-account')
-  async getAccount(
-    @Param('phone') phone: string,
-  ): Promise<FindAccountResponse> {
-    const user: UserModel = await this.authService.getUserByPhone(phone);
+  @Get('find-account/:id')
+  async getAccount(@Param('id') id: string): Promise<FindAccountResponse> {
+    const user: UserModel = await this.authService.getUserById(id);
 
     let name;
     let email;
