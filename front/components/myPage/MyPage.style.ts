@@ -111,6 +111,13 @@ export const MedicineBadgeContainer = styled("div", {
   height: "90%",
   maxHeight: "11rem",
   overflowY: "scroll",
+  "::-webkit-scrollbar": {
+    visibility: "hidden",
+    width: "0",
+  },
+  "::-webkit-scrollbar-thumb": {
+    visibility: "hidden",
+  },
 });
 
 export const PharmarcyContainer = styled("div", {
