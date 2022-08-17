@@ -10,7 +10,6 @@ import {
   Post,
   Put,
   Query,
-  Redirect,
   Req,
   Res,
   UseGuards,
@@ -396,7 +395,6 @@ export class AuthController {
 
   @UseGuards(GoogleGuard)
   @Get('google-redirect')
-  @Redirect(`${process.env.CLIENT_URL}/login`, 403)
   async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.googleLogin(req.user as OauthLoginDto, res);
@@ -412,7 +410,7 @@ export class AuthController {
       // secure:true
     });
 
-    res.redirect(`${process.env.CLIENT_URL}/`);
+    res.redirect(`${this.configService.get('CLIENT_URL')}/`);
     res.end();
   }
 
