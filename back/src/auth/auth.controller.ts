@@ -437,7 +437,7 @@ export class AuthController {
       300,
     );
 
-    await this.smsService.sendSMSByTwilio(findAccountDto.phone, verifyCode);
+    await this.smsService.sendSMS(findAccountDto.phone, verifyCode);
 
     this.logger.verbose(`User ${findAccountDto.phone} send sms Success!`);
     return {
