@@ -27,9 +27,9 @@ export const validation: Joi.Schema = Joi.object({
   GOOGLE_CLIENT_ID: Joi.string().required(),
   GOOGLE_CLIENT_PASSWORD: Joi.string().required(),
   GOOGLE_REDIRECT: Joi.string().required(),
-  SMS_ACCOUNT_ID: Joi.string().required(),
-  SMS_ACCOUNT_TOKEN: Joi.string().required(),
-  SMS_PHONE_NUMBER: Joi.string().required(),
+  SMS_SERVICE_ID: Joi.string().required(),
+  SMS_DOMAIN: Joi.string().required(),
+  SENDER_PHONE: Joi.string().required(),
 }).options({
   abortEarly: true,
 });
