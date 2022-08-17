@@ -104,7 +104,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('signin')
   @Throttle(5, 1)
-  // @UseGuards(RecaptchaGuard)
+  @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '유저 로그인 API',
     description:
