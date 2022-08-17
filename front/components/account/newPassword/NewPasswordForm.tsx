@@ -8,22 +8,52 @@ import {
 import { Form } from "../findPassword/FindPasswordForm.style";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useRouter } from "next/router";
+import { put } from "@api";
+import { useMutation } from "react-query";
 
 interface NewPasswordValues {
   password: string;
   checkPassword: string;
 }
-
 const findPasswordInitialValue: NewPasswordValues = {
   password: "",
   checkPassword: "",
 };
 
 interface NewPasswordFormProp {
-  data: boolean;
+  isValidToken: boolean;
 }
 
-function NewPasswordForm({ data }: NewPasswordFormProp) {
+function NewPasswordForm({ isValidToken }: NewPasswordFormProp) {
+  const router = useRouter();
+  const email = router.query.email;
+
+  const mutatuin = useMutation(
+    (data: string) =>
+      put(`/auth/change-password/${email}`, {
+        password: data,
+      }),
+    {
+      onSuccess: () => {
+        if (router.query.email) {
+          router.push(
+            {
+              pathname: "/login",
+              query: {
+                email: router.query.email,
+              },
+            },
+            "/login",
+          );
+        }
+      },
+      onError: (error: any) => {
+        throw new Error(error);
+      },
+    },
+  );
+
   const newPasswordFormik = useFormik({
     initialValues: findPasswordInitialValue,
     validationSchema: Yup.object({
@@ -37,8 +67,8 @@ function NewPasswordForm({ data }: NewPasswordFormProp) {
         .oneOf([Yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
         .required("필수 입력 란입니다."),
     }),
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      mutatuin.mutate(values.password);
     },
   });
   return (
