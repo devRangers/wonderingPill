@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { Pharmacy } from './pharmacy';
+import type { FindAccountResponseUser } from './findAccountResponseUser';
 
-export interface BookmarkListResponseDto {
+export interface FindAccountResponse {
   statusCode: number;
   message: string;
-  bookmark: Pharmacy[];
+  user: FindAccountResponseUser;
 }

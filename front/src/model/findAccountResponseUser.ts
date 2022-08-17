@@ -6,10 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type SigninResponseUser = {
-  id?: string;
-  email?: string;
+export type FindAccountResponseUser = {
   name?: string;
-  profileImg?: string;
-  provider?: string;
+  email?: string;
 };
