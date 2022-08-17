@@ -13,8 +13,6 @@ import {
   Req,
   Res,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -74,10 +72,8 @@ export class AuthController {
     private readonly smsService: SmsService,
   ) {}
 
-  @Public()
   @HttpCode(200)
   @Post('signup')
-  @UsePipes(new ValidationPipe())
   @ApiOperation({
     summary: '유저 생성(회원가입) API',
     description: '유저를 생성한다.',
@@ -100,7 +96,6 @@ export class AuthController {
     };
   }
 
-  @Public()
   @HttpCode(200)
   @Post('signin')
   @Throttle(5, 1)
