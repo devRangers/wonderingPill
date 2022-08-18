@@ -1,7 +1,25 @@
-import { PharmarcyContainer } from "./Pharmarcy.style";
+import {
+  DataContainer,
+  HeartContainer,
+  Name,
+  PharmarcyContainer,
+} from "./Pharmarcy.style";
 
-function Pharmarcy() {
-  return <PharmarcyContainer>Pharmarcy</PharmarcyContainer>;
+interface PharmarcyProps {
+  name: string;
+  phoneNumber: string;
+}
+
+function Pharmarcy({ name, phoneNumber }: PharmarcyProps) {
+  return (
+    <PharmarcyContainer>
+      <DataContainer>
+        <Name>{name}</Name>
+        <Name>{phoneNumber}</Name>
+      </DataContainer>
+      <HeartContainer>heart</HeartContainer>
+    </PharmarcyContainer>
+  );
 }
 
 export default Pharmarcy;
