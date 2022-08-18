@@ -125,9 +125,17 @@ export const PharmarcyContainer = styled("div", {
 });
 
 export const PharmarcyWrapper = styled("div", {
-  display: "flex",
-  justifyContent: "center",
-  // alignContent: "stretch",
-  // height: "100%",
+  // display: "flex",
   backgroundColor: "orange",
+});
+
+export const BottomContainer = styled("div", {
+  textAlign: "end",
+});
+
+export const ModifyUserDataButton = styled("button", {
+  width: "7rem",
+  height: "1.5rem",
+  backgroundColor: "orange",
+  borderRadius: "1rem",
 });
