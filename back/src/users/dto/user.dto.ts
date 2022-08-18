@@ -25,5 +25,11 @@ export class SendInquiryResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()
-  result: { result: boolean };
+  result: { check: boolean };
 }
+
+// export class User {
+//   id: number;
+//   name: string;
+//   phone: string;
+// }

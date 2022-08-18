@@ -109,52 +109,6 @@ export class MailService {
     }
   }
 
-  async sendInquiry(
-    email: string,
-    name: string,
-    description: string,
-  ): Promise<boolean> {
-    const mailUrl = '/api/v1/mails';
-    const result = await this.httpService
-      .post(
-        `${this.configService.get('MAIL_API_DOMAIN')}${mailUrl}`,
-        {
-          senderAddress: email,
-          senderName: name,
-          title: `[궁금해약] ${name} 님의 고객센터 문의입니다.`,
-          body: `<p> 문의 내용 : ${description}</p>`,
-          recipients: [
-            {
-              address: this.configService.get('SENDER_ADDRESS'),
-              name: 'DevRangers',
-              type: 'R',
-            },
-          ],
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-ncp-apigw-timestamp': new Date().getTime().toString(10),
-            'x-ncp-iam-access-key': this.configService.get('ACCESS_KEY_ID'),
-            'x-ncp-apigw-signature-v2': this.makeSign(
-              'POST',
-              mailUrl,
-              new Date().getTime().toString(10),
-              this.configService.get('ACCESS_KEY_ID'),
-              this.configService.get('SECRET_KEY'),
-            ),
-            'x-ncp-lang': 'ko-KR',
-          },
-        },
-      )
-      .toPromise();
-
-    if (!result || !result.data || result.data.count !== 1) {
-      throw new ForbiddenException('이메일 전송을 실패하였습니다.');
-    }
-    return true;
-  }
-
   makeSign(
     method: string,
     url: string,

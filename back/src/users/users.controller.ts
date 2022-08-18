@@ -29,7 +29,7 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
-  // 마이페이지 프로필 사진 업로드 : 외부 스토리지 연결
+  // 마이페이지 프로필 사진 업로드 : 외부 스토리지 gcs 연결
   @Post('upload-profileImg')
   async uploadProfile(@Body() img: string) {
     const user = await this.usersService.uploadProfile(img);
@@ -60,12 +60,13 @@ export class UsersController {
   }
 
   // 고객 센터
+  // 관리자 페이지를 추가하면 email 전송 제거
   @Post('send-email')
   async sendEmail(
     @Body() sendInquiryDto: SendInquiryDto,
   ): Promise<SendInquiryResponse> {
     const user: User = await this.authService.getUserById(sendInquiryDto.id);
-    const result: boolean = await this.mailService.sendInquiry(
+    const check: boolean = await this.mailService.sendInquiry(
       user.email,
       user.name,
       sendInquiryDto.description,
@@ -76,7 +77,7 @@ export class UsersController {
     return {
       statusCode: 200,
       message: '문의를 성공적으로 전송했습니다.',
-      result: { result },
+      result: { check },
     };
   }
 

@@ -405,6 +405,7 @@ export class AuthController {
       // secure:true
     });
 
+    this.logger.verbose(`Google login Success!`);
     res.redirect(`${this.configService.get('CLIENT_URL')}/`);
     res.end();
   }
