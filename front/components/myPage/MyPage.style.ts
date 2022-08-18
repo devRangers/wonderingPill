@@ -1,11 +1,14 @@
 import { styled } from "styletron-react";
 
-export const InnerContainer = styled("div", {
-  height: "100%",
-  display: "grid",
-  gridTemplateRows: "1fr 2fr 2fr 0.5fr",
-  gap: "1.5rem",
-});
+export const InnerContainer = styled(
+  "div",
+  (props: { $gridTemplateRows: string }) => ({
+    height: "100%",
+    display: "grid",
+    gridTemplateRows: props.$gridTemplateRows,
+    gap: "1.5rem",
+  }),
+);
 
 export const UserInfoContainer = styled("div", {
   display: "grid",
