@@ -12,7 +12,7 @@ import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
-import { BUTTON_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
+import { SUB_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -144,7 +144,7 @@ function LoginForm() {
             )}
           </InputContainer>
 
-          <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
+          <SubmitBtn type="submit" $btnColor={SUB_COLOR}>
             로그인하기
           </SubmitBtn>
         </ContentContainer>

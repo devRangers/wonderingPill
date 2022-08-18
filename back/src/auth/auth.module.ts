@@ -1,7 +1,8 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisModule } from 'src/redis/redis.module';
 import { AuthController } from './auth.controller';
@@ -32,4 +33,8 @@ import { GoogleStrategy } from './strategy/google.strategy';
   ],
   exports: [AuthService, JwtModule, PassportModule],
 })
-export class AuthModule {}
+export class AuthModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('auth');
+  }
+}

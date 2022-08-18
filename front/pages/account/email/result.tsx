@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
   MAIN_COLOR,
+  ACCENT_COLOR,
   SUB_COLOR,
-  BUTTON_COLOR,
   ROUTE,
   FULL_HEIGHT,
 } from "@utils/constant";
@@ -42,7 +42,7 @@ const FindEmailResultPage: NextPage = () => {
   return (
     <Container $bgColor={MAIN_COLOR} $fullHeight={FULL_HEIGHT}>
       <TitleContainer>
-        <Title $txtColor={SUB_COLOR}>계정 찾기</Title>
+        <Title $txtColor={ACCENT_COLOR}>계정 찾기</Title>
         <SubTitle>회원님의 계정 찾기가 완료되었습니다.</SubTitle>
       </TitleContainer>
 
@@ -76,7 +76,7 @@ const FindEmailResultPage: NextPage = () => {
         {fakeData.length === 0 && (
           <LinkButton
             $isWide={isWide}
-            $btnColor={BUTTON_COLOR}
+            $btnColor={SUB_COLOR}
             onClick={() => router.push(ROUTE.REGISTER)}>
             회원가입 바로가기
           </LinkButton>
@@ -86,7 +86,7 @@ const FindEmailResultPage: NextPage = () => {
       <BtnContainer $isWide={isWide}>
         <LinkButton
           $isWide={isWide}
-          $btnColor={BUTTON_COLOR}
+          $btnColor={SUB_COLOR}
           onClick={() =>
             router.push(
               {
@@ -103,7 +103,7 @@ const FindEmailResultPage: NextPage = () => {
 
         <LinkButton
           $isWide={isWide}
-          $btnColor={BUTTON_COLOR}
+          $btnColor={SUB_COLOR}
           onClick={() => router.push(ROUTE.PASSWORD_FIND)}>
           비밀번호 찾기
         </LinkButton>
