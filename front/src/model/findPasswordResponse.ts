@@ -5,8 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
+import type { FindPasswordResponseResult } from './findPasswordResponseResult';
 
 export interface FindPasswordResponse {
   statusCode: number;
   message: string;
+  result: FindPasswordResponseResult;
 }

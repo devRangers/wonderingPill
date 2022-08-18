@@ -23,3 +23,5 @@ export * from './useRecapchaDto';
 export * from './recapchaResponse';
 export * from './findPasswordDto';
 export * from './findPasswordResponse';
+export * from './bookmarkControllerCreateBookmark201';
+export * from './findPasswordResponseResult';

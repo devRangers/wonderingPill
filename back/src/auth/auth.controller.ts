@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -8,6 +9,8 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Redirect,
   Req,
   Res,
   UseGuards,
@@ -19,6 +22,8 @@ import {
   ApiBody,
   ApiCookieAuth,
   ApiOperation,
+  ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -39,13 +44,18 @@ import {
 } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { RedisService } from 'src/redis/redis.service';
+import { SmsService } from 'src/sms/sms.service';
+import { v4 as uuid } from 'uuid';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
   CreateUserDto,
   CreateUserResponse,
+  FindAccountDto,
+  FindAccountResponse,
   FindPasswordDto,
   FindPasswordResponse,
+  FindUserResponse,
   LogoutResponse,
   OauthLoginDto,
   SigninResponse,
@@ -56,13 +66,15 @@ import { Tokens } from './types';
 @ApiTags('Auth API')
 @Controller('auth')
 export class AuthController {
-  private logger = new Logger(`AuthController`);
+  private readonly logger = new Logger(`AuthController`);
   constructor(
     private readonly authService: AuthService,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
+    private readonly smsService: SmsService,
   ) {}
+
   @Public()
   @HttpCode(200)
   @Post('signup')
@@ -109,18 +121,18 @@ export class AuthController {
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SigninResponse> {
-    const user = await this.authService.getUserByEmail(signinUserDto.email);
+    const user: UserModel = await this.authService.getUserByEmail(
+      signinUserDto.email,
+    );
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto, user);
 
-    // redis: save refresh-token
     await this.authService.saveRefreshToken(
       user.id,
       signinUserDto.isSignin,
       refreshToken,
     );
 
-    // cookie에 accessToken, refreshToken 저장
     res.cookie('AccessToken', accessToken, {
       maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
@@ -281,11 +293,15 @@ export class AuthController {
     @Body() findPasswordDto: FindPasswordDto,
   ): Promise<FindPasswordResponse> {
     const user: UserModel = await this.authService.findUser(findPasswordDto);
-    await this.authService.setPWChangeToken(user.id);
+    const passwordToken: string = uuid().toString();
+    await this.authService.setPWChangeToken(user.id, passwordToken);
+
     const result: boolean = await this.mailService.sendEmail(
       user.email,
       user.name,
+      passwordToken,
     );
+
     this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
       statusCode: 200,
@@ -302,23 +318,39 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: '토큰 검사 성공',
-    type: CommonResponseDto,
+    type: FindPasswordResponse,
+  })
+  @ApiQuery({
+    name: 'email',
+    required: true,
+    description: '이메일',
+  })
+  @ApiQuery({
+    name: 'token',
+    required: true,
+    description: '비밀번호 토큰',
   })
   @Get('change-password/check')
-  async checkPWToken(
-    @Param('email') email: string,
-  ): Promise<CommonResponseDto> {
-    const user: UserModel = await this.authService.getUserByEmail(email);
-    await this.redisService.getKey('pw' + user.id);
+  async checkPWToken(@Query() query): Promise<FindPasswordResponse> {
+    const user: UserModel = await this.authService.getUserByEmail(query.email);
+    const token: string = await this.redisService.getKey('pw' + user.id);
+
+    if (
+      query.token !==
+      token.slice(this.configService.get('CHANGE_PASSWORD_KEY').length)
+    ) {
+      throw new ForbiddenException('토큰이 일치하지 않습니다.');
+    }
     this.logger.verbose(`User ${user.email} check pw token Success!`);
     return {
       statusCode: 200,
       message: '토큰의 유효기간이 만료되지 않았습니다.',
+      result: { result: true },
     };
   }
 
   @HttpCode(200)
-  @Put('change-password')
+  @Put('change-password/:email')
   @ApiOperation({
     summary: '비밀번호 변경 API',
     description: '비밀번호를 변경 한다.',
@@ -327,6 +359,11 @@ export class AuthController {
     status: 200,
     description: '비밀번호 변경 성공',
     type: CommonResponseDto,
+  })
+  @ApiParam({
+    name: 'email',
+    required: true,
+    description: '이메일',
   })
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(
@@ -340,6 +377,162 @@ export class AuthController {
       message: '비밀번호가 변경되었습니다.',
     };
   }
+
+  @HttpCode(200)
+  @Get('google')
+  @Throttle(5, 1)
+  @ApiOperation({
+    summary: 'google 로그인 API',
+    description: 'google 로그인을 요청 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'google 로그인 요청 성공',
+  })
+  @UseGuards(GoogleGuard)
+  async google() {
+    return HttpStatus.OK;
+  }
+
+  @UseGuards(GoogleGuard)
+  @Get('google-redirect')
+  @Redirect(`${process.env.CLIENT_URL}/login`, 403)
+  async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
+    const { accessToken, refreshToken }: Tokens =
+      await this.authService.googleLogin(req.user as OauthLoginDto, res);
+
+    res.cookie('AccessToken', accessToken, {
+      maxAge: this.configService.get('JWT_EXPIRESIN'),
+      httpOnly: true,
+      // secure:true
+    });
+    res.cookie('RefreshToken', refreshToken, {
+      maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
+      httpOnly: true,
+      // secure:true
+    });
+
+    res.redirect(`${process.env.CLIENT_URL}/`);
+    res.end();
+  }
+
+  @HttpCode(200)
+  @Throttle(5, 360)
+  @UseGuards(RecaptchaGuard)
+  @Post('send-sms')
+  @ApiOperation({
+    summary: '계정 찾기 / 회원가입의 휴대폰 본인인증 API',
+    description:
+      '계정 찾기 / 회원가입에서 휴대폰 SMS 인증번호로 본인인증 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'SMS 전송 성공',
+    type: CommonResponseDto,
+  })
+  @ApiBody({ type: FindAccountDto })
+  async sendSMS(
+    @Body() findAccountDto: FindAccountDto,
+  ): Promise<CommonResponseDto> {
+    const number = Math.floor(Math.random() * 1000000);
+    const verifyCode: string = number.toString().padStart(6, '0');
+
+    await this.redisService.setKey(
+      'sms' + findAccountDto.phone,
+      verifyCode,
+      300,
+    );
+
+    await this.smsService.sendSMSByTwilio(findAccountDto.phone, verifyCode);
+
+    this.logger.verbose(`User ${findAccountDto.phone} send sms Success!`);
+    return {
+      statusCode: 200,
+      message: 'SMS을 성공적으로 전송했습니다.',
+    };
+  }
+
+  @HttpCode(200)
+  @Get('verify-code')
+  @ApiOperation({
+    summary: '인증번호 확인 API',
+    description: '인증번호가 일치하는지 확인 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '인증번호 확인 성공',
+    type: FindUserResponse,
+  })
+  @ApiQuery({
+    name: 'code',
+    required: true,
+    description: '인증번호',
+  })
+  @ApiQuery({
+    name: 'phone',
+    required: true,
+    description: '전화번호',
+  })
+  async verifyCode(@Query() query): Promise<FindUserResponse> {
+    const { phone, code } = query;
+
+    const saveCode = await this.redisService.getKey('sms' + phone);
+
+    if (saveCode !== code) {
+      throw new ForbiddenException('인증번호가 일치하지 않습니다.');
+    } else {
+      const user: UserModel = await this.authService.getUserByPhone(phone);
+      this.logger.verbose(`User ${user.phone} verify code Success!`);
+      return {
+        statusCode: 200,
+        message: '인증번호가 일치합니다.',
+        user: { id: user.id },
+      };
+    }
+  }
+
+  @HttpCode(200)
+  @ApiParam({
+    name: 'phone',
+    required: true,
+    description: '전화번호',
+  })
+  @ApiOperation({
+    summary: '계정 찾기 API',
+    description: '계정을 찾는다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '계정 찾기 성공',
+    type: FindAccountResponse,
+  })
+  @Get('find-account')
+  async getAccount(
+    @Param('phone') phone: string,
+  ): Promise<FindAccountResponse> {
+    const user: UserModel = await this.authService.getUserByPhone(phone);
+
+    let name;
+    let email;
+
+    if (!user) {
+      name = '';
+      email = '';
+    } else {
+      name = user.name;
+      email = user.email;
+    }
+
+    return {
+      statusCode: 200,
+      message: '계정을 찾았습니다.',
+      user: { name, email },
+    };
+  }
+
+  // 이메일 인증
+  // 이메일이 유효한지 검사하기
+  // 인증번호? 아니면 비밀번호 변경 이메일에서 멘트만 바꾸기
 
   // @HttpCode(200)
   // @Throttle(5, 1)
@@ -364,7 +557,6 @@ export class AuthController {
   //   const { accessToken, refreshToken }: Tokens =
   //     await this.authService.kakaoLogin(req.user as OauthLoginDto);
 
-  //   // tokens cookie 저장
   //   res.cookie('AccessToken', accessToken, {
   //     maxAge: this.configService.get('JWT_EXPIRESIN'),
   //     httpOnly: true,
@@ -377,47 +569,6 @@ export class AuthController {
   //   });
 
   //   res.redirect(`${process.env.CLIENT_URL}/`);
+  //   res.end();
   // }
-
-  @Get('google')
-  @Throttle(5, 1)
-  @ApiOperation({
-    summary: 'google 로그인 API',
-    description: 'google 로그인을 요청 한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'google 로그인 요청 성공',
-  })
-  @UseGuards(GoogleGuard)
-  async google() {
-    return HttpStatus.OK;
-  }
-
-  @UseGuards(GoogleGuard)
-  @Get('google-redirect')
-  async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
-    const { accessToken, refreshToken }: Tokens =
-      await this.authService.googleLogin(req.user as OauthLoginDto);
-
-    res.cookie('AccessToken', accessToken, {
-      maxAge: this.configService.get('JWT_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
-    res.cookie('RefreshToken', refreshToken, {
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
-
-    res.redirect(`${process.env.CLIENT_URL}/`);
-    res.end();
-  }
-
-  // @Post('send-sms')
-  // async sendSMS() {}
-
-  // @Post('verify-code')
-  // async verifyCode() {}
 }

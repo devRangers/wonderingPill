@@ -1,4 +1,4 @@
-import { MAIN_COLOR, SUB_COLOR } from "@utils/constant";
+import { MAIN_COLOR, ACCENT_COLOR } from "@utils/constant";
 import {
   FormContainer,
   TitleContainer,
@@ -21,7 +21,7 @@ function AuthForm({ onClose }: AuthFormProps) {
   return (
     <FormContainer>
       <TitleContainer>
-        <Title $txtColor={SUB_COLOR}>인증번호 입력</Title>
+        <Title $txtColor={ACCENT_COLOR}>인증번호 입력</Title>
       </TitleContainer>
 
       <InputContainer>
@@ -33,7 +33,7 @@ function AuthForm({ onClose }: AuthFormProps) {
 
       <RetryBtnContainer>
         <RetryMessage>인증번호가 발송되지 않았나요?</RetryMessage>
-        <RetryBtn $btnColor={SUB_COLOR}>다시 인증번호 요청</RetryBtn>
+        <RetryBtn $btnColor={ACCENT_COLOR}>다시 인증번호 요청</RetryBtn>
       </RetryBtnContainer>
 
       <CloseBtnContainer>

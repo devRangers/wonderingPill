@@ -1,250 +1,6 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/pharmacy": {
-      "get": {
-        "operationId": "PharmacyController_pharmacyList",
-        "summary": "모든 약국 리스트 조회",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PharmacyResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Pharmacy API"]
-      }
-    },
-    "/pharmacy/search": {
-      "get": {
-        "operationId": "PharmacyController_pharmacySearch",
-        "summary": "약국 검색 API",
-        "parameters": [
-          {
-            "name": "phone",
-            "required": false,
-            "in": "query",
-            "description": "검색할 전화번호",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "required": false,
-            "in": "query",
-            "description": "검색할 약국 이름",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "address",
-            "required": false,
-            "in": "query",
-            "description": "검색할 주소",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "start",
-            "required": false,
-            "in": "query",
-            "description": "페이지네이션 시작 위치",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PharmacyResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Pharmacy API"]
-      }
-    },
-    "/pharmacy/count": {
-      "get": {
-        "operationId": "PharmacyController_pharmacyCount",
-        "summary": "약국 검색 결과 카운트 API",
-        "parameters": [
-          {
-            "name": "phone",
-            "required": false,
-            "in": "query",
-            "description": "검색할 전화번호",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "required": false,
-            "in": "query",
-            "description": "검색할 약국 이름",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "address",
-            "required": false,
-            "in": "query",
-            "description": "검색할 주소",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "start",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PharmacyCountResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Pharmacy API"]
-      }
-    },
-    "/bookmark": {
-      "post": {
-        "operationId": "BookmarkController_createBookmark",
-        "summary": "북마크 생성",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BookmarkCreateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BookmarkCreateDto"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BookmarkCreateResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Bookmark API"]
-      }
-    },
-    "/bookmark/list": {
-      "get": {
-        "operationId": "BookmarkController_listBookmark",
-        "summary": "북마크 리스트 조회",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BookmarkListResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Bookmark API"]
-      }
-    },
-    "/bookmark/{id}": {
-      "get": {
-        "operationId": "BookmarkController_readBookmark",
-        "summary": "북마크 개별 조회",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "조회할 북마크 ID",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BookmarkListResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Bookmark API"]
-      },
-      "delete": {
-        "operationId": "BookmarkController_deleteBookmark",
-        "summary": "북마크 삭제 ",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "삭제할 북마크 ID",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "tags": ["Bookmark API"]
-      }
-    },
     "/auth/signup": {
       "post": {
         "operationId": "AuthController_signupUser",
@@ -424,6 +180,215 @@
         },
         "tags": ["Auth API"]
       }
+    },
+    "/bookmark": {
+      "post": {
+        "operationId": "BookmarkController_createBookmark",
+        "summary": "북마크 생성",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookmarkCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookmarkCreateDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Bookmark API"]
+      }
+    },
+    "/bookmark/list": {
+      "get": {
+        "operationId": "BookmarkController_listBookmark",
+        "summary": "북마크 리스트 조회",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "조회 성공"
+          }
+        },
+        "tags": ["Bookmark API"]
+      }
+    },
+    "/bookmark/{id}": {
+      "get": {
+        "operationId": "BookmarkController_readBookmark",
+        "summary": "북마크 개별 조회",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "조회할 북마크 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공"
+          }
+        },
+        "tags": ["Bookmark API"]
+      },
+      "delete": {
+        "operationId": "BookmarkController_deleteBookmark",
+        "summary": "북마크 삭제 ",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "삭제할 북마크 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["Bookmark API"]
+      }
+    },
+    "/pharmacy": {
+      "get": {
+        "operationId": "PharmacyController_pharmacyList",
+        "summary": "모든 약국 리스트 조회",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "조회 성공"
+          }
+        },
+        "tags": ["Pharmacy API"]
+      }
+    },
+    "/pharmacy/search": {
+      "get": {
+        "operationId": "PharmacyController_pharmacySearch",
+        "summary": "약국 검색 API",
+        "parameters": [
+          {
+            "name": "phone",
+            "required": false,
+            "in": "query",
+            "description": "검색할 전화번호",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "검색할 약국 이름",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "address",
+            "required": false,
+            "in": "query",
+            "description": "검색할 주소",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start",
+            "required": false,
+            "in": "query",
+            "description": "페이지네이션 시작 위치",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공"
+          }
+        },
+        "tags": ["Pharmacy API"]
+      }
+    },
+    "/pharmacy/count": {
+      "get": {
+        "operationId": "PharmacyController_pharmacyCount",
+        "summary": "약국 검색 결과 카운트 API",
+        "parameters": [
+          {
+            "name": "phone",
+            "required": false,
+            "in": "query",
+            "description": "검색할 전화번호",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "검색할 약국 이름",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "address",
+            "required": false,
+            "in": "query",
+            "description": "검색할 주소",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공"
+          }
+        },
+        "tags": ["Pharmacy API"]
+      }
     }
   },
   "info": {
@@ -450,166 +415,6 @@
       }
     },
     "schemas": {
-      "PharmacyResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "고유 ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "이름"
-          },
-          "phone": {
-            "type": "string",
-            "description": "번호"
-          },
-          "address": {
-            "type": "string",
-            "description": "주소"
-          },
-          "monday": {
-            "type": "string",
-            "description": "월요일"
-          },
-          "tuesday": {
-            "type": "string",
-            "description": "화요일"
-          },
-          "wednesday": {
-            "type": "string",
-            "description": "수요일"
-          },
-          "thursday": {
-            "type": "string",
-            "description": "목요일"
-          },
-          "friday": {
-            "type": "string",
-            "description": "금요일"
-          },
-          "saturday": {
-            "type": "string",
-            "description": "토요일"
-          },
-          "sunday": {
-            "type": "string",
-            "description": "일요일"
-          },
-          "holiday": {
-            "type": "string",
-            "description": "공휴일"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "phone",
-          "address",
-          "monday",
-          "tuesday",
-          "wednesday",
-          "thursday",
-          "friday",
-          "saturday",
-          "sunday",
-          "holiday"
-        ]
-      },
-      "PharmacyCountResponse": {
-        "type": "object",
-        "properties": {
-          "count": {
-            "type": "number",
-            "description": "검색 개수"
-          }
-        },
-        "required": ["count"]
-      },
-      "BookmarkCreateDto": {
-        "type": "object",
-        "properties": {
-          "pharmacyId": {
-            "type": "number"
-          }
-        },
-        "required": ["pharmacyId"]
-      },
-      "BookmarkCreateResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number"
-          },
-          "pharmacy_id": {
-            "type": "number"
-          }
-        },
-        "required": ["id", "pharmacy_id"]
-      },
-      "BookmarkListResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number"
-          },
-          "Pharmacy": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "required": true,
-                "type": "number"
-              },
-              "name": {
-                "required": true,
-                "type": "string"
-              },
-              "phone": {
-                "required": true,
-                "type": "string"
-              },
-              "address": {
-                "required": true,
-                "type": "string"
-              },
-              "monday": {
-                "required": true,
-                "type": "string"
-              },
-              "tuesday": {
-                "required": true,
-                "type": "string"
-              },
-              "wednesday": {
-                "required": true,
-                "type": "string"
-              },
-              "thursday": {
-                "required": true,
-                "type": "string"
-              },
-              "friday": {
-                "required": true,
-                "type": "string"
-              },
-              "saturday": {
-                "required": true,
-                "type": "string"
-              },
-              "sunday": {
-                "required": true,
-                "type": "string"
-              },
-              "holiday": {
-                "required": true,
-                "type": "string"
-              }
-            }
-          }
-        },
-        "required": ["id", "Pharmacy"]
-      },
       "CreateUserDto": {
         "type": "object",
         "properties": {
@@ -766,9 +571,27 @@
           },
           "message": {
             "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "result": {
+                "required": true,
+                "type": "boolean"
+              }
+            }
           }
         },
-        "required": ["statusCode", "message"]
+        "required": ["statusCode", "message", "result"]
+      },
+      "BookmarkCreateDto": {
+        "type": "object",
+        "properties": {
+          "pharmacyId": {
+            "type": "number"
+          }
+        },
+        "required": ["pharmacyId"]
       }
     }
   }

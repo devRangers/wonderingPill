@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { LoggerMiddleware } from '../common/middlewares/LoggerMiddleware';
 import { BookmarkController } from './bookmark.controller';
 import { BookmarkService } from './bookmark.service';
 
@@ -7,4 +8,8 @@ import { BookmarkService } from './bookmark.service';
   controllers: [BookmarkController],
   providers: [BookmarkService, PrismaService],
 })
-export class BookmarkModule {}
+export class BookmarkModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('bookmark');
+  }
+}
