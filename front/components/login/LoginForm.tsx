@@ -60,7 +60,6 @@ function LoginForm() {
       Api.post<SigninResponse, LoginTypes>("/auth/signin", data),
     {
       onSuccess: ({ user }) => {
-        console.log(user);
         setUser(user);
         router.push("/");
       },
