@@ -3,7 +3,7 @@ import { styled } from "styletron-react";
 export const InnerContainer = styled("div", {
   height: "100%",
   display: "grid",
-  gridTemplateRows: "0.6fr 1.1fr 1fr 0.15fr",
+  gridTemplateRows: "1fr 2fr 2fr 0.5fr",
   gap: "1.5rem",
 });
 
@@ -80,10 +80,7 @@ export const ContentContainer = styled(
   "div",
   (props: { $borderColor: string }) => ({
     position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    padding: "1rem 1rem",
+    padding: "1rem 1.5rem",
     border: `1px solid ${props.$borderColor}`,
     borderRadius: "10px",
     backgroundColor: "#F5F5F5",
@@ -121,15 +118,16 @@ export const MedicineBadgeContainer = styled("div", {
 });
 
 export const PharmarcyContainer = styled("div", {
-  display: "grid",
-  gridTemplateRows: "1fr 1fr",
-  gap: "0.4rem",
-  justifyItems: "center",
-  width: "85%",
-  height: "90%",
-  maxHeight: "8rem",
-  overflowY: "scroll",
-  padding: "0.5rem",
-  margin: "0 auto",
-  border: "1px solid",
+  textAlign: "center",
+  // width: "100%",
+  height: "100%",
+  margin: "0.8rem auto 1rem auto",
+});
+
+export const PharmarcyWrapper = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  // alignContent: "stretch",
+  // height: "100%",
+  backgroundColor: "orange",
 });
