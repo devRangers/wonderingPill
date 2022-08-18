@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEmail,
@@ -13,10 +12,8 @@ import { CommonResponseDto } from 'src/common/dto';
 export class SigninUserDto {
   @IsEmail()
   @IsNotEmpty()
-  @ApiProperty()
   email: string;
 
-  @ApiProperty()
   @IsString()
   @MinLength(8)
   @IsNotEmpty()
@@ -27,11 +24,9 @@ export class SigninUserDto {
 
   @IsBoolean()
   @IsNotEmpty()
-  @ApiProperty()
   isSignin: boolean;
 
   @IsString()
-  @ApiProperty()
   @IsNotEmpty()
   token: string;
 }
@@ -39,7 +34,6 @@ export class SigninUserDto {
 export class SigninResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  @ApiProperty()
   user: {
     id: string;
     email: string;
@@ -52,7 +46,6 @@ export class SigninResponse extends CommonResponseDto {
 export class LogoutResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  @ApiProperty()
   checkLogout: {
     checkLogout: boolean;
   };
@@ -61,19 +54,15 @@ export class LogoutResponse extends CommonResponseDto {
 export class OauthLoginDto {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
   name: string;
 
   @IsString()
-  @ApiProperty()
   email: string;
 
   @IsString()
-  @ApiProperty()
   profileImg: string;
 
   @IsString()
-  @ApiProperty()
   @IsNotEmpty()
   @Matches(/^[A-Za-z\d!@#$%^&*()]{8,20}$/, {
     message: '비밀번호 양식에 맞게 작성하세요.',
@@ -81,12 +70,10 @@ export class OauthLoginDto {
   password: string;
 
   @IsString()
-  @ApiProperty()
   @IsNotEmpty()
   accessToken: string;
 
   @IsString()
-  @ApiProperty()
   @IsNotEmpty()
   refreshToken: string;
 }

@@ -6,7 +6,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
@@ -36,10 +35,6 @@ export class AuthService {
         where: { email },
       });
 
-      if (!user) {
-        throw new ForbiddenException('회원이 존재하지 않습니다.');
-      }
-
       return user;
     } catch {
       throw new ForbiddenException('회원을 찾지 못했습니다.');
@@ -51,10 +46,6 @@ export class AuthService {
       const user: User = await this.prisma.user.findUnique({
         where: { id },
       });
-
-      if (!user) {
-        throw new ForbiddenException('회원이 존재하지 않습니다.');
-      }
 
       return user;
     } catch {
@@ -91,13 +82,7 @@ export class AuthService {
 
       return newUser;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ForbiddenException('이미 존재하는 이메일입니다.');
-        }
-      } else {
-        throw new ForbiddenException('회원을 저장하지 못했습니다.');
-      }
+      throw new ForbiddenException('회원을 저장하지 못했습니다.');
     }
   }
 
@@ -146,7 +131,7 @@ export class AuthService {
       });
       return { accessToken, refreshToken };
     } catch (error) {
-      throw new ForbiddenException('토큰 생성에 실패했습니다.');
+      throw new UnauthorizedException('토큰 생성에 실패했습니다.');
     }
   }
 
@@ -257,15 +242,14 @@ export class AuthService {
 
   async setPWChangeToken(id: string, token: string): Promise<string> {
     try {
-      const result: boolean = await this.redisService.setKey(
+      await this.redisService.setKey(
         'pw' + id,
         this.configService.get('CHANGE_PASSWORD_KEY') + token,
         Number(this.configService.get('PW_TOKEN_TTL')),
       );
-      if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
       return token;
     } catch (error) {
-      throw new ForbiddenException('토큰을 저장할때 에러가 발생했습니다.');
+      throw new ForbiddenException('토큰을 저장하지 못했습니다.');
     }
   }
 
@@ -297,18 +281,18 @@ export class AuthService {
       if (!user) {
         await this.createOauthUser(googleLoginDto, 'google');
       } else if (user.provider !== 'GOOGLE') {
-        res.status(403).redirect(`${process.env.CLIENT_URL}/login/error`);
+        res
+          .status(403)
+          .redirect(`${this.configService.get('CLIENT_URL')}/login/error`);
       }
 
       const { accessToken, refreshToken } = googleLoginDto;
 
       await this.redisService.setKey(
         'go' + user.id,
-        process.env.REFRESHTOKEN_KEY + refreshToken,
-        Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+        this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
+        Number(this.configService.get('JWT_REFRESH_EXPIRESIN')) / 1000,
       );
-
-      console.log(accessToken, refreshToken);
 
       return { accessToken, refreshToken };
     } catch (error) {
