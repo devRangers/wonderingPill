@@ -2,6 +2,7 @@ export const MAIN_COLOR = "#A8C0EA";
 export const SUB_COLOR = "#9ADCDD";
 export const ACCENT_COLOR = "#3C5A93";
 export const ERROR_MSG_COLOR = "#bd0000";
+export const BOX_COLOR = "#2A306A";
 
 export const HEADER_HEIGHT = "10vh";
 export const FOOTER_HEIGHT = "8vh";
