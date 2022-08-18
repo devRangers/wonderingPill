@@ -14,6 +14,7 @@
     "@types/styletron-engine-atomic": "^1.1.1",
     "@types/styletron-react": "^5.0.3",
     "@types/styletron-standard": "^2.0.2",
+    "firebase": "8.2.1",
     "formik": "^2.2.9",
     "jotai": "^1.7.4",
     "next": "12.2.2",
