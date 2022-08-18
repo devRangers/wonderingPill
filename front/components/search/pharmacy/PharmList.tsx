@@ -5,8 +5,13 @@ import Slider from "react-slick";
 import { useMediaQuery } from "react-responsive";
 import { useStyletron } from "styletron-react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { MAIN_COLOR } from "@utils/constant";
+import { useQuery, useMutation } from "react-query";
+import * as Api from "@api";
+import { BookmarkGetResponseDto as BookmarkListResponse } from "@modelTypes/bookmarkGetResponseDto";
+import { BookmarkGetResponseDtoBookmark as Bookmark } from "@modelTypes/bookmarkGetResponseDtoBookmark";
+import { BookmarkCreateResponseDto } from "@modelTypes/bookmarkCreateResponseDto";
 import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
+import { MAIN_COLOR } from "@utils/constant";
 import {
   PharmInfoContainer,
   PharmInfo,
@@ -56,10 +61,25 @@ function PharmList({ pharmList }: PharmListProps) {
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [selectedPharmInfo, setSelectedPharmInfo] =
     useState<PharmacyResponse>(initialInfoValues);
+  const [bookmarkList, setBookmarkList] = useState<Bookmark[]>([]);
+
+  useQuery(
+    "getBookmarkList",
+    () => Api.get<BookmarkListResponse>("/bookmark/list"),
+    {
+      onSuccess: (data) => {
+        setBookmarkList(data.bookmark);
+      },
+    },
+  );
 
   const selectPharmHandler = (info: PharmacyResponse) => {
     setSelectedPharmInfo(info);
     setInfoModalOpen(true);
+  };
+
+  const bookmarkClickHandler = (id: number) => {
+    console.log(id);
   };
 
   useEffect(() => {
@@ -81,8 +101,14 @@ function PharmList({ pharmList }: PharmListProps) {
                   {item.name}
                 </PharmName>
                 <PharmSubInfo>{item.phone}</PharmSubInfo>
-                <IconBtn>
-                  <AiOutlineHeart />
+                <IconBtn onClick={() => bookmarkClickHandler(item.id)}>
+                  {bookmarkList
+                    .map((bookmark) => bookmark?.Pharmacy?.id)
+                    .includes(item.id) ? (
+                    <AiFillHeart />
+                  ) : (
+                    <AiOutlineHeart />
+                  )}
                 </IconBtn>
               </PharmInfo>
             </div>

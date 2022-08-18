@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { BookmarkGetResponseDtoBookmark } from './bookmarkGetResponseDtoBookmark';
+import type { BookmarkGetResponseDtoBookmark } from "./bookmarkGetResponseDtoBookmark";
 
 export interface BookmarkGetResponseDto {
   statusCode: number;
   message: string;
-  bookmark: BookmarkGetResponseDtoBookmark;
+  bookmark: BookmarkGetResponseDtoBookmark[];
 }
