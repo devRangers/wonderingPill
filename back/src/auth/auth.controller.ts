@@ -290,8 +290,8 @@ export class AuthController {
     const passwordToken: string = uuid().toString();
     await this.authService.setPWChangeToken(user.id, passwordToken);
 
-    const result: boolean = await this.mailService.sendEmail(
-      user.email,
+    const check: boolean = await this.mailService.sendEmail(
+      user.id,
       user.name,
       passwordToken,
     );
@@ -300,7 +300,7 @@ export class AuthController {
     return {
       statusCode: 200,
       message: '이메일을 성공적으로 전송했습니다.',
-      result: { result },
+      result: { check },
     };
   }
 
@@ -315,9 +315,9 @@ export class AuthController {
     type: FindPasswordResponse,
   })
   @ApiQuery({
-    name: 'email',
+    name: 'id',
     required: true,
-    description: '이메일',
+    description: '유저 아이디',
   })
   @ApiQuery({
     name: 'token',
@@ -326,8 +326,7 @@ export class AuthController {
   })
   @Get('change-password/check')
   async checkPWToken(@Query() query): Promise<FindPasswordResponse> {
-    const user: UserModel = await this.authService.getUserByEmail(query.email);
-    const token: string = await this.redisService.getKey('pw' + user.id);
+    const token: string = await this.redisService.getKey('pw' + query.id);
 
     if (
       query.token !==
@@ -335,11 +334,11 @@ export class AuthController {
     ) {
       throw new ForbiddenException('토큰이 일치하지 않습니다.');
     }
-    this.logger.verbose(`User ${user.email} check pw token Success!`);
+    this.logger.verbose(`User ${query.id} check pw token Success!`);
     return {
       statusCode: 200,
       message: '토큰의 유효기간이 만료되지 않았습니다.',
-      result: { result: true },
+      result: { check: true },
     };
   }
 
