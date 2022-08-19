@@ -43,6 +43,7 @@ model User {
   birth            String?            @db.VarChar(9)
   updatedAt        DateTime?          @updatedAt
   provider         Provider?          @default(LOCAL)
+  role             Role?              @default(USER)
   PharmacyBookMark PharmacyBookMark[]
   PillBookMark     PillBookMark[]
   Inquiry          Inquiry[]
@@ -71,6 +72,11 @@ model Inquiry{
    content          String             @db.VarChar(320)
    user_id          String?
    User             User?              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum Role {
+  ADMIN
+  USER
 }
 
 enum Provider {

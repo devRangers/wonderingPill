@@ -7,7 +7,7 @@ export class GcsService {
   constructor(private readonly configService: ConfigService) {}
 
   async getPresignedUrl(id: string): Promise<string> {
-    const fileName = id + 'profile.png';
+    const fileName = id + '_profile.png';
     const bucketName = 'wonderingpill-bucket/user_profileImg/';
     try {
       const storage = new Storage({
