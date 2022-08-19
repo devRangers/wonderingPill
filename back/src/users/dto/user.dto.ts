@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsJSON, IsNotEmpty, IsString } from 'class-validator';
+import { providerType } from 'src/auth/auth-provider.enum';
 import { CommonResponseDto } from 'src/common/dto';
 
 export class DeleteUserResponse extends CommonResponseDto {
@@ -28,8 +29,30 @@ export class SendInquiryResponse extends CommonResponseDto {
   result: { check: boolean };
 }
 
-// export class User {
-//   id: number;
-//   name: string;
-//   phone: string;
-// }
+export class getUserResponse extends CommonResponseDto {
+  @IsJSON()
+  @IsNotEmpty()
+  @ApiProperty()
+  result: { user };
+}
+
+export class getSignedUrlResponse extends CommonResponseDto {
+  @IsJSON()
+  @IsNotEmpty()
+  @ApiProperty()
+  result: { url: string };
+}
+
+export class User {
+  id: number;
+  email: string;
+  name: string;
+  phone: string;
+  password: string;
+  profileImg: string;
+  birth: string;
+  provider: providerType;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}

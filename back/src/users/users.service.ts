@@ -5,11 +5,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async uploadProfile(img: string) {
-    // db에 img 저장
-    // gcs에 사진 저장
-  }
-
   async deleteUser(id: string) {
     try {
       await this.prisma.user.update({

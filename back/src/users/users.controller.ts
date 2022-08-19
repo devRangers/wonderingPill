@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   Logger,
-  Param,
   Patch,
   Post,
   UseGuards,
@@ -20,8 +19,15 @@ import { User } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { AccessGuard } from 'src/common/guards';
+import { GcsService } from 'src/gcs/gcs.service';
 import { MailService } from 'src/mail/mail.service';
-import { DeleteUserResponse, SendInquiryDto, SendInquiryResponse } from './dto';
+import {
+  DeleteUserResponse,
+  getSignedUrlResponse,
+  getUserResponse,
+  SendInquiryDto,
+  SendInquiryResponse,
+} from './dto';
 import { UsersService } from './users.service';
 
 @ApiTags('Users API')
@@ -32,17 +38,12 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
     private readonly authService: AuthService,
+    private readonly gcsService: GcsService,
   ) {}
 
-  // 마이페이지 프로필 사진 업로드 : 외부 스토리지 gcs 연결
-  @Post('upload-profileImg')
-  async uploadProfile(@Body() img: string) {
-    const user = await this.usersService.uploadProfile(img);
-    console.log(user);
-  }
-
   @HttpCode(200)
-  @Patch('delete-user/:id')
+  @Patch('delete-user')
+  @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '회원탈퇴 API',
     description: '유저를 삭제 한다.',
@@ -54,7 +55,9 @@ export class UsersController {
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
-  async deleteUser(@Param('id') id: string): Promise<DeleteUserResponse> {
+  async deleteUser(
+    @GetCurrentUserId() id: string,
+  ): Promise<DeleteUserResponse> {
     await this.usersService.deleteUser(id);
     this.logger.verbose(`User ${id} delete Success!`);
     return {
@@ -64,9 +67,67 @@ export class UsersController {
     };
   }
 
+  // 알림 여부 추가해야함
+  @HttpCode(200)
+  @Get('mypage')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '마이페이지 조회 API',
+    description: '마이페이지에서 북마크를 조회 한다(알림 추가되어야함)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '마이페이지 조회 성공',
+    type: getUserResponse,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async getUserInfo(@GetCurrentUserId() id: string): Promise<getUserResponse> {
+    const user = await this.usersService.getUserInfo(id);
+    if (!user) throw new ForbiddenException('회원 정보를 가져오지 못했습니다.');
+    return {
+      statusCode: 200,
+      message: '마이페이지 조회를 성공했습니다.',
+      result: { user },
+    };
+  }
+
+  @HttpCode(200)
+  @Get('presigned-url')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: 'signed url 요청 API',
+    description: '외부 스토리지 GCS에서 signed url 발급한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'signed url 요청 성공',
+    type: getSignedUrlResponse,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async getPresignedUrl(
+    @GetCurrentUserId() id: string,
+  ): Promise<getSignedUrlResponse> {
+    const url: string = await this.gcsService.getPresignedUrl(id);
+    return {
+      statusCode: 200,
+      message: 'signed url를 발급했습니다.',
+      result: { url },
+    };
+  }
+
   // 고객 센터
   // 관리자 페이지를 추가하면 email 전송 제거
+  @HttpCode(200)
   @Post('send-email')
+  @ApiOperation({
+    summary: '고객센터 API',
+    description:
+      '고객이 문의한 내용을 이메일로 전송 한다(API 수정 필요 : 관리자 페이지)',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
   async sendEmail(
     @Body() sendInquiryDto: SendInquiryDto,
   ): Promise<SendInquiryResponse> {
@@ -83,31 +144,6 @@ export class UsersController {
       statusCode: 200,
       message: '문의를 성공적으로 전송했습니다.',
       result: { check },
-    };
-  }
-
-  // 알림 여부 추가해야함
-  @HttpCode(200)
-  @Get('mypage')
-  @UseGuards(AccessGuard)
-  @ApiOperation({
-    summary: '마이페이지 조회 API',
-    description: '마이페이지에서 북마크를 조회 한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '마이페이지 조회 성공',
-    // type: ,
-  })
-  @ApiCookieAuth('accessToken')
-  @ApiCookieAuth('refreshToken')
-  async getUserInfo(@GetCurrentUserId() id: string) {
-    const user = await this.usersService.getUserInfo(id);
-    if (!user) throw new ForbiddenException('회원 정보를 가져오지 못했습니다.');
-    return {
-      statusCode: 200,
-      message: '마이페이지 조회를 성공했습니다.',
-      result: { user },
     };
   }
 }
