@@ -242,15 +242,14 @@ export class AuthService {
 
   async setPWChangeToken(id: string, token: string): Promise<string> {
     try {
-      const result: boolean = await this.redisService.setKey(
+      await this.redisService.setKey(
         'pw' + id,
         this.configService.get('CHANGE_PASSWORD_KEY') + token,
         Number(this.configService.get('PW_TOKEN_TTL')),
       );
-      if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
       return token;
     } catch (error) {
-      throw new ForbiddenException('토큰을 저장할때 에러가 발생했습니다.');
+      throw new ForbiddenException('토큰을 저장하지 못했습니다.');
     }
   }
 

@@ -28,7 +28,7 @@ export class FindPasswordDto {
 export class FindPasswordResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  result: { result: boolean };
+  result: { check: boolean };
 }
 
 export class ChangePasswordDto {
