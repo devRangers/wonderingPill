@@ -519,9 +519,9 @@ export class AuthController {
 
   @HttpCode(200)
   @ApiParam({
-    name: 'phone',
+    name: 'id',
     required: true,
-    description: '전화번호',
+    description: '유저 아이디',
   })
   @ApiOperation({
     summary: '계정 찾기 API',
