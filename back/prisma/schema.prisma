@@ -50,14 +50,14 @@ model User {
 }
 
 model Inquiry {
-  id      String  @id
+  id      String  @id @default(uuid())
   content String  @db.VarChar(320)
   user_id String?
   User    User?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Pill {
-  id           String         @id
+  id           String         @id @default(uuid())
   code         String?        @unique @db.VarChar(10)
   name         String?        @db.VarChar(20)
   shape        Shape?
@@ -67,11 +67,18 @@ model Pill {
 }
 
 model PillBookMark {
-  id      String  @id
+  id      String  @id @default(uuid())
   pill_id String?
   user_id String?
   Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User    User?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Alarm   Alarm?
+}
+
+model Alarm {
+  id                  String             @id @default(uuid())
+  pillBookMark_id     String             @unique
+  PillBookMark        PillBookMark       @relation(fields: [pillBookMark_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum Provider {

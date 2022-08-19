@@ -20,5 +20,12 @@ export class AlarmsController {
     const alarms = await this.alarmsService.getAlarms(id);
     return alarms;
   }
+
   // alarm 삭제하기
+  // @Delete()
+  // @UseGuards(AccessGuard)
+  // async deleteAlarms(@GetCurrentUserId() id: string) {
+  //   const alarms = await this.alarmsService.getAlarms(id);
+  //   return alarms;
+  // }
 }

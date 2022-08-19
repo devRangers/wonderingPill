@@ -7,8 +7,22 @@ export class AlarmsService {
 
   async getAlarms(id: string) {
     try {
-      const alarms = await this.prisma.alarm.findUnique({
-        where: { user_id: id },
+      const alarms = await this.prisma.alarm.findMany({
+        where: { PillBookMark: { user_id: id } },
+        select: {
+          PillBookMark: {
+            select: {
+              User: {
+                select: { name: true },
+              },
+              Pill: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
       });
       return alarms;
     } catch (error) {
