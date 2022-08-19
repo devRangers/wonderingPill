@@ -8,7 +8,7 @@
 import type { Pharmacy } from './pharmacy';
 
 export interface BookmarkListResponseDto {
+  bookmark: Pharmacy[];
   statusCode: number;
   message: string;
-  bookmark: Pharmacy[];
 }

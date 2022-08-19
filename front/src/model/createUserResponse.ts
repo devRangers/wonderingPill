@@ -8,7 +8,7 @@
 import type { CreateUserResponseUser } from './createUserResponseUser';
 
 export interface CreateUserResponse {
+  user: CreateUserResponseUser;
   statusCode: number;
   message: string;
-  user: CreateUserResponseUser;
 }

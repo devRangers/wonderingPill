@@ -8,7 +8,7 @@
 import type { BookmarkGetResponseDtoBookmark } from './bookmarkGetResponseDtoBookmark';
 
 export interface BookmarkGetResponseDto {
+  bookmark: BookmarkGetResponseDtoBookmark;
   statusCode: number;
   message: string;
-  bookmark: BookmarkGetResponseDtoBookmark;
 }

@@ -195,10 +195,10 @@
             "schema": {}
           },
           {
-            "name": "email",
+            "name": "id",
             "required": true,
             "in": "query",
-            "description": "이메일",
+            "description": "유저 아이디",
             "schema": {}
           }
         ],
@@ -351,20 +351,26 @@
         "tags": ["Auth API"]
       }
     },
-    "/auth/find-account": {
+    "/auth/find-account/{id}": {
       "get": {
         "operationId": "AuthController_getAccount",
         "summary": "계정 찾기 API",
         "description": "계정을 찾는다.",
         "parameters": [
           {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "phone",
             "required": true,
             "in": "path",
             "description": "전화번호",
-            "schema": {
-              "type": "string"
-            }
+            "schema": {}
           }
         ],
         "responses": {
@@ -633,12 +639,6 @@
       "CreateUserResponse": {
         "type": "object",
         "properties": {
-          "statusCode": {
-            "type": "number"
-          },
-          "message": {
-            "type": "string"
-          },
           "user": {
             "type": "object",
             "properties": {
@@ -651,9 +651,15 @@
                 "type": "string"
               }
             }
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
           }
         },
-        "required": ["statusCode", "message", "user"]
+        "required": ["user", "statusCode", "message"]
       },
       "SigninUserDto": {
         "type": "object",
@@ -676,12 +682,6 @@
       "SigninResponse": {
         "type": "object",
         "properties": {
-          "statusCode": {
-            "type": "number"
-          },
-          "message": {
-            "type": "string"
-          },
           "user": {
             "type": "object",
             "properties": {
@@ -706,9 +706,15 @@
                 "type": "string"
               }
             }
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
           }
         },
-        "required": ["statusCode", "message", "user"]
+        "required": ["user", "statusCode", "message"]
       },
       "CommonResponseDto": {
         "type": "object",
@@ -773,7 +779,7 @@
           "result": {
             "type": "object",
             "properties": {
-              "result": {
+              "check": {
                 "required": true,
                 "type": "boolean"
               }
@@ -922,30 +928,24 @@
       "BookmarkListResponseDto": {
         "type": "object",
         "properties": {
-          "statusCode": {
-            "type": "number"
-          },
-          "message": {
-            "type": "string"
-          },
           "bookmark": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Pharmacy"
             }
-          }
-        },
-        "required": ["statusCode", "message", "bookmark"]
-      },
-      "BookmarkGetResponseDto": {
-        "type": "object",
-        "properties": {
+          },
           "statusCode": {
             "type": "number"
           },
           "message": {
             "type": "string"
-          },
+          }
+        },
+        "required": ["bookmark", "statusCode", "message"]
+      },
+      "BookmarkGetResponseDto": {
+        "type": "object",
+        "properties": {
           "bookmark": {
             "type": "object",
             "properties": {
@@ -1007,9 +1007,15 @@
                 }
               }
             }
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
           }
         },
-        "required": ["statusCode", "message", "bookmark"]
+        "required": ["bookmark", "statusCode", "message"]
       }
     }
   }

@@ -6,4 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type AuthControllerCheckPWTokenParams = { token: unknown; email: unknown };
+export type AuthControllerCheckPWTokenParams = { token: unknown; id: unknown };
