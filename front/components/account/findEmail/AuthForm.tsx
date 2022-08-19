@@ -29,7 +29,6 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
   const [code, setCode] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // TODO: api 요청 시 phone, code 가리기
   useQuery(
     ["verifyCode", code],
     () =>
