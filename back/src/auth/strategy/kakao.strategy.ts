@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import * as argon from 'argon2';
 import { Profile, Strategy } from 'passport-kakao';
-import { AuthService } from '../auth.service';
 import { OauthLoginDto } from '../dto';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly configService: ConfigService) {
     super({
-      clientID: process.env.KAKAO_REST_API_KEY,
-      clientSecret: process.env.KAKAO_SECRET_KEY,
-      callbackURL: process.env.KAKAO_REDIRECT_URI,
+      clientID: configService.get('KAKAO_REST_API_KEY'),
+      clientSecret: configService.get('KAKAO_SECRET_KEY'),
+      callbackURL: configService.get('KAKAO_REDIRECT_URI'),
     });
   }
 

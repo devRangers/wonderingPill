@@ -36,9 +36,10 @@
       "@searchComp/*": ["components/search/*"],
       "@searchPharmComp/*": ["components/search/pharmacy/*"],
       "@resultComp/*": ["components/search/result/*"],
+      "@searchPharmComp/*": ["components/search/pharmacy/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "firebase/index.js"],
   "exclude": ["node_modules"]
 }

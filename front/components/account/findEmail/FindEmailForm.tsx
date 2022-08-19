@@ -18,7 +18,6 @@ import {
   Hyphen,
   BtnContainer,
 } from "./FindEmailForm.style";
-import Recaptcha from "@recaptcha/Recaptcha";
 import Modal from "@modal/Modal";
 import AuthForm from "./AuthForm";
 
@@ -164,11 +163,6 @@ function FindEmailForm() {
           </Modal>
         )}
       </Form>
-
-      <Recaptcha
-        startVerification={startVerification}
-        setStartVerification={setStartVerification}
-      />
     </>
   );
 }
