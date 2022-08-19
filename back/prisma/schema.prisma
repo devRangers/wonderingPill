@@ -44,10 +44,39 @@ model User {
   updatedAt        DateTime?          @updatedAt
   provider         Provider?          @default(LOCAL)
   PharmacyBookMark PharmacyBookMark[]
+  PillBookMark     PillBookMark[]
 }
 
 enum Provider {
   GOOGLE
   KAKAO
   LOCAL
+}
+
+model PillBookMark{
+  id               String             @id @default(uuid())
+  pill_id          String?
+  user_id          String?
+  Pill             Pill?              @relation(fields: [pill_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User             User?              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Pill {
+  id               String             @id @default(uuid())
+  code             String?            @unique @db.VarChar(10)
+  name             String?            @db.VarChar(20)
+  shape            Shape?     
+  letters          String?            @db.VarChar(50)
+  colors           Colors?            
+  PillBookMark     PillBookMark[]
+}
+
+enum Colors {
+  white
+  brown
+}
+
+enum Shape {
+  rectangle
+  oval
 }

@@ -1,11 +1,14 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
+  Get,
   HttpCode,
   Logger,
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -15,6 +18,8 @@ import {
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
+import { GetCurrentUserId } from 'src/common/decorators';
+import { AccessGuard } from 'src/common/guards';
 import { MailService } from 'src/mail/mail.service';
 import { DeleteUserResponse, SendInquiryDto, SendInquiryResponse } from './dto';
 import { UsersService } from './users.service';
@@ -81,5 +86,28 @@ export class UsersController {
     };
   }
 
-  // 마이페이지 조회 : 복용약, 관심 약국, 로그인 provider, 갯수, 프로필 사진, 알림 여부
+  // 알림 여부 추가해야함
+  @HttpCode(200)
+  @Get('mypage')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '마이페이지 조회 API',
+    description: '마이페이지에서 북마크를 조회 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '마이페이지 조회 성공',
+    // type: ,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async getUserInfo(@GetCurrentUserId() id: string) {
+    const user = await this.usersService.getUserInfo(id);
+    if (!user) throw new ForbiddenException('회원 정보를 가져오지 못했습니다.');
+    return {
+      statusCode: 200,
+      message: '마이페이지 조회를 성공했습니다.',
+      result: { user },
+    };
+  }
 }

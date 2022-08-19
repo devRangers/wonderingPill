@@ -1,5 +1,4 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -11,17 +10,31 @@ export class UsersService {
     // gcs에 사진 저장
   }
 
-  async deleteUser(id: string): Promise<User> {
-    console.log(id);
-    const user: User = await this.prisma.user.update({
-      where: { id },
-      data: { isDeleted: true },
-    });
-
-    if (!user) {
-      throw new ForbiddenException('회원탈퇴를 실패했습니다.');
+  async deleteUser(id: string) {
+    try {
+      await this.prisma.user.update({
+        where: { id },
+        data: { isDeleted: true },
+      });
+    } catch (error) {
+      throw new ForbiddenException('회원탈퇴 실패!');
     }
+  }
 
-    return user;
+  async getUserInfo(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+        select: {
+          PharmacyBookMark: {
+            select: { Pharmacy: { select: { name: true, phone: true } } },
+          },
+          PillBookMark: { select: { Pill: { select: { name: true } } } },
+        },
+      });
+      return user;
+    } catch (error) {
+      throw new ForbiddenException('회원을 검색할 수 없습니다.');
+    }
   }
 }
