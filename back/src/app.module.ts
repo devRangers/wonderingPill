@@ -11,6 +11,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { SmsModule } from './sms/sms.module';
 import { validation } from './utils';
+import { AlarmsModule } from './alarms/alarms.module';
 import config from './utils/config';
 
 @Module({
@@ -38,6 +39,7 @@ import config from './utils/config';
     BookmarkModule,
     PharmacyModule,
     SmsModule,
+    AlarmsModule,
   ],
   controllers: [],
   providers: [

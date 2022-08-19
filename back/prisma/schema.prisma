@@ -43,11 +43,71 @@ model User {
   birth            String?            @db.VarChar(9)
   updatedAt        DateTime?          @updatedAt
   provider         Provider?          @default(LOCAL)
+  role             Role?              @default(USER)
+  Inquiry          Inquiry[]
   PharmacyBookMark PharmacyBookMark[]
+  PillBookMark     PillBookMark[]
+}
+
+model Inquiry {
+  id      String  @id
+  content String  @db.VarChar(320)
+  user_id String?
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Pill {
+  id           String         @id
+  code         String?        @unique @db.VarChar(10)
+  name         String?        @db.VarChar(20)
+  shape        Shape?
+  letters      String?        @db.VarChar(50)
+  colors       Colors?
+  PillBookMark PillBookMark[]
+}
+
+model PillBookMark {
+  id      String  @id
+  pill_id String?
+  user_id String?
+  Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum Provider {
   GOOGLE
   KAKAO
   LOCAL
+}
+
+enum Colors {
+  white
+  brown
+  green
+  yellow
+  pink
+  blue
+  orange
+  red
+  transparent
+  black
+  purple
+  gray
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Shape {
+  rectangle
+  oval
+  circle
+  pentagon
+  square
+  triangle
+  rhombus
+  hexagon
+  etc
 }
