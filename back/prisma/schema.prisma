@@ -11,7 +11,7 @@ model Pharmacy {
   id               Int                @id @default(autoincrement())
   name             String?            @db.VarChar(50)
   phone            String?            @db.VarChar(20)
-  address          String?
+  address          String?            @db.Text
   monday           String?            @db.VarChar(50)
   tuesday          String?            @db.VarChar(50)
   wednesday        String?            @db.VarChar(50)

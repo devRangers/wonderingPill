@@ -1,4 +1,6 @@
-import { BUTTON_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
+import { useRouter } from "next/router";
+import { put } from "@api";
+import { SUB_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -8,8 +10,6 @@ import {
 import { Form } from "../findPassword/FindPasswordForm.style";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useRouter } from "next/router";
-import { put } from "@api";
 import { useMutation } from "react-query";
 
 interface NewPasswordValues {
@@ -108,7 +108,7 @@ function NewPasswordForm({ isValidToken }: NewPasswordFormProp) {
         )}
       </InputContainer>
 
-      <ChangeBtn type="submit" $btnColor={BUTTON_COLOR}>
+      <ChangeBtn type="submit" $btnColor={SUB_COLOR}>
         비밀번호 변경
       </ChangeBtn>
     </Form>

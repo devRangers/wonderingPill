@@ -1,18 +1,18 @@
 import { useRef, useState } from "react";
-import { BUTTON_COLOR } from "@utils/constant";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import Modal from "@modal/Modal";
+import { post } from "@api";
+import { SUB_COLOR } from "@utils/constant";
 import {
   InputContainer,
   Input,
   SubmitBtn as FindBtn,
 } from "@userContainer/Container.style";
 import { ErrorMessage, Form, ModalInner } from "./FindPasswordForm.style";
-import ReCAPTCHA from "react-google-recaptcha";
-import { useMutation } from "react-query";
-import Modal from "@modal/Modal";
-import { post } from "@api";
 import { FindPasswordResponse } from "@modelTypes/findPasswordResponse";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useMutation } from "react-query";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface FindPasswordFormValues {
   email: string;
@@ -125,7 +125,7 @@ function FindPasswordForm() {
               <ErrorMessage />
             )}
           </InputContainer>
-          <FindBtn type="submit" $btnColor={BUTTON_COLOR}>
+          <FindBtn type="submit" $btnColor={SUB_COLOR}>
             비밀번호 찾기
           </FindBtn>
         </Form>

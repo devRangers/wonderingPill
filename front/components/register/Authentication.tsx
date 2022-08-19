@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SUB_COLOR } from "@utils/constant";
+import { ACCENT_COLOR } from "@utils/constant";
 import {
   AuthenticationForm,
   AuthenticationInput,
@@ -221,7 +221,7 @@ function Authentication({
           />
           <SubmitAuthenticationBtn
             type="submit"
-            $btnColor={SUB_COLOR}
+            $btnColor={ACCENT_COLOR}
             $isDisabled={authSelf.authPhone}
             disabled={authSelf.authPhone ? true : false}>
             전송
@@ -245,7 +245,7 @@ function Authentication({
           />
           <SubmitAuthenticationBtn
             type="submit"
-            $btnColor={SUB_COLOR}
+            $btnColor={ACCENT_COLOR}
             $isDisabled={authSelf.authNumberConfirm}
             disabled={
               authenticationFormik.errors.authenticationNumber &&
@@ -277,7 +277,7 @@ function Authentication({
               />
               <CustomCheckmark
                 $checked={selectedCheckbox[index]}
-                $markColor={SUB_COLOR}
+                $markColor={ACCENT_COLOR}
               />
               {value}
             </Label>
@@ -290,8 +290,8 @@ function Authentication({
           open={openModal[index + 1]}
           onClose={() => handleClickModalBackground(index + 1)}>
           <ModalChildrenContainer>
-            <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
-            <ModalContent $scrollColor={SUB_COLOR}>
+            <ModalTitle $fontColor={ACCENT_COLOR}>{value.title}</ModalTitle>
+            <ModalContent $scrollColor={ACCENT_COLOR}>
               {value.content}
             </ModalContent>
             <ModalButton onClick={() => handleClickModalBtn(index + 1)}>

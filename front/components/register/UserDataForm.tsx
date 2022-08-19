@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { BUTTON_COLOR, SUB_COLOR } from "@utils/constant";
+import { ACCENT_COLOR, SUB_COLOR } from "@utils/constant";
 import { BsFillExclamationCircleFill } from "react-icons/bs";
 import {
   ErrorMessage,
@@ -239,11 +239,11 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           <ErrorMessage />
         )}
 
-        <SelfAuthenticationLine $lineColor={SUB_COLOR}>
+        <SelfAuthenticationLine $lineColor={ACCENT_COLOR}>
           본인 인증
         </SelfAuthenticationLine>
 
-        <SubmitButton type="submit" $btnColor={BUTTON_COLOR}>
+        <SubmitButton type="submit" $btnColor={SUB_COLOR}>
           회원 가입하기
         </SubmitButton>
       </Form>
@@ -253,7 +253,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           open={openModal[index]}
           onClose={() => handleClickModalBackground(index)}>
           <NoticeCheckPhoneNumberModal>
-            <Mark $iconColor={SUB_COLOR}>
+            <Mark $iconColor={ACCENT_COLOR}>
               <BsFillExclamationCircleFill />
             </Mark>
             <NoticeCheckPhoneNumberBody>

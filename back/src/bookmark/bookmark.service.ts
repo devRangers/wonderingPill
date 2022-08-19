@@ -9,15 +9,13 @@ import {
 @Injectable()
 export class BookmarkService {
   constructor(private prisma: PrismaService) {}
-  async createBookmark(
-    pharmacyId: number,
+  async createOrDeleteBookmark(
     userId: string,
-  ): Promise<BookmarkCreateResponse> {
-    const bookmark = await this.getPharmacyBookmark(userId, pharmacyId);
+    pharmacyId?: number,
+  ): Promise<BookmarkCreateResponse | void> {
+    const { bookmark } = await this.getPharmacyBookmark(userId, pharmacyId);
     if (bookmark) {
-      throw new ForbiddenException(
-        `ID : ${pharmacyId} 인 약국은 이미 북마크에 존재합니다.`,
-      );
+      return this.deleteBookmark(bookmark.id, userId);
     }
     const createMark = await this.prisma.pharmacyBookMark.create({
       data: {

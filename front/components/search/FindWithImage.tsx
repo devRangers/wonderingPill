@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import Modal from "@modal/Modal";
+import Capture from "@capture/Capture";
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
@@ -22,8 +23,6 @@ import {
   TitleLine,
 } from "./FindWithImage.style";
 import CaptureGuideModal from "./CaptureGuideModal";
-import Capture from "./Capture";
-import Modal from "@modal/Modal";
 
 function FindWithImage() {
   const isWide = isWideDevice();
@@ -47,16 +46,6 @@ function FindWithImage() {
         <FindWithImageContainer $bgColor={MAIN_COLOR} $isWide={isWide}>
           <Camera $bgColor={MAIN_COLOR} $isWide={isWide}>
             <ImageWrapper>
-              <Image
-                src="/images/register_logo.png"
-                alt="사진으로 찾기"
-                layout="fill"
-                objectFit="contain"
-                style={{
-                  borderRadius: "50%",
-                }}
-                priority={true}
-              />
               <Capture />
             </ImageWrapper>
           </Camera>

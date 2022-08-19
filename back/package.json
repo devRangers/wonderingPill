@@ -31,7 +31,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.0.4",
     "@nestjs/throttler": "^3.0.0",
-    "@prisma/client": "^4.1.0",
+    "@prisma/client": "^4.1.1",
     "@types/cookie-parser": "^1.4.3",
     "@types/passport-local": "^1.0.34",
     "argon2": "^0.28.7",
