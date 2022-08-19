@@ -276,20 +276,24 @@ export class AuthService {
     const user: User = await this.prisma.user.findUnique({
       where: { email: googleLoginDto.email },
     });
-
+    const { accessToken, refreshToken } = googleLoginDto;
+    let key;
     try {
       if (!user) {
-        await this.createOauthUser(googleLoginDto, 'google');
+        const newUser: User = await this.createOauthUser(
+          googleLoginDto,
+          'google',
+        );
+        key = 'go' + newUser.id;
       } else if (user.provider !== 'GOOGLE') {
         res
           .status(403)
           .redirect(`${this.configService.get('CLIENT_URL')}/login/error`);
+      } else {
+        key = 'go' + user.id;
       }
-
-      const { accessToken, refreshToken } = googleLoginDto;
-
       await this.redisService.setKey(
-        'go' + user.id,
+        key,
         this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
         Number(this.configService.get('JWT_REFRESH_EXPIRESIN')) / 1000,
       );
