@@ -38,11 +38,16 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
       ),
     {
       enabled: !!code && isSubmitted,
+      retry: false,
       onSuccess: ({ user }) => {
         router.push({
           pathname: ROUTE.EMAIL_RESULT,
           query: { userId: user.id },
         });
+      },
+      onError: (err) => {
+        console.log(err);
+        setIsSubmitted(false);
       },
     },
   );
