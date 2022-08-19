@@ -45,12 +45,7 @@ model User {
   provider         Provider?          @default(LOCAL)
   PharmacyBookMark PharmacyBookMark[]
   PillBookMark     PillBookMark[]
-}
-
-enum Provider {
-  GOOGLE
-  KAKAO
-  LOCAL
+  Inquiry          Inquiry[]
 }
 
 model PillBookMark{
@@ -71,12 +66,42 @@ model Pill {
   PillBookMark     PillBookMark[]
 }
 
+model Inquiry{
+   id               String             @id @default(uuid())
+   content          String             @db.VarChar(320)
+   user_id          String?
+   User             User?              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum Provider {
+  GOOGLE
+  KAKAO
+  LOCAL
+}
+
 enum Colors {
   white
   brown
+  green
+  yellow
+  pink
+  blue
+  orange
+  red
+  transparent
+  black
+  purple
+  gray
 }
 
 enum Shape {
   rectangle
   oval
+  circle
+  pentagon
+  square
+  triangle
+  rhombus
+  hexagon
+  etc
 }

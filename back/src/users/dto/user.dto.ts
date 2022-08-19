@@ -14,7 +14,7 @@ export class SendInquiryDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  description: string;
+  content: string;
 
   @IsString()
   @IsNotEmpty()
@@ -26,7 +26,7 @@ export class SendInquiryResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   @ApiProperty()
-  result: { check: boolean };
+  result: { inquiry };
 }
 
 export class getUserResponse extends CommonResponseDto {

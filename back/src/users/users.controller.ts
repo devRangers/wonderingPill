@@ -15,7 +15,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import { Inquiry } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { AccessGuard } from 'src/common/guards';
@@ -40,6 +40,31 @@ export class UsersController {
     private readonly authService: AuthService,
     private readonly gcsService: GcsService,
   ) {}
+
+  @HttpCode(200)
+  @Get('presigned-url')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: 'signed url 요청 API',
+    description: '외부 스토리지 GCS에서 signed url 발급한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'signed url 요청 성공',
+    type: getSignedUrlResponse,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async getPresignedUrl(
+    @GetCurrentUserId() id: string,
+  ): Promise<getSignedUrlResponse> {
+    const url: string = await this.gcsService.getPresignedUrl(id);
+    return {
+      statusCode: 200,
+      message: 'signed url를 발급했습니다.',
+      result: { url },
+    };
+  }
 
   @HttpCode(200)
   @Patch('delete-user')
@@ -92,35 +117,10 @@ export class UsersController {
     };
   }
 
-  @HttpCode(200)
-  @Get('presigned-url')
-  @UseGuards(AccessGuard)
-  @ApiOperation({
-    summary: 'signed url 요청 API',
-    description: '외부 스토리지 GCS에서 signed url 발급한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'signed url 요청 성공',
-    type: getSignedUrlResponse,
-  })
-  @ApiCookieAuth('accessToken')
-  @ApiCookieAuth('refreshToken')
-  async getPresignedUrl(
-    @GetCurrentUserId() id: string,
-  ): Promise<getSignedUrlResponse> {
-    const url: string = await this.gcsService.getPresignedUrl(id);
-    return {
-      statusCode: 200,
-      message: 'signed url를 발급했습니다.',
-      result: { url },
-    };
-  }
-
   // 고객 센터
   // 관리자 페이지를 추가하면 email 전송 제거
   @HttpCode(200)
-  @Post('send-email')
+  @Post('send-inquiry')
   @ApiOperation({
     summary: '고객센터 API',
     description:
@@ -128,22 +128,26 @@ export class UsersController {
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
-  async sendEmail(
+  async sendInquiry(
     @Body() sendInquiryDto: SendInquiryDto,
   ): Promise<SendInquiryResponse> {
-    const user: User = await this.authService.getUserById(sendInquiryDto.id);
-    const check: boolean = await this.mailService.sendInquiry(
-      user.email,
-      user.name,
-      sendInquiryDto.description,
+    // const user: User = await this.authService.getUserById(sendInquiryDto.id);
+    // const check: boolean = await this.mailService.sendInquiry(
+    //   user.email,
+    //   user.name,
+    //   sendInquiryDto.description,
+    // );
+
+    const inquiry: Inquiry = await this.usersService.sendInquiry(
+      sendInquiryDto,
     );
 
-    this.logger.verbose(`User ${user.email} send inquiry Success!`);
+    this.logger.verbose(`User send inquiry Success!`);
 
     return {
       statusCode: 200,
       message: '문의를 성공적으로 전송했습니다.',
-      result: { check },
+      result: { inquiry },
     };
   }
 }
