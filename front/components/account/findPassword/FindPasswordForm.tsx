@@ -31,16 +31,18 @@ type AuthEmail = FindPasswordFormValues & {
 
 function FindPasswordForm() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isFailModalOpen, setIsFailModalOpen] = useState(false);
 
   const mutation = useMutation(
     (data: AuthEmail) =>
       post<FindPasswordResponse, AuthEmail>("/auth/send-email", data),
     {
       onSuccess: (data) => {
-        setIsModalOpen(true);
+        setIsSuccessModalOpen(true);
       },
       onError: (error: any) => {
+        setIsFailModalOpen(true);
         throw new Error(error);
       },
     },
@@ -130,11 +132,18 @@ function FindPasswordForm() {
           </FindBtn>
         </Form>
       </ReCAPTCHA>
-      {isModalOpen && (
-        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      {isSuccessModalOpen && (
+        <Modal
+          open={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}>
           <ModalInner>
             이메일이 전송 되었습니다. 이메일을 확인 해 주세요.
           </ModalInner>
+        </Modal>
+      )}
+      {isFailModalOpen && (
+        <Modal open={isFailModalOpen} onClose={() => setIsFailModalOpen(false)}>
+          <ModalInner>입력 정보를 다시 확인 해 주세요.</ModalInner>
         </Modal>
       )}
     </>
