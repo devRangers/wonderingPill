@@ -29,5 +29,6 @@ export const HeartContainer = styled("div", {
   flex: 0.3,
   display: "flex",
   justifyContent: "flex-end",
+  fontSize: "1.5rem",
   lineHeight: "1.3rem",
 });

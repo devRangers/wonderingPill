@@ -5,6 +5,7 @@ import {
   PharmarcyContainer,
   PhoneNumber,
 } from "./Pharmarcy.style";
+import { BsHeartFill } from "react-icons/bs";
 
 interface PharmarcyProps {
   name: string;
@@ -18,7 +19,9 @@ function Pharmarcy({ name, phoneNumber }: PharmarcyProps) {
         <Name>{name}</Name>
         <PhoneNumber>{phoneNumber}</PhoneNumber>
       </DataContainer>
-      <HeartContainer>heart</HeartContainer>
+      <HeartContainer>
+        <BsHeartFill />
+      </HeartContainer>
     </PharmarcyContainer>
   );
 }
