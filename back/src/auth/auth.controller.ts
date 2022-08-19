@@ -127,10 +127,14 @@ export class AuthController {
       refreshToken,
     );
 
+    let secure;
+    if (this.configService.get('NODE_ENV') === 'production') secure = true;
+    else secure = false;
+
     res.cookie('AccessToken', accessToken, {
       maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
-      // secure:true
+      secure,
     });
 
     let maxAge;
@@ -142,7 +146,7 @@ export class AuthController {
     res.cookie('RefreshToken', refreshToken, {
       maxAge,
       httpOnly: true,
-      // secure:true
+      secure,
     });
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
@@ -185,10 +189,14 @@ export class AuthController {
       refreshToken,
     );
 
+    let secure;
+    if (this.configService.get('NODE_ENV') === 'production') secure = true;
+    else secure = false;
+
     res.cookie('AccessToken', accessToken, {
       maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
-      // secure:true
+      secure,
     });
 
     let message;
@@ -393,15 +401,19 @@ export class AuthController {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.googleLogin(req.user as OauthLoginDto, res);
 
+    let secure;
+    if (this.configService.get('NODE_ENV') === 'production') secure = true;
+    else secure = false;
+
     res.cookie('AccessToken', accessToken, {
       maxAge: this.configService.get('JWT_EXPIRESIN'),
       httpOnly: true,
-      // secure:true
+      secure,
     });
     res.cookie('RefreshToken', refreshToken, {
       maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
       httpOnly: true,
-      // secure:true
+      secure,
     });
 
     res.redirect(`${this.configService.get('CLIENT_URL')}/`);
