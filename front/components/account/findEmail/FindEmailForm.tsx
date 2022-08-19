@@ -46,12 +46,13 @@ function FindEmailForm() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [phone, setPhone] = useState("");
 
   const findEmailMutation = useMutation(
     (data: FindAccountValues) =>
       Api.post<FindAccountResponse, FindAccountValues>("/auth/send-sms", data),
     {
-      onSuccess: (data) => {
+      onSuccess: () => {
         setAuthModalOpen(true);
       },
       onError: (err) => {
@@ -88,13 +89,18 @@ function FindEmailForm() {
       lastPhoneNum,
     }) => {
       const token = (await recaptchaRef?.current?.executeAsync()) as string;
+      const phoneNumber = firstPhoneNum + middlePhoneNum + lastPhoneNum;
+
       const dataToSubmit = {
         name,
         birth,
         token,
-        phone: firstPhoneNum + middlePhoneNum + lastPhoneNum,
+        phone: phoneNumber,
       };
+
+      setPhone(phoneNumber);
       recaptchaRef.current?.reset();
+      setAuthModalOpen(true);
       findEmailMutation.mutate(dataToSubmit);
     },
   });
@@ -188,7 +194,7 @@ function FindEmailForm() {
 
         {authModalOpen && (
           <Modal open={authModalOpen} onClose={modalCloseHandler}>
-            <AuthForm onClose={modalCloseHandler} />
+            <AuthForm onClose={modalCloseHandler} phone={phone} />
           </Modal>
         )}
       </Form>
