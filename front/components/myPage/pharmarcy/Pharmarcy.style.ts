@@ -1,9 +1,11 @@
 import { styled } from "styletron-react";
 
 export const PharmarcyContainer = styled("div", {
+  alignItems: "center",
   display: "flex",
-  justifyContent: "space-between",
   padding: "0.8rem",
+  height: "100%",
+  margin: "0 auto",
 });
 
 export const DataContainer = styled("div", {
@@ -11,9 +13,21 @@ export const DataContainer = styled("div", {
   textAlign: "start",
 });
 
-export const Name = styled("div", {});
+export const Name = styled("div", {
+  fontSize: "1.3rem",
+  fontWeight: "bold",
+  lineHeight: "1.3rem",
+  marginBottom: "0.5rem",
+});
+
+export const PhoneNumber = styled("div", {
+  fontSize: "0.7rem",
+  lineHeight: "1.3rem",
+});
 
 export const HeartContainer = styled("div", {
   flex: 0.3,
-  textAlign: "end",
+  display: "flex",
+  justifyContent: "flex-end",
+  lineHeight: "1.3rem",
 });

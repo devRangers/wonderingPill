@@ -3,6 +3,7 @@ import {
   HeartContainer,
   Name,
   PharmarcyContainer,
+  PhoneNumber,
 } from "./Pharmarcy.style";
 
 interface PharmarcyProps {
@@ -15,7 +16,7 @@ function Pharmarcy({ name, phoneNumber }: PharmarcyProps) {
     <PharmarcyContainer>
       <DataContainer>
         <Name>{name}</Name>
-        <Name>{phoneNumber}</Name>
+        <PhoneNumber>{phoneNumber}</PhoneNumber>
       </DataContainer>
       <HeartContainer>heart</HeartContainer>
     </PharmarcyContainer>

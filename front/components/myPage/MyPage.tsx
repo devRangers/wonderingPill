@@ -26,6 +26,7 @@ const medicinesName: { [key in string]: string } = {
   name2: "가스모틴정_2",
   name3: "가스모틴정_3",
   name4: "가스모틴정_4",
+  name5: "가스모틴정_5",
 };
 
 const pharmacyData: { [key in string]: pharmacyValues } = {
@@ -68,7 +69,7 @@ const settings = {
 function MyPage() {
   const [css] = useStyletron();
   return (
-    <Template gridTemplateRows="1fr 2fr 2fr 0.5fr">
+    <Template gridTemplateRows="1fr 1.4fr 1.5fr 0.5fr">
       <ContentContainer $borderColor={SUB_COLOR}>
         <ContentClip $bgColor={SUB_COLOR}>복용약</ContentClip>
         <MedicineBadgeContainer>
@@ -86,16 +87,14 @@ function MyPage() {
               width: "70vw",
               height: "80%",
               maxWidth: "400px",
-              margin: "0 auto",
+              margin: "auto",
               border: `1px solid ${MAIN_COLOR}`,
             })}>
-            {/* <PharmarcyWrapper> */}
             {Object.entries(pharmacyData).map(([key, value], index) => (
               <PharmarcyWrapper>
                 <Pharmarcy name={value.name} phoneNumber={value.phnoeNumber} />
               </PharmarcyWrapper>
             ))}
-            {/* </PharmarcyWrapper> */}
           </Slider>
         </PharmarcyContainer>
       </ContentContainer>
