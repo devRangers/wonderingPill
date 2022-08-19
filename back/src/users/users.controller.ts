@@ -59,6 +59,7 @@ export class UsersController {
     @GetCurrentUserId() id: string,
   ): Promise<getSignedUrlResponse> {
     const url: string = await this.gcsService.getPresignedUrl(id);
+    this.logger.verbose(`get user profileImg signed url Success!`);
     return {
       statusCode: 200,
       message: 'signed url를 발급했습니다.',
@@ -110,6 +111,8 @@ export class UsersController {
   async getUserInfo(@GetCurrentUserId() id: string): Promise<getUserResponse> {
     const user = await this.usersService.getUserInfo(id);
     if (!user) throw new ForbiddenException('회원 정보를 가져오지 못했습니다.');
+
+    this.logger.verbose(`get user mypage info Success!`);
     return {
       statusCode: 200,
       message: '마이페이지 조회를 성공했습니다.',
