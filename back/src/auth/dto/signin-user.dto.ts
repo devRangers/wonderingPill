@@ -46,7 +46,7 @@ export class SigninResponse extends CommonResponseDto {
 export class LogoutResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  checkLogout: {
+  result: {
     checkLogout: boolean;
   };
 }

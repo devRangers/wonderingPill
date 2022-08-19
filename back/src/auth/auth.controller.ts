@@ -118,6 +118,9 @@ export class AuthController {
     const user: UserModel = await this.authService.getUserByEmail(
       signinUserDto.email,
     );
+
+    if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
+
     const { accessToken, refreshToken }: Tokens =
       await this.authService.localSignin(signinUserDto, user);
 
@@ -127,23 +130,32 @@ export class AuthController {
       refreshToken,
     );
 
-    res.cookie('AccessToken', accessToken, {
-      maxAge: this.configService.get('JWT_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
+    let secure;
+    if (this.configService.get('NODE_ENV') === 'production') secure = true;
+    else secure = false;
 
-    let maxAge;
-    if (signinUserDto.isSignin) {
-      maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
-    } else {
-      maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN');
+    try {
+      res.cookie('AccessToken', accessToken, {
+        maxAge: this.configService.get('JWT_EXPIRESIN'),
+        httpOnly: true,
+        secure,
+      });
+
+      let maxAge;
+      if (signinUserDto.isSignin) {
+        maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
+      } else {
+        maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN');
+      }
+
+      res.cookie('RefreshToken', refreshToken, {
+        maxAge,
+        httpOnly: true,
+        secure,
+      });
+    } catch (error) {
+      throw new ForbiddenException('Cookie Failed!');
     }
-    res.cookie('RefreshToken', refreshToken, {
-      maxAge,
-      httpOnly: true,
-      // secure:true
-    });
 
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
 
@@ -185,22 +197,24 @@ export class AuthController {
       refreshToken,
     );
 
-    res.cookie('AccessToken', accessToken, {
-      maxAge: this.configService.get('JWT_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
+    let secure;
+    if (this.configService.get('NODE_ENV') === 'production') secure = true;
+    else secure = false;
 
-    let message;
-    if (accessToken) {
-      message = '정상적으로 access token이 발행되었습니다.';
-    } else {
-      message = '로그인이 유지되지 않습니다.';
+    try {
+      res.cookie('AccessToken', accessToken, {
+        maxAge: this.configService.get('JWT_EXPIRESIN'),
+        httpOnly: true,
+        secure,
+      });
+    } catch (error) {
+      throw new ForbiddenException('Cookie Failed!');
     }
+
     this.logger.verbose(`User ${id} keep login Success!`);
     return {
       statusCode: 200,
-      message,
+      message: '정상적으로 access token이 발행되었습니다.',
     };
   }
 
@@ -223,20 +237,20 @@ export class AuthController {
   ): Promise<LogoutResponse> {
     const checkLogout: boolean = await this.authService.logout(id);
 
-    let message;
-    if (checkLogout) {
-      res.clearCookie('AccessToken');
-      res.clearCookie('RefreshToken');
-
-      message = '로그아웃이 완료되었습니다.';
-    } else {
-      message = '로그아웃에 실패하였습니다.';
+    try {
+      if (checkLogout) {
+        res.clearCookie('AccessToken');
+        res.clearCookie('RefreshToken');
+      }
+    } catch (error) {
+      throw new ForbiddenException('Cookie Failed!');
     }
+
     this.logger.verbose(`User ${id} logout Success!`);
     return {
       statusCode: 200,
-      message,
-      checkLogout: { checkLogout },
+      message: '로그아웃이 완료되었습니다.',
+      result: { checkLogout },
     };
   }
 
@@ -255,6 +269,8 @@ export class AuthController {
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string): Promise<SigninResponse> {
     const user: UserModel = await this.authService.getUserById(id);
+    if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
+
     this.logger.verbose(`Call Current User ${id} Success!`);
     return {
       statusCode: 200,
@@ -286,7 +302,13 @@ export class AuthController {
   async sendEmail(
     @Body() findPasswordDto: FindPasswordDto,
   ): Promise<FindPasswordResponse> {
-    const user: UserModel = await this.authService.findUser(findPasswordDto);
+    const user: UserModel = await this.authService.getUserByEmail(
+      findPasswordDto.email,
+    );
+    if (user.name !== findPasswordDto.name) {
+      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    }
+
     const passwordToken: string = uuid().toString();
     await this.authService.setPWChangeToken(user.id, passwordToken);
 
@@ -334,6 +356,7 @@ export class AuthController {
     ) {
       throw new ForbiddenException('토큰이 일치하지 않습니다.');
     }
+
     this.logger.verbose(`User ${query.id} check pw token Success!`);
     return {
       statusCode: 200,
@@ -393,20 +416,27 @@ export class AuthController {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.googleLogin(req.user as OauthLoginDto, res);
 
-    res.cookie('AccessToken', accessToken, {
-      maxAge: this.configService.get('JWT_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
-    res.cookie('RefreshToken', refreshToken, {
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
-      httpOnly: true,
-      // secure:true
-    });
+    let secure;
+    if (this.configService.get('NODE_ENV') === 'production') secure = true;
+    else secure = false;
 
-    this.logger.verbose(`Google login Success!`);
-    res.redirect(`${this.configService.get('CLIENT_URL')}/`);
-    res.end();
+    try {
+      res.cookie('AccessToken', accessToken, {
+        maxAge: this.configService.get('JWT_EXPIRESIN'),
+        httpOnly: true,
+        secure,
+      });
+      res.cookie('RefreshToken', refreshToken, {
+        maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
+        httpOnly: true,
+        secure,
+      });
+
+      res.redirect(`${this.configService.get('CLIENT_URL')}/`);
+      res.end();
+    } catch (error) {
+      throw new ForbiddenException('Cookie Failed!');
+    }
   }
 
   @HttpCode(200)
@@ -427,7 +457,7 @@ export class AuthController {
   async sendSMS(
     @Body() findAccountDto: FindAccountDto,
   ): Promise<CommonResponseDto> {
-    await this.authService.findUserByPhone(findAccountDto);
+    await this.authService.getUserForAccount(findAccountDto);
     const number = Math.floor(Math.random() * 1000000);
     const verifyCode: string = number.toString().padStart(6, '0');
 
@@ -476,6 +506,8 @@ export class AuthController {
       throw new ForbiddenException('인증번호가 일치하지 않습니다.');
     } else {
       const user: UserModel = await this.authService.getUserByPhone(phone);
+      if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
+
       this.logger.verbose(`User ${user.phone} verify code Success!`);
       return {
         statusCode: 200,
