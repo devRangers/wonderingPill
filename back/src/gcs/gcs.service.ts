@@ -8,7 +8,7 @@ export class GcsService {
 
   async getPresignedUrl(id: string): Promise<string> {
     const fileName = id + 'profile.png';
-    const bucketName = 'wonderingpill-bucket';
+    const bucketName = 'wonderingpill-bucket/user_profileImg/';
     try {
       const storage = new Storage({
         keyFilename: `src/secure/${this.configService.get('GCS_KEY_FILE')}`,
