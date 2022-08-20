@@ -1,10 +1,10 @@
+import React from "react";
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
   HEADER_HEIGHT,
   MAIN_COLOR,
 } from "@utils/constant";
-import React from "react";
 import { Container as OuterContainer, InnerContainer } from "./Container.style";
 
 interface ContainerProp {
