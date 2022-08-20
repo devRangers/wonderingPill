@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { useState } from "react";
+import Image from "next/image";
 import { CaptureContainer, CaptureButton } from "./Capture.style";
 
 function Capture() {
