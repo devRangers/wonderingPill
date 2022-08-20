@@ -66,7 +66,6 @@ function FindPasswordForm() {
     }),
     onSubmit: async (values) => {
       const token = (await recaptchaRef?.current?.executeAsync()) as string;
-      console.log("token", token);
 
       const dataToSubmit: AuthEmail = Object.assign(values, {
         token,
