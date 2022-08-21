@@ -18,14 +18,18 @@ export class AlarmsController {
   @UseGuards(AccessGuard)
   async getAlarms(@GetCurrentUserId() id: string) {
     const alarms = await this.alarmsService.getAlarms(id);
+    this.logger.verbose(`get User Alarms Success!`);
     return alarms;
   }
 
-  // alarm 삭제하기
+  // 읽음 표시
+
+  //// alarm 삭제하기
   // @Delete()
   // @UseGuards(AccessGuard)
   // async deleteAlarms(@GetCurrentUserId() id: string) {
-  //   const alarms = await this.alarmsService.getAlarms(id);
-  //   return alarms;
+  //// 전체 선택인지, 뭘 선택했는지 받아야함
+  // const alarms = await this.alarmsService.deleteAlarm(id);
+  // return alarms;
   // }
 }

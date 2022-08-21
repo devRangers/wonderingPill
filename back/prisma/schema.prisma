@@ -33,14 +33,14 @@ model PharmacyBookMark {
 
 model User {
   id               String             @id @default(uuid())
-  email            String?            @unique @db.VarChar(100)
+  email            String             @unique @db.VarChar(50)
   name             String?            @db.VarChar(20)
   password         String?            @db.VarChar(100)
   phone            String?            @unique @db.VarChar(20)
   profileImg       String?            @default("imageUrl")
   isDeleted        Boolean?           @default(false)
-  createdAt        DateTime?          @default(now()) @db.Date
   birth            String?            @db.VarChar(9)
+  createdAt        DateTime?          @default(now()) @db.Date
   updatedAt        DateTime?          @updatedAt
   provider         Provider?          @default(LOCAL)
   role             Role?              @default(USER)
@@ -70,15 +70,15 @@ model PillBookMark {
   id      String  @id @default(uuid())
   pill_id String?
   user_id String?
-  Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  User    User?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Alarm   Alarm?
+  Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Alarm   Alarm[]
 }
 
 model Alarm {
   id                  String             @id @default(uuid())
-  pillBookMark_id     String             @unique
-  PillBookMark        PillBookMark       @relation(fields: [pillBookMark_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pillBookMark_id     String?             
+  PillBookMark        PillBookMark?      @relation(fields: [pillBookMark_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum Provider {
