@@ -27,6 +27,7 @@
       "@modal/*": ["common/modal/*"],
       "@sidebar/*": ["common/sidebar/*"],
       "@userContainer/*": ["common/userContainer/*"],
+      "@errorContainer/*": ["common/errorContainer/*"],
       "@utils/*": ["common/utils/*"],
       "@accountComp/*": ["components/account/*"],
       "@loginComp/*": ["components/login/*"],
