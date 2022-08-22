@@ -42,3 +42,6 @@ lerna-debug.log*
 
 # GCS
 secure/
+
+# REDIS
+conf/

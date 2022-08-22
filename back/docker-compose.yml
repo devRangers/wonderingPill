@@ -5,8 +5,15 @@ services:
     restart: 'on-failure'
     ports:
       - 5000:5000
+    depends_on:
+      - redis
   redis:
     image: redis:alpine
     container_name: wondering-redis
     ports:
       - 6379:6379
+    restart: always
+    command: redis-server /usr/local/conf/redis.conf --replica-read-only no
+    volumes:
+      - ./data/:/data
+      - ./conf/redis.conf:/usr/local/conf/redis.conf

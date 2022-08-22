@@ -3,16 +3,16 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AlarmsModule } from './alarms/alarms.module';
 import { AuthModule } from './auth/auth.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
+import { FcmModule } from './fcm/fcm.module';
 import { MailModule } from './mail/mail.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { SmsModule } from './sms/sms.module';
 import { validation } from './utils';
-import { AlarmsModule } from './alarms/alarms.module';
-import { FcmModule } from './fcm/fcm.module';
 import config from './utils/config';
 
 @Module({
