@@ -168,6 +168,7 @@ export class AuthController {
         name: user.name,
         profileImg: user.profileImg,
         provider: user.provider,
+        phone: user.phone,
       },
     };
   }
@@ -281,6 +282,7 @@ export class AuthController {
         name: user.name,
         profileImg: user.profileImg,
         provider: user.provider,
+        phone: user.phone,
       },
     };
   }
