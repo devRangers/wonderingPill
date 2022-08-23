@@ -10,12 +10,9 @@ import {
   Post,
   Put,
   Query,
-  Redirect,
   Req,
   Res,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -75,10 +72,8 @@ export class AuthController {
     private readonly smsService: SmsService,
   ) {}
 
-  @Public()
   @HttpCode(200)
   @Post('signup')
-  @UsePipes(new ValidationPipe())
   @ApiOperation({
     summary: '유저 생성(회원가입) API',
     description: '유저를 생성한다.',
@@ -101,7 +96,6 @@ export class AuthController {
     };
   }
 
-  @Public()
   @HttpCode(200)
   @Post('signin')
   @Throttle(5, 1)
@@ -296,8 +290,8 @@ export class AuthController {
     const passwordToken: string = uuid().toString();
     await this.authService.setPWChangeToken(user.id, passwordToken);
 
-    const result: boolean = await this.mailService.sendEmail(
-      user.email,
+    const check: boolean = await this.mailService.sendEmail(
+      user.id,
       user.name,
       passwordToken,
     );
@@ -306,7 +300,7 @@ export class AuthController {
     return {
       statusCode: 200,
       message: '이메일을 성공적으로 전송했습니다.',
-      result: { result },
+      result: { check },
     };
   }
 
@@ -321,9 +315,9 @@ export class AuthController {
     type: FindPasswordResponse,
   })
   @ApiQuery({
-    name: 'email',
+    name: 'id',
     required: true,
-    description: '이메일',
+    description: '유저 아이디',
   })
   @ApiQuery({
     name: 'token',
@@ -332,8 +326,7 @@ export class AuthController {
   })
   @Get('change-password/check')
   async checkPWToken(@Query() query): Promise<FindPasswordResponse> {
-    const user: UserModel = await this.authService.getUserByEmail(query.email);
-    const token: string = await this.redisService.getKey('pw' + user.id);
+    const token: string = await this.redisService.getKey('pw' + query.id);
 
     if (
       query.token !==
@@ -341,11 +334,11 @@ export class AuthController {
     ) {
       throw new ForbiddenException('토큰이 일치하지 않습니다.');
     }
-    this.logger.verbose(`User ${user.email} check pw token Success!`);
+    this.logger.verbose(`User ${query.id} check pw token Success!`);
     return {
       statusCode: 200,
       message: '토큰의 유효기간이 만료되지 않았습니다.',
-      result: { result: true },
+      result: { check: true },
     };
   }
 
@@ -396,7 +389,6 @@ export class AuthController {
 
   @UseGuards(GoogleGuard)
   @Get('google-redirect')
-  @Redirect(`${process.env.CLIENT_URL}/login`, 403)
   async googleLogin(@Req() req, @Res({ passthrough: true }) res) {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.googleLogin(req.user as OauthLoginDto, res);
@@ -412,7 +404,7 @@ export class AuthController {
       // secure:true
     });
 
-    res.redirect(`${process.env.CLIENT_URL}/`);
+    res.redirect(`${this.configService.get('CLIENT_URL')}/`);
     res.end();
   }
 
@@ -434,6 +426,7 @@ export class AuthController {
   async sendSMS(
     @Body() findAccountDto: FindAccountDto,
   ): Promise<CommonResponseDto> {
+    await this.authService.findUserByPhone(findAccountDto);
     const number = Math.floor(Math.random() * 1000000);
     const verifyCode: string = number.toString().padStart(6, '0');
 
@@ -443,7 +436,7 @@ export class AuthController {
       300,
     );
 
-    await this.smsService.sendSMSByTwilio(findAccountDto.phone, verifyCode);
+    await this.smsService.sendSMS(findAccountDto.phone, verifyCode);
 
     this.logger.verbose(`User ${findAccountDto.phone} send sms Success!`);
     return {
@@ -506,11 +499,9 @@ export class AuthController {
     description: '계정 찾기 성공',
     type: FindAccountResponse,
   })
-  @Get('find-account')
-  async getAccount(
-    @Param('phone') phone: string,
-  ): Promise<FindAccountResponse> {
-    const user: UserModel = await this.authService.getUserByPhone(phone);
+  @Get('find-account/:id')
+  async getAccount(@Param('id') id: string): Promise<FindAccountResponse> {
+    const user: UserModel = await this.authService.getUserById(id);
 
     let name;
     let email;
