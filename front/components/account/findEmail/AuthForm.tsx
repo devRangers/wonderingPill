@@ -1,8 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import * as Api from "@api";
-import { FindUserResponse } from "@modelTypes/findUserResponse";
 import { MAIN_COLOR, ACCENT_COLOR, ROUTE } from "@utils/constant";
 import {
   FormContainer,
@@ -23,33 +21,35 @@ interface AuthFormProps {
   phone: string;
 }
 
+const verifyCode = async (phone: string, code: string) => {
+  const res = await fetch("/api/verify-code", {
+    method: "POST",
+    body: JSON.stringify({ phone, code }),
+  });
+  const result = await res.json();
+  return result;
+};
+
 function AuthForm({ onClose, phone }: AuthFormProps) {
   const router = useRouter();
 
   const [code, setCode] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useQuery(
-    ["verifyCode", code],
-    () =>
-      Api.get<FindUserResponse>(
-        `/auth/verify-code?phone=${phone}&code=${code}`,
-      ),
-    {
-      enabled: !!code && isSubmitted,
-      retry: false,
-      onSuccess: ({ user }) => {
-        router.push({
-          pathname: ROUTE.EMAIL_RESULT,
-          query: { userId: user.id },
-        });
-      },
-      onError: (err) => {
-        console.log(err);
-        setIsSubmitted(false);
-      },
+  useQuery(["verifyCode", code], () => verifyCode(phone, code), {
+    enabled: !!code && isSubmitted,
+    retry: false,
+    onSuccess: ({ user }) => {
+      router.push({
+        pathname: ROUTE.EMAIL_RESULT,
+        query: { userId: user.id },
+      });
     },
-  );
+    onError: (err) => {
+      console.log(err);
+      setIsSubmitted(false);
+    },
+  });
 
   return (
     <FormContainer>
