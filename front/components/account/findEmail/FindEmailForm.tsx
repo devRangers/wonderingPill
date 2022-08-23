@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { BUTTON_COLOR, ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
+import { ERROR_MSG_COLOR, SUB_COLOR, ACCENT_COLOR } from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -112,7 +112,7 @@ function FindEmailForm() {
         </div>
 
         <PhoneContainer>
-          <PhoneTitle $txtColor={SUB_COLOR}>휴대폰 번호</PhoneTitle>
+          <PhoneTitle $txtColor={ACCENT_COLOR}>휴대폰 번호</PhoneTitle>
 
           <PhoneNumberContainer>
             <PhoneNumberSelect
@@ -124,7 +124,7 @@ function FindEmailForm() {
               <option value="010">010</option>
               <option value="070">070</option>
             </PhoneNumberSelect>
-            <Hyphen $txtColor={SUB_COLOR}>―</Hyphen>
+            <Hyphen $txtColor={ACCENT_COLOR}>―</Hyphen>
 
             <PhoneNumberInput
               id="middlePhoneNum"
@@ -136,7 +136,7 @@ function FindEmailForm() {
               onBlur={formik.handleBlur}
               value={formik.values.middlePhoneNum}
             />
-            <Hyphen $txtColor={SUB_COLOR}>―</Hyphen>
+            <Hyphen $txtColor={ACCENT_COLOR}>―</Hyphen>
 
             <PhoneNumberInput
               id="lastPhoneNum"
@@ -152,7 +152,7 @@ function FindEmailForm() {
         </PhoneContainer>
 
         <BtnContainer>
-          <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
+          <SubmitBtn type="submit" $btnColor={SUB_COLOR}>
             계정 찾기
           </SubmitBtn>
         </BtnContainer>

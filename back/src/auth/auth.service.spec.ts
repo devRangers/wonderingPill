@@ -27,8 +27,6 @@ describe('AuthService', () => {
     });
   });
 
-  afterAll(() => {});
-
   it('should be defined', () => {
     expect(service).toBeDefined();
   });

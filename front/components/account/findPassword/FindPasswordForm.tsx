@@ -1,4 +1,4 @@
-import { BUTTON_COLOR } from "@utils/constant";
+import { SUB_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -82,7 +82,7 @@ function FindPasswordForm() {
           <ErrorMessage />
         )}
       </InputContainer>
-      <FindBtn type="submit" $btnColor={BUTTON_COLOR}>
+      <FindBtn type="submit" $btnColor={SUB_COLOR}>
         비밀번호 찾기
       </FindBtn>
     </Form>
