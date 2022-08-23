@@ -1,45 +1,64 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsJSON,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { providerType } from 'src/auth/auth-provider.enum';
 import { CommonResponseDto } from 'src/common/dto';
 
 export class DeleteUserResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  @ApiProperty()
   result: { result: boolean };
 }
 
 export class SendInquiryDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
   content: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
   id: string;
+}
+
+export class UpdateUserDto {
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  @Matches(/^[A-Za-z\d!@#$%^&*()]{8,20}$/, {
+    message: '비밀번호 양식에 맞게 작성하세요.',
+  })
+  password?: string;
+
+  @IsString()
+  @IsOptional()
+  @Matches(/^[A-Za-z\d!@#$%^&*()]{8,20}$/, {
+    message: '비밀번호 양식에 맞게 작성하세요.',
+  })
+  newPassword?: string;
 }
 
 export class SendInquiryResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  @ApiProperty()
   result: { inquiry };
 }
 
 export class getUserResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  @ApiProperty()
   result: { user };
 }
 
 export class getSignedUrlResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  @ApiProperty()
   result: { url: string };
 }
 

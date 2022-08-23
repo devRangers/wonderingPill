@@ -18,6 +18,7 @@ import {
 import { Inquiry } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
 import { GetCurrentUserId } from 'src/common/decorators';
+import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import { GcsService } from 'src/gcs/gcs.service';
 import { MailService } from 'src/mail/mail.service';
@@ -27,6 +28,7 @@ import {
   getUserResponse,
   SendInquiryDto,
   SendInquiryResponse,
+  UpdateUserDto,
 } from './dto';
 import { UsersService } from './users.service';
 
@@ -90,6 +92,32 @@ export class UsersController {
       statusCode: 200,
       message: '회원탈퇴가 완료되었습니다.',
       result: { result: true },
+    };
+  }
+
+  @HttpCode(200)
+  @Patch('update-user')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '회원 정보 수정 API',
+    description: '회원 정보를 수정 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원 정보 수정 성공',
+    type: CommonResponseDto,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async UpdateUser(
+    @GetCurrentUserId() id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<CommonResponseDto> {
+    await this.usersService.updateUser(id, updateUserDto);
+    this.logger.verbose(`User ${id} update Success!`);
+    return {
+      statusCode: 200,
+      message: '회원 정보가 수정되었습니다.',
     };
   }
 
