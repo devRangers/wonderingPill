@@ -5,6 +5,7 @@ importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js");
 importScripts(
   "https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js",
 );
+import { config } from "@config/firebaseConfig";
 
 // Initialize the Firebase app in the service worker by passing in
 // your app's Firebase config object.
@@ -21,17 +22,7 @@ firebase.initializeApp(firebaseConfig);
 // messages.
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  console.log(
-    "[firebase-messaging-sw.js] Received background message ",
-    payload,
-  );
-  // Customize notification here
-  const notificationTitle = "궁금해 약";
-  const notificationOptions = {
-    body: "약을 복용할 시간입니다! \n가스모틴정 1정",
-    icon: "/images/logo.png",
-  };
-
-  self.registration.showNotification(notificationTitle, notificationOptions);
+self.addEventListener("notificationclick", (event) => {
+  console.log(event);
+  self.clients.openWindow("https://naver.com");
 });

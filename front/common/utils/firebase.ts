@@ -11,5 +11,9 @@ export async function getToken() {
     vapidKey: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_VAPID_KEY,
   });
 
+  messaging.onMessage((payload) => {
+    console.log(payload);
+  });
+
   return token;
 }
