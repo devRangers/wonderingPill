@@ -91,7 +91,7 @@ function MyPage() {
               border: `1px solid ${MAIN_COLOR}`,
             })}>
             {Object.entries(pharmacyData).map(([key, value], index) => (
-              <PharmarcyWrapper>
+              <PharmarcyWrapper key={key}>
                 <Pharmarcy name={value.name} phoneNumber={value.phnoeNumber} />
               </PharmarcyWrapper>
             ))}
