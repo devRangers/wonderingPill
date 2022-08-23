@@ -1,17 +1,23 @@
 import { Controller, Get, Logger, Post, UseGuards } from '@nestjs/common';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { AccessGuard } from 'src/common/guards';
+import { FcmService } from 'src/fcm/fcm.service';
 import { AlarmsService } from './alarms.service';
 
 @Controller('alarms')
 export class AlarmsController {
   private readonly logger = new Logger(`AlarmsController`);
-  constructor(private readonly alarmsService: AlarmsService) {}
+  constructor(
+    private readonly alarmsService: AlarmsService,
+    private readonly fcmService: FcmService,
+  ) {}
 
   @Post('set-alarm')
   async setAlarm() {
-    // 알람 DB에 설정 저장하기
     // firebase에 푸쉬 설정해주기
+    const deviceToken = '';
+    await this.fcmService.sendPushAlarm(deviceToken);
+    // 스케줄러 설정
   }
 
   @Get()

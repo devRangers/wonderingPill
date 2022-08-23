@@ -13,7 +13,7 @@ services:
     ports:
       - 6379:6379
     restart: always
-    command: redis-server /usr/local/conf/redis.conf --replica-read-only no
+    command: redis-server /usr/local/conf/redis.conf
     volumes:
       - ./data/:/data
       - ./conf/redis.conf:/usr/local/conf/redis.conf
