@@ -1,8 +1,9 @@
-import { Controller, Get, Logger, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, UseGuards } from '@nestjs/common';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { AccessGuard } from 'src/common/guards';
 import { FcmService } from 'src/fcm/fcm.service';
 import { AlarmsService } from './alarms.service';
+import { SetAlarmDto } from './dto';
 
 @Controller('alarms')
 export class AlarmsController {
@@ -13,10 +14,9 @@ export class AlarmsController {
   ) {}
 
   @Post('set-alarm')
-  async setAlarm() {
+  async setAlarm(@Body() setAlarmDto: SetAlarmDto) {
     // firebase에 푸쉬 설정해주기
-    const deviceToken = '';
-    await this.fcmService.sendPushAlarm(deviceToken);
+    await this.fcmService.sendPushAlarm(setAlarmDto.deviceToken);
     // 스케줄러 설정
   }
 

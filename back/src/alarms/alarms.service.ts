@@ -1,9 +1,13 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AlarmsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private prismaMongo: PrismaMongoService,
+  ) {}
 
   async getAlarms(id: string) {
     try {
