@@ -41,11 +41,11 @@ const FindEmailResultPage: NextPage = ({ name, email }: InfoType) => {
       <ResultContainer>
         <Description>
           다음 정보로 가입된 계정이
-          <br /> 총 {!!name ? 1 : 0}개 있습니다.
+          <br /> 총 {name ? 1 : 0}개 있습니다.
         </Description>
 
         <ResultBox $isWide={isWide} $isDivide={!!name}>
-          {!!name ? (
+          {name ? (
             <>
               <InfoContaniner $isWide={isWide}>
                 <InfoTitle>이름</InfoTitle>
