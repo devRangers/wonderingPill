@@ -1,10 +1,7 @@
 import { styled } from "styletron-react";
 
 export const ModifyContainer = styled("div", {
-  display: "flex",
   position: "relative",
-  justifyContent: "space-around",
-  flexDirection: "column",
   width: "90%",
   margin: "0 auto",
 });
@@ -17,6 +14,13 @@ export const BorderLine = styled("div", (props: { $borderColor: string }) => ({
   top: "-10px",
   left: "4%",
 }));
+
+export const Form = styled("form", {
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-around",
+});
 
 export const ModifyItem = styled("div", {
   display: "flex",
@@ -33,6 +37,13 @@ export const ItemContent = styled("p", {
 
 export const ItemInput = styled("input", {
   flex: "0.6",
+});
+
+export const ErrorMesasge = styled("p", {
+  display: "block",
+  position: "relative",
+  fontSize: "0.5rem",
+  color: "#bd0000",
 });
 
 export const ModifyButton = styled(
@@ -77,7 +88,7 @@ export const LeftSideContent = styled("div", {
 export const CustomerContainerRightSide = styled("div", {
   flex: "0.3",
   display: "flex",
-  justifyContent: "center",
+  justifyContent: "flex-end",
   alignItems: "center",
 });
 
