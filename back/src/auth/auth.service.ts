@@ -14,7 +14,6 @@ import {
   ChangePasswordDto,
   CreateUserDto,
   FindAccountDto,
-  FindPasswordDto,
   OauthLoginDto,
   SigninUserDto,
 } from './dto';
@@ -91,6 +90,7 @@ export class AuthService {
       const { email, password, isSignin } = signinUserDto;
 
       const isPwMatching: boolean = await argon.verify(user.password, password);
+
       if (!isPwMatching)
         throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
 
@@ -99,6 +99,7 @@ export class AuthService {
         email,
         isSignin,
       );
+
       return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
@@ -119,16 +120,19 @@ export class AuthService {
         secret: this.configService.get('JWT_SECRET'),
         expiresIn: this.configService.get('JWT_EXPIRESIN'),
       });
+
       let expiresIn;
       if (isSignin) {
         expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
       } else {
         expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
       }
+
       const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
         expiresIn,
       });
+
       return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('토큰 생성에 실패했습니다.');
@@ -163,6 +167,8 @@ export class AuthService {
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
     const user: User = await this.getUserById(id);
+    if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
+
     try {
       const result: string = await (
         await this.redisService.getKey('re' + id)
@@ -201,23 +207,11 @@ export class AuthService {
       await this.redisService.delKey('re' + id);
       return true;
     } catch (error) {
-      throw new ForbiddenException('로그아웃을 실패했습니다.');
+      throw new ForbiddenException('로그아웃 실패!.');
     }
   }
 
-  async findUser(findPasswordDto: FindPasswordDto): Promise<User> {
-    try {
-      const user: User = await this.getUserByEmail(findPasswordDto.email);
-      if (user.name !== findPasswordDto.name) {
-        throw new ForbiddenException('회원이 존재하지 않습니다.');
-      }
-      return user;
-    } catch (error) {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
-    }
-  }
-
-  async findUserByPhone(findAccountDto: FindAccountDto): Promise<User> {
+  async getUserForAccount(findAccountDto: FindAccountDto): Promise<User> {
     const { name, birth, phone } = findAccountDto;
     try {
       const user: User[] = await this.prisma.user.findMany({
@@ -276,20 +270,26 @@ export class AuthService {
     const user: User = await this.prisma.user.findUnique({
       where: { email: googleLoginDto.email },
     });
-
+    const { accessToken, refreshToken } = googleLoginDto;
+    let key;
     try {
       if (!user) {
-        await this.createOauthUser(googleLoginDto, 'google');
+        const newUser: User = await this.createOauthUser(
+          googleLoginDto,
+          'google',
+        );
+
+        key = 'go' + newUser.id;
       } else if (user.provider !== 'GOOGLE') {
         res
           .status(403)
           .redirect(`${this.configService.get('CLIENT_URL')}/login/error`);
+      } else {
+        key = 'go' + user.id;
       }
 
-      const { accessToken, refreshToken } = googleLoginDto;
-
       await this.redisService.setKey(
-        'go' + user.id,
+        key,
         this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
         Number(this.configService.get('JWT_REFRESH_EXPIRESIN')) / 1000,
       );

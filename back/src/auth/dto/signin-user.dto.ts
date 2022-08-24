@@ -40,13 +40,14 @@ export class SigninResponse extends CommonResponseDto {
     name: string;
     profileImg: string;
     provider: string;
+    phone: string;
   };
 }
 
 export class LogoutResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  checkLogout: {
+  result: {
     checkLogout: boolean;
   };
 }
