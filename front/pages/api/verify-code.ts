@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   );
   const result: FindAccountResponse = await response.json();
 
-  if (result.statusCode > 400) {
+  if (result.statusCode >= 400) {
     return res.status(result.statusCode).json({ message: result.message });
   }
 
