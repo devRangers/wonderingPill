@@ -14,7 +14,6 @@ import {
 import Template from "../Template";
 import ModifyForm from "./ModifyForm";
 import CustomerCenter from "./modals/CustomerCenter";
-import SuccessInquiry from "./modals/SuccessInquiry";
 import WithDrawl from "./modals/WithDrawl";
 import SubmitResult from "./modals/SubmitResult";
 
