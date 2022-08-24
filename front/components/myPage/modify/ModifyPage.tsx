@@ -16,6 +16,29 @@ import ModifyForm from "./ModifyForm";
 import CustomerCenter from "./modals/CustomerCenter";
 import SuccessInquiry from "./modals/SuccessInquiry";
 import WithDrawl from "./modals/WithDrawl";
+import SubmitResult from "./modals/SubmitResult";
+
+interface SubmitModals {
+  title: string;
+  contents: string[];
+}
+
+const submitModalData: { [key in string]: SubmitModals } = {
+  customerCenter: {
+    title: "고객 문의 완료",
+    contents: [
+      "문의가 완료되었습니다.",
+      "답변은 등록된 이메일을 통해 받아보실 수 있습니다.",
+    ],
+  },
+  withdrawal: {
+    title: "회원 탈퇴 완료",
+    contents: [
+      "회원 탈퇴가 완료되었습니다.",
+      "보다 나은 궁금해 약으로 다시 뵐 수 있기를 기대합니다",
+    ],
+  },
+};
 
 function ModifyPage() {
   const [isOpenModal, setIsOpenModal] = useState({
@@ -29,7 +52,7 @@ function ModifyPage() {
     setIsOpenModal((cur) => {
       return {
         ...cur,
-        customerCenter: true,
+        customerCenter: !cur.customerCenter,
       };
     });
   };
@@ -38,37 +61,28 @@ function ModifyPage() {
     setIsOpenModal((cur) => {
       return {
         ...cur,
-        withdrawal: true,
+        withdrawal: !cur.withdrawal,
       };
     });
   };
 
-  const handleCloseCustomerCenter = () => {
+  const handleClickSuccessInquiry = () => {
     setIsOpenModal((cur) => {
       return {
         ...cur,
-        customerCenter: false,
+        successInquiry: !cur.successInquiry,
+      };
+    });
+  };
+  const handleClickSuccessWithdrawal = () => {
+    setIsOpenModal((cur) => {
+      return {
+        ...cur,
+        successWithdrawal: !cur.successWithdrawal,
       };
     });
   };
 
-  const handleCloseSuccessInquiry = () => {
-    setIsOpenModal((cur) => {
-      return {
-        ...cur,
-        successInquiryModal: false,
-      };
-    });
-  };
-
-  const handleCloseWithdrawal = () => {
-    setIsOpenModal((cur) => {
-      return {
-        ...cur,
-        withdrawal: false,
-      };
-    });
-  };
   return (
     <>
       <Template gridTemplateRows="0.3fr 1fr 0.7fr">
@@ -116,19 +130,33 @@ function ModifyPage() {
       {isOpenModal.customerCenter && (
         <CustomerCenter
           isOpenModal={isOpenModal.customerCenter}
-          handleCloseCustomerCenter={handleCloseCustomerCenter}
+          handleCloseCustomerCenter={handleClickCustomerCenter}
+          handleOpenSuccessInquiry={handleClickSuccessInquiry}
         />
       )}
       {isOpenModal.successInquiry && (
-        <SuccessInquiry
+        <SubmitResult
+          {...submitModalData.customerCenter}
           isOpenModal={isOpenModal.successInquiry}
-          handleCloseSuccessInquiry={handleCloseSuccessInquiry}
+          handleCloseSubmitResult={handleClickSuccessInquiry}
         />
       )}
+
       {isOpenModal.withdrawal && (
         <WithDrawl
+          {...submitModalData.customerCenter}
           isOpenModal={isOpenModal.withdrawal}
-          handleCloseWithDrawl={handleCloseWithdrawal}></WithDrawl>
+          handleCloseWithDrawl={handleClickWithdrawal}
+          handleOpenSuccessWithDrawl={handleClickSuccessWithdrawal}
+        />
+      )}
+
+      {isOpenModal.successWithdrawal && (
+        <SubmitResult
+          {...submitModalData.withdrawal}
+          isOpenModal={isOpenModal.successWithdrawal}
+          handleCloseSubmitResult={handleClickSuccessWithdrawal}
+        />
       )}
     </>
   );

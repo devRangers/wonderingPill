@@ -1,5 +1,17 @@
 import { styled } from "styletron-react";
 
+export const CustomerCenterModalInner = styled("div", {
+  display: "grid",
+  gridTemplateRows: "1fr 3fr",
+  justifyItems: "center",
+  alignItems: "center",
+  gap: "0.3rem",
+  height: "35vh",
+  width: "80%",
+  padding: "0.5rem",
+  margin: "0 auto",
+});
+
 export const ModalInner = styled("div", {
   display: "grid",
   gridTemplateRows: "1fr 3fr 1fr",
@@ -17,6 +29,14 @@ export const Title = styled("h1", (props: { $color: string }) => ({
   fontWeight: "600",
   color: props.$color,
 }));
+
+export const Form = styled("form", {
+  display: "grid",
+  gridTemplateRows: "3fr 1fr",
+  alignItems: "center",
+  height: "100%",
+  width: "100%",
+});
 
 export const TextArea = styled("textarea", {
   width: "100%",

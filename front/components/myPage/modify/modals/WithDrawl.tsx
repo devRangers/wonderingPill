@@ -13,9 +13,23 @@ import { ACCENT_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 interface WithDrawlProp {
   isOpenModal: boolean;
   handleCloseWithDrawl: () => void;
+  handleOpenSuccessWithDrawl: () => void;
 }
 
-function WithDrawl({ isOpenModal, handleCloseWithDrawl }: WithDrawlProp) {
+function WithDrawl({
+  isOpenModal,
+  handleCloseWithDrawl,
+  handleOpenSuccessWithDrawl,
+}: WithDrawlProp) {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      handleCloseWithDrawl();
+      handleOpenSuccessWithDrawl();
+
+      // 회원 탈퇴 로직
+    } catch (e) {}
+  };
   return (
     <Modal open={isOpenModal} onClose={handleCloseWithDrawl}>
       <ModalInner>
@@ -26,7 +40,9 @@ function WithDrawl({ isOpenModal, handleCloseWithDrawl }: WithDrawlProp) {
         </TextContainer>
         <Bottom>
           <CloseButton onClick={handleCloseWithDrawl}>닫기</CloseButton>
-          <SubmitButton $bgColor={ERROR_MSG_COLOR}>회원탈퇴</SubmitButton>
+          <form onSubmit={handleSubmit}>
+            <SubmitButton $bgColor={ERROR_MSG_COLOR}>회원탈퇴</SubmitButton>
+          </form>
         </Bottom>
       </ModalInner>
     </Modal>

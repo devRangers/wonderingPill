@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "@modal/Modal";
-import { CloseButton, ModalInner, Title } from "./Modal.style";
 import { ACCENT_COLOR } from "@utils/constant";
+import { CloseButton, ModalInner, Title } from "./Modal.style";
 
 interface SuccessInquiryProp {
   isOpenModal: boolean;
