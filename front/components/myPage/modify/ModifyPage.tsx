@@ -15,11 +15,12 @@ import Template from "../Template";
 import ModifyForm from "./ModifyForm";
 import CustomerCenter from "./modals/CustomerCenter";
 import SuccessInquiry from "./modals/SuccessInquiry";
+import WithDrawl from "./modals/WithDrawl";
 
 function ModifyPage() {
   const [isOpenModal, setIsOpenModal] = useState({
     customerCenter: false,
-    successInquiryModal: false,
+    successInquiry: false,
     withdrawal: false,
     successWithdrawal: false,
   });
@@ -32,6 +33,16 @@ function ModifyPage() {
       };
     });
   };
+
+  const handleClickWithdrawal = () => {
+    setIsOpenModal((cur) => {
+      return {
+        ...cur,
+        withdrawal: true,
+      };
+    });
+  };
+
   const handleCloseCustomerCenter = () => {
     setIsOpenModal((cur) => {
       return {
@@ -46,6 +57,15 @@ function ModifyPage() {
       return {
         ...cur,
         successInquiryModal: false,
+      };
+    });
+  };
+
+  const handleCloseWithdrawal = () => {
+    setIsOpenModal((cur) => {
+      return {
+        ...cur,
+        withdrawal: false,
       };
     });
   };
@@ -84,7 +104,9 @@ function ModifyPage() {
               </LeftSideContent>
             </CustomerContainerLeftSide>
             <CustomerContainerRightSide>
-              <CustomerButton $buttonColor={SUB_COLOR}>
+              <CustomerButton
+                $buttonColor={SUB_COLOR}
+                onClick={handleClickWithdrawal}>
                 회원 탈퇴
               </CustomerButton>
             </CustomerContainerRightSide>
@@ -97,11 +119,16 @@ function ModifyPage() {
           handleCloseCustomerCenter={handleCloseCustomerCenter}
         />
       )}
-      {isOpenModal.successInquiryModal && (
+      {isOpenModal.successInquiry && (
         <SuccessInquiry
-          isOpenModal={isOpenModal.successInquiryModal}
+          isOpenModal={isOpenModal.successInquiry}
           handleCloseSuccessInquiry={handleCloseSuccessInquiry}
         />
+      )}
+      {isOpenModal.withdrawal && (
+        <WithDrawl
+          isOpenModal={isOpenModal.withdrawal}
+          handleCloseWithDrawl={handleCloseWithdrawal}></WithDrawl>
       )}
     </>
   );

@@ -27,6 +27,14 @@ export const TextArea = styled("textarea", {
   padding: "0.8rem",
 });
 
+export const TextContainer = styled("div", {
+  display: "grid",
+  gridTemplateRows: "1fr 1fr",
+  height: "100%",
+  alignItems: "center",
+  lineHeight: "1.4rem",
+});
+
 export const Bottom = styled("div", {
   display: "flex",
   justifyContent: "space-between",
