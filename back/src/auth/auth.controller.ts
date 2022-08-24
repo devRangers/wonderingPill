@@ -72,14 +72,14 @@ export class AuthController {
     private readonly smsService: SmsService,
   ) {}
 
-  @HttpCode(200)
+  @HttpCode(201)
   @Post('signup')
   @ApiOperation({
     summary: '유저 생성(회원가입) API',
     description: '유저를 생성한다.',
   })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: '회원가입 성공',
     type: CreateUserResponse,
   })
@@ -90,13 +90,13 @@ export class AuthController {
     const user: UserModel = await this.authService.createUser(createUserDto);
     this.logger.verbose(`User ${user.email} Sign-Up Success!`);
     return {
-      statusCode: 200,
+      statusCode: 201,
       message: '회원가입에 성공했습니다.',
       user: { id: user.id, email: user.email },
     };
   }
 
-  @HttpCode(200)
+  @HttpCode(201)
   @Post('signin')
   @Throttle(5, 1)
   @UseGuards(RecaptchaGuard)
@@ -106,7 +106,7 @@ export class AuthController {
       '유저의 accessToken, refreshToken을 발행하여 cookie에 저장하고 로그인한다.',
   })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: '로그인 성공',
     type: SigninResponse,
   })
@@ -160,7 +160,7 @@ export class AuthController {
     this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
 
     return {
-      statusCode: 200,
+      statusCode: 201,
       message: '정상적으로 로그인되었습니다.',
       user: {
         id: user.id,
@@ -287,7 +287,7 @@ export class AuthController {
     };
   }
 
-  @HttpCode(200)
+  @HttpCode(201)
   @Post('send-email')
   @Throttle(5, 360)
   @UseGuards(RecaptchaGuard)
@@ -296,7 +296,7 @@ export class AuthController {
     description: '비밀번호 찾기를 위해 email을 전송 한다.',
   })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'email 전송 성공',
     type: FindPasswordResponse,
   })
@@ -322,7 +322,7 @@ export class AuthController {
 
     this.logger.verbose(`User ${user.email} send email to update Success!`);
     return {
-      statusCode: 200,
+      statusCode: 201,
       message: '이메일을 성공적으로 전송했습니다.',
       result: { check },
     };
@@ -441,7 +441,7 @@ export class AuthController {
     }
   }
 
-  @HttpCode(200)
+  @HttpCode(201)
   @Throttle(5, 360)
   @UseGuards(RecaptchaGuard)
   @Post('send-sms')
@@ -451,7 +451,7 @@ export class AuthController {
       '계정 찾기 / 회원가입에서 휴대폰 SMS 인증번호로 본인인증 한다.',
   })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'SMS 전송 성공',
     type: CommonResponseDto,
   })
@@ -473,7 +473,7 @@ export class AuthController {
 
     this.logger.verbose(`User ${findAccountDto.phone} send sms Success!`);
     return {
-      statusCode: 200,
+      statusCode: 201,
       message: 'SMS을 성공적으로 전송했습니다.',
     };
   }
