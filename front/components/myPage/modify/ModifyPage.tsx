@@ -13,9 +13,9 @@ import {
 } from "./ModifyPage.style";
 import Template from "../Template";
 import ModifyForm from "./ModifyForm";
-import CustomerCenter from "./modals/CustomerCenter";
 import WithDrawl from "./modals/WithDrawl";
 import SubmitResult from "./modals/SubmitResult";
+import CustomerCenter from "./modals/CustomerCenter";
 
 interface SubmitModals {
   title: string;

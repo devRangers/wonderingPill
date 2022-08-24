@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "@modal/Modal";
+import { ACCENT_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import {
   Bottom,
   CloseButton,
@@ -8,7 +9,6 @@ import {
   TextContainer,
   Title,
 } from "./Modal.style";
-import { ACCENT_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 
 interface WithDrawlProp {
   isOpenModal: boolean;

@@ -1,4 +1,5 @@
 import { userAtom } from "@atom/userAtom";
+import { SUB_COLOR } from "@utils/constant";
 import {
   Form,
   ItemContent,
@@ -7,11 +8,10 @@ import {
   ModifyButton,
   ModifyItem,
 } from "./ModifyPage.style";
+import ReactTooltip from "react-tooltip";
 import { useFormik } from "formik";
 import { useAtom } from "jotai";
 import * as Yup from "yup";
-import ReactTooltip from "react-tooltip";
-import { SUB_COLOR } from "@utils/constant";
 
 interface ModifyValues {
   name: string;

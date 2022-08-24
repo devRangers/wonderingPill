@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "@modal/Modal";
+import { ACCENT_COLOR } from "@utils/constant";
 import {
   Bottom,
   CloseButton,
@@ -7,7 +8,6 @@ import {
   TextContainer,
   Title,
 } from "./Modal.style";
-import { ACCENT_COLOR } from "@utils/constant";
 
 interface SubmitResultProp {
   title: string;
