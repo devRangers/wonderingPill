@@ -10,4 +10,13 @@ datasource db {
 
 model Reminder{
   id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  user_id          String             @unique
+  User             User               @relation(fields: [user_id], references: [id])
 }
+
+model User{
+    id               String             @id @default(auto()) @map("_id") @db.ObjectId
+    name             String             
+    fcmToken         String             @unique
+    Reminder         Reminder[]
+} 

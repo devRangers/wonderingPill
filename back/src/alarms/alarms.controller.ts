@@ -1,9 +1,6 @@
-import { Body, Controller, Get, Logger, Post, UseGuards } from '@nestjs/common';
-import { GetCurrentUserId } from 'src/common/decorators';
-import { AccessGuard } from 'src/common/guards';
+import { Controller, Logger, Post } from '@nestjs/common';
 import { FcmService } from 'src/fcm/fcm.service';
 import { AlarmsService } from './alarms.service';
-import { SetAlarmDto } from './dto';
 
 @Controller('alarms')
 export class AlarmsController {
@@ -14,19 +11,20 @@ export class AlarmsController {
   ) {}
 
   @Post('set-alarm')
-  async setAlarm(@Body() setAlarmDto: SetAlarmDto) {
+  async setAlarm() {
+    //@Body() setAlarmDto: SetAlarmDto
     // firebase에 푸쉬 설정해주기
-    await this.fcmService.sendPushAlarm(setAlarmDto.deviceToken);
     // 스케줄러 설정
+    await this.alarmsService.setReminders();
   }
 
-  @Get()
-  @UseGuards(AccessGuard)
-  async getAlarms(@GetCurrentUserId() id: string) {
-    const alarms = await this.alarmsService.getAlarms(id);
-    this.logger.verbose(`get User Alarms Success!`);
-    return alarms;
-  }
+  // @Get()
+  // @UseGuards(AccessGuard)
+  // async getAlarms(@GetCurrentUserId() id: string) {
+  //   const alarms = await this.alarmsService.getAlarms(id);
+  //   this.logger.verbose(`get User Alarms Success!`);
+  //   return alarms;
+  // }
 
   // 읽음 표시
 
