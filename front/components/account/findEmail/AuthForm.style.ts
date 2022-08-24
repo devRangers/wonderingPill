@@ -34,12 +34,15 @@ export const Input = styled("input", {
   marginRight: "0.5rem",
 });
 
-export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
-  borderRadius: "25px",
-  backgroundColor: props.$btnColor,
-  color: "#fff",
-  padding: "0.5rem 1rem",
-}));
+export const SubmitBtn = styled(
+  "button",
+  (props: { $btnColor: string; $disabled: boolean }) => ({
+    borderRadius: "25px",
+    backgroundColor: props.$disabled ? "#A4A4A4" : props.$btnColor,
+    color: "#fff",
+    padding: "0.5rem 1rem",
+  }),
+);
 
 export const RetryBtnContainer = styled("div", {
   display: "grid",
