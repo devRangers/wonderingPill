@@ -1,29 +1,24 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getToken } from "@utils/firebase";
 
 const Test: NextPage = () => {
   const router = useRouter();
+  const [token, setToken] = useState("");
 
   useEffect(() => {
     async function getMessageToken() {
-      const token = await getToken();
-      console.log(token);
+      const temp = await getToken();
+      if (temp !== null) {
+        setToken(temp);
+      }
+      console.log(temp);
     }
     getMessageToken();
   }, []);
 
-  return (
-    <>
-      <button
-        onClick={() =>
-          router.push({ pathname: "/login", query: { error: "google" } })
-        }>
-        로그인페이지 이동
-      </button>
-    </>
-  );
+  return <>{token}</>;
 };
 
 export default Test;
