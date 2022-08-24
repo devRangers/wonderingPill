@@ -37,7 +37,6 @@
       "@searchComp/*": ["components/search/*"],
       "@searchPharmComp/*": ["components/search/pharmacy/*"],
       "@resultComp/*": ["components/search/result/*"],
-      "@searchPharmComp/*": ["components/search/pharmacy/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },
