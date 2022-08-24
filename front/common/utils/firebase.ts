@@ -11,8 +11,11 @@ export async function getToken() {
     vapidKey: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_VAPID_KEY,
   });
 
-  messaging.onMessage((payload) => {
-    console.log(payload);
+  messaging.onMessage(({ notification }) => {
+    const { title, body } = notification;
+    const icon = "/images/logo.png";
+    const options = { body, icon };
+    const notif = new Notification(title, options);
   });
 
   return token;
