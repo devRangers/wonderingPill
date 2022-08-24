@@ -14,6 +14,7 @@ import {
 import Template from "../Template";
 import ModifyForm from "./ModifyForm";
 import CustomerCenter from "./modals/CustomerCenter";
+import SuccessInquiry from "./modals/SuccessInquiry";
 
 function ModifyPage() {
   const [isOpenModal, setIsOpenModal] = useState({
@@ -31,11 +32,20 @@ function ModifyPage() {
       };
     });
   };
-  const handleCloseustomerCenter = () => {
+  const handleCloseCustomerCenter = () => {
     setIsOpenModal((cur) => {
       return {
         ...cur,
         customerCenter: false,
+      };
+    });
+  };
+
+  const handleCloseSuccessInquiry = () => {
+    setIsOpenModal((cur) => {
+      return {
+        ...cur,
+        successInquiryModal: false,
       };
     });
   };
@@ -84,7 +94,13 @@ function ModifyPage() {
       {isOpenModal.customerCenter && (
         <CustomerCenter
           isOpenModal={isOpenModal.customerCenter}
-          handleCloseustomerCenter={handleCloseustomerCenter}
+          handleCloseCustomerCenter={handleCloseCustomerCenter}
+        />
+      )}
+      {isOpenModal.successInquiryModal && (
+        <SuccessInquiry
+          isOpenModal={isOpenModal.successInquiryModal}
+          handleCloseSuccessInquiry={handleCloseSuccessInquiry}
         />
       )}
     </>
