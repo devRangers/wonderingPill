@@ -15,21 +15,20 @@ export class AlarmsService {
     private readonly fcmService: FcmService,
   ) {}
 
-  async setReminders(setAlarmDto: SetAlarmDto) {
+  async setAlarms(setAlarmDto: SetAlarmDto) {
     const { vip, hour, minute, pillName, userName, repeatTime, deviceToken } =
       setAlarmDto;
     await this.isDevicetoken(deviceToken, userName);
     const agenda = new Agenda({
       db: {
         address: this.configService.get('DATABASE_URL_MONGO'),
-        collection: 'agendaJobs',
-        options: { useNewUrlParser: true, useUnifiedTopology: true },
+        collection: 'pillAlarms',
       },
       name: userName + pillName,
     });
 
     agenda.define(userName + pillName, async () => {
-      console.log('Hello!!!');
+      await this.fcmService.sendPushAlarm(deviceToken, userName, pillName);
     });
 
     (async function () {
@@ -39,9 +38,13 @@ export class AlarmsService {
         .repeatEvery(`${minute} ${hour} * * ${vip.join(',')}`, {
           timezone: 'Asia/Seoul',
         })
-        // .schedule(`in ${repeatTime} minutes`)
+        .setShouldSaveResult(true)
         .save();
     })();
+
+    if (repeatTime !== 0) {
+      await this.setRepeatAlarm(repeatTime, agenda, userName, pillName);
+    }
   }
 
   async isDevicetoken(deviceToken: string, name: string) {
@@ -56,6 +59,18 @@ export class AlarmsService {
         },
       });
     }
+  }
+
+  async setRepeatAlarm(repeatTime: number, agenda, userName, pillName) {
+    (async function () {
+      const job = agenda.create(userName + pillName + repeatTime.toString());
+      await agenda.start();
+      await job
+        // .repeatEvery(`* * * * *`, {
+        //   timezone: 'Asia/Seoul',
+        // })
+        .save();
+    })();
   }
 
   // async getAlarms(id: string) {

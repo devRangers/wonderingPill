@@ -1,7 +1,9 @@
 import { Body, Controller, HttpCode, Logger, Post } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AlarmsService } from './alarms.service';
 import { SetAlarmDto } from './dto';
 
+@ApiTags('Alarms API')
 @Controller('alarms')
 export class AlarmsController {
   private readonly logger = new Logger(`AlarmsController`);
@@ -9,8 +11,18 @@ export class AlarmsController {
 
   @HttpCode(201)
   @Post('set-alarm')
+  @ApiOperation({
+    summary: '알림 설정 API',
+    description: '알림 예약을 설정한다.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '알림 설정 성공',
+    type: '',
+  })
+  @ApiBody({ type: SetAlarmDto })
   async setAlarm(@Body() setAlarmDto: SetAlarmDto) {
-    await this.alarmsService.setReminders(setAlarmDto);
+    await this.alarmsService.setAlarms(setAlarmDto);
   }
 
   // @Get()

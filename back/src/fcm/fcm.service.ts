@@ -3,18 +3,14 @@ import * as admin from 'firebase-admin';
 
 @Injectable()
 export class FcmService {
-  async sendPushAlarm(deviceToken: string) {
-    const name = '';
-    const pill = '루테인';
-
+  async sendPushAlarm(deviceToken: string, userName: string, pillName: string) {
     const message = {
       notification: {
         title: '[궁금해약] 복용 알림',
-        body: `${name}님! ${pill} 약을 먹을 시간입니다!`,
+        body: `${userName}님! ${pillName} 약을 먹을 시간입니다!`,
       },
       data: {
         score: '850',
-        time: '',
       },
       android: {
         notification: {
