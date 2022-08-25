@@ -58,7 +58,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       try {
         const { user } = await Api.get<CurrentUserResponse>("/auth/current");
         setUser(user);
-        Api.get<RefreshResponse>("/auth/refresh");
       } catch (err) {}
     }
     getUsers();
@@ -75,6 +74,16 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       clearInterval(timer);
     };
+  }, []);
+
+  // refresh token이 있을 경우 페이지 이동 시 access token 재발급
+  useEffect(() => {
+    async function getAccessToken() {
+      try {
+        await Api.get<RefreshResponse>("/auth/refresh");
+      } catch (err) {}
+    }
+    getAccessToken();
   }, []);
 
   return (
