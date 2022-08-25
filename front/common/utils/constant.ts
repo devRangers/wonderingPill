@@ -22,6 +22,8 @@ export const ROUTE = {
   PASSWORD_NEW: "/account/password/new",
   SEARCH_IMAGE: "/search/image",
   SEARCH_RESULT: "/search/result",
+  MY_PAGE: "/myPage",
+  MY_PAGE_MODIFY: "/myPage/modify",
   ERROR: "/error",
   BLOCK: "/blocked",
 };
