@@ -1,50 +1,64 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { MockService } from './auth.mock';
 import { AuthService } from './auth.service';
+import { CreateUserDto } from './dto';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prismaService: PrismaService;
 
   beforeEach(async () => {
+    const mockProvider = { provide: AuthService, useClass: MockService };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      imports: [],
+      providers: [AuthService, ConfigService, PrismaService, mockProvider],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    prismaService = module.get<PrismaService>(PrismaService);
+  });
 
-    await prismaService.user.create({
-      data: {
-        id: '1',
-        email: 'string124453@email.com',
-        name: 'string',
-        password: 'string1324533@',
-        birth: '19551212',
-        phone: '01000000000',
-      },
-    });
+  afterEach(async () => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getUserByEmail', () => {
-    it('should return a user', async () => {
-      const user = await service.getUserByEmail('string124453@email.com');
-      expect(user).toBeDefined();
-      expect(user.email).toEqual('string124453@email.com');
+  describe('create user', () => {
+    const res = {
+      send: jest.fn(),
+      status: jest.fn(() => res),
+      json: jest.fn(),
+    };
+
+    it('should create a user', async () => {
+      const createUserSpy = jest.spyOn(service, 'createUser');
+      const dto = new CreateUserDto();
+
+      await service.createUser(dto);
+      res.status.mockReturnValue(200);
+
+      expect(createUserSpy).toHaveBeenCalledWith(dto);
+      expect(res.status()).toBe(200);
     });
 
-    it('should throw forbidden error', async () => {
-      try {
-        await service.getUserByEmail('999');
-      } catch (e) {
-        expect(e).toBeInstanceOf(ForbiddenException);
-        expect(e.message).toEqual('회원이 존재하지 않습니다.');
-      }
+    it('should return 403 error', async () => {
+      const createUserSpy = jest.spyOn(service, 'createUser');
+      const dto = new CreateUserDto();
+
+      // {
+      //   "statusCode": 403,
+      //   "message": "회원을 저장하지 못했습니다.",
+      //   "error": "Forbidden"
+      // }
+
+      res.status.mockReturnValue(403);
+      res.json.mockReturnValue();
+
+      await service.createUser(dto);
+      expect(res.status()).toBe(403);
     });
   });
 });
