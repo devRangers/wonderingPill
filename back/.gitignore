@@ -48,8 +48,4 @@ conf/
 
 # Prisma
 mongoClient/
-<<<<<<< HEAD
 postgresClient/
-=======
-postgresClient/
->>>>>>> 9fa8a3ebd54ffd53d7beef82db73a0cda9cc06da
