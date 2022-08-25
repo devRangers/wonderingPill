@@ -1,5 +1,6 @@
 import { Body, Controller, HttpCode, Logger, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CommonResponseDto } from 'src/common/dto';
 import { AlarmsService } from './alarms.service';
 import { SetAlarmDto } from './dto';
 
@@ -18,11 +19,13 @@ export class AlarmsController {
   @ApiResponse({
     status: 201,
     description: '알림 설정 성공',
-    type: '',
+    type: CommonResponseDto,
   })
   @ApiBody({ type: SetAlarmDto })
   async setAlarm(@Body() setAlarmDto: SetAlarmDto) {
     await this.alarmsService.setAlarms(setAlarmDto);
+    this.logger.verbose(``);
+    return { statusCode: 201, message: '알림을 설정했습니다.' };
   }
 
   // @Get()
