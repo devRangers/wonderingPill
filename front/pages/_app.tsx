@@ -67,7 +67,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   // refresh token이 있을 경우 access token 주기적으로 재발급
   useEffect(() => {
     const timer = setInterval(() => {
-      if (document.hasFocus()) Api.get<RefreshResponse>("/auth/refresh");
+      try {
+        if (document.hasFocus()) Api.get<RefreshResponse>("/auth/refresh");
+      } catch (err) {}
     }, SILENT_REFRESH_TIME);
 
     return () => {

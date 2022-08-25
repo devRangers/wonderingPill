@@ -15,6 +15,17 @@ const Test: NextPage = () => {
       }
       console.log(temp);
     }
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        console.log("event for the service worker", event);
+      });
+
+      navigator.serviceWorker.addEventListener("notificationclick", (event) => {
+        console.log("click!!!!!!");
+      });
+    }
+
     getMessageToken();
   }, []);
 
