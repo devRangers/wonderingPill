@@ -69,23 +69,23 @@ model Pill {
 
 model PillBookMark {
   id      String  @id @default(uuid())
+  alarm   Boolean @default(false)
   pill_id String?
   user_id String?
   Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Alarm   Alarm[]
 }
 
-model Alarm {
-  id                  String             @id @default(uuid())
-  pillBookMark_id     String?             
-  PillBookMark        PillBookMark?      @relation(fields: [pillBookMark_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-}
 
 enum Provider {
   GOOGLE
   KAKAO
   LOCAL
+}
+
+enum Role {
+  ADMIN
+  USER
 }
 
 enum Colors {
@@ -101,11 +101,6 @@ enum Colors {
   black
   purple
   gray
-}
-
-enum Role {
-  ADMIN
-  USER
 }
 
 enum Shape {

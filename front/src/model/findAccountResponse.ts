@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { CreateUserResponseUser } from './createUserResponseUser';
+import type { FindAccountResponseUser } from './findAccountResponseUser';
 
-export interface CreateUserResponse {
-  user: CreateUserResponseUser;
+export interface FindAccountResponse {
   statusCode: number;
   message: string;
+  user: FindAccountResponseUser;
 }

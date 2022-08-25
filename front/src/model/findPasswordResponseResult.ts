@@ -7,5 +7,5 @@
  */
 
 export type FindPasswordResponseResult = {
-  result?: boolean;
+  check?: boolean;
 };

@@ -40,6 +40,7 @@ export class SigninResponse extends CommonResponseDto {
     name: string;
     profileImg: string;
     provider: string;
+    phone: string;
   };
 }
 

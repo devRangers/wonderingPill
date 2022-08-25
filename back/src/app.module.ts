@@ -7,11 +7,13 @@ import { AlarmsModule } from './alarms/alarms.module';
 import { AuthModule } from './auth/auth.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { FcmModule } from './fcm/fcm.module';
+import { GcsModule } from './gcs/gcs.module';
 import { MailModule } from './mail/mail.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { SmsModule } from './sms/sms.module';
+import { UsersModule } from './users/users.module';
 import { validation } from './utils';
 import config from './utils/config';
 
@@ -42,8 +44,9 @@ import config from './utils/config';
     SmsModule,
     AlarmsModule,
     FcmModule,
+    UsersModule,
+    GcsModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_GUARD,
