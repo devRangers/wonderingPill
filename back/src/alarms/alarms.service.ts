@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Agenda } from 'agenda/es';
 import { FcmService } from 'src/fcm/fcm.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SetAlarmDto } from './dto';
 
 @Injectable()
 export class AlarmsService {
@@ -12,6 +14,49 @@ export class AlarmsService {
     private readonly configService: ConfigService,
     private readonly fcmService: FcmService,
   ) {}
+
+  async setReminders(setAlarmDto: SetAlarmDto) {
+    const { vip, hour, minute, pillName, userName, repeatTime, deviceToken } =
+      setAlarmDto;
+    await this.isDevicetoken(deviceToken, userName);
+    const agenda = new Agenda({
+      db: {
+        address: this.configService.get('DATABASE_URL_MONGO'),
+        collection: 'agendaJobs',
+        options: { useNewUrlParser: true, useUnifiedTopology: true },
+      },
+      name: userName + pillName,
+    });
+
+    agenda.define(userName + pillName, async () => {
+      console.log('Hello!!!');
+    });
+
+    (async function () {
+      const job = agenda.create(userName + pillName);
+      await agenda.start();
+      await job
+        .repeatEvery(`${minute} ${hour} * * ${vip.join(',')}`, {
+          timezone: 'Asia/Seoul',
+        })
+        // .schedule(`in ${repeatTime} minutes`)
+        .save();
+    })();
+  }
+
+  async isDevicetoken(deviceToken: string, name: string) {
+    const user = await this.prismaMongo.user.findUnique({
+      where: { deviceToken },
+    });
+    if (!user) {
+      await this.prismaMongo.user.create({
+        data: {
+          deviceToken,
+          name,
+        },
+      });
+    }
+  }
 
   // async getAlarms(id: string) {
   //   try {
@@ -37,33 +82,4 @@ export class AlarmsService {
   //     throw new ForbiddenException('알림을 조회하지 못했습니다.');
   //   }
   // }
-
-  async setReminders() {
-    // await this.prismaMongo.user.create({
-    //   data: {
-    //     fcmToken:
-    //     name: ,
-    //   },
-    // });
-    // const agenda = new Agenda({
-    //   db: {
-    //     address: this.configService.get('DATABASE_URL_MONGO'),
-    //     options: { useNewUrlParser: true, useUnifiedTopology: true },
-    //   },
-    //   name: 'vote deadline queue',
-    // });
-    // // const agenda = new Agenda({
-    // //   db: { address: this.configService.get('DATABASE_URL_MONGO') },
-    // // });
-    // agenda.define('delete old users', async (job) => {
-    //   console.log('Hello!!!');
-    //   job.repeatEvery('0 24 15 * * MON,FRI');
-    // });
-    // (async function () {
-    //   // IIFE to give access to async/await
-    //   await agenda.start();
-    //   await agenda.every('5 seconds', 'delete old users');
-    // })();
-    // mongodb에 저장
-  }
 }

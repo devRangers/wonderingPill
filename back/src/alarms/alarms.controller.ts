@@ -1,21 +1,16 @@
-import { Controller, Logger, Post } from '@nestjs/common';
-import { FcmService } from 'src/fcm/fcm.service';
+import { Body, Controller, HttpCode, Logger, Post } from '@nestjs/common';
 import { AlarmsService } from './alarms.service';
+import { SetAlarmDto } from './dto';
 
 @Controller('alarms')
 export class AlarmsController {
   private readonly logger = new Logger(`AlarmsController`);
-  constructor(
-    private readonly alarmsService: AlarmsService,
-    private readonly fcmService: FcmService,
-  ) {}
+  constructor(private readonly alarmsService: AlarmsService) {}
 
+  @HttpCode(201)
   @Post('set-alarm')
-  async setAlarm() {
-    //@Body() setAlarmDto: SetAlarmDto
-    // firebase에 푸쉬 설정해주기
-    // 스케줄러 설정
-    await this.alarmsService.setReminders();
+  async setAlarm(@Body() setAlarmDto: SetAlarmDto) {
+    await this.alarmsService.setReminders(setAlarmDto);
   }
 
   // @Get()
