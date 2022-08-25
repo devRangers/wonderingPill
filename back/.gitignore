@@ -40,5 +40,12 @@ lerna-debug.log*
 .production.env
 .env
 
-# GCS
+# secure
 secure/
+
+# REDIS
+conf/
+
+# Prisma
+mongoClient/
+postgresClient/
