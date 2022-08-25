@@ -9,26 +9,14 @@ export class FcmService {
         title: '[궁금해약] 복용 알림',
         body: `${userName}님! ${pillName} 약을 먹을 시간입니다!`,
       },
-      data: {
-        score: '850',
-      },
-      android: {
-        notification: {
-          clickAction: 'https://www.naver.com/',
-          icon: 'stock_ticker_update',
-          color: '#7e55c3',
-          imageUrl:
-            'https://storage.cloud.google.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png',
-        },
-      },
       webpush: {
         headers: {
           image:
             'https://storage.cloud.google.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png',
         },
-        fcmOptions: {
-          link: 'https://www.naver.com/',
-        },
+        // fcm_options: {
+        //   link: 'https://www.naver.com/',
+        // },
       },
       token: deviceToken,
     };

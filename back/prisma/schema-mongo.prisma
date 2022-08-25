@@ -10,13 +10,16 @@ datasource db {
 
 model Reminder{
   id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  user_name        String
+  pill_name        String
+  time             String
   user_id          String             @unique
-  User             User               @relation(fields: [user_id], references: [id])
+  User             User               @relation(fields: [user_id], references: [user_id])
 }
 
 model User{
     id               String             @id @default(auto()) @map("_id") @db.ObjectId
-    name             String             
-    deviceToken      String             @unique
-    Reminder         Reminder[]
-} 
+    user_id          String             @unique          
+    deviceToken      String 
+    Reminder           Reminder[]
+}
