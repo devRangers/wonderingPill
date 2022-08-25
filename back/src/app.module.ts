@@ -11,6 +11,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { SmsModule } from './sms/sms.module';
 import { validation } from './utils';
+import { UsersModule } from './users/users.module';
+import { GcsModule } from './gcs/gcs.module';
 import config from './utils/config';
 
 @Module({
@@ -38,8 +40,9 @@ import config from './utils/config';
     BookmarkModule,
     PharmacyModule,
     SmsModule,
+    UsersModule,
+    GcsModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_GUARD,
