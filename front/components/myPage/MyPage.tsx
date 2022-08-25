@@ -1,6 +1,7 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { MAIN_COLOR, SUB_COLOR } from "@utils/constant";
+import { useRouter } from "next/router";
+import { ROUTE, SUB_COLOR } from "@utils/constant";
 import {
   BottomContainer,
   ContentClip,
@@ -8,12 +9,11 @@ import {
   MedicineBadgeContainer,
   ModifyUserDataButton,
   PharmarcyContainer,
-  PharmarcyWrapper,
 } from "./MyPage.style";
+import Template from "./Template";
 import Medicine from "./medicine/Medicine";
 import Pharmarcy from "./pharmarcy/Pharmarcy";
 import { useStyletron } from "styletron-react";
-import Template from "./Template";
 import Slider from "react-slick";
 
 interface pharmacyValues {
@@ -67,7 +67,13 @@ const settings = {
 };
 
 function MyPage() {
+  const router = useRouter();
   const [css] = useStyletron();
+  const handleClick = () => {
+    router.push({
+      pathname: ROUTE.MY_PAGE_MODIFY,
+    });
+  };
   return (
     <Template gridTemplateRows="1fr 1.4fr 1.5fr 0.5fr">
       <ContentContainer $borderColor={SUB_COLOR}>
@@ -88,18 +94,23 @@ function MyPage() {
               height: "80%",
               maxWidth: "400px",
               margin: "auto",
-              border: `1px solid ${MAIN_COLOR}`,
+              // border: `1px solid ${MAIN_COLOR}`,
+              border: "1px solid red",
             })}>
             {Object.entries(pharmacyData).map(([key, value], index) => (
-              <PharmarcyWrapper key={key}>
-                <Pharmarcy name={value.name} phoneNumber={value.phnoeNumber} />
-              </PharmarcyWrapper>
+              <Pharmarcy
+                key={key}
+                name={value.name}
+                phoneNumber={value.phnoeNumber}
+              />
             ))}
           </Slider>
         </PharmarcyContainer>
       </ContentContainer>
       <BottomContainer>
-        <ModifyUserDataButton>개인정보수정</ModifyUserDataButton>
+        <ModifyUserDataButton onClick={handleClick}>
+          개인정보수정
+        </ModifyUserDataButton>
       </BottomContainer>
     </Template>
   );
