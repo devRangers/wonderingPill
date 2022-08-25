@@ -126,11 +126,6 @@ export const PharmarcyContainer = styled("div", {
   margin: "1rem auto 0.5rem auto",
 });
 
-export const PharmarcyWrapper = styled("div", {
-  height: "15vh",
-  width: "100px",
-});
-
 export const BottomContainer = styled("div", {
   textAlign: "end",
 });

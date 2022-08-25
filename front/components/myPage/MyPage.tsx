@@ -1,7 +1,7 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useRouter } from "next/router";
-import { ROUTE, SUB_COLOR } from "@utils/constant";
+import { MAIN_COLOR, ROUTE, SUB_COLOR } from "@utils/constant";
 import {
   BottomContainer,
   ContentClip,
@@ -94,8 +94,7 @@ function MyPage() {
               height: "80%",
               maxWidth: "400px",
               margin: "auto",
-              // border: `1px solid ${MAIN_COLOR}`,
-              border: "1px solid red",
+              border: `1px solid ${MAIN_COLOR}`,
             })}>
             {Object.entries(pharmacyData).map(([key, value], index) => (
               <Pharmarcy

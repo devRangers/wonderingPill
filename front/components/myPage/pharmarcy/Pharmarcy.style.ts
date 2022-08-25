@@ -4,8 +4,8 @@ export const PharmarcyContainer = styled("div", {
   alignItems: "center",
   display: "flex",
   padding: "0.8rem",
-  height: "100%",
   margin: "0 auto",
+  height: "15vh",
 });
 
 export const DataContainer = styled("div", {
