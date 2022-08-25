@@ -94,6 +94,7 @@ export class AlarmsController {
     @GetCurrentUserId() userId: string,
   ): Promise<CommonResponseDto> {
     await this.alarmsService.deleteAlarm(deleteAlarmsDto, userId);
+    this.logger.verbose(`Removing User ${userId} pill alarms`);
     return { statusCode: 201, message: '알림을 조회했습니다.' };
   }
 }

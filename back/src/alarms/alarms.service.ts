@@ -62,7 +62,8 @@ export class AlarmsService {
       if (repeatTime !== 0) {
         await this.setRepeatAlarm(repeatTime, agenda, userName, pillName);
       }
-      await this.setAlarmMark(id, true, pillName);
+      // 알림 표시 추가하기
+      // await this.setAlarmMark(id, true, pillName);
     } catch (error) {
       throw new ForbiddenException('알림을 예약하지 못했습니다.');
     }
@@ -86,15 +87,16 @@ export class AlarmsService {
     }
   }
 
-  async setAlarmMark(id: string, check: boolean, pillName: string) {
-    // await this.prisma.pillBookMark.update({
-    //   where: { user_id: id, Pill: { where: { name: pillName } } },
-    //   data: { alarm: check },
-    // });
-  }
+  // async setAlarmMark(id: string, check: boolean, pillName: string) {
+  // await this.prisma.pillBookMark.update({
+  //   where: { user_id: id, Pill: { where: { name: pillName } } },
+  //   data: { alarm: check },
+  // });
+  // }
 
   async setRepeatAlarm(repeatTime: number, agenda, userName, pillName) {
     try {
+      // 반복 알림 적용하기
       (async function () {
         const job = agenda.create(userName + pillName + repeatTime.toString());
         await agenda.start();
@@ -126,7 +128,7 @@ export class AlarmsService {
       const alarms = await this.prismaMongo.reminder.deleteMany({
         where: { id: { in: ids }, user_id: userId },
       });
-
+      // 알림 표시 없애기
       // await this.setAlarmMark(userId, false, alarms.pill_name);
       return alarms;
     } catch (error) {
