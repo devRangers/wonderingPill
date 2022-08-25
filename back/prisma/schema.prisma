@@ -71,7 +71,7 @@ model PillBookMark {
   id      String  @id @default(uuid())
   alarm   Boolean @default(false)
   pill_id String?
-  user_id String?
+  user_id String? @unique
   Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

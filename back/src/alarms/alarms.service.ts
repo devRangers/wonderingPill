@@ -3,12 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import { Agenda } from 'agenda/es';
 import { FcmService } from 'src/fcm/fcm.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { DeleteAlarmsDto, SetAlarmDto } from './dto';
 
 @Injectable()
 export class AlarmsService {
   constructor(
     private prismaMongo: PrismaMongoService,
+    private prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly fcmService: FcmService,
   ) {}
@@ -18,6 +20,7 @@ export class AlarmsService {
       setAlarmDto;
 
     await this.saveDevicetoken(deviceToken, id);
+
     try {
       const agenda = new Agenda({
         db: {
@@ -59,6 +62,7 @@ export class AlarmsService {
       if (repeatTime !== 0) {
         await this.setRepeatAlarm(repeatTime, agenda, userName, pillName);
       }
+      await this.setAlarmMark(id, true, pillName);
     } catch (error) {
       throw new ForbiddenException('알림을 예약하지 못했습니다.');
     }
@@ -80,6 +84,13 @@ export class AlarmsService {
     } catch (error) {
       throw new ForbiddenException('user를 저장하지 못했습니다.');
     }
+  }
+
+  async setAlarmMark(id: string, check: boolean, pillName: string) {
+    // await this.prisma.pillBookMark.update({
+    //   where: { user_id: id, Pill: { where: { name: pillName } } },
+    //   data: { alarm: check },
+    // });
   }
 
   async setRepeatAlarm(repeatTime: number, agenda, userName, pillName) {
@@ -115,6 +126,8 @@ export class AlarmsService {
       const alarms = await this.prismaMongo.reminder.deleteMany({
         where: { id: { in: ids }, user_id: userId },
       });
+
+      // await this.setAlarmMark(userId, false, alarms.pill_name);
       return alarms;
     } catch (error) {
       throw new ForbiddenException('알림을 삭제하지 못했습니다.');
