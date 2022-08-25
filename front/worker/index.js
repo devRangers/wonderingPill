@@ -1,4 +1,4 @@
-self.addEventListener("notificationclick", (event) => {
-  console.log(event);
-  self.clients.openWindow("/login");
+self.addEventListener("push", (event) => {
+  console.log("sw.js ", event);
+  // self.clients.openWindow("/login");
 });
