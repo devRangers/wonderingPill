@@ -5,12 +5,8 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
+import type { GetUserResponseResultUser } from './getUserResponseResultUser';
 
-export type SigninResponseUser = {
-  id?: string;
-  email?: string;
-  name?: string;
-  profileImg?: string;
-  provider?: string;
-  phone?: string;
+export type GetUserResponseResult = {
+  user?: GetUserResponseResultUser;
 };

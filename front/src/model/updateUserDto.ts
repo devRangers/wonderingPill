@@ -6,11 +6,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type SigninResponseUser = {
-  id?: string;
-  email?: string;
+export interface UpdateUserDto {
   name?: string;
-  profileImg?: string;
-  provider?: string;
-  phone?: string;
-};
+  password?: string;
+  newPassword?: string;
+}
