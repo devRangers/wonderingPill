@@ -76,7 +76,6 @@ model PillBookMark {
   User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-
 enum Provider {
   GOOGLE
   KAKAO
