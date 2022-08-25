@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 export class GcsService {
   constructor(private readonly configService: ConfigService) {}
 
-  async getPresignedUrl(id: string): Promise<string> {
+  async getPresignedUrl(id: string) {
     const fileName = id + '_profile.png';
     const bucketName = 'wonderingpill-bucket/user_profileImg/';
     try {
@@ -24,7 +24,7 @@ export class GcsService {
           contentType: 'application/octet-stream',
         });
 
-      return url.pop();
+      return { url: url.pop(), fileName };
     } catch (error) {
       throw new ForbiddenException(
         '외부 스토리지에서 signed url를 받아오지 못했습니다.',

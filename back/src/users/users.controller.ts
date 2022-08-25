@@ -60,12 +60,12 @@ export class UsersController {
   async getPresignedUrl(
     @GetCurrentUserId() id: string,
   ): Promise<getSignedUrlResponse> {
-    const url: string = await this.gcsService.getPresignedUrl(id);
+    const { url, fileName } = await this.gcsService.getPresignedUrl(id);
     this.logger.verbose(`get user profileImg signed url Success!`);
     return {
       statusCode: 200,
       message: 'signed url를 발급했습니다.',
-      result: { url },
+      result: { url, fileName },
     };
   }
 
