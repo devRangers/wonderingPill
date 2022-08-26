@@ -33,10 +33,6 @@ const initialModifyValue: ModifyValues = {
 function ModifyForm() {
   const [user] = useAtom(userAtom);
 
-  if (user.name) {
-    initialModifyValue.name = user.name;
-  }
-
   const mutation = useMutation(
     (data: ModifyValues) =>
       patch<{ statusCode: number; message: string }, UpdateUserDto>(
@@ -97,7 +93,7 @@ function ModifyForm() {
           id="name"
           type="text"
           {...modifyDataFormik.getFieldProps("name")}
-          placeholder="이름을 입력해주세요."
+          placeholder={user.name}
         />
       </ModifyItem>
       <ModifyItem>
