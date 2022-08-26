@@ -4,7 +4,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RedisModule } from 'src/redis/redis.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtRefreshStrategy, JwtStrategy, KakaoStrategy } from './strategy';
@@ -20,7 +19,6 @@ import { GoogleStrategy } from './strategy/google.strategy';
     }),
     JwtModule.register({}),
     HttpModule,
-    RedisModule,
   ],
   controllers: [AuthController],
   providers: [

@@ -7,11 +7,14 @@ import {
   Logger,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBody,
   ApiCookieAuth,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -70,6 +73,36 @@ export class UsersController {
   }
 
   @HttpCode(200)
+  @Patch('save-profileImg')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '프로필 이미지 수정 API',
+    description: '프로필 이미지를 수정한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '프로필 이미지 수정 성공',
+    type: CommonResponseDto,
+  })
+  @ApiQuery({
+    name: 'img',
+    required: true,
+    description: '유저 프로필 이미지',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async saveProfileImg(
+    @GetCurrentUserId() id: string,
+    @Query('img') img: string,
+  ) {
+    await this.usersService.saveImg(id, img);
+    return {
+      statusCode: 200,
+      message: '프로필 이미지를 수정했습니다.',
+    };
+  }
+
+  @HttpCode(200)
   @Patch('delete-user')
   @UseGuards(AccessGuard)
   @ApiOperation({
@@ -107,6 +140,7 @@ export class UsersController {
     description: '회원 정보 수정 성공',
     type: CommonResponseDto,
   })
+  @ApiBody({ type: UpdateUserDto })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async UpdateUser(

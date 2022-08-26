@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { ACCENT_COLOR, SUB_COLOR } from "@utils/constant";
+import {
+  ACCENT_COLOR,
+  SUB_COLOR,
+  ERROR_MSG_COLOR,
+  GRAY_COLOR,
+} from "@utils/constant";
 import { BsFillExclamationCircleFill } from "react-icons/bs";
 import {
   ErrorMessage,
@@ -168,11 +173,14 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           inputMode="email"
           {...userDataFormik.getFieldProps("email")}
           placeholder="이메일"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.email && userDataFormik.errors.email ? (
-          <ErrorMessage>{userDataFormik.errors.email}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {userDataFormik.errors.email}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <Input
@@ -180,11 +188,14 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           type="text"
           {...userDataFormik.getFieldProps("name")}
           placeholder="이름"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.name && userDataFormik.errors.name ? (
-          <ErrorMessage>{userDataFormik.errors.name}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {userDataFormik.errors.name}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <Input
@@ -195,10 +206,13 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           autoComplete="true"
           data-tip="password-tooltip"
           data-for="password-tooltip"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.password && userDataFormik.errors.password ? (
           <>
-            <ErrorMessage>필수 입력 란입니다.</ErrorMessage>
+            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+              필수 입력 란입니다.
+            </ErrorMessage>
 
             <ReactTooltip
               key="password-tooltip"
@@ -208,7 +222,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
             </ReactTooltip>
           </>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <Input
@@ -217,12 +231,15 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           {...userDataFormik.getFieldProps("checkPassword")}
           placeholder="비밀번호 확인"
           autoComplete="true"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.checkPassword &&
         userDataFormik.errors.checkPassword ? (
-          <ErrorMessage>{userDataFormik.errors.checkPassword}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {userDataFormik.errors.checkPassword}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <Input
@@ -232,11 +249,14 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           inputMode="numeric"
           {...userDataFormik.getFieldProps("birth")}
           placeholder="생년월일(8자리)"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.birth && userDataFormik.errors.birth ? (
-          <ErrorMessage>{userDataFormik.errors.birth}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {userDataFormik.errors.birth}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <SelfAuthenticationLine $lineColor={ACCENT_COLOR}>

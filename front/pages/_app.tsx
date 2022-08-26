@@ -56,9 +56,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function getUsers() {
       try {
+        await Api.get<RefreshResponse>("/auth/refresh");
         const { user } = await Api.get<CurrentUserResponse>("/auth/current");
         setUser(user);
-        Api.get<RefreshResponse>("/auth/refresh");
       } catch (err) {}
     }
     getUsers();
@@ -66,8 +66,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // refresh token이 있을 경우 access token 주기적으로 재발급
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (document.hasFocus()) Api.get<RefreshResponse>("/auth/refresh");
+    const timer = setInterval(async () => {
+      try {
+        if (document.hasFocus()) {
+          await Api.get<RefreshResponse>("/auth/refresh");
+        }
+      } catch (err) {}
     }, SILENT_REFRESH_TIME);
 
     return () => {
@@ -85,16 +89,13 @@ function MyApp({ Component, pageProps }: AppProps) {
               content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
             />
           </Head>
-
           {!URL_WITHOUT_HEADER.includes(router.pathname) && <Header />}
           <Component {...pageProps} />
           {!URL_WITHOUT_HEADER.includes(router.pathname) && <Footer />}
-
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         </Hydrate>
       </QueryClientProvider>
     </StyletronProvider>
   );
 }
-
 export default MyApp;

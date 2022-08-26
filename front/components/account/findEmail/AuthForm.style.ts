@@ -24,25 +24,22 @@ export const InputContainer = styled("div", {
   alignItems: "center",
 });
 
-export const Input = styled("input", {
+export const Input = styled("input", (props: { $borderColor: string }) => ({
   width: "50%",
   height: "2.5rem",
   borderRadius: "25px",
-  border: "0.1px solid #a4a4a4",
+  border: `1px solid ${props.$borderColor}`,
   textAlign: "center",
   fontSize: "1.2rem",
   marginRight: "0.5rem",
-});
+}));
 
-export const SubmitBtn = styled(
-  "button",
-  (props: { $btnColor: string; $disabled: boolean }) => ({
-    borderRadius: "25px",
-    backgroundColor: props.$disabled ? "#A4A4A4" : props.$btnColor,
-    color: "#fff",
-    padding: "0.5rem 1rem",
-  }),
-);
+export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
+  borderRadius: "25px",
+  backgroundColor: props.$btnColor,
+  color: "#fff",
+  padding: "0.5rem 1rem",
+}));
 
 export const RetryBtnContainer = styled("div", {
   display: "grid",
@@ -67,7 +64,7 @@ export const CloseBtnContainer = styled("div", {
   alignItems: "center",
 });
 
-export const CloseBtn = styled("button", {
-  color: "#a4a4a4",
+export const CloseBtn = styled("button", (props: { $btnColor: string }) => ({
+  color: props.$btnColor,
   marginRight: "0.5rem",
-});
+}));
