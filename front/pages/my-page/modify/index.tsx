@@ -1,4 +1,4 @@
-import ModifyPage from "@myPage//modify/ModifyPage";
+import ModifyPage from "@mypage//modify/ModifyPage";
 
 function index() {
   return <ModifyPage />;

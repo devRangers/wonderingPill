@@ -32,7 +32,7 @@
       "@accountComp/*": ["components/account/*"],
       "@loginComp/*": ["components/login/*"],
       "@mainComp/*": ["components/main/*"],
-      "@myPage/*": ["components/myPage*"],
+      "@mypage/*": ["components/mypage*"],
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
       "@searchPharmComp/*": ["components/search/pharmacy/*"],
