@@ -15,6 +15,7 @@ import { RedisModule } from './redis/redis.module';
 import { SmsModule } from './sms/sms.module';
 import { UsersModule } from './users/users.module';
 import { validation } from './utils';
+import { PillModule } from './pill/pill.module';
 import config from './utils/config';
 
 @Module({
@@ -46,6 +47,7 @@ import config from './utils/config';
     FcmModule,
     UsersModule,
     GcsModule,
+    PillModule,
   ],
   providers: [
     {
