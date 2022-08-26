@@ -15,6 +15,8 @@ import * as Yup from "yup";
 import { useMutation } from "react-query";
 import { patch } from "@api";
 import { UpdateUserDto } from "@modelTypes/updateUserDto";
+import SubmitResult from "./modals/SubmitResult";
+import { useState } from "react";
 
 interface ModifyValues {
   name: string;
@@ -30,12 +32,49 @@ const initialModifyValue: ModifyValues = {
   checkPassword: "",
 };
 
+interface modalValues {
+  title: string;
+  contents: string[];
+}
+
+const modalData: { [key in string]: modalValues } = {
+  success: {
+    title: "",
+    contents: ["개인정보가 변경되었습니다."],
+  },
+  fail: {
+    title: "",
+    contents: ["개인정보 변경에 실패했습니다."],
+  },
+};
+
 function ModifyForm() {
   const [user] = useAtom(userAtom);
+  const [isOpenModal, setIsOpenModal] = useState({
+    success: false,
+    fail: false,
+  });
 
   if (user.name) {
     initialModifyValue.name = user.name;
   }
+
+  const handleSuccessModal = () => {
+    setIsOpenModal((cur) => {
+      return {
+        ...cur,
+        success: !cur.success,
+      };
+    });
+  };
+  const handleFailModal = () => {
+    setIsOpenModal((cur) => {
+      return {
+        ...cur,
+        fail: !cur.fail,
+      };
+    });
+  };
 
   const mutation = useMutation(
     (data: ModifyValues) =>
@@ -50,9 +89,11 @@ function ModifyForm() {
       ),
     {
       onSuccess: (data) => {
+        handleSuccessModal();
         console.log(data);
       },
       onError: (err) => {
+        handleFailModal();
         console.log(err);
       },
     },
@@ -82,84 +123,102 @@ function ModifyForm() {
     },
   });
   return (
-    <Form onSubmit={modifyDataFormik.handleSubmit}>
-      <ModifyItem>
-        <ItemName>이메일</ItemName>
-        <ItemContent>{user.email}</ItemContent>
-      </ModifyItem>
-      <ModifyItem>
-        <ItemName>전화번호</ItemName>
-        <ItemContent>01000000000</ItemContent>
-      </ModifyItem>
-      <ModifyItem>
-        <ItemName>이름</ItemName>
-        <ItemInput
-          id="name"
-          type="text"
-          {...modifyDataFormik.getFieldProps("name")}
-          placeholder="이름을 입력해주세요."
+    <>
+      <Form onSubmit={modifyDataFormik.handleSubmit}>
+        <ModifyItem>
+          <ItemName>이메일</ItemName>
+          <ItemContent>{user.email}</ItemContent>
+        </ModifyItem>
+        <ModifyItem>
+          <ItemName>전화번호</ItemName>
+          <ItemContent>01000000000</ItemContent>
+        </ModifyItem>
+        <ModifyItem>
+          <ItemName>이름</ItemName>
+          <ItemInput
+            id="name"
+            type="text"
+            {...modifyDataFormik.getFieldProps("name")}
+            placeholder="이름을 입력해주세요."
+          />
+        </ModifyItem>
+        <ModifyItem>
+          <ItemName>비밀번호</ItemName>
+          <ItemInput
+            id="curPassword"
+            type="password"
+            autoComplete="true"
+            {...modifyDataFormik.getFieldProps("curPassword")}
+            placeholder="현재 비밀번호를 입력하세요."
+          />
+        </ModifyItem>
+        <ModifyItem>
+          <ItemName>새 비밀번호</ItemName>
+          <ItemInput
+            id="newPassword"
+            type="password"
+            autoComplete="true"
+            {...modifyDataFormik.getFieldProps("newPassword")}
+            placeholder="새로운 비밀번호를 입력하세요."
+            data-tip="newPassword-tooltip"
+            data-for="newPassword-tooltip"
+          />
+          {modifyDataFormik.touched.newPassword &&
+          modifyDataFormik.errors.newPassword ? (
+            <ReactTooltip
+              key="newPassword-tooltip"
+              id="newPassword-tooltip"
+              place="top">
+              {modifyDataFormik.errors.newPassword}
+            </ReactTooltip>
+          ) : (
+            <></>
+          )}
+        </ModifyItem>
+        <ModifyItem>
+          <ItemName>비밀번호 확인</ItemName>
+          <ItemInput
+            id="checkPassword"
+            type="password"
+            autoComplete="true"
+            {...modifyDataFormik.getFieldProps("checkPassword")}
+            placeholder="다시 한번 비밀번호를 입력하세요."
+            data-tip="checkPassword-tooltip"
+            data-for="checkPassword-tooltip"
+          />
+          {modifyDataFormik.touched.checkPassword &&
+          modifyDataFormik.errors.checkPassword ? (
+            <ReactTooltip
+              key="checkPassword-tooltip"
+              id="checkPassword-tooltip"
+              place="top">
+              {modifyDataFormik.errors.checkPassword}
+            </ReactTooltip>
+          ) : (
+            <></>
+          )}
+        </ModifyItem>
+        <ModifyButton type="submit" $buttonColor={SUB_COLOR}>
+          변경
+        </ModifyButton>
+      </Form>
+      {isOpenModal.success && (
+        <SubmitResult
+          title=""
+          contents={modalData.success.contents}
+          isOpenModal={isOpenModal.success}
+          handleCloseSubmitResult={handleSuccessModal}
         />
-      </ModifyItem>
-      <ModifyItem>
-        <ItemName>비밀번호</ItemName>
-        <ItemInput
-          id="curPassword"
-          type="password"
-          autoComplete="true"
-          {...modifyDataFormik.getFieldProps("curPassword")}
-          placeholder="현재 비밀번호를 입력하세요."
+      )}
+      {isOpenModal.fail && (
+        <SubmitResult
+          title=""
+          contents={modalData.fail.contents}
+          isOpenModal={isOpenModal.fail}
+          handleCloseSubmitResult={handleFailModal}
         />
-      </ModifyItem>
-      <ModifyItem>
-        <ItemName>새 비밀번호</ItemName>
-        <ItemInput
-          id="newPassword"
-          type="password"
-          autoComplete="true"
-          {...modifyDataFormik.getFieldProps("newPassword")}
-          placeholder="새로운 비밀번호를 입력하세요."
-          data-tip="newPassword-tooltip"
-          data-for="newPassword-tooltip"
-        />
-        {modifyDataFormik.touched.newPassword &&
-        modifyDataFormik.errors.newPassword ? (
-          <ReactTooltip
-            key="newPassword-tooltip"
-            id="newPassword-tooltip"
-            place="top">
-            {modifyDataFormik.errors.newPassword}
-          </ReactTooltip>
-        ) : (
-          <></>
-        )}
-      </ModifyItem>
-      <ModifyItem>
-        <ItemName>비밀번호 확인</ItemName>
-        <ItemInput
-          id="checkPassword"
-          type="password"
-          autoComplete="true"
-          {...modifyDataFormik.getFieldProps("checkPassword")}
-          placeholder="다시 한번 비밀번호를 입력하세요."
-          data-tip="checkPassword-tooltip"
-          data-for="checkPassword-tooltip"
-        />
-        {modifyDataFormik.touched.checkPassword &&
-        modifyDataFormik.errors.checkPassword ? (
-          <ReactTooltip
-            key="checkPassword-tooltip"
-            id="checkPassword-tooltip"
-            place="top">
-            {modifyDataFormik.errors.checkPassword}
-          </ReactTooltip>
-        ) : (
-          <></>
-        )}
-      </ModifyItem>
-      <ModifyButton type="submit" $buttonColor={SUB_COLOR}>
-        변경
-      </ModifyButton>
-    </Form>
+      )}
+    </>
   );
 }
 

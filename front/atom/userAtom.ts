@@ -6,6 +6,8 @@ const initialState: User = {
   email: "",
   name: "",
   profileImg: "",
+  provider: "",
+  phone: "",
 };
 
 export const userAtom = atom(initialState);

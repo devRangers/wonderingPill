@@ -32,9 +32,7 @@ function Capture() {
             method: "PUT",
             body: file,
             headers: new Headers({
-              "Content-Type": file.type,
-              mode: "Access-Control-Allow-Origin",
-              "x-goog-resumable": "start",
+              "Content-Type": "application/octet-stream",
             }),
           }),
         );
