@@ -117,7 +117,35 @@ export const BtnContainer = styled("div", {
   justifyContent: "space-evenly",
 });
 
-export const SelectTime = styled("div", {});
+export const SelectTime = styled("div", {
+  width: "90%",
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr 1fr",
+  columnGap: "0.5rem",
+});
+
+export const Select = styled("select", {
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  borderBottom: "1px solid rgba(0,0,0,0.5)",
+});
+
+export const Text = styled("pre", (props: { $txtColor: string }) => ({
+  display: "inline-block",
+  fontSize: "0.7rem",
+  color: props.$txtColor,
+}));
+
+export const Input = styled("input", {
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  borderBottom: "1px solid rgba(0,0,0,0.5)",
+  width: "70%",
+  height: "1.4rem",
+  textAlign: "center",
+});
 
 export const DayButton = styled(
   "button",

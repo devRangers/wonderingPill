@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useFormik } from "formik";
 import { SEMI_ACCENT_COLOR, GRAY_COLOR, SUB_COLOR } from "@utils/constant";
 import {
   FormContainer,
@@ -10,6 +9,9 @@ import {
   BtnContainer,
   DayButton,
   SelectTime,
+  Select,
+  Input,
+  Text,
 } from "./SetNotificationPage.style";
 
 interface TimeFormProps {
@@ -71,7 +73,20 @@ function TimeForm({ disabled }: TimeFormProps) {
               </DayButton>
             ))}
           </BtnContainer>
-          <SelectTime></SelectTime>
+          <SelectTime>
+            <Select disabled={disabled}>
+              <option value={0}>오전</option>
+              <option value={1}>오후</option>
+            </Select>
+            <div>
+              <Input type="number" disabled={disabled} />{" "}
+              <Text $txtColor={disabled ? GRAY_COLOR : "#000"}>시</Text>
+            </div>
+            <div>
+              <Input type="number" disabled={disabled} />{" "}
+              <Text $txtColor={disabled ? GRAY_COLOR : "#000"}>분</Text>
+            </div>
+          </SelectTime>
         </TimeSelectContainer>
       </Form>
     </FormContainer>
