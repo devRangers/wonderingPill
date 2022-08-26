@@ -104,7 +104,6 @@ export class AlarmsController {
     required: true,
     description: '약 이름',
   })
-  @ApiBody({ type: SetAlarmDto })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async getSetAlarm(
