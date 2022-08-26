@@ -32,6 +32,7 @@
       "@accountComp/*": ["components/account/*"],
       "@loginComp/*": ["components/login/*"],
       "@mainComp/*": ["components/main/*"],
+      "@messagesComp/*": ["components/messages/*"],
       "@myPage/*": ["components/myPage*"],
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
