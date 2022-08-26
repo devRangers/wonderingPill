@@ -6,7 +6,12 @@ import { useMutation } from "react-query";
 import * as Api from "@api";
 import { FindAccountResponse } from "@modelTypes/findAccountResponse";
 import { FindAccountDto as FindAccountValues } from "@modelTypes/findAccountDto";
-import { ERROR_MSG_COLOR, SUB_COLOR, ACCENT_COLOR } from "@utils/constant";
+import {
+  ERROR_MSG_COLOR,
+  SUB_COLOR,
+  ACCENT_COLOR,
+  GRAY_COLOR,
+} from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -122,6 +127,7 @@ function FindEmailForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.name}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.name && formik.errors.name}
@@ -139,6 +145,7 @@ function FindEmailForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.birth}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.birth && formik.errors.birth}

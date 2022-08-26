@@ -1,4 +1,4 @@
-import { MAIN_COLOR } from "@utils/constant";
+import { MAIN_COLOR, GRAY_COLOR } from "@utils/constant";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
 import {
@@ -55,7 +55,9 @@ function PharmInfoModal({ onClose, selectedPharmInfo }: PharmInfoModalProps) {
         </InfoContent>
       </InfoContaniner>
       <CloseBtnContainer>
-        <CloseBtn onClick={onClose}>닫기</CloseBtn>
+        <CloseBtn onClick={onClose} $btnColor={GRAY_COLOR}>
+          닫기
+        </CloseBtn>
       </CloseBtnContainer>
     </Container>
   );

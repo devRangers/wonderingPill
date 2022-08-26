@@ -12,7 +12,7 @@ import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
-import { SUB_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
+import { SUB_COLOR, ERROR_MSG_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -106,6 +106,7 @@ function LoginForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.email}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.email && formik.errors.email}
@@ -124,6 +125,7 @@ function LoginForm() {
               data-tip="password-tooltip"
               data-for="password-tooltip"
               autoComplete="true"
+              $placeholderColor={GRAY_COLOR}
             />
             {formik.touched.password && formik.errors.password ? (
               <>

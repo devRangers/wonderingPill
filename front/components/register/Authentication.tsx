@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ACCENT_COLOR } from "@utils/constant";
+import { ACCENT_COLOR, GRAY_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import {
   AuthenticationForm,
   AuthenticationInput,
@@ -218,6 +218,7 @@ function Authentication({
             maxLength={11}
             {...phoneNumberFormik.getFieldProps("phoneNumber")}
             placeholder="- 제외 휴대폰번호"
+            $placeholderColor={GRAY_COLOR}
           />
           <SubmitAuthenticationBtn
             type="submit"
@@ -229,9 +230,11 @@ function Authentication({
         </PhoneNumberContainer>
         {phoneNumberFormik.touched.phoneNumber &&
         phoneNumberFormik.errors.phoneNumber ? (
-          <ErrorMessage>{phoneNumberFormik.errors.phoneNumber}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {phoneNumberFormik.errors.phoneNumber}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </AuthenticationForm>
 
@@ -242,6 +245,7 @@ function Authentication({
             type="number"
             {...authenticationFormik.getFieldProps("authenticationNumber")}
             placeholder="인증번호"
+            $placeholderColor={GRAY_COLOR}
           />
           <SubmitAuthenticationBtn
             type="submit"
@@ -258,11 +262,11 @@ function Authentication({
         </PhoneNumberContainer>
         {authenticationFormik.touched.authenticationNumber &&
         authenticationFormik.errors.authenticationNumber ? (
-          <ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
             {authenticationFormik.errors.authenticationNumber}
           </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </AuthenticationForm>
       <CheckboxContainer>

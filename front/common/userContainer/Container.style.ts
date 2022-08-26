@@ -49,19 +49,22 @@ export const InputContainer = styled("div", {
   justifyItems: "center",
 });
 
-export const Input = styled("input", {
-  width: "65%",
-  height: "3.5rem",
-  border: 0,
-  borderRadius: "25px",
-  fontSize: "1rem",
-  padding: "0 1rem",
-  "::-webkit-input-placeholder": {
-    textAlign: "center",
-    fontFamily: "'Noto Sans KR', sans-serif",
-    color: "#A4A4A4",
-  },
-});
+export const Input = styled(
+  "input",
+  (props: { $placeholderColor: string }) => ({
+    width: "65%",
+    height: "3.5rem",
+    border: 0,
+    borderRadius: "25px",
+    fontSize: "1rem",
+    padding: "0 1rem",
+    "::-webkit-input-placeholder": {
+      textAlign: "center",
+      fontFamily: "'Noto Sans KR', sans-serif",
+      color: props.$placeholderColor,
+    },
+  }),
+);
 
 export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
   textAlign: "start",
