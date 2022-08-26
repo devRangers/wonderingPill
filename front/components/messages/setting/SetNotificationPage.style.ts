@@ -97,6 +97,38 @@ export const Form = styled("form", (props: { $height: string }) => ({
   borderRadius: "20px",
 }));
 
+export const TimeSelectContainer = styled("div", {
+  display: "grid",
+  gridTemplateRows: "0.5fr 1fr 1fr",
+  height: "100%",
+  padding: "0.5rem",
+  alignItems: "center",
+  justifyItems: "center",
+});
+
+export const SelectedDays = styled("pre", {
+  justifySelf: "end",
+  fontSize: "0.7rem",
+});
+
+export const BtnContainer = styled("div", {
+  width: "100%",
+  display: "flex",
+  justifyContent: "space-evenly",
+});
+
+export const SelectTime = styled("div", {});
+
+export const DayButton = styled(
+  "button",
+  (props: { $selected: boolean; $selectedColor: string }) => ({
+    border: "1px solid rgba(0,0,0,0.5)",
+    backgroundColor: props.$selected ? props.$selectedColor : "#fff",
+    borderRadius: "20px",
+    padding: " 0.3rem 0.5rem",
+  }),
+);
+
 export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
   justifySelf: "end",
   alignSelf: "end",
