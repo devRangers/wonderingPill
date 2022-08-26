@@ -24,6 +24,7 @@ export const Form = styled("form", {
 
 export const ModifyItem = styled("div", {
   display: "flex",
+  justifyContent: "space-between",
 });
 export const ItemName = styled("p", {
   flex: "0.4",
@@ -35,13 +36,21 @@ export const ItemContent = styled("p", {
   flex: "0.6",
 });
 
+export const ItemWrapper = styled("div", {
+  flex: "0.6",
+  display: "flex",
+  flexDirection: "column",
+  position: "relative",
+});
+
 export const ItemInput = styled("input", {
   flex: "0.6",
 });
 
 export const ErrorMesasge = styled("p", {
-  display: "block",
-  position: "relative",
+  position: "absolute",
+  top: "100%",
+  marginTop: "1px",
   fontSize: "0.5rem",
   color: "#bd0000",
 });
