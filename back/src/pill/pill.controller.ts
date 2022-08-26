@@ -1,5 +1,15 @@
-import { Controller, Get, HttpCode, Logger, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Logger,
+  Param,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AccessGuard } from 'src/common/guards';
 import { PillService } from './pill.service';
 
 @ApiTags('Pill API')
@@ -52,5 +62,17 @@ export class PillController {
       message: '약 검색 결과를 성공적으로 가져왔습니다.',
       pills,
     };
+  }
+
+  @Put('bookmark/:id')
+  @UseGuards(AccessGuard)
+  async bookmarkPill() {
+    // 약 북마크
+  }
+
+  // 약 결과 API
+  @Get('result/:name')
+  async resultPill(@Param('name') name: string) {
+    const result = await this.pillService.resultPill(name);
   }
 }
