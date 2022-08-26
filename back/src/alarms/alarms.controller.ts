@@ -21,7 +21,12 @@ import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import { AlarmsService } from './alarms.service';
-import { DeleteAlarmsDto, GetAlarmsResponseDto, SetAlarmDto } from './dto';
+import {
+  DeleteAlarmsDto,
+  GetAlarmSetResponseDto,
+  GetAlarmsResponseDto,
+  SetAlarmDto,
+} from './dto';
 
 @ApiTags('Alarms API')
 @Controller('alarms')
@@ -82,7 +87,38 @@ export class AlarmsController {
     return { statusCode: 200, message: '알림을 취소했습니다.' };
   }
 
-  // 설정 알림 조회 기능 만들어야함
+  @HttpCode(200)
+  @Get('set-alarm/:name')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '알림 설정창 조회 API',
+    description: '알림 설정창에서 설정 내용을 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '알림 설정창 조회 성공',
+    type: GetAlarmSetResponseDto,
+  })
+  @ApiParam({
+    name: 'name',
+    required: true,
+    description: '약 이름',
+  })
+  @ApiBody({ type: SetAlarmDto })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async getSetAlarm(
+    @GetCurrentUserId() id: string,
+    @Param('name') name: string,
+  ): Promise<GetAlarmSetResponseDto> {
+    const alarm = await this.alarmsService.getSetAlarm(id, name);
+    this.logger.verbose(`Canceling User ${id} pill alarm`);
+    return {
+      statusCode: 200,
+      message: '알림 설정을 읽어왔습니다.',
+      alarm,
+    };
+  }
 
   @HttpCode(200)
   @Get()

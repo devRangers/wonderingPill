@@ -64,6 +64,7 @@ model Pill {
   shape        Shape?
   letters      String?        @db.VarChar(50)
   colors       Colors?
+  mark         Boolean
   PillBookMark PillBookMark[]
 }
 

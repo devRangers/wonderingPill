@@ -21,7 +21,7 @@ export class AlarmsService {
         address: this.configService.get('DATABASE_URL_MONGO'),
         collection: 'pillAlarms',
       },
-      name: id + pillName,
+      name: id + '-' + pillName,
     });
     return agenda;
   }
@@ -35,7 +35,7 @@ export class AlarmsService {
     try {
       const agenda = await this.setAgenda(id, pillName);
 
-      agenda.define(id + pillName, async () => {
+      agenda.define(id + '-' + pillName, async () => {
         await this.fcmService.sendPushAlarm(deviceToken, userName, pillName);
         const time = await this.getCurrTime();
 
@@ -48,13 +48,15 @@ export class AlarmsService {
       });
 
       (async function () {
-        const job = agenda.create(id + pillName);
         await agenda.start();
-        await job
-          .repeatEvery(`${minute} ${hour} * * ${vip.join(',')}`, {
+        await agenda.every(
+          `${minute} ${hour} * * ${vip.join(',')}`,
+          id + '-' + pillName,
+          {
+            repeatTime,
             timezone: 'Asia/Seoul',
-          })
-          .save();
+          },
+        );
       })();
 
       await this.setAlarmMark(id, true, pillName);
@@ -139,7 +141,7 @@ export class AlarmsService {
   ) {
     try {
       (async function () {
-        const job = agenda.create(id + pillName + repeatTime.toString());
+        const job = agenda.create(id + '-' + pillName + ':repeat');
         await agenda.start();
         await job.schedule(`in ${repeatTime} minutes`).save();
       })();
@@ -168,5 +170,26 @@ export class AlarmsService {
     } catch (error) {
       throw new ForbiddenException('알림을 삭제하지 못했습니다.');
     }
+  }
+
+  async getSetAlarm(id: string, name: string) {
+    const agenda = await this.setAgenda(id, name);
+    const result = (async function () {
+      await agenda.start();
+      const job = await agenda.jobs({ name: id + '-' + name });
+      const alarm = job.pop().attrs;
+
+      const arr = alarm.repeatInterval.split(' ');
+      const repeat = alarm.data.repeatTime;
+
+      return {
+        minute: Number(arr[0]),
+        hour: Number(arr[1]),
+        vip: arr[4].split(',').map((v) => Number(v)),
+        repeatTime: repeat,
+      };
+    })();
+
+    return result;
   }
 }
