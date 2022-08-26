@@ -80,7 +80,9 @@ export class UsersService {
           PharmacyBookMark: {
             select: { Pharmacy: { select: { name: true, phone: true } } },
           },
-          PillBookMark: { select: { Pill: { select: { name: true } } } },
+          PillBookMark: {
+            select: { Pill: { select: { name: true } }, alarm: true },
+          },
         },
       });
       return user;
