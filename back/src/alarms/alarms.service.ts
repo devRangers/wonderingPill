@@ -32,21 +32,15 @@ export class AlarmsService {
 
       agenda.define(userName + pillName, async () => {
         await this.fcmService.sendPushAlarm(deviceToken, userName, pillName);
-        const fullTime = new Date(Date.now());
-        const time =
-          fullTime.getFullYear().toString() +
-          '.' +
-          (fullTime.getMonth() + 1).toString() +
-          '.' +
-          fullTime.getDate().toString() +
-          ' ' +
-          fullTime.getHours().toString() +
-          ':' +
-          fullTime.getMinutes().toString();
+        const time = await this.getCurrTime();
 
         await this.prismaMongo.reminder.create({
           data: { user_id: id, user_name: userName, pill_name: pillName, time },
         });
+
+        if (repeatTime !== 0) {
+          await this.setRepeatAlarm(repeatTime, agenda, userName, pillName);
+        }
       });
 
       (async function () {
@@ -59,9 +53,6 @@ export class AlarmsService {
           .save();
       })();
 
-      if (repeatTime !== 0) {
-        await this.setRepeatAlarm(repeatTime, agenda, userName, pillName);
-      }
       // 알림 표시 추가하기
       // await this.setAlarmMark(id, true, pillName);
     } catch (error) {
@@ -86,6 +77,21 @@ export class AlarmsService {
       throw new ForbiddenException('user를 저장하지 못했습니다.');
     }
   }
+  async getCurrTime() {
+    const fullTime = new Date(Date.now());
+    const time =
+      fullTime.getFullYear().toString() +
+      '.' +
+      (fullTime.getMonth() + 1).toString() +
+      '.' +
+      fullTime.getDate().toString() +
+      ' ' +
+      fullTime.getHours().toString() +
+      ':' +
+      fullTime.getMinutes().toString();
+
+    return time;
+  }
 
   // async setAlarmMark(id: string, check: boolean, pillName: string) {
   // await this.prisma.pillBookMark.update({
@@ -94,17 +100,17 @@ export class AlarmsService {
   // });
   // }
 
-  async setRepeatAlarm(repeatTime: number, agenda, userName, pillName) {
+  async setRepeatAlarm(
+    repeatTime: number,
+    agenda: Agenda,
+    userName: string,
+    pillName: string,
+  ) {
     try {
-      // 반복 알림 적용하기
       (async function () {
         const job = agenda.create(userName + pillName + repeatTime.toString());
         await agenda.start();
-        await job
-          // .repeatEvery(`* * * * *`, {
-          //   timezone: 'Asia/Seoul',
-          // })
-          .save();
+        await job.schedule(`in ${repeatTime} minutes`).save();
       })();
     } catch (error) {
       throw new ForbiddenException('반복 시간을 설정하지 못했습니다.');
@@ -130,7 +136,6 @@ export class AlarmsService {
       });
       // 알림 표시 없애기
       // await this.setAlarmMark(userId, false, alarms.pill_name);
-      return alarms;
     } catch (error) {
       throw new ForbiddenException('알림을 삭제하지 못했습니다.');
     }
