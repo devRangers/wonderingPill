@@ -15,6 +15,17 @@ export class AlarmsService {
     private readonly fcmService: FcmService,
   ) {}
 
+  async setAgenda(id: string, pillName: string): Promise<Agenda> {
+    const agenda = new Agenda({
+      db: {
+        address: this.configService.get('DATABASE_URL_MONGO'),
+        collection: 'pillAlarms',
+      },
+      name: id + pillName,
+    });
+    return agenda;
+  }
+
   async setAlarms(id: string, setAlarmDto: SetAlarmDto) {
     const { vip, hour, minute, pillName, userName, repeatTime, deviceToken } =
       setAlarmDto;
@@ -22,29 +33,22 @@ export class AlarmsService {
     await this.saveDevicetoken(deviceToken, id);
 
     try {
-      const agenda = new Agenda({
-        db: {
-          address: this.configService.get('DATABASE_URL_MONGO'),
-          collection: 'pillAlarms',
-        },
-        name: userName + pillName,
-      });
+      const agenda = await this.setAgenda(id, pillName);
 
-      agenda.define(userName + pillName, async () => {
+      agenda.define(id + pillName, async () => {
         await this.fcmService.sendPushAlarm(deviceToken, userName, pillName);
         const time = await this.getCurrTime();
 
         await this.prismaMongo.reminder.create({
           data: { user_id: id, user_name: userName, pill_name: pillName, time },
         });
-
         if (repeatTime !== 0) {
-          await this.setRepeatAlarm(repeatTime, agenda, userName, pillName);
+          await this.setRepeatAlarm(repeatTime, agenda, id, pillName);
         }
       });
 
       (async function () {
-        const job = agenda.create(userName + pillName);
+        const job = agenda.create(id + pillName);
         await agenda.start();
         await job
           .repeatEvery(`${minute} ${hour} * * ${vip.join(',')}`, {
@@ -53,8 +57,7 @@ export class AlarmsService {
           .save();
       })();
 
-      // 알림 표시 추가하기
-      // await this.setAlarmMark(id, true, pillName);
+      await this.setAlarmMark(id, true, pillName);
     } catch (error) {
       throw new ForbiddenException('알림을 예약하지 못했습니다.');
     }
@@ -77,6 +80,7 @@ export class AlarmsService {
       throw new ForbiddenException('user를 저장하지 못했습니다.');
     }
   }
+
   async getCurrTime() {
     const fullTime = new Date(Date.now());
     const time =
@@ -93,22 +97,49 @@ export class AlarmsService {
     return time;
   }
 
-  // async setAlarmMark(id: string, check: boolean, pillName: string) {
-  // await this.prisma.pillBookMark.update({
-  //   where: { user_id: id, Pill: { where: { name: pillName } } },
-  //   data: { alarm: check },
-  // });
-  // }
+  async cancelAlarm(id: string, name: string) {
+    const agenda = await this.setAgenda(id, name);
+    await agenda.cancel({ name: id + name });
+  }
+
+  async setAlarmMark(id: string, check: boolean, pillName: string) {
+    try {
+      const userPills = await this.prisma.user.findUnique({
+        where: { id },
+        select: {
+          PillBookMark: {
+            select: { id: true, Pill: { select: { name: true } } },
+          },
+        },
+      });
+      let pillBookMark_id;
+      userPills.PillBookMark.every(function (pill) {
+        if (pill.Pill.name === pillName) {
+          pillBookMark_id = pill.id;
+          return false;
+        } else {
+          return true;
+        }
+      });
+
+      await this.prisma.pillBookMark.update({
+        where: { id: pillBookMark_id },
+        data: { alarm: check },
+      });
+    } catch (error) {
+      throw new ForbiddenException('알림을 체크하지 못했습니다.');
+    }
+  }
 
   async setRepeatAlarm(
     repeatTime: number,
     agenda: Agenda,
-    userName: string,
+    id: string,
     pillName: string,
   ) {
     try {
       (async function () {
-        const job = agenda.create(userName + pillName + repeatTime.toString());
+        const job = agenda.create(id + pillName + repeatTime.toString());
         await agenda.start();
         await job.schedule(`in ${repeatTime} minutes`).save();
       })();
@@ -131,11 +162,9 @@ export class AlarmsService {
   async deleteAlarm(deleteAlarmsDto: DeleteAlarmsDto, userId: string) {
     try {
       const { ids } = deleteAlarmsDto;
-      const alarms = await this.prismaMongo.reminder.deleteMany({
+      await this.prismaMongo.reminder.deleteMany({
         where: { id: { in: ids }, user_id: userId },
       });
-      // 알림 표시 없애기
-      // await this.setAlarmMark(userId, false, alarms.pill_name);
     } catch (error) {
       throw new ForbiddenException('알림을 삭제하지 못했습니다.');
     }

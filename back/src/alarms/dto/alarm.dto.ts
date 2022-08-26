@@ -15,7 +15,7 @@ export class SetAlarmDto {
 
   @IsArray()
   @IsNotEmpty()
-  vip: string[];
+  vip: number[];
 
   @IsNumber()
   @IsNotEmpty()

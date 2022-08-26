@@ -4,13 +4,16 @@ import {
   Get,
   HttpCode,
   Logger,
+  Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiCookieAuth,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -51,6 +54,37 @@ export class AlarmsController {
   }
 
   @HttpCode(200)
+  @Put('cancel-alarm/:name')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '푸쉬 알림 취소 API',
+    description: '푸쉬 알림을 취소한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '푸쉬 알림 취소 성공',
+    type: CommonResponseDto,
+  })
+  @ApiParam({
+    name: 'name',
+    required: true,
+    description: '약 이름',
+  })
+  @ApiBody({ type: SetAlarmDto })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async cancelAlarm(
+    @GetCurrentUserId() id: string,
+    @Param('name') name: string,
+  ) {
+    await this.alarmsService.cancelAlarm(id, name);
+    this.logger.verbose(`Canceling User ${id} pill alarm`);
+    return { statusCode: 200, message: '알림을 취소했습니다.' };
+  }
+
+  // 설정 알림 조회 기능 만들어야함
+
+  @HttpCode(200)
   @Get()
   @UseGuards(AccessGuard)
   @ApiOperation({
@@ -76,15 +110,15 @@ export class AlarmsController {
     };
   }
 
-  @Post('delete')
+  @Post('delete-alarms')
   @UseGuards(AccessGuard)
   @ApiOperation({
-    summary: '알림 삭제 API',
-    description: '알림을 삭제한다.',
+    summary: '알림 내역 삭제 API',
+    description: '알림 내역을 삭제한다.',
   })
   @ApiResponse({
     status: 201,
-    description: '알림 삭제 성공',
+    description: '알림 내역 삭제 성공',
     type: CommonResponseDto,
   })
   @ApiCookieAuth('accessToken')
