@@ -15,7 +15,7 @@ export class SetAlarmDto {
 
   @IsArray()
   @IsNotEmpty()
-  vip: string[];
+  vip: number[];
 
   @IsNumber()
   @IsNotEmpty()
@@ -52,4 +52,9 @@ export class GetAlarmsResponseDto extends CommonResponseDto {
     time: string;
     user_id: string;
   }[];
+}
+
+export class GetAlarmSetResponseDto extends CommonResponseDto {
+  @IsJSON()
+  alarm: { minute: number; hour: number; vip: number[]; repeatTime: number };
 }
