@@ -8,8 +8,15 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AccessGuard } from 'src/common/guards';
+import { GetAlarmResultResponseDto } from './dto';
 import { PillService } from './pill.service';
 
 @ApiTags('Pill API')
@@ -70,9 +77,31 @@ export class PillController {
     // 약 북마크
   }
 
-  // 약 결과 API
+  @HttpCode(200)
   @Get('result/:name')
-  async resultPill(@Param('name') name: string) {
+  @ApiOperation({
+    summary: '약 검색 결과 조회 API',
+    description: '약 검색 결과를 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '약 검색 결과 조회 성공',
+    type: GetAlarmResultResponseDto,
+  })
+  @ApiParam({
+    name: 'name',
+    required: true,
+    description: '약 이름',
+  })
+  async resultPill(
+    @Param('name') name: string,
+  ): Promise<GetAlarmResultResponseDto> {
     const result = await this.pillService.resultPill(name);
+    this.logger.verbose(`get Pill Detail Success`);
+    return {
+      statusCode: 200,
+      message: '약 검색 결과를 성공적으로 가져왔습니다.',
+      result,
+    };
   }
 }

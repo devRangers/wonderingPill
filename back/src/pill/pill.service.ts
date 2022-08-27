@@ -21,10 +21,46 @@ export class PillService {
       .get(
         `${this.configService.get(
           'PILL_DOMAIN',
-        )}?serviceKey=${this.configService.get('PILL_KEY')}&itemName=${name}`,
+        )}?serviceKey=${this.configService.get(
+          'PILL_KEY',
+        )}&itemSeq=${name}&type=json`,
       )
       .toPromise();
-    console.log(result);
-    return result;
+    const pill = result.data.body.items.pop();
+    const reg = /[<]p[>]|[<][/]p[>]|\n|[<]sub[>]|[<][/]sub[>]/g;
+    const [
+      title,
+      effect,
+      sideEffect,
+      company,
+      usage,
+      caution,
+      keep,
+      cautionContent,
+      interactionContent,
+    ] = [
+      pill.itemName,
+      pill.efcyQesitm,
+      pill.seQesitm,
+      pill.entpName,
+      pill.useMethodQesitm,
+      pill.atpnWarnQesitm,
+      pill.depositMethodQesitm,
+      pill.atpnQesitm,
+      pill.intrcQesitm,
+    ];
+
+    return {
+      title,
+      effect: effect == null || effect.replace(reg, ''),
+      sideEffect: sideEffect == null || sideEffect.replace(reg, ''),
+      company,
+      usage: usage == null || usage.replace(reg, ''),
+      caution: caution == null || caution.replace(reg, ''),
+      keep: keep == null || keep.replace(reg, ''),
+      cautionContent: cautionContent == null || cautionContent.replace(reg, ''),
+      interactionContent:
+        interactionContent == null || interactionContent.replace(reg, ''),
+    };
   }
 }
