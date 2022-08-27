@@ -21,6 +21,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@adminjs/express": "^5.0.0",
+    "@adminjs/nestjs": "^5.0.1",
+    "@adminjs/prisma": "^3.0.1",
     "@google-cloud/storage": "^6.4.1",
     "@nestjs/axios": "^0.1.0",
     "@nestjs/cli": "^9.0.0",
@@ -35,6 +38,7 @@
     "@prisma/client": "^4.1.1",
     "@types/cookie-parser": "^1.4.3",
     "@types/passport-local": "^1.0.34",
+    "adminjs": "^6.1.4",
     "agenda": "^4.3.0",
     "argon2": "^0.28.7",
     "cache-manager": "^4.1.0",
@@ -43,6 +47,7 @@
     "class-validator": "^0.13.2",
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
+    "express-formidable": "^1.2.0",
     "firebase-admin": "^11.0.1",
     "joi": "^17.6.0",
     "js-yaml": "^4.1.0",

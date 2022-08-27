@@ -5,7 +5,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '../../prisma/postgresClient';
+import { PrismaClient } from 'prisma/postgresClient';
 
 @Injectable()
 export class PrismaService

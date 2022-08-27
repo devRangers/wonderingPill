@@ -9,12 +9,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiCookieAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { GetCurrentUserId } from 'src/common/decorators';
 import { AccessGuard } from 'src/common/guards';
 import { GetAlarmResultResponseDto } from './dto';
 import { PillService } from './pill.service';
@@ -71,9 +73,20 @@ export class PillController {
     };
   }
 
-  @Put('bookmark/:id')
+  @Put('bookmark/:')
   @UseGuards(AccessGuard)
-  async bookmarkPill() {
+  @ApiOperation({
+    summary: '알림 설정 API',
+    description: '알림 예약을 설정한다.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '알림 설정 성공',
+    // type: CommonResponseDto,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async bookmarkPill(@GetCurrentUserId() id: string) {
     // 약 북마크
   }
 
