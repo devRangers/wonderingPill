@@ -111,7 +111,7 @@ export class AlarmsController {
     @Param('name') name: string,
   ): Promise<GetAlarmSetResponseDto> {
     const alarm = await this.alarmsService.getSetAlarm(id, name);
-    this.logger.verbose(`Canceling User ${id} pill alarm`);
+    this.logger.verbose(`Get User ${id} pill alarm set`);
     return {
       statusCode: 200,
       message: '알림 설정을 읽어왔습니다.',

@@ -446,9 +446,8 @@ export class AuthController {
   @UseGuards(RecaptchaGuard)
   @Post('send-sms')
   @ApiOperation({
-    summary: '계정 찾기 / 회원가입의 휴대폰 본인인증 API',
-    description:
-      '계정 찾기 / 회원가입에서 휴대폰 SMS 인증번호로 본인인증 한다.',
+    summary: '계정 찾기 API',
+    description: '계정 찾기에서 휴대폰 SMS 인증번호로 본인인증 한다.',
   })
   @ApiResponse({
     status: 201,
