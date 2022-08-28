@@ -1,6 +1,8 @@
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { providerType } from './auth-provider.enum';
+import { role } from './auth-role.enum';
 import { MockService } from './auth.mock';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto';
@@ -11,7 +13,7 @@ describe('AuthService', () => {
   beforeEach(async () => {
     const mockProvider = { provide: AuthService, useClass: MockService };
     const module: TestingModule = await Test.createTestingModule({
-      imports: [],
+      imports: [ConfigModule],
       providers: [AuthService, ConfigService, PrismaService, mockProvider],
     }).compile();
 
@@ -33,32 +35,34 @@ describe('AuthService', () => {
       json: jest.fn(),
     };
 
+    const newUser = {
+      id: 'uuid_test_1234',
+      email: 'test@mail.com',
+      name: 'tester',
+      password: 'hashed_password',
+      phone: '01000000000',
+      profileImg: 'image.png',
+      isDeleted: true,
+      birth: '19900101',
+      createdAt: new Date('2022 - 08 - 28'),
+      updatedAt: new Date('2022-08-28 05:00:47.583'),
+      provider: providerType.LOCAL,
+      role: role.USER,
+    };
+
     it('should create a user', async () => {
-      const createUserSpy = jest.spyOn(service, 'createUser');
+      const createUserSpy = jest
+        .spyOn(service, 'createUser')
+        .mockResolvedValue(newUser);
+
       const dto = new CreateUserDto();
 
-      await service.createUser(dto);
+      const result = await service.createUser(dto);
       res.status.mockReturnValue(200);
 
       expect(createUserSpy).toHaveBeenCalledWith(dto);
+      expect(result).toEqual(newUser);
       expect(res.status()).toBe(200);
-    });
-
-    it('should return 403 error', async () => {
-      const createUserSpy = jest.spyOn(service, 'createUser');
-      const dto = new CreateUserDto();
-
-      // {
-      //   "statusCode": 403,
-      //   "message": "회원을 저장하지 못했습니다.",
-      //   "error": "Forbidden"
-      // }
-
-      res.status.mockReturnValue(403);
-      res.json.mockReturnValue();
-
-      await service.createUser(dto);
-      expect(res.status()).toBe(403);
     });
   });
 });
