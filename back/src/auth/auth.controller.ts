@@ -396,7 +396,7 @@ export class AuthController {
     };
   }
 
-  @HttpCode(200)
+  @HttpCode(301)
   @Get('google')
   @Throttle(5, 1)
   @ApiOperation({
@@ -404,7 +404,7 @@ export class AuthController {
     description: 'google 로그인을 요청 한다.',
   })
   @ApiResponse({
-    status: 200,
+    status: 301,
     description: 'google 로그인 요청 성공',
   })
   @UseGuards(GoogleGuard)

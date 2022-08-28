@@ -2,7 +2,7 @@ import { AdminModule } from '@adminjs/nestjs';
 import { Database, Resource } from '@adminjs/prisma';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import AdminJS from 'adminjs';
@@ -54,9 +54,7 @@ AdminJS.registerAdapter({ Database, Resource });
     GcsModule,
     PillModule,
     AdminModule.createAdminAsync({
-      imports: [PrismaModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
+      useFactory: async () => {
         return {
           adminJsOptions: {
             rootPath: '/admin',
@@ -88,19 +86,6 @@ AdminJS.registerAdapter({ Database, Resource });
       },
     }),
   ],
-
-  // {
-  //   adminJsOptions: {
-  //     rootPath: '/admin',
-  //     resources: [
-  //       {
-  //         resource: { model: dmmf.modelMap.programs, client: prisma },
-  //         options: {}
-  //       }
-  //     ]
-  //   },
-
-  // }
   providers: [
     {
       provide: APP_GUARD,
