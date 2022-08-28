@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { MAIN_COLOR, ACCENT_COLOR, ROUTE } from "@utils/constant";
+import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
 import {
   FormContainer,
   TitleContainer,
@@ -66,11 +66,11 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setCode(e.target.value)
           }
+          $borderColor={GRAY_COLOR}
         />
         <SubmitBtn
           type="button"
-          $btnColor={MAIN_COLOR}
-          $disabled={code.length === 0}
+          $btnColor={code.length === 0 ? GRAY_COLOR : MAIN_COLOR}
           onClick={() => setIsSubmitted(true)}
           disabled={code.length === 0}>
           확인
@@ -85,7 +85,7 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
       </RetryBtnContainer>
 
       <CloseBtnContainer>
-        <CloseBtn type="button" onClick={onClose}>
+        <CloseBtn type="button" onClick={onClose} $btnColor={GRAY_COLOR}>
           닫기
         </CloseBtn>
       </CloseBtnContainer>

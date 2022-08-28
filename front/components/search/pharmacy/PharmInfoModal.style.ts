@@ -53,6 +53,6 @@ export const CloseBtnContainer = styled("div", {
   alignItems: "center",
 });
 
-export const CloseBtn = styled("button", {
-  color: "#a4a4a4",
-});
+export const CloseBtn = styled("button", (props: { $btnColor: string }) => ({
+  color: props.$btnColor,
+}));
