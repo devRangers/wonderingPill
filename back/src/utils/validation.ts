@@ -33,6 +33,8 @@ export const validation: Joi.Schema = Joi.object({
   FIREBASE_KEY_FILE: Joi.string().required(), // FIREBASE
   PILL_DOMAIN: Joi.string().required(), // PILL API
   PILL_KEY: Joi.string().required(),
+  ADMIN_EMAIL: Joi.string().required(), // ADMIN BRO
+  ADMIN_PASSWORD: Joi.string().required(),
 }).options({
   abortEarly: true,
 });

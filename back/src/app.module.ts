@@ -2,7 +2,7 @@ import { AdminModule } from '@adminjs/nestjs';
 import { Database, Resource } from '@adminjs/prisma';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import AdminJS from 'adminjs';
@@ -54,7 +54,8 @@ AdminJS.registerAdapter({ Database, Resource });
     GcsModule,
     PillModule,
     AdminModule.createAdminAsync({
-      useFactory: async () => {
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
         return {
           adminJsOptions: {
             rootPath: '/admin',
@@ -81,6 +82,22 @@ AdminJS.registerAdapter({ Database, Resource });
                 options: {},
               },
             ],
+          },
+          auth: {
+            authenticate: async (email, password) => {
+              if (
+                configService.get('ADMIN_PASSWORD') === password &&
+                configService.get('ADMIN_EMAIL') === email
+              ) {
+                return {
+                  email: configService.get('ADMIN_EMAIL'),
+                  password: configService.get('ADMIN_PASSWORD'),
+                };
+              }
+              return null;
+            },
+            cookieName: 'adminBro',
+            cookiePassword: 'some-secret-password-used-to-secure-cookie',
           },
         };
       },
