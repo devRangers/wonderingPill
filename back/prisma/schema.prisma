@@ -44,7 +44,6 @@ model User {
   createdAt        DateTime?          @default(now()) @db.Date
   updatedAt        DateTime?          @updatedAt
   provider         Provider?          @default(LOCAL)
-  role             Role?              @default(USER)
   Inquiry          Inquiry[]
   PharmacyBookMark PharmacyBookMark[]
   PillBookMark     PillBookMark[]
@@ -82,9 +81,3 @@ enum Provider {
   KAKAO
   LOCAL
 }
-
-enum Role {
-  ADMIN
-  USER
-}
-

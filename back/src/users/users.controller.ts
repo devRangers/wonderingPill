@@ -18,7 +18,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Inquiry } from '@prisma/client';
+import { Inquiry } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';

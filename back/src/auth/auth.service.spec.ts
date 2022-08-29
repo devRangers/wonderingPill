@@ -2,7 +2,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { providerType } from './auth-provider.enum';
-import { role } from './auth-role.enum';
 import { MockService } from './auth.mock';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto';
@@ -47,7 +46,6 @@ describe('AuthService', () => {
       createdAt: new Date('2022 - 08 - 28'),
       updatedAt: new Date('2022-08-28 05:00:47.583'),
       provider: providerType.LOCAL,
-      role: role.USER,
     };
 
     it('should create a user', async () => {

@@ -25,8 +25,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { User as UserModel } from '@prisma/client';
 import { Response } from 'express';
+import { User } from 'prisma/postgresClient';
 import {
   GetCurrentUser,
   GetCurrentUserId,
@@ -87,7 +87,7 @@ export class AuthController {
   async signupUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<CreateUserResponse> {
-    const user: UserModel = await this.authService.createUser(createUserDto);
+    const user: User = await this.authService.createUser(createUserDto);
     this.logger.verbose(`User ${user.email} Sign-Up Success!`);
     return {
       statusCode: 201,
@@ -115,7 +115,7 @@ export class AuthController {
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SigninResponse> {
-    const user: UserModel = await this.authService.getUserByEmail(
+    const user: User = await this.authService.getUserByEmail(
       signinUserDto.email,
     );
 
@@ -269,7 +269,7 @@ export class AuthController {
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string): Promise<SigninResponse> {
-    const user: UserModel = await this.authService.getUserById(id);
+    const user: User = await this.authService.getUserById(id);
     if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
 
     this.logger.verbose(`Call Current User ${id} Success!`);
@@ -304,7 +304,7 @@ export class AuthController {
   async sendEmail(
     @Body() findPasswordDto: FindPasswordDto,
   ): Promise<FindPasswordResponse> {
-    const user: UserModel = await this.authService.getUserByEmail(
+    const user: User = await this.authService.getUserByEmail(
       findPasswordDto.email,
     );
     if (user.name !== findPasswordDto.name) {
@@ -506,7 +506,7 @@ export class AuthController {
     if (saveCode !== code) {
       throw new ForbiddenException('인증번호가 일치하지 않습니다.');
     } else {
-      const user: UserModel = await this.authService.getUserByPhone(phone);
+      const user: User = await this.authService.getUserByPhone(phone);
       if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
 
       this.logger.verbose(`User ${user.phone} verify code Success!`);
@@ -535,7 +535,7 @@ export class AuthController {
   })
   @Get('find-account/:id')
   async getAccount(@Param('id') id: string): Promise<FindAccountResponse> {
-    const user: UserModel = await this.authService.getUserById(id);
+    const user: User = await this.authService.getUserById(id);
 
     let name;
     let email;
