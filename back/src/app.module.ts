@@ -18,7 +18,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { SmsModule } from './sms/sms.module';
 import { UsersModule } from './users/users.module';
-import { dmmf_postgres, prisma, validation } from './utils';
+import { postgresResourceArr, validation } from './utils';
 import config from './utils/config';
 
 AdminJS.registerAdapter({ Database, Resource });
@@ -59,29 +59,7 @@ AdminJS.registerAdapter({ Database, Resource });
         return {
           adminJsOptions: {
             rootPath: '/admin',
-            resources: [
-              {
-                resource: {
-                  model: dmmf_postgres.modelMap.User,
-                  client: prisma,
-                },
-                options: {},
-              },
-              {
-                resource: {
-                  model: dmmf_postgres.modelMap.Pill,
-                  client: prisma,
-                },
-                options: {},
-              },
-              {
-                resource: {
-                  model: dmmf_postgres.modelMap.Inquiry,
-                  client: prisma,
-                },
-                options: {},
-              },
-            ],
+            resources: postgresResourceArr,
           },
           auth: {
             authenticate: async (email, password) => {
