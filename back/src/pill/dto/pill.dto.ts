@@ -1,7 +1,7 @@
 import { IsJSON } from 'class-validator';
 import { CommonResponseDto } from 'src/common/dto';
 
-export class GetAlarmResultResponseDto extends CommonResponseDto {
+export class pillResultResponseDto extends CommonResponseDto {
   @IsJSON()
   result: {
     title: string;

@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { AccessGuard } from 'src/common/guards';
-import { GetAlarmResultResponseDto } from './dto';
+import { pillResultResponseDto } from './dto';
 import { PillService } from './pill.service';
 
 @ApiTags('Pill API')
@@ -99,7 +99,7 @@ export class PillController {
   @ApiResponse({
     status: 200,
     description: '약 검색 결과 조회 성공',
-    type: GetAlarmResultResponseDto,
+    type: pillResultResponseDto,
   })
   @ApiParam({
     name: 'name',
@@ -108,7 +108,7 @@ export class PillController {
   })
   async resultPill(
     @Param('name') name: string,
-  ): Promise<GetAlarmResultResponseDto> {
+  ): Promise<pillResultResponseDto> {
     const result = await this.pillService.resultPill(name);
     this.logger.verbose(`get Pill Detail Success`);
     return {
