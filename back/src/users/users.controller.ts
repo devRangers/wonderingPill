@@ -24,7 +24,6 @@ import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import { GcsService } from 'src/gcs/gcs.service';
-import { MailService } from 'src/mail/mail.service';
 import {
   DeleteUserResponse,
   getSignedUrlResponse,
@@ -41,7 +40,6 @@ export class UsersController {
   private readonly logger = new Logger(`UsersController`);
   constructor(
     private readonly usersService: UsersService,
-    private readonly mailService: MailService,
     private readonly authService: AuthService,
     private readonly gcsService: GcsService,
   ) {}

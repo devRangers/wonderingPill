@@ -1,4 +1,4 @@
-export class MockService {
+export class MockAuthService {
   createUser() {
     return [];
   }

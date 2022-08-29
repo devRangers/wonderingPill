@@ -1,11 +1,12 @@
 import { HttpModule } from '@nestjs/axios';
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { MailModule } from 'src/mail/mail.module';
 import { SmsService } from './sms.service';
 
-@Global()
 @Module({
   imports: [
     HttpModule,
+    MailModule,
     // TwilioModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],

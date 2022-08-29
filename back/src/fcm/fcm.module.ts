@@ -1,9 +1,8 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 import { FcmService } from './fcm.service';
 
-@Global()
 @Module({
   providers: [FcmService],
   exports: [FcmService],

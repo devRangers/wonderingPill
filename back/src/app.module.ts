@@ -87,6 +87,6 @@ AdminJS.registerAdapter({ Database, Resource });
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [HttpModule, MailModule, SmsModule, ThrottlerModule, ConfigModule],
+  exports: [ThrottlerModule],
 })
 export class AppModule {}

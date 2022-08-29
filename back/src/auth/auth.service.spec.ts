@@ -1,8 +1,6 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { providerType } from './auth-provider.enum';
-import { MockService } from './auth.mock';
+import { MockAuthService } from './auth.mock';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto';
 
@@ -10,10 +8,9 @@ describe('AuthService', () => {
   let service: AuthService;
 
   beforeEach(async () => {
-    const mockProvider = { provide: AuthService, useClass: MockService };
+    const mockProvider = { provide: AuthService, useClass: MockAuthService };
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule],
-      providers: [AuthService, ConfigService, PrismaService, mockProvider],
+      providers: [AuthService, mockProvider],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
@@ -38,7 +35,7 @@ describe('AuthService', () => {
       id: 'uuid_test_1234',
       email: 'test@mail.com',
       name: 'tester',
-      password: 'hashed_password',
+      password: 'password',
       phone: '01000000000',
       profileImg: 'image.png',
       isDeleted: true,
