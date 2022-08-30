@@ -9,8 +9,8 @@ import { DeleteAlarmsDto, SetAlarmDto } from './dto';
 @Injectable()
 export class AlarmsService {
   constructor(
-    private prismaMongo: PrismaMongoService,
-    private prisma: PrismaService,
+    private readonly prismaMongo: PrismaMongoService,
+    private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly fcmService: FcmService,
   ) {}
