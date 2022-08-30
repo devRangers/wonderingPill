@@ -1,4 +1,4 @@
-import ModifyPage from "components/my-page/modify/ModifyPage";
+import ModifyPage from "@mypage//modify/ModifyPage";
 
 function index() {
   return <ModifyPage />;
