@@ -44,7 +44,6 @@ model User {
   createdAt        DateTime?          @default(now()) @db.Date
   updatedAt        DateTime?          @updatedAt
   provider         Provider?          @default(LOCAL)
-  role             Role?              @default(USER)
   Inquiry          Inquiry[]
   PharmacyBookMark PharmacyBookMark[]
   PillBookMark     PillBookMark[]
@@ -58,20 +57,20 @@ model Inquiry {
 }
 
 model Pill {
-  id           String         @id @default(uuid())
-  code         String?        @unique @db.VarChar(10)
-  name         String?        @unique @db.VarChar(20)
-  shape        Shape?
+  id           Int            @id @default(autoincrement())
+  code         String?        @unique @db.VarChar(20)
+  name         String?        @unique @db.VarChar(50)
+  shape        String?
   letters      String?        @db.VarChar(50)
-  colors       Colors?
-  mark         Boolean
+  colors       String?
+  mark         Int?
   PillBookMark PillBookMark[]
 }
 
 model PillBookMark {
   id      String  @id @default(uuid())
   alarm   Boolean @default(false)
-  pill_id String? 
+  pill_id Int? 
   user_id String? 
   Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -81,36 +80,4 @@ enum Provider {
   GOOGLE
   KAKAO
   LOCAL
-}
-
-enum Role {
-  ADMIN
-  USER
-}
-
-enum Colors {
-  white
-  brown
-  green
-  yellow
-  pink
-  blue
-  orange
-  red
-  transparent
-  black
-  purple
-  gray
-}
-
-enum Shape {
-  rectangle
-  oval
-  circle
-  pentagon
-  square
-  triangle
-  rhombus
-  hexagon
-  etc
 }
