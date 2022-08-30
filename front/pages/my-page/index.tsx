@@ -1,4 +1,4 @@
-import MyPage from "@mypage//MyPage";
+import MyPage from "components/my-page/MyPage";
 
 function index() {
   return <MyPage />;
