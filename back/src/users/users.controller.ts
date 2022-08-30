@@ -7,11 +7,14 @@ import {
   Logger,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBody,
   ApiCookieAuth,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -60,12 +63,42 @@ export class UsersController {
   async getPresignedUrl(
     @GetCurrentUserId() id: string,
   ): Promise<getSignedUrlResponse> {
-    const url: string = await this.gcsService.getPresignedUrl(id);
+    const { url, fileName } = await this.gcsService.getPresignedUrl(id);
     this.logger.verbose(`get user profileImg signed url Success!`);
     return {
       statusCode: 200,
       message: 'signed url를 발급했습니다.',
-      result: { url },
+      result: { url, fileName },
+    };
+  }
+
+  @HttpCode(200)
+  @Patch('save-profileImg')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '프로필 이미지 수정 API',
+    description: '프로필 이미지를 수정한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '프로필 이미지 수정 성공',
+    type: CommonResponseDto,
+  })
+  @ApiQuery({
+    name: 'img',
+    required: true,
+    description: '유저 프로필 이미지',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async saveProfileImg(
+    @GetCurrentUserId() id: string,
+    @Query('img') img: string,
+  ) {
+    await this.usersService.saveImg(id, img);
+    return {
+      statusCode: 200,
+      message: '프로필 이미지를 수정했습니다.',
     };
   }
 
@@ -107,6 +140,7 @@ export class UsersController {
     description: '회원 정보 수정 성공',
     type: CommonResponseDto,
   })
+  @ApiBody({ type: UpdateUserDto })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async UpdateUser(
@@ -148,27 +182,17 @@ export class UsersController {
     };
   }
 
-  // 고객 센터
-  // 관리자 페이지를 추가하면 email 전송 제거
   @HttpCode(200)
   @Post('send-inquiry')
   @ApiOperation({
     summary: '고객센터 API',
-    description:
-      '고객이 문의한 내용을 이메일로 전송 한다(API 수정 필요 : 관리자 페이지)',
+    description: '고객이 문의한 내용을 DB로 저장 한다(관리자 페이지)',
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async sendInquiry(
     @Body() sendInquiryDto: SendInquiryDto,
   ): Promise<SendInquiryResponse> {
-    // const user: User = await this.authService.getUserById(sendInquiryDto.id);
-    // const check: boolean = await this.mailService.sendInquiry(
-    //   user.email,
-    //   user.name,
-    //   sendInquiryDto.description,
-    // );
-
     const inquiry: Inquiry = await this.usersService.sendInquiry(
       sendInquiryDto,
     );

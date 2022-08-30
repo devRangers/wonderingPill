@@ -1,4 +1,4 @@
-import { SUB_COLOR, GRAY_COLOR } from "@utils/constant";
+import { SUB_COLOR, GRAY_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -52,9 +52,11 @@ function FindPasswordForm() {
           $placeholderColor={GRAY_COLOR}
         />
         {findPasswordFormik.touched.email && findPasswordFormik.errors.email ? (
-          <ErrorMessage>{findPasswordFormik.errors.email}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {findPasswordFormik.errors.email}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </InputContainer>
       <InputContainer>
@@ -66,9 +68,11 @@ function FindPasswordForm() {
           $placeholderColor={GRAY_COLOR}
         />
         {findPasswordFormik.touched.name && findPasswordFormik.errors.name ? (
-          <ErrorMessage>{findPasswordFormik.errors.name}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {findPasswordFormik.errors.name}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </InputContainer>
       <InputContainer>
@@ -80,9 +84,11 @@ function FindPasswordForm() {
           $placeholderColor={GRAY_COLOR}
         />
         {findPasswordFormik.touched.birth && findPasswordFormik.errors.birth ? (
-          <ErrorMessage>{findPasswordFormik.errors.birth}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {findPasswordFormik.errors.birth}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </InputContainer>
       <FindBtn type="submit" $btnColor={SUB_COLOR}>

@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output = "./postgresClient"
 }
 
 datasource db {
@@ -33,56 +34,58 @@ model PharmacyBookMark {
 
 model User {
   id               String             @id @default(uuid())
-  email            String?            @unique @db.VarChar(100)
+  email            String             @unique @db.VarChar(50)
   name             String?            @db.VarChar(20)
   password         String?            @db.VarChar(100)
   phone            String?            @unique @db.VarChar(20)
   profileImg       String?            @default("imageUrl")
   isDeleted        Boolean?           @default(false)
-  createdAt        DateTime?          @default(now()) @db.Date
   birth            String?            @db.VarChar(9)
+  createdAt        DateTime?          @default(now()) @db.Date
   updatedAt        DateTime?          @updatedAt
   provider         Provider?          @default(LOCAL)
   role             Role?              @default(USER)
+  Inquiry          Inquiry[]
   PharmacyBookMark PharmacyBookMark[]
   PillBookMark     PillBookMark[]
-  Inquiry          Inquiry[]
 }
 
-model PillBookMark{
-  id               String             @id @default(uuid())
-  pill_id          String?
-  user_id          String?
-  Pill             Pill?              @relation(fields: [pill_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  User             User?              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model Inquiry {
+  id      String  @id @default(uuid())
+  content String  @db.VarChar(320)
+  user_id String?
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Pill {
-  id               String             @id @default(uuid())
-  code             String?            @unique @db.VarChar(10)
-  name             String?            @db.VarChar(20)
-  shape            Shape?     
-  letters          String?            @db.VarChar(50)
-  colors           Colors?            
-  PillBookMark     PillBookMark[]
+  id           String         @id @default(uuid())
+  code         String?        @unique @db.VarChar(10)
+  name         String?        @unique @db.VarChar(20)
+  shape        Shape?
+  letters      String?        @db.VarChar(50)
+  colors       Colors?
+  mark         Boolean
+  PillBookMark PillBookMark[]
 }
 
-model Inquiry{
-   id               String             @id @default(uuid())
-   content          String             @db.VarChar(320)
-   user_id          String?
-   User             User?              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-enum Role {
-  ADMIN
-  USER
+model PillBookMark {
+  id      String  @id @default(uuid())
+  alarm   Boolean @default(false)
+  pill_id String? 
+  user_id String? 
+  Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum Provider {
   GOOGLE
   KAKAO
   LOCAL
+}
+
+enum Role {
+  ADMIN
+  USER
 }
 
 enum Colors {

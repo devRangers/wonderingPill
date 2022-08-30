@@ -5,7 +5,9 @@ import {
 } from '@nestjs/common';
 import { Inquiry } from '@prisma/client';
 import * as argon from 'argon2';
+import { User } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
+import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendInquiryDto, UpdateUserDto } from './dto';
 
@@ -14,6 +16,7 @@ export class UsersService {
   constructor(
     private prisma: PrismaService,
     private readonly authService: AuthService,
+    private prismaMongo: PrismaMongoService,
   ) {}
 
   async deleteUser(id: string) {
@@ -51,10 +54,22 @@ export class UsersService {
     }
   }
 
-  async verifyPassword(user, password: string) {
-    const hashedNewPassword = await argon.hash(password);
-    if (user.password !== hashedNewPassword)
+  async verifyPassword(user: User, password: string) {
+    const check = await argon.verify(user.password, password);
+    if (!check) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+  }
+
+  async saveImg(id: string, img: string) {
+    try {
+      await this.prisma.user.update({
+        where: { id },
+        data: { profileImg: img },
+      });
+    } catch (error) {
+      throw new ForbiddenException('프로필 이미지를 수정하지 못했습니다.');
+    }
   }
 
   async getUserInfo(id: string) {
@@ -65,7 +80,9 @@ export class UsersService {
           PharmacyBookMark: {
             select: { Pharmacy: { select: { name: true, phone: true } } },
           },
-          PillBookMark: { select: { Pill: { select: { name: true } } } },
+          PillBookMark: {
+            select: { Pill: { select: { name: true } }, alarm: true },
+          },
         },
       });
       return user;

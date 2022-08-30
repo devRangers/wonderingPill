@@ -5,10 +5,10 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '../../prisma/postgresClient';
+import { PrismaClient } from '../../prisma/mongoClient';
 
 @Injectable()
-export class PrismaService
+export class PrismaMongoService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
@@ -16,7 +16,7 @@ export class PrismaService
     super({
       datasources: {
         db: {
-          url: configService.get('DATABASE_URL'),
+          url: configService.get('DATABASE_URL_MONGO'),
         },
       },
     });
