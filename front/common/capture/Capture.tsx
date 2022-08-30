@@ -21,27 +21,19 @@ function Capture() {
       const file = files[0];
       const newUrl = URL.createObjectURL(file);
       setSource(newUrl);
-      // 이미지를 서버에 보내주면 됨!
 
       try {
         const result = await getSignedURL();
 
-        console.log("signed URL: ", result);
         const response = await fetch(
           new Request(result.result.url, {
             method: "PUT",
             body: file,
             headers: new Headers({
-              "Content-Type": file.type,
-              mode: "Access-Control-Allow-Origin",
-              "x-goog-resumable": "start",
+              "Content-Type": "application/octet-stream",
             }),
           }),
         );
-        if (response.status !== 200) {
-          console.log("error!");
-          return;
-        }
       } catch (e: any) {
         throw new Error(e);
       }
