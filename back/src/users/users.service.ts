@@ -37,13 +37,10 @@ export class UsersService {
         const hashedNewPassword = await argon.hash(newPassword);
         await this.prisma.user.update({
           where: { id: user.id },
-          data: { password: hashedNewPassword },
-        });
-      }
-      if (name) {
-        await this.prisma.user.update({
-          where: { id: user.id },
-          data: { name },
+          data: {
+            password: hashedNewPassword,
+            name: name !== null ? name : undefined,
+          },
         });
       }
     } catch (error) {
