@@ -16,10 +16,9 @@ import {
 import * as Yup from "yup";
 import { useAtom } from "jotai";
 import { useFormik } from "formik";
+import Modify from "./modals/Modify";
 import ReactTooltip from "react-tooltip";
 import { useMutation } from "react-query";
-import SubmitResult from "./modals/SubmitResult";
-import Modify from "./modals/Modify";
 
 interface ModifyValues {
   name: string;

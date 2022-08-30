@@ -1,6 +1,6 @@
-import { get } from "@api";
 import Image from "next/image";
 import { useState } from "react";
+import { get } from "@api";
 import { CaptureContainer, CaptureButton } from "./Capture.style";
 
 interface SignedURLValues {

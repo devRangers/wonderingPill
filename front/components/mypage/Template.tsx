@@ -1,7 +1,7 @@
-import Capture from "@capture/Capture";
-import Container from "@container/Container";
-import { SUB_COLOR } from "@utils/constant";
 import React from "react";
+import Capture from "@capture/Capture";
+import { SUB_COLOR } from "@utils/constant";
+import Container from "@container/Container";
 import {
   InnerContainer,
   Profile,
