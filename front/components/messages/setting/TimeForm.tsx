@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { SEMI_ACCENT_COLOR, GRAY_COLOR, SUB_COLOR } from "@utils/constant";
 import {
   FormContainer,
@@ -16,6 +16,10 @@ import {
 
 interface TimeFormProps {
   disabled: boolean;
+  isAfternoon: boolean;
+  onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
+  setVip: Dispatch<SetStateAction<number[]>>;
+  setIsAfternoon: Dispatch<SetStateAction<boolean>>;
 }
 
 const Day = {
@@ -28,15 +32,27 @@ const Day = {
   SAT: "토",
 };
 
-function TimeForm({ disabled }: TimeFormProps) {
+function TimeForm({
+  disabled,
+  isAfternoon,
+  onChange,
+  setVip,
+  setIsAfternoon,
+}: TimeFormProps) {
   const [selectedDays, setSelectedDays] = useState(Array(7).fill(false));
   const [selectedDaysText, setSelectedDaysText] = useState("");
+
+  const selectChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === "오후") setIsAfternoon(true);
+    else setIsAfternoon(false);
+  };
 
   useEffect(() => {
     const selectedIdx = selectedDays.reduce(
       (a, e, i) => (e === true ? a.concat(i) : a),
       [],
     );
+    setVip(selectedIdx);
     const text = Object.values(Day).reduce(
       (a, e, i) => (selectedIdx.includes(i) ? (a += e + ", ") : a),
       "",
@@ -74,16 +90,32 @@ function TimeForm({ disabled }: TimeFormProps) {
             ))}
           </BtnContainer>
           <SelectTime>
-            <Select disabled={disabled}>
-              <option value={0}>오전</option>
-              <option value={1}>오후</option>
+            <Select disabled={disabled} onChange={selectChangeHandler}>
+              <option value="오전">오전</option>
+              <option value="오후">오후</option>
             </Select>
             <div>
-              <Input type="number" disabled={disabled} />{" "}
+              <Input
+                type="number"
+                name="hour"
+                min={isAfternoon ? "1" : "0"}
+                max={isAfternoon ? "12" : "11"}
+                disabled={disabled}
+                onChange={onChange}
+                $width="70%"
+              />{" "}
               <Text $txtColor={disabled ? GRAY_COLOR : "#000"}>시</Text>
             </div>
             <div>
-              <Input type="number" disabled={disabled} />{" "}
+              <Input
+                type="number"
+                name="minute"
+                min="0"
+                max="59"
+                disabled={disabled}
+                onChange={onChange}
+                $width="70%"
+              />{" "}
               <Text $txtColor={disabled ? GRAY_COLOR : "#000"}>분</Text>
             </div>
           </SelectTime>

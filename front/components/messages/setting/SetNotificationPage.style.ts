@@ -1,6 +1,6 @@
 import { styled } from "styletron-react";
 
-export const ContentContainer = styled("div", {
+export const ContentContainer = styled("form", {
   display: "grid",
   gridTemplateRows: "1fr 5fr 0.5fr",
   width: "90%",
@@ -90,7 +90,7 @@ export const FormTitle = styled(
   }),
 );
 
-export const Form = styled("form", (props: { $height: string }) => ({
+export const Form = styled("div", (props: { $height: string }) => ({
   backgroundColor: "#f7f7f7",
   width: "90%",
   height: props.$height,
@@ -131,21 +131,24 @@ export const Select = styled("select", {
   borderBottom: "1px solid rgba(0,0,0,0.5)",
 });
 
-export const Text = styled("pre", (props: { $txtColor: string }) => ({
-  display: "inline-block",
-  fontSize: "0.7rem",
-  color: props.$txtColor,
-}));
+export const Text = styled(
+  "pre",
+  (props: { $txtColor: string; $isRemindForm?: boolean }) => ({
+    display: "inline-block",
+    fontSize: props.$isRemindForm ? "1rem" : "0.7rem",
+    color: props.$txtColor,
+  }),
+);
 
-export const Input = styled("input", {
+export const Input = styled("input", (props: { $width: string }) => ({
   border: "none",
   outline: "none",
   background: "transparent",
   borderBottom: "1px solid rgba(0,0,0,0.5)",
-  width: "70%",
+  width: props.$width,
   height: "1.4rem",
   textAlign: "center",
-});
+}));
 
 export const DayButton = styled(
   "button",
@@ -156,6 +159,15 @@ export const DayButton = styled(
     padding: " 0.3rem 0.5rem",
   }),
 );
+
+export const FormContent = styled("div", {
+  display: "flex",
+  width: "80%",
+  height: "100%",
+  justifyContent: "center",
+  alignItems: "center",
+  margin: "0 auto",
+});
 
 export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
   justifySelf: "end",
