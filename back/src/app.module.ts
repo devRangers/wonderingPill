@@ -75,7 +75,12 @@ AdminJS.registerAdapter({ Database, Resource });
               return null;
             },
             cookieName: 'adminBro',
-            cookiePassword: 'some-secret-password-used-to-secure-cookie',
+            cookiePassword: 'session_key',
+          },
+          sessionOptions: {
+            secret: 'adminBro',
+            resave: true,
+            saveUninitialized: true,
           },
         };
       },
