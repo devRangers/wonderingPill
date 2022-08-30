@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
+import { PrismaMongoService } from './prisma/prisma-mongo.service';
 import { PrismaService } from './prisma/prisma.service';
 import { setupSwagger } from './utils';
 
@@ -23,6 +24,8 @@ async function bootstrap() {
 
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
+  const prismaMongoService = app.get(PrismaMongoService);
+  await prismaMongoService.enableShutdownHooks(app);
 
   setupSwagger(app);
   app.enableCors({

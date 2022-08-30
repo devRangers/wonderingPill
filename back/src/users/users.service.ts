@@ -3,20 +3,17 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Inquiry } from '@prisma/client';
 import * as argon from 'argon2';
-import { User } from 'prisma/postgresClient';
+import { Inquiry, User } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
-import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendInquiryDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly authService: AuthService,
-    private prismaMongo: PrismaMongoService,
   ) {}
 
   async deleteUser(id: string) {
