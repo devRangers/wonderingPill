@@ -85,8 +85,8 @@ export class UsersService {
     }
   }
 
-  async sendInquiry(sendInquiryDto: SendInquiryDto) {
-    const { id, content } = sendInquiryDto;
+  async sendInquiry(id: string, sendInquiryDto: SendInquiryDto) {
+    const { content } = sendInquiryDto;
     const inquiry: Inquiry = await this.prisma.inquiry.create({
       data: { user_id: id, content },
     });
