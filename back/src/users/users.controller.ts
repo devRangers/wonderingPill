@@ -153,7 +153,6 @@ export class UsersController {
     };
   }
 
-  // 알림 여부 추가해야함
   @HttpCode(200)
   @Get('mypage')
   @UseGuards(AccessGuard)
@@ -182,6 +181,7 @@ export class UsersController {
 
   @HttpCode(200)
   @Post('send-inquiry')
+  @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '고객센터 API',
     description: '고객이 문의한 내용을 DB로 저장 한다(관리자 페이지)',
@@ -189,14 +189,14 @@ export class UsersController {
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async sendInquiry(
+    @GetCurrentUserId() id: string,
     @Body() sendInquiryDto: SendInquiryDto,
   ): Promise<SendInquiryResponse> {
     const inquiry: Inquiry = await this.usersService.sendInquiry(
+      id,
       sendInquiryDto,
     );
-
     this.logger.verbose(`User send inquiry Success!`);
-
     return {
       statusCode: 200,
       message: '문의를 성공적으로 전송했습니다.',
