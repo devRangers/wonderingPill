@@ -1,22 +1,44 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
+import { MailModule } from 'src/mail/mail.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisModule } from 'src/redis/redis.module';
+import { SmsModule } from 'src/sms/sms.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtRefreshStrategy, JwtStrategy } from './strategy';
+import { JwtRefreshStrategy, JwtStrategy, KakaoStrategy } from './strategy';
+import { GoogleStrategy } from './strategy/google.strategy';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({
+      accessType: 'offline',
+      prompt: 'consent',
+      approval_prompt: 'force',
+      defaultStrategy: 'jwt',
+    }),
     JwtModule.register({}),
     HttpModule,
+    SmsModule,
+    MailModule,
     RedisModule,
   ],
   controllers: [AuthController],
-  providers: [PrismaService, AuthService, JwtStrategy, JwtRefreshStrategy],
-  exports: [JwtStrategy, JwtRefreshStrategy],
+  providers: [
+    PrismaService,
+    AuthService,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    KakaoStrategy,
+    GoogleStrategy,
+  ],
+  exports: [RedisModule, JwtModule],
 })
-export class AuthModule {}
+export class AuthModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('auth');
+  }
+}

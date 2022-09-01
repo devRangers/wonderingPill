@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { BUTTON_COLOR, SUB_COLOR } from "@utils/constant";
+import {
+  ACCENT_COLOR,
+  SUB_COLOR,
+  ERROR_MSG_COLOR,
+  GRAY_COLOR,
+} from "@utils/constant";
 import { BsFillExclamationCircleFill } from "react-icons/bs";
 import {
   ErrorMessage,
@@ -19,6 +24,7 @@ import { useFormik } from "formik";
 import { useMutation } from "react-query";
 import * as Yup from "yup";
 import ReactTooltip from "react-tooltip";
+import * as Api from "@api";
 
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
@@ -54,21 +60,6 @@ const userInitialValue: RegisterValues = {
 
 type PostUserData = Omit<RegisterValues, "checkPassword">;
 
-const postRegisterAPI = async (data: PostUserData) => {
-  const res = await fetch("http://localhost:5000/auth/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  const result = await res.json();
-  if (result.statusCode >= 400) {
-    throw new Error(result.message);
-  }
-  return result;
-};
-
 const modalText: { [key in string]: ModalValue } = {
   selfAuthModal: {
     content: "본인 인증을 진행해주세요.",
@@ -85,31 +76,31 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
   const [openModal, setOpenModal] = useState([false, false, false]);
   const router = useRouter();
 
-  const mutation = useMutation(postRegisterAPI, {
-    onSuccess: (data: CreateUserResponse, variables) => {
-      console.log("data : ", data);
-      console.log("variables : ", variables);
-      router.push(
-        {
-          pathname: "/login",
-          query: {
-            email: data.user.email,
+  const mutation = useMutation(
+    (data: PostUserData) =>
+      Api.post<CreateUserResponse, PostUserData>("/auth/signup", data),
+    {
+      onSuccess: (data, variables) => {
+        router.push(
+          {
+            pathname: "/login",
+            query: {
+              email: data.user.email,
+            },
           },
-        },
-        "/login",
-      );
+          "/login",
+        );
+      },
+      onError: (error, variables, context) => {
+        // An error happened!
+        setOpenModal((cur) => {
+          const temp = [...cur];
+          temp[2] = !temp[2];
+          return temp;
+        });
+      },
     },
-    onError: (error, variables, context) => {
-      // An error happened!
-      console.log("error: ", error);
-      console.log("variables:", variables);
-      setOpenModal((cur) => {
-        const temp = [...cur];
-        temp[2] = !temp[2];
-        return temp;
-      });
-    },
-  });
+  );
 
   const userDataFormik = useFormik({
     initialValues: userInitialValue,
@@ -182,11 +173,14 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           inputMode="email"
           {...userDataFormik.getFieldProps("email")}
           placeholder="이메일"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.email && userDataFormik.errors.email ? (
-          <ErrorMessage>{userDataFormik.errors.email}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {userDataFormik.errors.email}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <Input
@@ -194,11 +188,14 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           type="text"
           {...userDataFormik.getFieldProps("name")}
           placeholder="이름"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.name && userDataFormik.errors.name ? (
-          <ErrorMessage>{userDataFormik.errors.name}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {userDataFormik.errors.name}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <Input
@@ -209,10 +206,13 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           autoComplete="true"
           data-tip="password-tooltip"
           data-for="password-tooltip"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.password && userDataFormik.errors.password ? (
           <>
-            <ErrorMessage>필수 입력 란입니다.</ErrorMessage>
+            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+              필수 입력 란입니다.
+            </ErrorMessage>
 
             <ReactTooltip
               key="password-tooltip"
@@ -222,7 +222,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
             </ReactTooltip>
           </>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <Input
@@ -231,12 +231,15 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           {...userDataFormik.getFieldProps("checkPassword")}
           placeholder="비밀번호 확인"
           autoComplete="true"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.checkPassword &&
         userDataFormik.errors.checkPassword ? (
-          <ErrorMessage>{userDataFormik.errors.checkPassword}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {userDataFormik.errors.checkPassword}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
         <Input
@@ -246,18 +249,21 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           inputMode="numeric"
           {...userDataFormik.getFieldProps("birth")}
           placeholder="생년월일(8자리)"
+          $placeholderColor={GRAY_COLOR}
         />
         {userDataFormik.touched.birth && userDataFormik.errors.birth ? (
-          <ErrorMessage>{userDataFormik.errors.birth}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {userDataFormik.errors.birth}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
 
-        <SelfAuthenticationLine $lineColor={SUB_COLOR}>
+        <SelfAuthenticationLine $lineColor={ACCENT_COLOR}>
           본인 인증
         </SelfAuthenticationLine>
 
-        <SubmitButton type="submit" $btnColor={BUTTON_COLOR}>
+        <SubmitButton type="submit" $btnColor={SUB_COLOR}>
           회원 가입하기
         </SubmitButton>
       </Form>
@@ -267,7 +273,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           open={openModal[index]}
           onClose={() => handleClickModalBackground(index)}>
           <NoticeCheckPhoneNumberModal>
-            <Mark $iconColor={SUB_COLOR}>
+            <Mark $iconColor={ACCENT_COLOR}>
               <BsFillExclamationCircleFill />
             </Mark>
             <NoticeCheckPhoneNumberBody>

@@ -1,7 +1,10 @@
 export const MAIN_COLOR = "#A8C0EA";
-export const SUB_COLOR = "#3C5A93";
-export const BUTTON_COLOR = "#9ADCDD";
+export const SUB_COLOR = "#9ADCDD";
+export const ACCENT_COLOR = "#3C5A93";
+export const SEMI_ACCENT_COLOR = "#567BC4";
 export const ERROR_MSG_COLOR = "#bd0000";
+export const BOX_COLOR = "#2A306A";
+export const GRAY_COLOR = "#A4A4A4";
 
 export const HEADER_HEIGHT = "10vh";
 export const FOOTER_HEIGHT = "8vh";
@@ -20,6 +23,7 @@ export const ROUTE = {
   PASSWORD_FIND: "/account/password/find",
   PASSWORD_NEW: "/account/password/new",
   SEARCH_IMAGE: "/search/image",
+  SEARCH_RESULT: "/search/result",
   ERROR: "/error",
   BLOCK: "/blocked",
 };

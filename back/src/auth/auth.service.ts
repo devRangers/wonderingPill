@@ -1,59 +1,74 @@
 import {
   ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
+import { User } from 'prisma/postgresClient';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
-import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
-import { CreateUserDto, FindPasswordDto, SigninUserDto } from './dto';
+import {
+  ChangePasswordDto,
+  CreateUserDto,
+  FindAccountDto,
+  OauthLoginDto,
+  SigninUserDto,
+} from './dto';
 import { JwtPayload, Tokens } from './types';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
   ) {}
 
-  async getUserByEmail(email): Promise<User> {
-    const user: User = await this.prisma.user.findUnique({
-      where: { email },
-    });
+  async getUserByEmail(email: string): Promise<User> {
+    try {
+      const user: User = await this.prisma.user.findUnique({
+        where: { email },
+      });
 
-    if (!user) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
+      return user;
+    } catch {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
     }
-
-    return user;
   }
 
-  async getUserById(id): Promise<User> {
-    const user: User = await this.prisma.user.findUnique({
-      where: { id },
-    });
+  async getUserById(id: string): Promise<User> {
+    try {
+      const user: User = await this.prisma.user.findUnique({
+        where: { id },
+      });
 
-    if (!user) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
+      return user;
+    } catch {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
     }
+  }
 
-    return user;
+  async getUserByPhone(phone: string): Promise<User> {
+    try {
+      const user: User = await this.prisma.user.findUnique({
+        where: { phone },
+      });
+
+      return user;
+    } catch {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
+    }
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { name, email, password, phone, birth } = createUserDto;
-    const hashedPassword = await argon.hash(password);
+    const hashedPassword: string = await argon.hash(password);
     try {
-      const newUser = await this.prisma.user.create({
+      const newUser: User = await this.prisma.user.create({
         data: {
           name,
           password: hashedPassword,
@@ -66,13 +81,7 @@ export class AuthService {
 
       return newUser;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ForbiddenException('이미 존재하는 이메일입니다.');
-        }
-      } else {
-        throw new InternalServerErrorException();
-      }
+      throw new ForbiddenException('회원을 저장하지 못했습니다.');
     }
   }
 
@@ -80,15 +89,17 @@ export class AuthService {
     try {
       const { email, password, isSignin } = signinUserDto;
 
-      const isPwMatching = await argon.verify(user.password, password);
+      const isPwMatching: boolean = await argon.verify(user.password, password);
+
       if (!isPwMatching)
         throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
 
-      const { accessToken, refreshToken } = await this.getTokens(
+      const { accessToken, refreshToken }: Tokens = await this.getTokens(
         user.id,
         email,
         isSignin,
       );
+
       return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
@@ -104,22 +115,28 @@ export class AuthService {
       email,
       sub: id,
     };
+    try {
+      const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
+        secret: this.configService.get('JWT_SECRET'),
+        expiresIn: this.configService.get('JWT_EXPIRESIN'),
+      });
 
-    const accessToken = await this.jwtService.signAsync(jwtPayload, {
-      secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_EXPIRESIN'),
-    });
-    let expiresIn;
-    if (isSignin) {
-      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
-    } else {
-      expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
+      let expiresIn;
+      if (isSignin) {
+        expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
+      } else {
+        expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
+      }
+
+      const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        expiresIn,
+      });
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new UnauthorizedException('토큰 생성에 실패했습니다.');
     }
-    const refreshToken = await this.jwtService.signAsync(jwtPayload, {
-      secret: this.configService.get('JWT_REFRESH_SECRET'),
-      expiresIn,
-    });
-    return { accessToken, refreshToken };
   }
 
   async saveRefreshToken(
@@ -135,31 +152,37 @@ export class AuthService {
     } else {
       ttl = Number(this.configService.get('JWT_REFRESH_EXPIRESIN') / 1000);
     }
-    const result = await this.redisService.setKey(
-      're' + id,
-      this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
-      ttl,
-    );
+    try {
+      const result: boolean = await this.redisService.setKey(
+        're' + id,
+        this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
+        ttl,
+      );
 
-    if (!result) {
+      return result;
+    } catch (error) {
       throw new ForbiddenException('refresh token이 저장되지 않았습니다.');
     }
-
-    return result;
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
-    const user = await this.getUserById(id);
-    const result = await (
-      await this.redisService.getKey('re' + id)
-    ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
+    const user: User = await this.getUserById(id);
+    if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
 
-    if (result !== refreshToken) {
-      throw new ForbiddenException('Access Denied');
+    try {
+      const result: string = await (
+        await this.redisService.getKey('re' + id)
+      ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
+
+      if (result !== refreshToken) {
+        throw new ForbiddenException('Access Denied');
+      }
+
+      const accessToken: string = await this.getAccessToken(id, user.email);
+      return accessToken;
+    } catch (error) {
+      throw new ForbiddenException('엑세스 토큰 발급을 실패했습니다.');
     }
-
-    const accessToken: string = await this.getAccessToken(id, user.email);
-    return accessToken;
   }
 
   async getAccessToken(id: string, email: string): Promise<string> {
@@ -167,43 +190,147 @@ export class AuthService {
       sub: id,
       email: email,
     };
-    const accessToken = await this.jwtService.signAsync(jwtPayload, {
-      secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_EXPIRESIN'),
-    });
+    try {
+      const accessToken: string = await this.jwtService.signAsync(jwtPayload, {
+        secret: this.configService.get('JWT_SECRET'),
+        expiresIn: this.configService.get('JWT_EXPIRESIN'),
+      });
 
-    if (!accessToken) {
+      return accessToken;
+    } catch (error) {
       throw new ForbiddenException('accessToken을 생성하지 못했습니다.');
     }
-
-    return accessToken;
   }
 
   async logout(id: string): Promise<boolean> {
-    await this.redisService.delKey('re' + id);
-    return true;
-  }
-
-  async findUser(findPasswordDto: FindPasswordDto): Promise<User> {
-    const user = await this.getUserByEmail(findPasswordDto.email);
-    if (user.name !== findPasswordDto.name) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
+    try {
+      await this.redisService.delKey('re' + id);
+      return true;
+    } catch (error) {
+      throw new ForbiddenException('로그아웃 실패!.');
     }
-    if (user.birth !== findPasswordDto.birth) {
-      throw new ForbiddenException('회원이 존재하지 않습니다.');
+  }
+
+  async getUserForAccount(findAccountDto: FindAccountDto): Promise<User> {
+    const { name, birth, phone } = findAccountDto;
+    try {
+      const user: User[] = await this.prisma.user.findMany({
+        where: {
+          AND: {
+            name,
+            birth,
+            phone,
+          },
+        },
+      });
+
+      if (!user || user.length !== 1) {
+        throw new ForbiddenException('회원이 존재하지 않습니다.');
+      }
+
+      return user.pop();
+    } catch (error) {
+      throw new ForbiddenException('회원을 찾지 못했습니다.');
     }
-
-    return user;
   }
 
-  async getPWChangeToken(id: string): Promise<string> {
-    const token: string = uuid().toString();
-    const result = await this.redisService.setKey(
-      'pw' + id,
-      this.configService.get('CHANGE_PASSWORD_KEY') + token,
-      Number(this.configService.get('PW_TOKEN_TTL')),
-    );
-    if (!result) throw new ForbiddenException('토큰을 저장하지 못했습니다.');
-    return token;
+  async setPWChangeToken(id: string, token: string): Promise<string> {
+    try {
+      await this.redisService.setKey(
+        'pw' + id,
+        this.configService.get('CHANGE_PASSWORD_KEY') + token,
+        Number(this.configService.get('PW_TOKEN_TTL')),
+      );
+      return token;
+    } catch (error) {
+      throw new ForbiddenException('토큰을 저장하지 못했습니다.');
+    }
   }
+
+  async createOauthUser(payload: OauthLoginDto, type: string): Promise<User> {
+    let provider;
+    if (type === 'kakao') provider = providerType.KAKAO;
+    else provider = providerType.GOOGLE;
+    try {
+      const newUser: User = await this.prisma.user.create({
+        data: {
+          name: payload.name,
+          password: payload.password,
+          email: payload.email,
+          provider,
+        },
+      });
+      return newUser;
+    } catch (error) {
+      throw new ForbiddenException('회원 정보를 저장하지 못했습니다.');
+    }
+  }
+
+  async googleLogin(googleLoginDto: OauthLoginDto, res): Promise<Tokens> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { email: googleLoginDto.email },
+    });
+    const { accessToken, refreshToken } = googleLoginDto;
+    let key;
+    try {
+      if (!user) {
+        const newUser: User = await this.createOauthUser(
+          googleLoginDto,
+          'google',
+        );
+
+        key = 'go' + newUser.id;
+      } else if (user.provider !== 'GOOGLE') {
+        res
+          .status(403)
+          .redirect(`${this.configService.get('CLIENT_URL')}/login/error`);
+      } else {
+        key = 'go' + user.id;
+      }
+
+      await this.redisService.setKey(
+        key,
+        this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
+        Number(this.configService.get('JWT_REFRESH_EXPIRESIN')) / 1000,
+      );
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new ForbiddenException('구글 로그인 중에 문제 발생!');
+    }
+  }
+
+  async changePassword(
+    email,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<User> {
+    try {
+      const hashedPassword: string = await argon.hash(
+        changePasswordDto.password,
+      );
+      const user: User = await this.prisma.user.update({
+        where: { email },
+        data: {
+          password: hashedPassword,
+        },
+      });
+      return user;
+    } catch (error) {
+      throw new ForbiddenException('비밀번호를 변경하지 못했습니다.');
+    }
+  }
+
+  // async kakaoLogin(kakaoLoginDto: OauthLoginDto) {
+  //   const user: User = await this.createOauthUser(kakaoLoginDto, 'kakao');
+  //   const { accessToken, refreshToken } = kakaoLoginDto;
+
+  //   // redis 저장
+  //   await this.redisService.setKey(
+  //     'ka' + user.id,
+  //     process.env.REFRESHTOKEN_KEY + refreshToken,
+  //     Number(process.env.JWT_REFRESH_EXPIRESIN) / 1000,
+  //   );
+
+  //   return { accessToken, refreshToken };
+  // }
 }

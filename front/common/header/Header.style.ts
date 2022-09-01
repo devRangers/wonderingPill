@@ -14,6 +14,7 @@ export const HeaderContainer = styled(
     gridTemplateColumns: "1fr 1fr 1fr",
     justifyItems: "start",
     alignItems: "center",
+    zIndex: "1",
   }),
 );
 
@@ -35,6 +36,12 @@ export const BellBtn = styled("button", {
   fontSize: "1.5rem",
   color: "#fff",
   justifySelf: "end",
+});
+
+export const Button = styled("button", {
+  position: "relative",
+  width: "100%",
+  height: "100%",
 });
 
 export const HeaderEmptyBox = styled(

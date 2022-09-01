@@ -54,26 +54,29 @@ export const SubmitButton = styled(
   }),
 );
 
-export const Input = styled("input", {
-  width: "80%",
-  maxWidth: "25rem",
-  minHeight: "3.5rem",
+export const Input = styled(
+  "input",
+  (props: { $placeholderColor: string }) => ({
+    width: "80%",
+    maxWidth: "25rem",
+    minHeight: "3.5rem",
 
-  backgroundColor: "#fff",
-  border: "none",
-  borderRadius: "25px",
+    backgroundColor: "#fff",
+    border: "none",
+    borderRadius: "25px",
 
-  outline: "0",
-  fontSize: "1.2rem",
-  padding: "0 1rem",
+    outline: "0",
+    fontSize: "1.2rem",
+    padding: "0 1rem",
 
-  "::-webkit-input-placeholder": {
-    textAlign: "center",
-    color: "#A4A4A4",
-  },
-});
+    "::-webkit-input-placeholder": {
+      textAlign: "center",
+      color: props.$placeholderColor,
+    },
+  }),
+);
 
-export const ErrorMessage = styled("div", {
+export const ErrorMessage = styled("div", (props: { $txtColor: string }) => ({
   textAlign: "start",
   width: "80%",
   maxWidth: "25rem",
@@ -83,8 +86,8 @@ export const ErrorMessage = styled("div", {
   margin: "0.3rem 0 0.3rem 0.2rem",
 
   fontSize: "0.9rem",
-  color: "#bd0000",
-});
+  color: props.$txtColor,
+}));
 
 export const SelfAuthenticationLine = styled(
   "div",
@@ -129,25 +132,29 @@ export const PhoneNumberContainer = styled("div", {
   alignItems: "center",
 });
 
-export const AuthenticationInput = styled("input", {
-  maxWidth: "25rem",
-  minHeight: "3.5rem",
+export const AuthenticationInput = styled(
+  "input",
+  (props: { $placeholderColor: string }) => ({
+    maxWidth: "25rem",
+    minHeight: "3.5rem",
 
-  backgroundColor: "#fff",
-  border: "none",
-  borderRadius: "25px",
+    backgroundColor: "#fff",
+    border: "none",
+    borderRadius: "25px",
 
-  outline: "0",
-  fontSize: "1.2rem",
-  padding: "0 1rem",
+    outline: "0",
+    fontSize: "1.2rem",
+    padding: "0 1rem",
 
-  "::-webkit-input-placeholder": {
-    textAlign: "center",
-    color: "#A4A4A4",
-  },
-  width: "70%",
-  marginRight: "0.7rem",
-});
+    width: "70%",
+    marginRight: "0.7rem",
+
+    "::-webkit-input-placeholder": {
+      textAlign: "center",
+      color: props.$placeholderColor,
+    },
+  }),
+);
 
 export const SubmitAuthenticationBtn = styled(
   "button",

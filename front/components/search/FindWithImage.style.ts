@@ -81,20 +81,17 @@ export const Title = styled("span", {
   fontWeight: "bold",
 });
 
-export const DescriptionFirstBox = styled(
-  "div",
-  (props: { $bgColor: string }) => ({
-    display: "grid",
-    gridTemplateRows: "1fr",
-    gridTemplateColumns: "0.15fr 0.85fr",
-    alignItems: "center",
-    width: "90%",
-    margin: "0.4rem auto",
-    padding: "0.5rem",
-    borderRadius: "1.5rem",
-    backgroundColor: props.$bgColor,
-  }),
-);
+export const DescriptionBox = styled("div", (props: { $bgColor: string }) => ({
+  display: "grid",
+  gridTemplateRows: "1fr",
+  gridTemplateColumns: "0.15fr 0.85fr",
+  alignItems: "center",
+  width: "90%",
+  margin: "0.4rem auto",
+  padding: "0.5rem",
+  borderRadius: "1.5rem",
+  backgroundColor: props.$bgColor,
+}));
 
 export const Numbering = styled("p", {
   textAlign: "center",
@@ -108,20 +105,6 @@ export const DescriptionContent = styled("p", {
   lineHeight: "1.2rem",
   marginRight: "1rem",
 });
-
-export const DescriptionSecondBox = styled(
-  "div",
-  (props: { $bgColor: string }) => ({
-    margin: "0.4rem auto",
-    width: "90%",
-    backgroundColor: props.$bgColor,
-    borderRadius: "1.5rem",
-    display: "grid",
-    gridTemplateRows: "1fr",
-    gridTemplateColumns: "0.2fr 0.8fr",
-    alignItems: "center",
-  }),
-);
 
 export const ModalInner = styled("div", {
   // width: "80%",
@@ -226,18 +209,3 @@ export const CloseWeekendBtn = styled(
     fontSize: props.$isWide ? "1.2rem" : "0.8rem",
   }),
 );
-
-export const CaptureContainer = styled("div", {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "100%",
-  height: "100%",
-});
-
-export const CaptureButton = styled("label", {
-  display: "inline-block",
-  width: "100%",
-  height: "100%",
-});

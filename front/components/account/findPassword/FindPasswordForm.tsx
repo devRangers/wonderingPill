@@ -1,4 +1,4 @@
-import { BUTTON_COLOR } from "@utils/constant";
+import { SUB_COLOR, GRAY_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -49,11 +49,14 @@ function FindPasswordForm() {
           type="email"
           {...findPasswordFormik.getFieldProps("email")}
           placeholder="이메일"
+          $placeholderColor={GRAY_COLOR}
         />
         {findPasswordFormik.touched.email && findPasswordFormik.errors.email ? (
-          <ErrorMessage>{findPasswordFormik.errors.email}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {findPasswordFormik.errors.email}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </InputContainer>
       <InputContainer>
@@ -62,11 +65,14 @@ function FindPasswordForm() {
           type="text"
           {...findPasswordFormik.getFieldProps("name")}
           placeholder="이름"
+          $placeholderColor={GRAY_COLOR}
         />
         {findPasswordFormik.touched.name && findPasswordFormik.errors.name ? (
-          <ErrorMessage>{findPasswordFormik.errors.name}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {findPasswordFormik.errors.name}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </InputContainer>
       <InputContainer>
@@ -75,14 +81,17 @@ function FindPasswordForm() {
           type="number"
           {...findPasswordFormik.getFieldProps("birth")}
           placeholder="생년월일"
+          $placeholderColor={GRAY_COLOR}
         />
         {findPasswordFormik.touched.birth && findPasswordFormik.errors.birth ? (
-          <ErrorMessage>{findPasswordFormik.errors.birth}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {findPasswordFormik.errors.birth}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </InputContainer>
-      <FindBtn type="submit" $btnColor={BUTTON_COLOR}>
+      <FindBtn type="submit" $btnColor={SUB_COLOR}>
         비밀번호 찾기
       </FindBtn>
     </Form>

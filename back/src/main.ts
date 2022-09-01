@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
+import { PrismaMongoService } from './prisma/prisma-mongo.service';
 import { PrismaService } from './prisma/prisma.service';
 import { setupSwagger } from './utils';
 
@@ -15,14 +16,16 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // 어떤 decorator도 없는 property의 object 제외
-      forbidNonWhitelisted: true, // 이상한걸 보내면 request를 막음
-      transform: true, // 원하는 타입으로 변환
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
+  const prismaMongoService = app.get(PrismaMongoService);
+  await prismaMongoService.enableShutdownHooks(app);
 
   setupSwagger(app);
   app.enableCors({

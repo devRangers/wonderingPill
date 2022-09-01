@@ -36,6 +36,13 @@ lerna-debug.log*
 ../.vscode/*
 
 # env
-.development.env
-.production.env
-.env
+*.env
+
+# secure
+secure/
+
+# REDIS
+conf/
+
+# Prisma
+*Client/
