@@ -62,7 +62,7 @@ export class PillController {
   })
   @ApiQuery({
     name: 'letters',
-    required: true,
+    required: false,
     description: '약 글자',
   })
   @ApiQuery({

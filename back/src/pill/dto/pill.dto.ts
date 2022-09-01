@@ -15,7 +15,7 @@ export class pillSearchDto {
   mark: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   letters: string;
 
   @IsString()
