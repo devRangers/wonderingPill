@@ -25,6 +25,7 @@ $ python app.py
 ```
 
 -------
+
 ## ai 폴더 구조
 
 ```
@@ -32,7 +33,7 @@ $ python app.py
 - https://drive.google.com/drive/folders/19w4LiKE6K9aR3a0vxnZSZuSkA3W7KjVP?usp=sharing
 
 # pill-text-recognition-a3e91afb350f.json 파일은 디스코드 ai 채널 고정메세지에서 다운로드
-``
+```
 
 ```
 📂ai
