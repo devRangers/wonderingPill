@@ -4,9 +4,11 @@ import {
   HttpCode,
   Logger,
   Param,
+  ParseIntPipe,
   Put,
   Query,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -93,7 +95,7 @@ export class PillController {
   @ApiCookieAuth('refreshToken')
   async bookmarkPill(
     @GetCurrentUserId() id: string,
-    @Param('id') pill_id: number,
+    @Param('id', ParseIntPipe) pill_id: number,
   ): Promise<CommonResponseDto> {
     await this.pillService.bookmarkPill(id, pill_id);
     return {
@@ -119,7 +121,7 @@ export class PillController {
     description: '약 이름',
   })
   async resultPill(
-    @Param('name') name: string,
+    @Param('name', ValidationPipe) name: string,
   ): Promise<pillResultResponseDto> {
     const result = await this.pillService.resultPill(name);
     this.logger.verbose(`get Pill Detail Success`);

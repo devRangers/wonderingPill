@@ -13,6 +13,7 @@ import {
   Req,
   Res,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -385,7 +386,7 @@ export class AuthController {
   })
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(
-    @Param('email') email: string,
+    @Param('email', ValidationPipe) email: string,
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<CommonResponseDto> {
     await this.authService.changePassword(email, changePasswordDto);
@@ -534,7 +535,9 @@ export class AuthController {
     type: FindAccountResponse,
   })
   @Get('find-account/:id')
-  async getAccount(@Param('id') id: string): Promise<FindAccountResponse> {
+  async getAccount(
+    @Param('id', ValidationPipe) id: string,
+  ): Promise<FindAccountResponse> {
     const user: User = await this.authService.getUserById(id);
 
     let name;
