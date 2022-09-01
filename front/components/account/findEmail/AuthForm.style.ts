@@ -24,15 +24,15 @@ export const InputContainer = styled("div", {
   alignItems: "center",
 });
 
-export const Input = styled("input", {
+export const Input = styled("input", (props: { $borderColor: string }) => ({
   width: "50%",
   height: "2.5rem",
   borderRadius: "25px",
-  border: "0.1px solid #a4a4a4",
+  border: `1px solid ${props.$borderColor}`,
   textAlign: "center",
   fontSize: "1.2rem",
   marginRight: "0.5rem",
-});
+}));
 
 export const SubmitBtn = styled("button", (props: { $btnColor: string }) => ({
   borderRadius: "25px",
@@ -64,7 +64,7 @@ export const CloseBtnContainer = styled("div", {
   alignItems: "center",
 });
 
-export const CloseBtn = styled("button", {
-  color: "#a4a4a4",
+export const CloseBtn = styled("button", (props: { $btnColor: string }) => ({
+  color: props.$btnColor,
   marginRight: "0.5rem",
-});
+}));

@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "./mongoClient"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL_MONGO")
+}
+
+model Reminder{
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  user_name        String
+  pill_name        String
+  time             String
+  user_id          String             @unique
+  User             User               @relation(fields: [user_id], references: [user_id])
+}
+
+model User{
+    id               String             @id @default(auto()) @map("_id") @db.ObjectId
+    user_id          String             @unique          
+    deviceToken      String 
+    Reminder         Reminder[]
+}

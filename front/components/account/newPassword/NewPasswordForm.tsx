@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { put } from "@api";
-import { SUB_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
+import { SUB_COLOR, ERROR_MSG_COLOR, GRAY_COLOR } from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -80,6 +80,7 @@ function NewPasswordForm({ isValidToken }: NewPasswordFormProp) {
           autoComplete="true"
           {...newPasswordFormik.getFieldProps("password")}
           placeholder="새로운 비밀번호"
+          $placeholderColor={GRAY_COLOR}
         />
         {newPasswordFormik.touched.password &&
         newPasswordFormik.errors.password ? (
@@ -97,6 +98,7 @@ function NewPasswordForm({ isValidToken }: NewPasswordFormProp) {
           autoComplete="true"
           {...newPasswordFormik.getFieldProps("checkPassword")}
           placeholder="비밀번호 확인"
+          $placeholderColor={GRAY_COLOR}
         />
         {newPasswordFormik.touched.checkPassword &&
         newPasswordFormik.errors.checkPassword ? (

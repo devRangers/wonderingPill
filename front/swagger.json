@@ -66,7 +66,9 @@
             "description": "Access Token 발행 성공",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CommonResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
               }
             }
           }
@@ -141,6 +143,18 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "토큰 검사 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindPasswordResponse"
+                }
+              }
+            }
+          }
+        },
         "tags": ["Auth API"]
       }
     },
@@ -158,10 +172,10 @@
             "schema": {}
           },
           {
-            "name": "email",
+            "name": "id",
             "required": true,
             "in": "query",
-            "description": "이메일",
+            "description": "유저 아이디",
             "schema": {}
           }
         ],
@@ -191,14 +205,18 @@
             "required": true,
             "in": "path",
             "description": "이메일",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ChangePasswordDto" }
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
             }
           }
         },
@@ -207,7 +225,9 @@
             "description": "비밀번호 변경 성공",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CommonResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
               }
             }
           }
@@ -221,7 +241,11 @@
         "summary": "google 로그인 API",
         "description": "google 로그인을 요청 한다.",
         "parameters": [],
-        "responses": { "200": { "description": "google 로그인 요청 성공" } },
+        "responses": {
+          "200": {
+            "description": "google 로그인 요청 성공"
+          }
+        },
         "tags": ["Auth API"]
       }
     },
@@ -229,7 +253,11 @@
       "get": {
         "operationId": "AuthController_googleLogin",
         "parameters": [],
-        "responses": { "200": { "description": "" } },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "tags": ["Auth API"]
       }
     },
@@ -243,7 +271,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/FindAccountDto" }
+              "schema": {
+                "$ref": "#/components/schemas/FindAccountDto"
+              }
             }
           }
         },
@@ -252,7 +282,9 @@
             "description": "SMS 전송 성공",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CommonResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
               }
             }
           }
@@ -286,7 +318,9 @@
             "description": "인증번호 확인 성공",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/FindUserResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/FindUserResponse"
+                }
               }
             }
           }
@@ -294,18 +328,26 @@
         "tags": ["Auth API"]
       }
     },
-    "/auth/find-account": {
+    "/auth/find-account/{id}": {
       "get": {
         "operationId": "AuthController_getAccount",
         "summary": "계정 찾기 API",
         "description": "계정을 찾는다.",
         "parameters": [
           {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "phone",
             "required": true,
             "in": "path",
             "description": "전화번호",
-            "schema": { "type": "string" }
+            "schema": {}
           }
         ],
         "responses": {
@@ -313,7 +355,9 @@
             "description": "계정 찾기 성공",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/FindAccountResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/FindAccountResponse"
+                }
               }
             }
           }
@@ -330,13 +374,25 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/BookmarkCreateDto" }
+              "schema": {
+                "$ref": "#/components/schemas/BookmarkCreateDto"
+              }
             }
           }
         },
         "responses": {
           "201": {
             "description": "생성 혹은 삭제 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookmarkCreateDto"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/BookmarkCreateDto" }
@@ -513,56 +569,23 @@
       "CreateUserDto": {
         "type": "object",
         "properties": {
-          "email": { "type": "string" },
-          "name": { "type": "string" },
-          "password": { "type": "string" },
-          "birth": { "type": "string" },
-          "phone": { "type": "string" }
-        },
-        "required": ["email", "name", "password", "birth", "phone"]
-      },
-      "CreateUserResponse": {
-        "type": "object",
-        "properties": {
-          "statusCode": { "type": "number" },
-          "message": { "type": "string" },
-          "user": {
-            "type": "object",
-            "properties": {
-              "id": { "required": true, "type": "string" },
-              "email": { "required": true, "type": "string" }
-            }
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "birth": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
           }
         },
-        "required": ["statusCode", "message", "user"]
-      },
-      "SigninUserDto": {
-        "type": "object",
-        "properties": {
-          "email": { "type": "string" },
-          "password": { "type": "string" },
-          "isSignin": { "type": "boolean" },
-          "token": { "type": "string" }
-        },
-        "required": ["email", "password", "isSignin", "token"]
-      },
-      "SigninResponse": {
-        "type": "object",
-        "properties": {
-          "statusCode": { "type": "number" },
-          "message": { "type": "string" },
-          "user": {
-            "type": "object",
-            "properties": {
-              "id": { "required": true, "type": "string" },
-              "email": { "required": true, "type": "string" },
-              "name": { "required": true, "type": "string" },
-              "profileImg": { "required": true, "type": "string" },
-              "provider": { "required": true, "type": "string" }
-            }
-          }
-        },
-        "required": ["statusCode", "message", "user"]
+        "required": ["user", "statusCode", "message"]
       },
       "CommonResponseDto": {
         "type": "object",
@@ -626,50 +649,92 @@
       "FindUserResponse": {
         "type": "object",
         "properties": {
-          "statusCode": { "type": "number" },
-          "message": { "type": "string" },
-          "user": {
-            "type": "object",
-            "properties": { "id": { "required": true, "type": "string" } }
-          }
-        },
-        "required": ["statusCode", "message", "user"]
-      },
-      "FindAccountResponse": {
-        "type": "object",
-        "properties": {
-          "statusCode": { "type": "number" },
-          "message": { "type": "string" },
           "user": {
             "type": "object",
             "properties": {
-              "name": { "required": true, "type": "string" },
-              "email": { "required": true, "type": "string" }
+              "id": {
+                "required": true,
+                "type": "string"
+              },
+              "email": {
+                "required": true,
+                "type": "string"
+              }
             }
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
           }
         },
-        "required": ["statusCode", "message", "user"]
+        "required": ["user", "statusCode", "message"]
       },
-      "BookmarkCreateDto": {
-        "type": "object",
-        "properties": { "pharmacyId": { "type": "number" } },
-        "required": ["pharmacyId"]
-      },
-      "Pharmacy": {
+      "ChangePasswordDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "number" },
-          "name": { "type": "string" },
-          "phone": { "type": "string" },
-          "address": { "type": "string" },
-          "monday": { "type": "string" },
-          "tuesday": { "type": "string" },
-          "wednesday": { "type": "string" },
-          "thursday": { "type": "string" },
-          "friday": { "type": "string" },
-          "saturday": { "type": "string" },
-          "sunday": { "type": "string" },
-          "holiday": { "type": "string" }
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "isSignin": {
+            "type": "boolean"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "birth", "token", "phone"]
+      },
+      "FindUserResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "required": true,
+                "type": "string"
+              },
+              "email": {
+                "required": true,
+                "type": "string"
+              },
+              "name": {
+                "required": true,
+                "type": "string"
+              },
+              "profileImg": {
+                "required": true,
+                "type": "string"
+              },
+              "provider": {
+                "required": true,
+                "type": "string"
+              }
+            }
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["user", "statusCode", "message"]
+      },
+      "CommonResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          }
         },
         "required": [
           "id",
@@ -689,45 +754,298 @@
       "BookmarkListResponseDto": {
         "type": "object",
         "properties": {
-          "statusCode": { "type": "number" },
-          "message": { "type": "string" },
-          "bookmark": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/Pharmacy" }
-          }
-        },
-        "required": ["statusCode", "message", "bookmark"]
-      },
-      "BookmarkGetResponseDto": {
-        "type": "object",
-        "properties": {
-          "statusCode": { "type": "number" },
-          "message": { "type": "string" },
-          "bookmark": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "checkLogout": {
             "type": "object",
             "properties": {
-              "id": { "required": true, "type": "number" },
-              "Pharmacy": {
-                "type": "object",
-                "properties": {
-                  "id": { "required": true, "type": "number" },
-                  "name": { "required": true, "type": "string" },
-                  "phone": { "required": true, "type": "string" },
-                  "address": { "required": true, "type": "string" },
-                  "monday": { "required": true, "type": "string" },
-                  "tuesday": { "required": true, "type": "string" },
-                  "wednesday": { "required": true, "type": "string" },
-                  "thursday": { "required": true, "type": "string" },
-                  "friday": { "required": true, "type": "string" },
-                  "saturday": { "required": true, "type": "string" },
-                  "sunday": { "required": true, "type": "string" },
-                  "holiday": { "required": true, "type": "string" }
-                }
+              "checkLogout": {
+                "required": true,
+                "type": "boolean"
               }
             }
           }
         },
         "required": ["statusCode", "message", "bookmark"]
+=======
+          "bookmark": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "required": true,
+                "type": "number"
+              },
+      "FindPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "birth": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "name", "birth", "token"]
+      },
+      "FindPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "check": {
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "result"]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["password"]
+      },
+      "FindAccountDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "birth": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "birth", "token", "phone"]
+      },
+      "FindUserResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "user"]
+      },
+      "FindAccountResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "required": true,
+                "type": "string"
+              },
+              "email": {
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "user"]
+      },
+      "BookmarkCreateDto": {
+        "type": "object",
+        "properties": {
+          "pharmacyId": {
+            "type": "number"
+          }
+        },
+        "required": ["pharmacyId"]
+      },
+      "Pharmacy": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "monday": {
+            "type": "string"
+          },
+          "tuesday": {
+            "type": "string"
+          },
+          "wednesday": {
+            "type": "string"
+          },
+          "thursday": {
+            "type": "string"
+          },
+          "friday": {
+            "type": "string"
+          },
+          "saturday": {
+            "type": "string"
+          },
+          "sunday": {
+            "type": "string"
+          },
+          "holiday": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "address",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+          "holiday"
+        ]
+      },
+      "BookmarkListResponseDto": {
+        "type": "object",
+        "properties": {
+          "bookmark": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Pharmacy"
+            }
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["bookmark", "statusCode", "message"]
+      },
+      "BookmarkGetResponseDto": {
+        "type": "object",
+        "properties": {
+          "bookmark": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "required": true,
+                "type": "number"
+              },
+              "Pharmacy": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "required": true,
+                    "type": "number"
+                  },
+                  "name": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "phone": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "address": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "monday": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "tuesday": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "wednesday": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "thursday": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "friday": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "saturday": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "sunday": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "holiday": {
+                    "required": true,
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["bookmark", "statusCode", "message"]
       }
     }
   }

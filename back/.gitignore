@@ -39,3 +39,13 @@ lerna-debug.log*
 .development.env
 .production.env
 .env
+
+# secure
+secure/
+
+# REDIS
+conf/
+
+# Prisma
+mongoClient/
+postgresClient/

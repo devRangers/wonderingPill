@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import Modal from "@modal/Modal";
 import { post } from "@api";
-import { SUB_COLOR } from "@utils/constant";
+import { SUB_COLOR, GRAY_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -88,12 +88,15 @@ function FindPasswordForm() {
               type="email"
               {...findPasswordFormik.getFieldProps("email")}
               placeholder="이메일"
+              $placeholderColor={GRAY_COLOR}
             />
             {findPasswordFormik.touched.email &&
             findPasswordFormik.errors.email ? (
-              <ErrorMessage>{findPasswordFormik.errors.email}</ErrorMessage>
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+                {findPasswordFormik.errors.email}
+              </ErrorMessage>
             ) : (
-              <ErrorMessage />
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
             )}
           </InputContainer>
           <InputContainer>
@@ -102,12 +105,15 @@ function FindPasswordForm() {
               type="text"
               {...findPasswordFormik.getFieldProps("name")}
               placeholder="이름"
+              $placeholderColor={GRAY_COLOR}
             />
             {findPasswordFormik.touched.name &&
             findPasswordFormik.errors.name ? (
-              <ErrorMessage>{findPasswordFormik.errors.name}</ErrorMessage>
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+                {findPasswordFormik.errors.name}
+              </ErrorMessage>
             ) : (
-              <ErrorMessage />
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
             )}
           </InputContainer>
           <InputContainer>
@@ -118,12 +124,15 @@ function FindPasswordForm() {
               inputMode="numeric"
               {...findPasswordFormik.getFieldProps("birth")}
               placeholder="생년월일"
+              $placeholderColor={GRAY_COLOR}
             />
             {findPasswordFormik.touched.birth &&
             findPasswordFormik.errors.birth ? (
-              <ErrorMessage>{findPasswordFormik.errors.birth}</ErrorMessage>
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+                {findPasswordFormik.errors.birth}
+              </ErrorMessage>
             ) : (
-              <ErrorMessage />
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
             )}
           </InputContainer>
           <FindBtn type="submit" $btnColor={SUB_COLOR}>
