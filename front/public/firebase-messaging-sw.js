@@ -21,6 +21,14 @@ firebase.initializeApp(firebaseConfig);
 // messages.
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage = (payload) => {
-  console.log("여기!!!!!!!! ", payload);
-};
+messaging.onBackgroundMessage((payload) => {
+  console.log("onBackgroundMessage ", payload);
+  self.addEventListener("notificationclick", (event) => {
+    console.log("notificationclick in firebase sw ", event);
+    // self.clients.openWindow("/login");
+  });
+  self.addEventListener("click", (event) => {
+    console.log("click in firebase sw ", event);
+    // self.clients.openWindow("/login");
+  });
+});

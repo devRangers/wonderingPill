@@ -16,6 +16,11 @@ export async function getToken() {
     const icon = "/images/logo.png";
     const options = { body, icon };
     const notif = new Notification(title, options);
+
+    notif.onclick = (event) => {
+      event.preventDefault();
+      window.open("/login");
+    };
   });
 
   return token;

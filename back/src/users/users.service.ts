@@ -3,8 +3,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Inquiry } from '@prisma/client';
 import * as argon from 'argon2';
+import { Inquiry, User } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendInquiryDto, UpdateUserDto } from './dto';
@@ -12,7 +12,7 @@ import { SendInquiryDto, UpdateUserDto } from './dto';
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly authService: AuthService,
   ) {}
 
@@ -37,13 +37,10 @@ export class UsersService {
         const hashedNewPassword = await argon.hash(newPassword);
         await this.prisma.user.update({
           where: { id: user.id },
-          data: { password: hashedNewPassword },
-        });
-      }
-      if (name) {
-        await this.prisma.user.update({
-          where: { id: user.id },
-          data: { name },
+          data: {
+            password: hashedNewPassword,
+            name: name !== null ? name : undefined,
+          },
         });
       }
     } catch (error) {
@@ -51,10 +48,22 @@ export class UsersService {
     }
   }
 
-  async verifyPassword(user, password: string) {
-    const hashedNewPassword = await argon.hash(password);
-    if (user.password !== hashedNewPassword)
+  async verifyPassword(user: User, password: string) {
+    const check = await argon.verify(user.password, password);
+    if (!check) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+  }
+
+  async saveImg(id: string, img: string) {
+    try {
+      await this.prisma.user.update({
+        where: { id },
+        data: { profileImg: img },
+      });
+    } catch (error) {
+      throw new ForbiddenException('프로필 이미지를 수정하지 못했습니다.');
+    }
   }
 
   async getUserInfo(id: string) {
@@ -65,7 +74,9 @@ export class UsersService {
           PharmacyBookMark: {
             select: { Pharmacy: { select: { name: true, phone: true } } },
           },
-          PillBookMark: { select: { Pill: { select: { name: true } } } },
+          PillBookMark: {
+            select: { Pill: { select: { name: true } }, alarm: true },
+          },
         },
       });
       return user;
@@ -74,8 +85,8 @@ export class UsersService {
     }
   }
 
-  async sendInquiry(sendInquiryDto: SendInquiryDto) {
-    const { id, content } = sendInquiryDto;
+  async sendInquiry(id: string, sendInquiryDto: SendInquiryDto) {
+    const { content } = sendInquiryDto;
     const inquiry: Inquiry = await this.prisma.inquiry.create({
       data: { user_id: id, content },
     });

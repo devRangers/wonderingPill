@@ -18,10 +18,6 @@ export class SendInquiryDto {
   @IsString()
   @IsNotEmpty()
   content: string;
-
-  @IsString()
-  @IsNotEmpty()
-  id: string;
 }
 
 export class UpdateUserDto {
@@ -59,7 +55,7 @@ export class getUserResponse extends CommonResponseDto {
 export class getSignedUrlResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
-  result: { url: string };
+  result: { url: string; fileName: string };
 }
 
 export class User {
