@@ -18,10 +18,6 @@ export class SendInquiryDto {
   @IsString()
   @IsNotEmpty()
   content: string;
-
-  @IsString()
-  @IsNotEmpty()
-  id: string;
 }
 
 export class UpdateUserDto {
