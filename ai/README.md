@@ -24,3 +24,20 @@ $ pip install -r requirements.txt
 $ python app.py
 ```
 
+-------
+📂ai
+┣ 📂labels
+┃ ┣ 📜color_label.py
+┃ ┗ 📜shape_label.py
+┣ 📂models
+┃ ┣ 📂color_classifier_2
+┃ ┗ 📂shape_classifier_4
+┣ 📂myvenv
+┣ 📜.gitignore
+┣ 📜app.py
+┣ 📜model.py
+┣ 📜img_augmentation.py
+┣ 📜pill-text-recognition-a3e91afb350f.json
+┣ 📜README.md
+┗ 📜requirements.txt
+
