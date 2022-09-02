@@ -19,6 +19,8 @@ import { useFormik } from "formik";
 import Modify from "./modals/Modify";
 import ReactTooltip from "react-tooltip";
 import { useMutation } from "react-query";
+import { AiOutlineCheckCircle } from "react-icons/ai";
+import { BsFillExclamationCircleFill } from "react-icons/bs";
 
 interface ModifyValues {
   name: string;
@@ -76,10 +78,10 @@ function ModifyForm() {
       patch<{ statusCode: number; message: string }, UpdateUserDto>(
         "/users/update-user",
         {
-          name: data.name.length == 0 ? undefined : data.name,
-          password: data.curPassword.length == 0 ? undefined : data.curPassword,
+          name: data.name || undefined,
+          password: data.curPassword || undefined,
           newPassword:
-            data.newPassword.length == 0 ? undefined : data.newPassword,
+            data.newPassword || undefined,
         },
       ),
     {
@@ -89,7 +91,6 @@ function ModifyForm() {
       },
       onError: (err: any) => {
         handleFailModal();
-        throw new Error(err);
       },
     },
   );
@@ -115,8 +116,6 @@ function ModifyForm() {
         .max(20, "20자 이하로 입력 해 주세요."),
     }),
     onSubmit: async (values, {}) => {
-      console.log(values);
-
       if (values.newPassword !== values.checkPassword) {
         handleFailModal();
         return;
@@ -238,14 +237,14 @@ function ModifyForm() {
           content={modalData.success.content}
           isOpenModal={isOpenModal.success}
           handleCloseModifyResult={handleSuccessModal}
-        />
+        ><AiOutlineCheckCircle /></Modify>
       )}
       {isOpenModal.fail && (
         <Modify
           content={modalData.fail.content}
           isOpenModal={isOpenModal.fail}
           handleCloseModifyResult={handleFailModal}
-        />
+        ><BsFillExclamationCircleFill /></Modify>
       )}
     </>
   );

@@ -26,14 +26,20 @@ export const ModalInner = styled("div", {
 
 export const ModifyModalInner = styled("div", {
   display: "grid",
-  gridTemplateRows: "1fr 1.5fr",
+  gridTemplateRows: "1fr 1fr",
   justifyItems: "center",
   alignItems: "center",
   gap: "0.3rem",
   height: "28vh",
   padding: "0.5rem",
   margin: "0 auto",
+  fontWeight: "bold"
 });
+
+export const IconWrapper = styled("div", {
+  fontSize: "2rem",
+  alignSelf: "flex-end"
+})
 
 export const Title = styled("h1", (props: { $color: string }) => ({
   fontSize: "1.2rem",

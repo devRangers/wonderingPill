@@ -3,6 +3,7 @@ import Modal from "@modal/Modal";
 import {
   Bottom,
   CloseButton,
+  IconWrapper,
   ModalInner,
   ModifyModalInner,
 } from "./Modal.style";
@@ -11,18 +12,20 @@ interface ModifyProps {
   content: string;
   isOpenModal: boolean;
   handleCloseModifyResult: () => void;
+  children: React.ReactNode
 }
 
 function Modify({
   content,
   isOpenModal,
   handleCloseModifyResult,
+  children
 }: ModifyProps) {
   return (
     <Modal open={isOpenModal} onClose={handleCloseModifyResult}>
       <ModalInner>
         <ModifyModalInner>
-          <div></div>
+          <IconWrapper>{children}</IconWrapper>
           <p>{content}</p>
         </ModifyModalInner>
         <Bottom>
