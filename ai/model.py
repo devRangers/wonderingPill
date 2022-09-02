@@ -47,7 +47,7 @@ class ShapeClassifier(ModelHandler):
 
     def initialize(self, **kwargs):
         import keras
-        self.model_path = "./models/shape_classifier_4"
+        self.model_path = "./models/shape_classifier_5"
         self.model = keras.models.load_model(self.model_path)
 
     def preprocess(self, url):
@@ -136,4 +136,5 @@ class LetterRecognizer(ModelHandler):
     def handle(self, url):
         model_input = self.preprocess(url)
         response, model_output = self.inference(model_input)
-        return self.postprocess(response, model_output)
+        model_output = self.postprocess(response, model_output)
+        return ''.join(model_output.split()).upper()
