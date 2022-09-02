@@ -20,7 +20,6 @@
       "@lib/*": ["lib/*"],
       "@atom/*": ["atom/*"],
       "@api": ["api/api"],
-      "@capture/*": ["common/capture/*"],
       "@container/*": ["common/container/*"],
       "@footer/*": ["common/footer/*"],
       "@header/*": ["common/header/*"],
