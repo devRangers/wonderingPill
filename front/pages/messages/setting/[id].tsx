@@ -38,7 +38,8 @@ const initialValue = {
 const SetNotificationPage: NextPage = () => {
   const [user] = useAtom(userAtom);
 
-  const [isToggle, setIsToggle] = useState(false);
+  const [isNotificationToggle, setIsNotificationToggle] = useState(false);
+  const [isRemindToggle, setIsRemindToggle] = useState(false);
   const [isAfternoon, setIsAfternoon] = useState(false);
   const [vip, setVip] = useState<number[]>([]);
   const [deviceToken, setDeviceToken] = useState("");
@@ -47,13 +48,14 @@ const SetNotificationPage: NextPage = () => {
     initialValues: initialValue,
     validationSchema: Yup.object({}),
     onSubmit: async (values) => {
-      const { hour, ...data } = values;
+      const { hour, repeatTime, ...data } = values;
       const dataToSubmit = Object.assign(data, {
         deviceToken,
         vip,
         hour: isAfternoon && hour < 12 ? hour + 12 : hour,
         pillName: fakeData.name,
         userName: user.name,
+        repeatTime: isRemindToggle ? repeatTime : 0,
       });
       console.log(dataToSubmit);
       // TODO: api 연결
@@ -84,18 +86,26 @@ const SetNotificationPage: NextPage = () => {
           <NotificationForm>
             <NotificationTitle $txtColor={SEMI_ACCENT_COLOR}>
               푸시 알림 설정{" "}
-              <Switch isToggle={isToggle} setIsToggle={setIsToggle} />
+              <Switch
+                isToggle={isNotificationToggle}
+                setIsToggle={setIsNotificationToggle}
+              />
             </NotificationTitle>
             <Hr $borderColor={SEMI_ACCENT_COLOR} />
           </NotificationForm>
           <TimeForm
-            disabled={!isToggle}
+            disabled={!isNotificationToggle}
             isAfternoon={isAfternoon}
             onChange={formik.handleChange}
             setVip={setVip}
             setIsAfternoon={setIsAfternoon}
           />
-          <RemindForm disabled={!isToggle} onChange={formik.handleChange} />
+          <RemindForm
+            disabled={!isNotificationToggle}
+            isRemindToggle={isRemindToggle}
+            setIsRemindToggle={setIsRemindToggle}
+            onChange={formik.handleChange}
+          />
         </MessageContainer>
         <SubmitBtn type="submit" $btnColor={MAIN_COLOR}>
           저장하기
