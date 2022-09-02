@@ -39,6 +39,7 @@ async function bootstrap() {
 
   if (configService.get('NODE_ENV') === 'development') {
     Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
+    Logger.log(`Go to API Docs : http://localhost:${PORT}/swagger`);
   }
 }
 bootstrap();

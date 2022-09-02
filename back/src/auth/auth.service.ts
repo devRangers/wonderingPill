@@ -1,6 +1,6 @@
 import {
-  ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -36,7 +36,7 @@ export class AuthService {
 
       return user;
     } catch {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
+      throw new NotFoundException('회원을 찾지 못했습니다.');
     }
   }
 
@@ -48,7 +48,7 @@ export class AuthService {
 
       return user;
     } catch {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
+      throw new NotFoundException('회원을 찾지 못했습니다.');
     }
   }
 
@@ -60,7 +60,7 @@ export class AuthService {
 
       return user;
     } catch {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
+      throw new NotFoundException('회원을 찾지 못했습니다.');
     }
   }
 
@@ -81,7 +81,7 @@ export class AuthService {
 
       return newUser;
     } catch (error) {
-      throw new ForbiddenException('회원을 저장하지 못했습니다.');
+      throw new NotFoundException('회원을 저장하지 못했습니다.');
     }
   }
 
@@ -92,7 +92,7 @@ export class AuthService {
       const isPwMatching: boolean = await argon.verify(user.password, password);
 
       if (!isPwMatching)
-        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+        throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
       const { accessToken, refreshToken }: Tokens = await this.getTokens(
         user.id,
@@ -161,13 +161,14 @@ export class AuthService {
 
       return result;
     } catch (error) {
-      throw new ForbiddenException('refresh token이 저장되지 않았습니다.');
+      throw new NotFoundException('refresh token이 저장되지 않았습니다.');
     }
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
     const user: User = await this.getUserById(id);
-    if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
+    if (!user || user.isDeleted)
+      throw new NotFoundException('회원이 존재하지 않습니다.');
 
     try {
       const result: string = await (
@@ -175,13 +176,13 @@ export class AuthService {
       ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
 
       if (result !== refreshToken) {
-        throw new ForbiddenException('Access Denied');
+        throw new UnauthorizedException('Access Denied');
       }
 
       const accessToken: string = await this.getAccessToken(id, user.email);
       return accessToken;
     } catch (error) {
-      throw new ForbiddenException('엑세스 토큰 발급을 실패했습니다.');
+      throw new UnauthorizedException('엑세스 토큰 발급을 실패했습니다.');
     }
   }
 
@@ -198,7 +199,7 @@ export class AuthService {
 
       return accessToken;
     } catch (error) {
-      throw new ForbiddenException('accessToken을 생성하지 못했습니다.');
+      throw new UnauthorizedException('accessToken을 생성하지 못했습니다.');
     }
   }
 
@@ -207,7 +208,7 @@ export class AuthService {
       await this.redisService.delKey('re' + id);
       return true;
     } catch (error) {
-      throw new ForbiddenException('로그아웃 실패!.');
+      throw new NotFoundException('로그아웃 실패!.');
     }
   }
 
@@ -224,13 +225,13 @@ export class AuthService {
         },
       });
 
-      if (!user || user.length !== 1) {
-        throw new ForbiddenException('회원이 존재하지 않습니다.');
+      if (!user || user.length !== 1 || user.pop().isDeleted) {
+        throw new NotFoundException('회원이 존재하지 않습니다.');
       }
 
       return user.pop();
     } catch (error) {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
+      throw new NotFoundException('회원을 찾지 못했습니다.');
     }
   }
 
@@ -243,7 +244,7 @@ export class AuthService {
       );
       return token;
     } catch (error) {
-      throw new ForbiddenException('토큰을 저장하지 못했습니다.');
+      throw new NotFoundException('토큰을 저장하지 못했습니다.');
     }
   }
 
@@ -262,7 +263,7 @@ export class AuthService {
       });
       return newUser;
     } catch (error) {
-      throw new ForbiddenException('회원 정보를 저장하지 못했습니다.');
+      throw new NotFoundException('회원 정보를 저장하지 못했습니다.');
     }
   }
 
@@ -270,10 +271,13 @@ export class AuthService {
     const user: User = await this.prisma.user.findUnique({
       where: { email: googleLoginDto.email },
     });
+
+    if (user.isDeleted) throw new NotFoundException('이미 탈퇴된 회원입니다.');
+
     const { accessToken, refreshToken } = googleLoginDto;
     let key;
     try {
-      if (!user) {
+      if (!user || user.isDeleted) {
         const newUser: User = await this.createOauthUser(
           googleLoginDto,
           'google',
@@ -296,7 +300,7 @@ export class AuthService {
 
       return { accessToken, refreshToken };
     } catch (error) {
-      throw new ForbiddenException('구글 로그인 중에 문제 발생!');
+      throw new NotFoundException('구글 로그인 중에 문제 발생!');
     }
   }
 
@@ -316,7 +320,7 @@ export class AuthService {
       });
       return user;
     } catch (error) {
-      throw new ForbiddenException('비밀번호를 변경하지 못했습니다.');
+      throw new NotFoundException('비밀번호를 변경하지 못했습니다.');
     }
   }
 
