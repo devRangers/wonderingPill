@@ -1,5 +1,4 @@
 import React from "react";
-import Capture from "@capture/Capture";
 import { SUB_COLOR } from "@utils/constant";
 import Container from "@container/Container";
 import {
@@ -15,6 +14,7 @@ import {
   UserState,
   UserStateWrapper,
 } from "./MyPage.style";
+import Capture from "./capture/Capture";
 
 interface TemplateProp {
   children: React.ReactNode;
