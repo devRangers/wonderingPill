@@ -14,9 +14,9 @@ export class FcmService {
           image:
             'https://storage.cloud.google.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png',
         },
-        // fcm_options: {
-        //   link: 'https://www.naver.com/',
-        // },
+        fcmOptions: {
+          link: 'https://www.naver.com/',
+        },
       },
       token: deviceToken,
     };

@@ -3,20 +3,17 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Inquiry } from '@prisma/client';
 import * as argon from 'argon2';
-import { User } from 'prisma/postgresClient';
+import { Inquiry, User } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
-import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendInquiryDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly authService: AuthService,
-    private prismaMongo: PrismaMongoService,
   ) {}
 
   async deleteUser(id: string) {
@@ -40,13 +37,10 @@ export class UsersService {
         const hashedNewPassword = await argon.hash(newPassword);
         await this.prisma.user.update({
           where: { id: user.id },
-          data: { password: hashedNewPassword },
-        });
-      }
-      if (name) {
-        await this.prisma.user.update({
-          where: { id: user.id },
-          data: { name },
+          data: {
+            password: hashedNewPassword,
+            name: name !== null ? name : undefined,
+          },
         });
       }
     } catch (error) {
@@ -80,7 +74,9 @@ export class UsersService {
           PharmacyBookMark: {
             select: { Pharmacy: { select: { name: true, phone: true } } },
           },
-          PillBookMark: { select: { Pill: { select: { name: true } } } },
+          PillBookMark: {
+            select: { Pill: { select: { name: true } }, alarm: true },
+          },
         },
       });
       return user;
@@ -89,8 +85,8 @@ export class UsersService {
     }
   }
 
-  async sendInquiry(sendInquiryDto: SendInquiryDto) {
-    const { id, content } = sendInquiryDto;
+  async sendInquiry(id: string, sendInquiryDto: SendInquiryDto) {
+    const { content } = sendInquiryDto;
     const inquiry: Inquiry = await this.prisma.inquiry.create({
       data: { user_id: id, content },
     });

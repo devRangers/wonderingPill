@@ -13,6 +13,7 @@ import {
   Req,
   Res,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -25,8 +26,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { User as UserModel } from '@prisma/client';
 import { Response } from 'express';
+import { User } from 'prisma/postgresClient';
 import {
   GetCurrentUser,
   GetCurrentUserId,
@@ -87,7 +88,7 @@ export class AuthController {
   async signupUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<CreateUserResponse> {
-    const user: UserModel = await this.authService.createUser(createUserDto);
+    const user: User = await this.authService.createUser(createUserDto);
     this.logger.verbose(`User ${user.email} Sign-Up Success!`);
     return {
       statusCode: 201,
@@ -115,7 +116,7 @@ export class AuthController {
     @Body() signinUserDto: SigninUserDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SigninResponse> {
-    const user: UserModel = await this.authService.getUserByEmail(
+    const user: User = await this.authService.getUserByEmail(
       signinUserDto.email,
     );
 
@@ -269,7 +270,7 @@ export class AuthController {
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string): Promise<SigninResponse> {
-    const user: UserModel = await this.authService.getUserById(id);
+    const user: User = await this.authService.getUserById(id);
     if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
 
     this.logger.verbose(`Call Current User ${id} Success!`);
@@ -304,7 +305,7 @@ export class AuthController {
   async sendEmail(
     @Body() findPasswordDto: FindPasswordDto,
   ): Promise<FindPasswordResponse> {
-    const user: UserModel = await this.authService.getUserByEmail(
+    const user: User = await this.authService.getUserByEmail(
       findPasswordDto.email,
     );
     if (user.name !== findPasswordDto.name) {
@@ -385,7 +386,7 @@ export class AuthController {
   })
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(
-    @Param('email') email: string,
+    @Param('email', ValidationPipe) email: string,
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<CommonResponseDto> {
     await this.authService.changePassword(email, changePasswordDto);
@@ -396,7 +397,7 @@ export class AuthController {
     };
   }
 
-  @HttpCode(200)
+  @HttpCode(301)
   @Get('google')
   @Throttle(5, 1)
   @ApiOperation({
@@ -404,7 +405,7 @@ export class AuthController {
     description: 'google 로그인을 요청 한다.',
   })
   @ApiResponse({
-    status: 200,
+    status: 301,
     description: 'google 로그인 요청 성공',
   })
   @UseGuards(GoogleGuard)
@@ -446,9 +447,8 @@ export class AuthController {
   @UseGuards(RecaptchaGuard)
   @Post('send-sms')
   @ApiOperation({
-    summary: '계정 찾기 / 회원가입의 휴대폰 본인인증 API',
-    description:
-      '계정 찾기 / 회원가입에서 휴대폰 SMS 인증번호로 본인인증 한다.',
+    summary: '계정 찾기 API',
+    description: '계정 찾기에서 휴대폰 SMS 인증번호로 본인인증 한다.',
   })
   @ApiResponse({
     status: 201,
@@ -507,7 +507,7 @@ export class AuthController {
     if (saveCode !== code) {
       throw new ForbiddenException('인증번호가 일치하지 않습니다.');
     } else {
-      const user: UserModel = await this.authService.getUserByPhone(phone);
+      const user: User = await this.authService.getUserByPhone(phone);
       if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
 
       this.logger.verbose(`User ${user.phone} verify code Success!`);
@@ -535,8 +535,10 @@ export class AuthController {
     type: FindAccountResponse,
   })
   @Get('find-account/:id')
-  async getAccount(@Param('id') id: string): Promise<FindAccountResponse> {
-    const user: UserModel = await this.authService.getUserById(id);
+  async getAccount(
+    @Param('id', ValidationPipe) id: string,
+  ): Promise<FindAccountResponse> {
+    const user: User = await this.authService.getUserById(id);
 
     let name;
     let email;
