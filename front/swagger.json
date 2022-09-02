@@ -18,7 +18,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "회원가입 성공",
             "content": {
               "application/json": {
@@ -49,7 +49,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "로그인 성공",
             "content": {
               "application/json": {
@@ -167,7 +167,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "email 전송 성공",
             "content": {
               "application/json": {
@@ -265,7 +265,7 @@
         "description": "google 로그인을 요청 한다.",
         "parameters": [],
         "responses": {
-          "200": {
+          "301": {
             "description": "google 로그인 요청 성공"
           }
         },
@@ -287,8 +287,8 @@
     "/auth/send-sms": {
       "post": {
         "operationId": "AuthController_sendSMS",
-        "summary": "계정 찾기 / 회원가입의 휴대폰 본인인증 API",
-        "description": "계정 찾기 / 회원가입에서 휴대폰 SMS 인증번호로 본인인증 한다.",
+        "summary": "계정 찾기 API",
+        "description": "계정 찾기에서 휴대폰 SMS 인증번호로 본인인증 한다.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -301,7 +301,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "SMS 전송 성공",
             "content": {
               "application/json": {
@@ -361,16 +361,10 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "유저 아이디",
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "phone",
-            "required": true,
-            "in": "path",
-            "description": "전화번호",
-            "schema": {}
           }
         ],
         "responses": {
@@ -589,6 +583,464 @@
         },
         "tags": ["Pharmacy API"]
       }
+    },
+    "/alarms/set-alarm": {
+      "post": {
+        "operationId": "AlarmsController_setAlarm",
+        "summary": "알림 설정 API",
+        "description": "알림 예약을 설정한다.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAlarmDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "알림 설정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Alarms API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/alarms/cancel-alarm/{name}": {
+      "put": {
+        "operationId": "AlarmsController_cancelAlarm",
+        "summary": "푸쉬 알림 취소 API",
+        "description": "푸쉬 알림을 취소한다.",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "description": "약 이름",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "푸쉬 알림 취소 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Alarms API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/alarms/set-alarm/{name}": {
+      "get": {
+        "operationId": "AlarmsController_getSetAlarm",
+        "summary": "알림 설정창 조회 API",
+        "description": "알림 설정창에서 설정 내용을 조회한다.",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "description": "약 이름",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "알림 설정창 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAlarmSetResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Alarms API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/alarms": {
+      "get": {
+        "operationId": "AlarmsController_getAlarms",
+        "summary": "알림 조회 API",
+        "description": "알림 내역을 조회한다.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "알림 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAlarmsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Alarms API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/alarms/delete-alarms": {
+      "post": {
+        "operationId": "AlarmsController_deleteAlarms",
+        "summary": "알림 내역 삭제 API",
+        "description": "알림 내역을 삭제한다.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAlarmsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "알림 내역 삭제 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Alarms API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/users/presigned-url": {
+      "get": {
+        "operationId": "UsersController_getPresignedUrl",
+        "summary": "signed url 요청 API",
+        "description": "외부 스토리지 GCS에서 signed url 발급한다.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "signed url 요청 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getSignedUrlResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Users API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/users/save-profileImg": {
+      "patch": {
+        "operationId": "UsersController_saveProfileImg",
+        "summary": "프로필 이미지 수정 API",
+        "description": "프로필 이미지를 수정한다.",
+        "parameters": [
+          {
+            "name": "img",
+            "required": true,
+            "in": "query",
+            "description": "유저 프로필 이미지",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "프로필 이미지 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Users API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/users/delete-user": {
+      "patch": {
+        "operationId": "UsersController_deleteUser",
+        "summary": "회원탈퇴 API",
+        "description": "유저를 삭제 한다.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "회원탈퇴 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteUserResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Users API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/users/update-user": {
+      "patch": {
+        "operationId": "UsersController_UpdateUser",
+        "summary": "회원 정보 수정 API",
+        "description": "회원 정보를 수정 한다.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "회원 정보 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Users API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/users/mypage": {
+      "get": {
+        "operationId": "UsersController_getUserInfo",
+        "summary": "마이페이지 조회 API",
+        "description": "마이페이지에서 북마크를 조회 한다(알림 추가되어야함)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "마이페이지 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getUserResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Users API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/users/send-inquiry": {
+      "post": {
+        "operationId": "UsersController_sendInquiry",
+        "summary": "고객센터 API",
+        "description": "고객이 문의한 내용을 DB로 저장 한다(관리자 페이지)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendInquiryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendInquiryResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Users API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/pill/bookmark/{id}": {
+      "put": {
+        "operationId": "PillController_bookmarkPill",
+        "summary": "알약 북마크 API",
+        "description": "알약을 북마크 한다.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "알약 북마크 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pill API"],
+        "security": [
+          {
+            "refreshToken": []
+          },
+          {
+            "accessToken": []
+          }
+        ]
+      }
+    },
+    "/pill/result/{name}": {
+      "get": {
+        "operationId": "PillController_resultPill",
+        "summary": "약 검색 결과 조회 API",
+        "description": "약 검색 결과를 조회한다.",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "description": "약 이름",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "약 검색 결과 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pillResultResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pill API"]
+      }
     }
   },
   "info": {
@@ -704,6 +1156,10 @@
               "provider": {
                 "required": true,
                 "type": "string"
+              },
+              "phone": {
+                "required": true,
+                "type": "string"
               }
             }
           },
@@ -737,7 +1193,7 @@
           "message": {
             "type": "string"
           },
-          "checkLogout": {
+          "result": {
             "type": "object",
             "properties": {
               "checkLogout": {
@@ -747,7 +1203,7 @@
             }
           }
         },
-        "required": ["statusCode", "message", "checkLogout"]
+        "required": ["statusCode", "message", "result"]
       },
       "FindPasswordDto": {
         "type": "object",
@@ -1016,6 +1472,274 @@
           }
         },
         "required": ["bookmark", "statusCode", "message"]
+      },
+      "SetAlarmDto": {
+        "type": "object",
+        "properties": {
+          "deviceToken": {
+            "type": "string"
+          },
+          "vip": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "hour": {
+            "type": "number"
+          },
+          "minute": {
+            "type": "number"
+          },
+          "pillName": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "repeatTime": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "deviceToken",
+          "vip",
+          "hour",
+          "minute",
+          "pillName",
+          "userName",
+          "repeatTime"
+        ]
+      },
+      "GetAlarmSetResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "alarm": {
+            "type": "object",
+            "properties": {
+              "minute": {
+                "required": true,
+                "type": "number"
+              },
+              "hour": {
+                "required": true,
+                "type": "number"
+              },
+              "vip": {
+                "required": true,
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "repeatTime": {
+                "required": true,
+                "type": "number"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "alarm"]
+      },
+      "GetAlarmsResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["statusCode", "message", "result"]
+      },
+      "DeleteAlarmsDto": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["ids"]
+      },
+      "getSignedUrlResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "required": true,
+                "type": "string"
+              },
+              "fileName": {
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "result"]
+      },
+      "DeleteUserResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "result": {
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "result"]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "getUserResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "required": true,
+                "type": "object"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "result"]
+      },
+      "SendInquiryDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": ["content"]
+      },
+      "SendInquiryResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "inquiry": {
+                "required": true,
+                "type": "object"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "result"]
+      },
+      "pillResultResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "required": true,
+                "type": "string"
+              },
+              "effect": {
+                "required": true,
+                "type": "string"
+              },
+              "sideEffect": {
+                "required": true,
+                "type": "string"
+              },
+              "company": {
+                "required": true,
+                "type": "string"
+              },
+              "usage": {
+                "required": true,
+                "type": "string"
+              },
+              "caution": {
+                "required": true,
+                "type": "string"
+              },
+              "keep": {
+                "required": true,
+                "type": "string"
+              },
+              "cautionContent": {
+                "required": true,
+                "type": "string"
+              },
+              "interactionContent": {
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["statusCode", "message", "result"]
       }
     }
   }
