@@ -5,6 +5,10 @@ import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useMutation } from "react-query";
+import * as Api from "@api";
+import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
+import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import { MAIN_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
 import { getToken } from "@utils/firebase";
 import {
@@ -24,12 +28,14 @@ import Switch from "@messagesComp/setting/Switch";
 import TimeForm from "@messagesComp/setting/TimeForm";
 import RemindForm from "@messagesComp/setting/RemindForm";
 
+type SettingFormValues = Pick<SetAlarmValues, "hour" | "minute" | "repeatTime">;
+
 const fakeData = {
   name: "가스모틴정",
   link: "/messages/setting/124",
 };
 
-const initialValue = {
+const initialValue: SettingFormValues = {
   hour: 0,
   minute: 0,
   repeatTime: 0,
@@ -44,21 +50,38 @@ const SetNotificationPage: NextPage = () => {
   const [vip, setVip] = useState<number[]>([]);
   const [deviceToken, setDeviceToken] = useState("");
 
+  const setAlarmMutation = useMutation(
+    (data: SetAlarmValues) =>
+      Api.post<Response, SetAlarmValues>("/alarms/set-alarm", data),
+    {
+      onSuccess: (data) => {
+        console.log(data);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    },
+  );
+
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({}),
     onSubmit: async (values) => {
-      const { hour, repeatTime, ...data } = values;
-      const dataToSubmit = Object.assign(data, {
-        deviceToken,
-        vip,
-        hour: isAfternoon && hour < 12 ? hour + 12 : hour,
-        pillName: fakeData.name,
-        userName: user.name,
-        repeatTime: isRemindToggle ? repeatTime : 0,
-      });
-      console.log(dataToSubmit);
-      // TODO: api 연결
+      if (isNotificationToggle) {
+        const { hour, repeatTime, minute } = values;
+        const dataToSubmit: SetAlarmValues = {
+          deviceToken,
+          vip,
+          minute,
+          hour: isAfternoon && hour < 12 ? hour + 12 : hour,
+          pillName: fakeData.name,
+          userName: typeof user.name === "string" ? user.name : "",
+          repeatTime: isRemindToggle ? repeatTime : 0,
+        };
+        setAlarmMutation.mutate(dataToSubmit);
+      } else {
+        // TODO: 알림 취소
+      }
     },
   });
 
