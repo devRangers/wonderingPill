@@ -21,6 +21,9 @@ firebase.initializeApp(firebaseConfig);
 // messages.
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  console.log("onBackgroundMessage ", payload);
+messaging.onBackgroundMessage(({ data }) => {
+  const icon =
+    "https://storage.cloud.google.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png";
+  const options = { body: data.body, icon };
+  self.registration.showNotification(data.title, options);
 });
