@@ -26,7 +26,7 @@ function Capture() {
     try {
       const result = await getSignedURL();
 
-      const res = await fetch(result.result.url, {
+      await fetch(result.result.url, {
         method: "PUT",
         body: file,
         headers: {
@@ -39,7 +39,7 @@ function Capture() {
 
       setUser(curUser);
     } catch (e: any) {
-      throw new Error(e);
+      console.error(e);
     }
   };
 
