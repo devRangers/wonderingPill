@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { useState } from "react";
 import { get, patch } from "@api";
 import { CaptureContainer, CaptureButton } from "./Capture.style";
 import { useAtom } from "jotai";
