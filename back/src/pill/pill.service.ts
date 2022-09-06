@@ -59,7 +59,7 @@ export class PillService {
         id: true,
         name: true,
         code: true,
-        PillBookMark: { select: { user_id: true } }, // 다른 방법이 있을까?
+        PillBookMark: { select: { user_id: true } },
       },
     });
 

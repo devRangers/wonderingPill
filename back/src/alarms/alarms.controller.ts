@@ -119,7 +119,7 @@ export class AlarmsController {
   }
 
   @HttpCode(200)
-  @Get()
+  @Get(':page')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '알림 조회 API',
@@ -130,12 +130,18 @@ export class AlarmsController {
     description: '알림 조회 성공',
     type: GetAlarmsResponseDto,
   })
+  @ApiParam({
+    name: 'page',
+    required: true,
+    description: '알림 페이지',
+  })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async getAlarms(
     @GetCurrentUserId() id: string,
+    @Param('page') page: number,
   ): Promise<GetAlarmsResponseDto> {
-    const alarms = await this.alarmsService.getAlarms(id);
+    const alarms = await this.alarmsService.getAlarms(id, page);
     this.logger.verbose(`get User ${id} Alarms Success!`);
     return {
       statusCode: 200,
