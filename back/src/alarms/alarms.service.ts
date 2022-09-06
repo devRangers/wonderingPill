@@ -165,10 +165,16 @@ export class AlarmsService {
     }
   }
 
-  async getAlarms(id: string) {
+  async getAlarms(id: string, page: number) {
     try {
       const alarms = await this.prismaMongo.reminder.findMany({
         where: { user_id: id },
+        orderBy: [
+          {
+            time: 'desc',
+          },
+        ],
+        take: (page - 1) * 10 + 10,
       });
       return alarms;
     } catch (error) {
