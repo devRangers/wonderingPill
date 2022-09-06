@@ -17,8 +17,8 @@ import Pharmarcy from "./pharmarcy/Pharmarcy";
 import { useStyletron } from "styletron-react";
 
 interface pharmacyValues {
-  name: "동방 약국";
-  phnoeNumber: "010-0000-0000";
+  name: string;
+  phoneNumber: string;
 }
 
 const medicinesName: { [key in string]: string } = {
@@ -32,27 +32,27 @@ const medicinesName: { [key in string]: string } = {
 const pharmacyData: { [key in string]: pharmacyValues } = {
   pharm_0: {
     name: "동방 약국",
-    phnoeNumber: "010-0000-0000",
+    phoneNumber: "010-0000-0000",
   },
   pharm_1: {
     name: "동방 약국",
-    phnoeNumber: "010-0000-0000",
+    phoneNumber: "010-0000-0000",
   },
   pharm_2: {
     name: "동방 약국",
-    phnoeNumber: "010-0000-0000",
+    phoneNumber: "010-0000-0000",
   },
   pharm_3: {
     name: "동방 약국",
-    phnoeNumber: "010-0000-0000",
+    phoneNumber: "010-0000-0000",
   },
   pharm_4: {
     name: "동방 약국",
-    phnoeNumber: "010-0000-0000",
+    phoneNumber: "010-0000-0000",
   },
   pharm_5: {
     name: "동방 약국",
-    phnoeNumber: "010-0000-0000",
+    phoneNumber: "010-0000-0000",
   },
 };
 
@@ -100,7 +100,7 @@ function MyPage() {
               <Pharmarcy
                 key={key}
                 name={value.name}
-                phoneNumber={value.phnoeNumber}
+                phoneNumber={value.phoneNumber}
               />
             ))}
           </Slider>
