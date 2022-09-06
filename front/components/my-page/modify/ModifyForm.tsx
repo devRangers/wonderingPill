@@ -115,11 +115,7 @@ function ModifyForm() {
         .oneOf([Yup.ref("newPassword"), null], "비밀번호가 일치하지 않습니다.")
         .max(20, "20자 이하로 입력 해 주세요."),
     }),
-    onSubmit: async (values, {}) => {
-      if (values.newPassword !== values.checkPassword) {
-        handleFailModal();
-        return;
-      }
+    onSubmit: async (values) => {
       if (!values.name && !values.curPassword && !values.newPassword) {
         handleFailModal();
         return;
