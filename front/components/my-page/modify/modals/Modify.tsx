@@ -12,14 +12,14 @@ interface ModifyProps {
   content: string;
   isOpenModal: boolean;
   handleCloseModifyResult: () => void;
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 function Modify({
   content,
   isOpenModal,
   handleCloseModifyResult,
-  children
+  children,
 }: ModifyProps) {
   return (
     <Modal open={isOpenModal} onClose={handleCloseModifyResult}>

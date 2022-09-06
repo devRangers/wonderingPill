@@ -19,7 +19,7 @@ export const ModalInner = styled("div", {
   alignItems: "center",
   gap: "0.3rem",
   height: "35vh",
-  width: "80%",
+  width: "90%",
   padding: "0.5rem",
   margin: "0 auto",
 });
@@ -33,13 +33,13 @@ export const ModifyModalInner = styled("div", {
   height: "28vh",
   padding: "0.5rem",
   margin: "0 auto",
-  fontWeight: "bold"
+  fontWeight: "bold",
 });
 
 export const IconWrapper = styled("div", {
   fontSize: "2rem",
-  alignSelf: "flex-end"
-})
+  alignSelf: "flex-end",
+});
 
 export const Title = styled("h1", (props: { $color: string }) => ({
   fontSize: "1.2rem",
