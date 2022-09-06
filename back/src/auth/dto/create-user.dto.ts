@@ -18,8 +18,8 @@ export class CreateUserDto {
   name: string;
 
   @IsString()
-  @MinLength(8)
   @IsNotEmpty()
+  @MinLength(8)
   @Matches(/^[A-Za-z\d!@#$%^&*()]{8,20}$/, {
     message: '비밀번호 양식에 맞게 작성하세요.',
   })
@@ -45,6 +45,5 @@ export class CreateUserDto {
 
 export class CreateUserResponse extends CommonResponseDto {
   @IsJSON()
-  @IsNotEmpty()
   user: { id: string; email: string };
 }

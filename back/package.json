@@ -37,7 +37,6 @@
     "@nestjs/throttler": "^3.0.0",
     "@prisma/client": "^4.1.1",
     "@types/cookie-parser": "^1.4.3",
-    "@types/passport-local": "^1.0.34",
     "adminjs": "^6.1.4",
     "agenda": "^4.3.0",
     "argon2": "^0.28.7",
@@ -55,7 +54,6 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "passport-kakao": "^1.0.1",
-    "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
