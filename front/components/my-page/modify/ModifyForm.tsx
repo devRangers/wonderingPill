@@ -13,10 +13,10 @@ import {
   ModifyButton,
   ModifyItem,
 } from "./ModifyPage.style";
+import Modify from "./modals/Modify";
 import * as Yup from "yup";
 import { useAtom } from "jotai";
 import { useFormik } from "formik";
-import Modify from "./modals/Modify";
 import ReactTooltip from "react-tooltip";
 import { useMutation } from "react-query";
 import { AiOutlineCheckCircle } from "react-icons/ai";

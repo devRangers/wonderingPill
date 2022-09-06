@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { get, patch } from "@api";
-import { CaptureContainer, CaptureButton } from "./Capture.style";
-import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
+import { CaptureContainer, CaptureButton } from "./Capture.style";
+import { useAtom } from "jotai";
 
 interface SignedURLValues {
   statusCode: number;

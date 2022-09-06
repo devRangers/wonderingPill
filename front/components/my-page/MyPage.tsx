@@ -10,10 +10,10 @@ import {
   ModifyUserDataButton,
   PharmarcyContainer,
 } from "./MyPage.style";
-import Slider from "react-slick";
 import Template from "./Template";
 import Medicine from "./medicine/Medicine";
 import Pharmarcy from "./pharmarcy/Pharmarcy";
+import Slider from "react-slick";
 import { useStyletron } from "styletron-react";
 
 interface pharmacyValues {
