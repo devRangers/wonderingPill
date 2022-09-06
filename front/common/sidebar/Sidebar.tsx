@@ -51,7 +51,7 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
   },
   myPage: {
     title: "마이페이지",
-    link: ROUTE.MAIN,
+    link: ROUTE.MY_PAGE,
   },
   guide: {
     title: "설치 가이드",

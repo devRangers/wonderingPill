@@ -6,14 +6,15 @@ export const MedicineBadge = styled(
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    height: "25%",
-    margin: "0.8rem auto 0.8rem auto",
+    margin: "0 auto 0.8rem auto",
     padding: "0.2rem 0.4rem 0.2rem 0.4rem",
     border: `1px solid ${props.$borderColor}`,
+    fontSize: "0.8rem",
   }),
 );
 
 export const AlarmButton = styled("button", (props: { $bgColor: string }) => ({
+  fontSize: "0.7rem",
   backgroundColor: props.$bgColor,
   color: "#fff",
   borderRadius: "10px",

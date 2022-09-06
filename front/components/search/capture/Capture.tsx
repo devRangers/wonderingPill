@@ -5,13 +5,13 @@ import { CaptureContainer, CaptureButton } from "./Capture.style";
 function Capture() {
   const [source, setSource] = useState("");
 
-  const handleCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (files?.length) {
       const file = files[0];
       const newUrl = URL.createObjectURL(file);
       setSource(newUrl);
-      // 이미지를 서버에 보내주면 됨!
+      // 여기서 서버로 이미지 전송!
     }
   };
 

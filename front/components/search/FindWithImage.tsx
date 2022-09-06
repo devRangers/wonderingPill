@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Modal from "@modal/Modal";
-import Capture from "@capture/Capture";
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
@@ -22,6 +21,7 @@ import {
   Title,
   TitleLine,
 } from "./FindWithImage.style";
+import Capture from "./capture/Capture";
 import CaptureGuideModal from "./CaptureGuideModal";
 
 function FindWithImage() {
