@@ -13,19 +13,19 @@ import {
 interface WithDrawlProp {
   isOpenModal: boolean;
   handleCloseWithDrawl: () => void;
-  handleOpenSuccessWithDrawl: () => void;
+  handleOpenSuccessWithDrawal: () => void;
 }
 
 function WithDrawl({
   isOpenModal,
   handleCloseWithDrawl,
-  handleOpenSuccessWithDrawl,
+  handleOpenSuccessWithDrawal,
 }: WithDrawlProp) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     try {
       handleCloseWithDrawl();
-      handleOpenSuccessWithDrawl();
+      handleOpenSuccessWithDrawal();
 
       // 회원 탈퇴 로직
     } catch (e) {}

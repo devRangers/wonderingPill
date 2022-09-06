@@ -13,7 +13,7 @@ import {
 } from "./ModifyPage.style";
 import Template from "../Template";
 import ModifyForm from "./ModifyForm";
-import WithDrawl from "./modals/WithDrawl";
+import WithDrawal from "./modals/WithDrawal";
 import SubmitResult from "./modals/SubmitResult";
 import CustomerCenter from "./modals/CustomerCenter";
 
@@ -142,11 +142,11 @@ function ModifyPage() {
       )}
 
       {isOpenModal.withdrawal && (
-        <WithDrawl
+        <WithDrawal
           {...submitModalData.customerCenter}
           isOpenModal={isOpenModal.withdrawal}
           handleCloseWithDrawl={handleClickWithdrawal}
-          handleOpenSuccessWithDrawl={handleClickSuccessWithdrawal}
+          handleOpenSuccessWithDrawal={handleClickSuccessWithdrawal}
         />
       )}
 
