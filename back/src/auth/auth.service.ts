@@ -28,6 +28,27 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    const { name, email, password, phone, birth } = createUserDto;
+    const hashedPassword: string = await argon.hash(password);
+    try {
+      const newUser: User = await this.prisma.user.create({
+        data: {
+          name,
+          password: hashedPassword,
+          phone,
+          birth,
+          email,
+          provider: providerType.LOCAL,
+        },
+      });
+
+      return newUser;
+    } catch (error) {
+      throw new NotFoundException('회원을 저장하지 못했습니다.');
+    }
+  }
+
   async getUserByEmail(email: string): Promise<User> {
     try {
       const user: User = await this.prisma.user.findUnique({
@@ -61,27 +82,6 @@ export class AuthService {
       return user;
     } catch {
       throw new NotFoundException('회원을 찾지 못했습니다.');
-    }
-  }
-
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const { name, email, password, phone, birth } = createUserDto;
-    const hashedPassword: string = await argon.hash(password);
-    try {
-      const newUser: User = await this.prisma.user.create({
-        data: {
-          name,
-          password: hashedPassword,
-          phone,
-          birth,
-          email,
-          provider: providerType.LOCAL,
-        },
-      });
-
-      return newUser;
-    } catch (error) {
-      throw new NotFoundException('회원을 저장하지 못했습니다.');
     }
   }
 

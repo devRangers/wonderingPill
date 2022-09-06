@@ -31,21 +31,34 @@ export class AlarmsService {
       setAlarmDto;
 
     await this.saveDevicetoken(deviceToken, id);
+    const agenda = await this.setAgenda(id, pillName);
 
     try {
-      const agenda = await this.setAgenda(id, pillName);
-
       agenda.define(id + '-' + pillName, async () => {
         await this.fcmService.sendPushAlarm(deviceToken, userName, pillName);
         const time = await this.getCurrTime();
 
         await this.prismaMongo.reminder.create({
-          data: { user_id: id, user_name: userName, pill_name: pillName, time },
+          data: {
+            user_id: id,
+            user_name: userName,
+            pill_name: pillName,
+            time,
+          },
         });
+
         if (repeatTime !== 0) {
           await this.setRepeatAlarm(repeatTime, agenda, id, pillName);
         }
+
+        if (vip.length === 8) {
+          await agenda.cancel({ name: id + '-' + pillName });
+        }
       });
+
+      if (vip.length === 0) {
+        vip.push(0, 1, 2, 3, 4, 5, 6, 7);
+      }
 
       (async function () {
         await agenda.start();
@@ -101,7 +114,8 @@ export class AlarmsService {
 
   async cancelAlarm(id: string, name: string) {
     const agenda = await this.setAgenda(id, name);
-    await agenda.cancel({ name: id + name });
+    await agenda.cancel({ name: id + '-' + name });
+    await agenda.cancel({ name: id + '-' + name + ':repeat' });
   }
 
   async setAlarmMark(id: string, check: boolean, pillName: string) {
@@ -114,6 +128,7 @@ export class AlarmsService {
           },
         },
       });
+
       let pillBookMark_id;
       userPills.PillBookMark.every(function (pill) {
         if (pill.Pill.name === pillName) {
