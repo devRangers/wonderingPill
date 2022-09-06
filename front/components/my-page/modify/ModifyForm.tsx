@@ -51,6 +51,7 @@ const modalData: { [key in string]: modalValues } = {
 
 function ModifyForm() {
   const [user] = useAtom(userAtom);
+  const [namePlaceholder, setNamePlaceholder] = useState("");
   const [isOpenModal, setIsOpenModal] = useState({
     success: false,
     fail: false,
@@ -80,8 +81,7 @@ function ModifyForm() {
         {
           name: data.name || undefined,
           password: data.curPassword || undefined,
-          newPassword:
-            data.newPassword || undefined,
+          newPassword: data.newPassword || undefined,
         },
       ),
     {
@@ -125,6 +125,7 @@ function ModifyForm() {
         return;
       }
       mutation.mutate(values);
+      setNamePlaceholder(values.name);
     },
   });
   return (
@@ -144,7 +145,7 @@ function ModifyForm() {
             id="name"
             type="text"
             {...modifyDataFormik.getFieldProps("name")}
-            placeholder={user.name}
+            placeholder={namePlaceholder ? namePlaceholder : user.name}
           />
         </ModifyItem>
         <ModifyItem>
@@ -236,15 +237,17 @@ function ModifyForm() {
         <Modify
           content={modalData.success.content}
           isOpenModal={isOpenModal.success}
-          handleCloseModifyResult={handleSuccessModal}
-        ><AiOutlineCheckCircle /></Modify>
+          handleCloseModifyResult={handleSuccessModal}>
+          <AiOutlineCheckCircle />
+        </Modify>
       )}
       {isOpenModal.fail && (
         <Modify
           content={modalData.fail.content}
           isOpenModal={isOpenModal.fail}
-          handleCloseModifyResult={handleFailModal}
-        ><BsFillExclamationCircleFill /></Modify>
+          handleCloseModifyResult={handleFailModal}>
+          <BsFillExclamationCircleFill color="red" />
+        </Modify>
       )}
     </>
   );
