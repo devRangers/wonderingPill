@@ -1,0 +1,41 @@
+{
+  "config": {
+    "target": "http://localhost:5000",
+    "phases": [
+      {
+        "duration": 60,
+        "arrivalRate": 30
+      }
+    ],
+    "payload": {
+      "path": "./artillery-data.csv",
+      "fields": ["email", "password"]
+    }
+  },
+  "scenarios": [
+    {
+      "name": "signin - alarms - current",
+      "flow": [
+        {
+          "post": {
+            "url": "/auth/signin",
+            "json": {
+              "email": "{{email}}",
+              "password": "{{password}}"
+            }
+          }
+        },
+        {
+          "get": {
+            "url": "/alarms"
+          }
+        },
+        {
+          "get": {
+            "url": "/current"
+          }
+        }
+      ]
+    }
+  ]
+}

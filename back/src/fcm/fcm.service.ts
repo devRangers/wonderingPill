@@ -5,18 +5,10 @@ import * as admin from 'firebase-admin';
 export class FcmService {
   async sendPushAlarm(deviceToken: string, userName: string, pillName: string) {
     const message = {
-      notification: {
+      data: {
         title: '[궁금해약] 복용 알림',
         body: `${userName}님! ${pillName} 약을 먹을 시간입니다!`,
-      },
-      webpush: {
-        headers: {
-          image:
-            'https://storage.cloud.google.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png',
-        },
-        fcmOptions: {
-          link: 'https://www.naver.com/',
-        },
+        icon: 'https://storage.cloud.google.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png',
       },
       token: deviceToken,
     };

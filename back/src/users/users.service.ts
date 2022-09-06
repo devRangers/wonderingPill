@@ -18,9 +18,10 @@ export class UsersService {
 
   async deleteUser(id: string) {
     try {
+      const user = await this.authService.getUserById(id);
       await this.prisma.user.update({
         where: { id },
-        data: { isDeleted: true },
+        data: { isDeleted: true, email: user.email + '_' },
       });
     } catch (error) {
       throw new ForbiddenException('회원탈퇴 실패!');
