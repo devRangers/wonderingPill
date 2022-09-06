@@ -47,13 +47,13 @@ export const ItemInput = styled("input", {
   flex: "0.6",
 });
 
-export const ErrorMesasge = styled("p", {
+export const ErrorMesasge = styled("p", (props: { $color: string }) => ({
   position: "absolute",
   top: "100%",
   marginTop: "1px",
   fontSize: "0.5rem",
-  color: "#bd0000",
-});
+  color: props.$color,
+}));
 
 export const ModifyButton = styled(
   "button",

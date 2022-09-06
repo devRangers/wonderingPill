@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { patch } from "@api";
 import { userAtom } from "@atom/userAtom";
-import { SUB_COLOR } from "@utils/constant";
+import { ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
 import { UpdateUserDto } from "@modelTypes/updateUserDto";
 import {
   ErrorMesasge,
@@ -194,7 +194,9 @@ function ModifyForm() {
                   place="top">
                   {modifyDataFormik.errors.newPassword}
                 </ReactTooltip>
-                <ErrorMesasge>새 비밀번호를 확인하세요.</ErrorMesasge>
+                <ErrorMesasge $color={ERROR_MSG_COLOR}>
+                  새 비밀번호를 확인하세요.
+                </ErrorMesasge>
               </>
             ) : (
               <></>
@@ -222,7 +224,9 @@ function ModifyForm() {
                   place="top">
                   {modifyDataFormik.errors.checkPassword}
                 </ReactTooltip>
-                <ErrorMesasge>비밀번호가 일치하지 않습니다.</ErrorMesasge>
+                <ErrorMesasge $color={ERROR_MSG_COLOR}>
+                  비밀번호가 일치하지 않습니다.
+                </ErrorMesasge>
               </>
             ) : (
               <></>
