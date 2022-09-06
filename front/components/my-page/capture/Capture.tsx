@@ -1,7 +1,10 @@
 import Image from "next/image";
 import { useState } from "react";
-import { get } from "@api";
+import { get, patch } from "@api";
 import { CaptureContainer, CaptureButton } from "./Capture.style";
+import { useAtom } from "jotai";
+import { userAtom } from "@atom/userAtom";
+import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
 
 interface SignedURLValues {
   statusCode: number;
@@ -13,28 +16,31 @@ interface SignedURLValues {
 }
 
 function Capture() {
-  const [source, setSource] = useState("");
+  const [user, setUser] = useAtom(userAtom);
 
   const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
-    if (files?.length) {
-      const file = files[0];
-      const newUrl = URL.createObjectURL(file);
-      setSource(newUrl);
+    if (!files) return;
+    const file = files[0];
+    const newUrl = URL.createObjectURL(file);
 
-      try {
-        const result = await getSignedURL();
+    try {
+      const result = await getSignedURL();
 
-        const res = await fetch(result.result.url, {
-          method: "PUT",
-          body: file,
-          headers: {
-            "Content-Type": "application/octet-stream",
-          }
-        })
-      } catch (e: any) {
-        throw new Error(e);
-      }
+      const res = await fetch(result.result.url, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      await patch(`/users/save-profileImg?img=${newUrl}`);
+      const { user: curUser } = await get<CurrentUserResponse>("/auth/current");
+
+      setUser(curUser);
+    } catch (e: any) {
+      throw new Error(e);
     }
   };
 
@@ -45,7 +51,7 @@ function Capture() {
   return (
     <>
       <Image
-        src={source ? source : "/images/register_logo.png"}
+        src={user.profileImg ? user.profileImg : "/images/logo.png"}
         alt="wondering-pill-logo"
         layout="fill"
         objectFit="cover"
