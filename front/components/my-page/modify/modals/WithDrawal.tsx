@@ -36,7 +36,7 @@ function WithDrawl({
         <Title $color={ACCENT_COLOR}>회원 탈퇴</Title>
         <TextContainer>
           <p>사용하고 계신 이메일은 복구나 재사용이 불가능합니다.</p>
-          <p>회월탈퇴 시 개인정보 및 모든 데이터는 삭제됩니다.</p>
+          <p>회원탈퇴 시 개인정보 및 모든 데이터는 삭제됩니다.</p>
         </TextContainer>
         <Bottom>
           <CloseButton onClick={handleCloseWithDrawl}>닫기</CloseButton>
