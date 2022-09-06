@@ -1,11 +1,14 @@
 import { styled } from "styletron-react";
 
-export const InnerContainer = styled("div", {
-  height: "100%",
-  display: "grid",
-  gridTemplateRows: "0.6fr 1.1fr 1fr 0.15fr",
-  gap: "1.5rem",
-});
+export const InnerContainer = styled(
+  "div",
+  (props: { $gridTemplateRows: string }) => ({
+    height: "100%",
+    display: "grid",
+    gridTemplateRows: props.$gridTemplateRows,
+    gap: "1.5rem",
+  }),
+);
 
 export const UserInfoContainer = styled("div", {
   display: "grid",
@@ -39,7 +42,7 @@ export const UserNameWrapper = styled("div", {
 });
 
 export const UserName = styled("p", (props: { $borderColor: string }) => ({
-  fontSize: "0.9rem",
+  fontSize: "0.8rem",
   fontWeight: "bold",
   paddingBottom: "0.3rem",
   borderBottom: `3px solid ${props.$borderColor}`,
@@ -48,7 +51,7 @@ export const UserName = styled("p", (props: { $borderColor: string }) => ({
 export const SocialLoginState = styled("div", {
   backgroundColor: "orange",
   color: "#fff",
-  fontSize: "0.8rem",
+  fontSize: "0.6rem",
   borderRadius: "10px",
   padding: "0.2rem",
 });
@@ -64,11 +67,11 @@ export const UserState = styled("div", {
   flexDirection: "column",
   justifyContent: "space-between",
   alignItems: "center",
-  minHeight: "3rem",
+  minHeight: "2.4rem",
 });
 
 export const UserInfoItemCount = styled("p", {
-  fontSize: "1.6rem",
+  fontSize: "1.3rem",
 });
 
 export const UserInfoItem = styled("p", {
@@ -79,11 +82,10 @@ export const UserInfoItem = styled("p", {
 export const ContentContainer = styled(
   "div",
   (props: { $borderColor: string }) => ({
-    position: "relative",
     display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    padding: "1rem 1rem",
+    alignItems: "center",
+    position: "relative",
+    padding: "1rem 1.5rem",
     border: `1px solid ${props.$borderColor}`,
     borderRadius: "10px",
     backgroundColor: "#F5F5F5",
@@ -95,34 +97,42 @@ export const ContentClip = styled("div", (props: { $bgColor: string }) => ({
   justifyContent: "center",
   alignItems: "center",
   position: "absolute",
-  width: "7rem",
-  height: "1.8rem",
+  width: "6rem",
+  height: "1.5rem",
   left: "0",
   top: "0",
   transform: "translate(0.1rem, -1rem)",
   backgroundColor: props.$bgColor,
   borderRadius: "1rem",
   fontWeight: "bold",
-  fontSize: "1.1rem",
+  fontSize: "0.9rem",
 }));
 
 export const MedicineBadgeContainer = styled("div", {
   width: "100%",
-  height: "90%",
-  maxHeight: "11rem",
+  height: "80%",
+  maxHeight: "20vh",
   overflowY: "scroll",
+  "::-webkit-scrollbar": {
+    visibility: "hidden",
+    width: "0",
+  },
 });
 
 export const PharmarcyContainer = styled("div", {
-  display: "grid",
-  gridTemplateRows: "1fr 1fr",
-  gap: "0.4rem",
-  justifyItems: "center",
-  width: "85%",
-  height: "90%",
-  maxHeight: "8rem",
-  overflowY: "scroll",
-  padding: "0.5rem",
-  margin: "0 auto",
-  border: "1px solid",
+  textAlign: "center",
+  height: "100%",
+  maxHeight: "20vh",
+  margin: "1rem auto 0.5rem auto",
+});
+
+export const BottomContainer = styled("div", {
+  textAlign: "end",
+});
+
+export const ModifyUserDataButton = styled("button", {
+  width: "7rem",
+  height: "1.5rem",
+  backgroundColor: "orange",
+  borderRadius: "1rem",
 });

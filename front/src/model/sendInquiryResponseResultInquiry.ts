@@ -6,11 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type SigninResponseUser = {
-  id?: string;
-  email?: string;
-  name?: string;
-  profileImg?: string;
-  provider?: string;
-  phone?: string;
-};
+export type SendInquiryResponseResultInquiry = { [key: string]: any };
