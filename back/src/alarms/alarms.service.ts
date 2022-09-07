@@ -174,7 +174,14 @@ export class AlarmsService {
             time: 'desc',
           },
         ],
-        take: (page - 1) * 10 + 10,
+        skip: (page - 1) * 10,
+        take: 10,
+        select: {
+          id: true,
+          user_name: true,
+          pill_name: true,
+          time: true,
+        },
       });
       return alarms;
     } catch (error) {

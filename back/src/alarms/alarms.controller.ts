@@ -146,7 +146,7 @@ export class AlarmsController {
     return {
       statusCode: 200,
       message: '알림을 조회했습니다.',
-      result: alarms,
+      alarms,
     };
   }
 
