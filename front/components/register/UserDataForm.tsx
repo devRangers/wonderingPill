@@ -106,7 +106,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
     initialValues: userInitialValue,
     validationSchema: Yup.object({
       email: Yup.string()
-        .email("이메일을 확인 해 주세요")
+        .email("이메일을 확인 해 주세요.")
         .required("필수 입력 란입니다."),
       name: Yup.string()
         .max(20, "20자 이하로 입력 해 주세요.")

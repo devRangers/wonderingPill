@@ -3,6 +3,9 @@
 const withPWA = require("next-pwa");
 
 const nextConfig = {
+  images: {
+    domains: ["localhost", "*"],
+  },
   reactStrictMode: true,
   swcMinify: true,
 };

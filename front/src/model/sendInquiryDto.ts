@@ -8,4 +8,5 @@
 
 export interface SendInquiryDto {
   content: string;
+  id: string;
 }
