@@ -1,5 +1,8 @@
 import type { NextPage } from "next";
 import { useState } from "react";
+import { useQuery } from "react-query";
+import * as Api from "@api";
+import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
 import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR } from "@utils/constant";
 import {
   ContentContainer,
@@ -19,48 +22,33 @@ import {
 } from "@messagesComp/MessagesPage.style";
 import Container from "@container/Container";
 
-const fakeData = [
-  {
-    id: 1,
-    user_name: "지유",
-    pill_name: "카엘정",
-    time: "2022.09.07 20:21",
-  },
-  {
-    id: 2,
-    user_name: "지유",
-    pill_name: "카엘정",
-    time: "2022.09.07 20:21",
-  },
-  {
-    id: 3,
-    user_name: "지유",
-    pill_name: "카엘정",
-    time: "2022.09.07 20:21",
-  },
-  {
-    id: 4,
-    user_name: "지유",
-    pill_name: "카엘정",
-    time: "2022.09.07 20:21",
-  },
-  {
-    id: 5,
-    user_name: "지유",
-    pill_name: "카엘정",
-    time: "2022.09.07 20:21",
-  },
-  {
-    id: 6,
-    user_name: "지유",
-    pill_name: "카엘정",
-    time: "2022.09.07 20:21",
-  },
-];
+interface MessageValues {
+  id: string;
+  user_name: string;
+  pill_name: string;
+  time: string;
+  user_id: string;
+}
+
+interface MessageResponse extends CommonResponse {
+  result: MessageValues[];
+}
 
 const MessageListPage: NextPage = () => {
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<MessageValues[]>([]);
+  const [pageCount, setPageCount] = useState(1);
+
+  useQuery(
+    ["getMessages", pageCount],
+    () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
+    {
+      retry: false,
+      onSuccess: ({ result }) => {
+        setMessages((prev) => [...new Set([...prev, ...result])]);
+      },
+    },
+  );
 
   return (
     <Container>
@@ -82,7 +70,7 @@ const MessageListPage: NextPage = () => {
             <DeleteBtn>선택된 알림 삭제</DeleteBtn>
           </Header>
           <Body $scrollColor={ACCENT_COLOR}>
-            {fakeData.map((message) => (
+            {messages.map((message) => (
               <List key={message.id}>
                 <input type="checkbox" name="messages" />
                 <MessageContainer $borderColor={MAIN_COLOR}>
@@ -96,7 +84,11 @@ const MessageListPage: NextPage = () => {
               </List>
             ))}
           </Body>
-          <MoreBtn $btnColor={ACCENT_COLOR}>더보기</MoreBtn>
+          <MoreBtn
+            $btnColor={ACCENT_COLOR}
+            onClick={() => setPageCount((cur) => cur + 1)}>
+            더보기
+          </MoreBtn>
         </ListContainer>
       </ContentContainer>
     </Container>
