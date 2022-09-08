@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
@@ -139,3 +140,5 @@ const SetNotificationPage: NextPage = () => {
 };
 
 export default SetNotificationPage;
+
+// TODO: 알림 정보 가져오기(getServerSideProps)
