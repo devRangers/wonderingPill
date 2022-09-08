@@ -7,33 +7,29 @@ import {
 } from "@utils/constant";
 import {
   ImageSection,
+  ImageWrapper,
   MainContainer,
   MainContent,
   MainItem,
   MainSection,
 } from "./Main.style";
+import { useRouter } from "next/router";
 
 interface MainSectionValues {
   src: string;
 }
 const MainSectionTitle: { [key in string]: MainSectionValues } = {
   "사진으로 찾기": {
-    src: "",
+    src: "/images/main/findwithImage.png",
   },
   "약국 찾기": {
-    src: "",
+    src: "/images/main/findPharmarcy.png",
   },
-  "시제품 약 검색": {
-    src: "",
-  },
-  "증상으로 검색": {
-    src: "",
-  },
-  "내 건강 캘린더": {
-    src: "",
+  "약 검색하기": {
+    src: "/images/main/searchPill.png",
   },
   "마이 페이지": {
-    src: "",
+    src: "/images/main/mypage.png",
   },
 };
 
@@ -55,17 +51,19 @@ function Main() {
           />
         </ImageSection>
         <MainSection>
-          {Object.entries(MainSectionTitle).map(([key, value], index) => (
+          {Object.entries(MainSectionTitle).map(([key, value]) => (
             <MainItem key={key}>
-              <Image
-                src="/images/register_logo.png"
-                alt={key}
-                layout="fill"
-                objectFit="cover"
-                style={{
-                  borderRadius: "50%",
-                }}
-              />
+              <ImageWrapper>
+                <Image
+                  src={value.src}
+                  alt={key}
+                  layout="fill"
+                  objectFit="contain"
+                  style={{
+                    borderRadius: "50%",
+                  }}
+                />
+              </ImageWrapper>
               <h4>{key}</h4>
             </MainItem>
           ))}
