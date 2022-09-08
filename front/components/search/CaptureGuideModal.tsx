@@ -17,7 +17,6 @@ import {
   ImageDescription,
   PillImage,
 } from "./FindWithImage.style";
-import Modal from "@modal/Modal";
 
 interface CaptureGuideModalProp {
   handleCloseModal: () => void;
@@ -38,7 +37,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
         </GuideDescriptionBox>
         <GuideImageWrapper>
           <Image
-            src="/images/register_logo.png"
+            src="/images/search/image/rightImage.png"
             layout="fill"
             objectFit="contain"
             priority={true}
@@ -55,7 +54,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
         <GuideTwoImageWrapper $isWide={isWide}>
           <PillImage $isWide={isWide}>
             <Image
-              src="/images/register_logo.png"
+              src="/images/search/image/brightImage.png"
               layout="fill"
               objectFit="contain"
               priority={true}
@@ -63,7 +62,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
           </PillImage>
           <PillImage $isWide={isWide}>
             <Image
-              src="/images/register_logo.png"
+              src="/images/search/image/darkImage.png"
               layout="fill"
               objectFit="contain"
               priority={true}
