@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
@@ -44,11 +44,18 @@ const MessageListPage: NextPage = () => {
     () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
     {
       retry: false,
+      refetchOnWindowFocus: false,
       onSuccess: ({ result }) => {
         setMessages((prev) => [...new Set([...prev, ...result])]);
       },
     },
   );
+
+  const selectAllMessageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedMessages(
+      e.target.checked ? messages.map((message) => message.id) : [],
+    );
+  };
 
   return (
     <Container>
@@ -64,6 +71,7 @@ const MessageListPage: NextPage = () => {
                 type="checkbox"
                 name="select-all-messages"
                 id="select-all-messages"
+                onChange={selectAllMessageHandler}
               />
               <Label htmlFor="select-all-messages">알림 전체 선택</Label>
             </div>
@@ -72,7 +80,11 @@ const MessageListPage: NextPage = () => {
           <Body $scrollColor={ACCENT_COLOR}>
             {messages.map((message) => (
               <List key={message.id}>
-                <input type="checkbox" name="messages" />
+                <input
+                  type="checkbox"
+                  name="messages"
+                  checked={selectedMessages.includes(message.id) || false}
+                />
                 <MessageContainer $borderColor={MAIN_COLOR}>
                   <Message>
                     약을 먹을 시간입니다!
