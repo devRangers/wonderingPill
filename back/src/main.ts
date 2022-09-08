@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
+import { HttpExceptionFilter } from './common/filters';
 import { PrismaMongoService } from './prisma/prisma-mongo.service';
 import { PrismaService } from './prisma/prisma.service';
 import { setupSwagger } from './utils';
@@ -39,6 +39,7 @@ async function bootstrap() {
 
   if (configService.get('NODE_ENV') === 'development') {
     Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
+    Logger.log(`Go to API Docs : http://localhost:${PORT}/swagger`);
   }
 }
 bootstrap();
