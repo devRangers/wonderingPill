@@ -12,13 +12,14 @@ class ModelHandler:
     def __init__(self):
         pass
 
-    def preprocess_url(self, url):
+    def preprocess_url(self, url, zoom_size=1.5):
         img_nparray = np.asarray(bytearray(requests.get(url).content), dtype=np.uint8)
         input = cv2.imdecode(img_nparray, cv2.IMREAD_COLOR)
         input = cv2.cvtColor(input, cv2.COLOR_BGR2RGB)
 
         rmbg_img = remove(input)[...,:3]
-        zoomed_img = self.zoom_at(rmbg_img, 1.5)
+        rmbg_img = self.crop_center(rmbg_img)
+        zoomed_img = self.zoom_at(rmbg_img, zoom_size)
         return zoomed_img
 
     def zoom_at(self, img, zoom, coord=None):
@@ -31,6 +32,13 @@ class ModelHandler:
         img = img[ int(round(cy - h/zoom * .5)) : int(round(cy + h/zoom * .5)),
                 int(round(cx - w/zoom * .5)) : int(round(cx + w/zoom * .5)),
                     : ] 
+        return img
+    
+    def crop_center(self, img):
+        y, x, c = img.shape
+        sx = x // 2-(min(x, y) // 2)
+        sy = y // 2-(min(x, y) // 2)
+        img = img[sy:sy+min(x,y), sx:sx+min(x,y)]
         return img
     
     def preprocess_for_model(self, img):
@@ -47,11 +55,11 @@ class ShapeClassifier(ModelHandler):
 
     def initialize(self, **kwargs):
         import keras
-        self.model_path = "./models/shape_classifier_5"
+        self.model_path = "./models/shape_classifier"
         self.model = keras.models.load_model(self.model_path)
 
     def preprocess(self, url):
-        model_input = self.preprocess_url(url)
+        model_input = self.preprocess_url(url, zoom_size=1.5)
         model_input = self.preprocess_for_model(model_input)
         return model_input
 
@@ -77,7 +85,7 @@ class ColorClassifier(ModelHandler):
 
     def initialize(self, **kwargs):
         import keras
-        self.model_path = "./models/color_classifier_2"
+        self.model_path = "./models/color_classifier"
         self.model = keras.models.load_model(self.model_path)
 
     def preprocess(self, url):
