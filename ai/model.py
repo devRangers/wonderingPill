@@ -8,19 +8,9 @@ from tensorflow.keras.applications.mobilenet_v3 import preprocess_input
 from labels.color_label import color_label
 from labels.shape_label import shape_label
 
-class ModelHandler:
+class ImgPreprocesser:
     def __init__(self):
-        pass
-
-    def preprocess_url(self, url, zoom_size=1.5):
-        img_nparray = np.asarray(bytearray(requests.get(url).content), dtype=np.uint8)
-        input = cv2.imdecode(img_nparray, cv2.IMREAD_COLOR)
-        input = cv2.cvtColor(input, cv2.COLOR_BGR2RGB)
-
-        rmbg_img = remove(input)[...,:3]
-        rmbg_img = self.crop_center(rmbg_img)
-        zoomed_img = self.zoom_at(rmbg_img, zoom_size)
-        return zoomed_img
+        self.zoom_size = 1.5
 
     def zoom_at(self, img, zoom, coord=None):
         h, w, _ = [ zoom * i for i in img.shape ]
@@ -40,6 +30,16 @@ class ModelHandler:
         sy = y // 2-(min(x, y) // 2)
         img = img[sy:sy+min(x,y), sx:sx+min(x,y)]
         return img
+
+    def url_to_nparray(self, url):
+        img_nparray = np.asarray(bytearray(requests.get(url).content), dtype=np.uint8)
+        input = cv2.imdecode(img_nparray, cv2.IMREAD_COLOR)
+        input = cv2.cvtColor(input, cv2.COLOR_BGR2RGB)
+
+        rmbg_img = remove(input)[...,:3]
+        rmbg_img = self.crop_center(rmbg_img)
+        zoomed_img = self.zoom_at(rmbg_img, self.zoom_size)
+        return zoomed_img
     
     def preprocess_for_model(self, img):
         img = cv2.resize(img, dsize=(224,224))
@@ -48,20 +48,15 @@ class ModelHandler:
         return img
 
 
-class ShapeClassifier(ModelHandler):
+
+class ShapeClassifier():
     def __init__(self):
-        super().__init__()
         self.initialize()
 
-    def initialize(self, **kwargs):
+    def initialize(self):
         import keras
         self.model_path = "./models/shape_classifier"
         self.model = keras.models.load_model(self.model_path)
-
-    def preprocess(self, url):
-        model_input = self.preprocess_url(url, zoom_size=1.5)
-        model_input = self.preprocess_for_model(model_input)
-        return model_input
 
     def inference(self, model_input):
         model_output = self.model.predict(model_input)
@@ -72,26 +67,19 @@ class ShapeClassifier(ModelHandler):
         predict_shape_label = shape_label[predict_shape_class[0]]
         return predict_shape_label
 
-    def handle(self, url):
-        model_input = self.preprocess(url)
-        model_output = self.inference(model_input)
+    def handle(self, input):
+        model_output = self.inference(input)
         return self.postprocess(model_output)
 
 
-class ColorClassifier(ModelHandler):
+class ColorClassifier():
     def __init__(self):
-        super().__init__()
         self.initialize()
 
-    def initialize(self, **kwargs):
+    def initialize(self):
         import keras
         self.model_path = "./models/color_classifier"
         self.model = keras.models.load_model(self.model_path)
-
-    def preprocess(self, url):
-        model_input = self.preprocess_url(url)
-        model_input = self.preprocess_for_model(model_input)
-        return model_input
 
     def inference(self, model_input):
         model_output = self.model.predict(model_input)
@@ -102,25 +90,19 @@ class ColorClassifier(ModelHandler):
         predict_color_label = color_label[predict_color_class[0]]
         return predict_color_label
 
-    def handle(self, url):
-        model_input = self.preprocess(url)
-        model_output = self.inference(model_input)
+    def handle(self, input):
+        model_output = self.inference(input)
         return self.postprocess(model_output)
 
 
-class LetterRecognizer(ModelHandler):
+class LetterRecognizer():
     def __init__(self):
-        super().__init__()
         self.initialize()
 
-    def initialize(self, **kwargs):
+    def initialize(self):
         from google.cloud import vision
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './pill-text-recognition-a3e91afb350f.json'
         self.model = vision.ImageAnnotatorClient()
-
-    def preprocess(self, url):
-        model_input = self.preprocess_url(url)        
-        return model_input
 
     def inference(self, model_input):
         from google.cloud import vision
@@ -141,8 +123,7 @@ class LetterRecognizer(ModelHandler):
             return model_output[0].description
         return ''
 
-    def handle(self, url):
-        model_input = self.preprocess(url)
-        response, model_output = self.inference(model_input)
+    def handle(self, input):
+        response, model_output = self.inference(input)
         model_output = self.postprocess(response, model_output)
         return ''.join(model_output.split()).upper()

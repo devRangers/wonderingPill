@@ -1,9 +1,10 @@
 from flask import Flask, request, json
-from model import ShapeClassifier, ColorClassifier, LetterRecognizer
+from model import ShapeClassifier, ColorClassifier, LetterRecognizer, ImgPreprocesser 
 
 app = Flask(__name__)
 
 # assign model as global variable
+img_preprocessor = ImgPreprocesser()
 shape_classifier = ShapeClassifier()
 color_classifier = ColorClassifier()
 letter_recognizer = LetterRecognizer()
@@ -14,10 +15,14 @@ def predict():
     params = request.get_json()
     img_url = params["imgURL"]
 
+    # preprocessing
+    preprocessed_img_nparray = img_preprocessor.url_to_nparray(img_url)
+    preprocessed_for_model = img_preprocessor.preprocess_for_model(preprocessed_img_nparray)
+
     # model inference 
-    shape_pred = shape_classifier.handle(img_url)
-    color_pred = color_classifier.handle(img_url)
-    letter_pred = letter_recognizer.handle(img_url)
+    shape_pred = shape_classifier.handle(preprocessed_for_model)
+    color_pred = color_classifier.handle(preprocessed_for_model)
+    letter_pred = letter_recognizer.handle(preprocessed_img_nparray)
 
     # response
     json_object = {
