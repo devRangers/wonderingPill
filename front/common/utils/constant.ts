@@ -41,3 +41,8 @@ export const URL_WITHOUT_HEADER = [
   ROUTE.ERROR,
   ROUTE.BLOCK,
 ];
+
+export const TOASTIFY = {
+  LOGIN_FAIL: "이메일이나 비밀번호를 확인해주세요.",
+  NEED_LOGIN: "로그인이 필요한 서비스입니다.",
+};
