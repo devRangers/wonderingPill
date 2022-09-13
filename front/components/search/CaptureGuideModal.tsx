@@ -48,7 +48,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
         <GuideDescriptionBox $bgColor={MAIN_COLOR} $isWide={isWide}>
           <GuideNumber>2</GuideNumber>
           <Guide $isWide={isWide}>
-            색깔이 잘 구분되도록 되도록 밝은 곳에서 촬영주세요!
+            색깔이 잘 구분되게 되도록 밝은 곳에서 촬영해주세요!
           </Guide>
         </GuideDescriptionBox>
         <GuideTwoImageWrapper $isWide={isWide}>
