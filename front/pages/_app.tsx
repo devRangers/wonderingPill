@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import "../styles/reset.css";
-import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.min.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -91,7 +91,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
             />
           </Head>
-          <ToastContainer theme="colored" position="top-center" />
+          <ToastContainer theme="colored" position="top-center" limit={3} />
           {!URL_WITHOUT_HEADER.includes(router.pathname) && <Header />}
           <Component {...pageProps} />
           {!URL_WITHOUT_HEADER.includes(router.pathname) && <Footer />}
