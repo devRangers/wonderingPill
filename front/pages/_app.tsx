@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import "../styles/reset.css";
+import "react-toastify/dist/ReactToastify.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -18,6 +19,7 @@ import { RefreshResponse } from "@modelTypes/refreshResponse";
 import { URL_WITHOUT_HEADER, SILENT_REFRESH_TIME } from "@utils/constant";
 import Header from "@header/Header";
 import Footer from "@footer/Footer";
+import { ToastContainer } from "react-toastify";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -89,6 +91,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
             />
           </Head>
+          <ToastContainer theme="colored" position="top-center" />
           {!URL_WITHOUT_HEADER.includes(router.pathname) && <Header />}
           <Component {...pageProps} />
           {!URL_WITHOUT_HEADER.includes(router.pathname) && <Footer />}
