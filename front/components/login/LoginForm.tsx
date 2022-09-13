@@ -32,6 +32,7 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
+import { toast } from "react-toastify";
 
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
@@ -45,6 +46,9 @@ function LoginForm() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
+
+  const nofityLoginFail = () =>
+    toast.error("이메일이나 비밀번호를 확인해주세요.");
 
   const initialValue: LoginFormValues = {
     email: userEmail,
@@ -65,6 +69,7 @@ function LoginForm() {
       },
       onError: ({ message }) => {
         console.log(message);
+        nofityLoginFail();
       },
     },
   );
