@@ -26,6 +26,7 @@
     "react-query": "^3.39.1",
     "react-responsive": "^9.0.0-beta.10",
     "react-slick": "^0.29.0",
+    "react-toastify": "^9.0.8",
     "react-tooltip": "^4.2.21",
     "slick-carousel": "^1.8.1",
     "styletron-engine-atomic": "^1.4.8",
