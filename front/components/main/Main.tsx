@@ -1,11 +1,14 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
   HEADER_HEIGHT,
   MAIN_COLOR,
   ROUTE,
+  TOASTIFY,
 } from "@utils/constant";
+import { userAtom } from "@atom/userAtom";
 import {
   ImageSection,
   ImageWrapper,
@@ -14,7 +17,8 @@ import {
   MainItem,
   MainSection,
 } from "./Main.style";
-import { useRouter } from "next/router";
+import { useAtom } from "jotai";
+import { toast } from "react-toastify";
 
 interface MainSectionValues {
   src: string;
@@ -41,6 +45,15 @@ const MainSectionTitle: { [key in string]: MainSectionValues } = {
 
 function Main() {
   const router = useRouter();
+  const [user] = useAtom(userAtom);
+  const notifyNeedLogin = () => toast.info(TOASTIFY.NEED_LOGIN);
+
+  const handleClick = (value: MainSectionValues) => {
+    !user.id && value.link === ROUTE.MY_PAGE
+      ? notifyNeedLogin()
+      : router.push(value.link);
+  };
+
   return (
     <MainContainer
       $bgColor={MAIN_COLOR}
@@ -60,7 +73,7 @@ function Main() {
         <MainSection>
           {Object.entries(MainSectionTitle).map(([key, value]) => (
             <MainItem key={key}>
-              <ImageWrapper onClick={() => router.push(value.link)}>
+              <ImageWrapper onClick={() => handleClick(value)}>
                 <Image
                   src={value.src}
                   alt={key}
