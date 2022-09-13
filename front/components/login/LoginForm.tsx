@@ -12,7 +12,13 @@ import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
-import { SUB_COLOR, ERROR_MSG_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
+import {
+  SUB_COLOR,
+  ERROR_MSG_COLOR,
+  GRAY_COLOR,
+  ROUTE,
+  TOASTIFY,
+} from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -47,8 +53,7 @@ function LoginForm() {
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
 
-  const nofityLoginFail = () =>
-    toast.error("이메일이나 비밀번호를 확인해주세요.");
+  const nofityLoginFail = () => toast.error(TOASTIFY.LOGIN_FAIL);
 
   const initialValue: LoginFormValues = {
     email: userEmail,
