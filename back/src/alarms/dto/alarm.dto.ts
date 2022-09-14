@@ -1,7 +1,6 @@
 import {
   IsArray,
   IsJSON,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -10,27 +9,24 @@ import { CommonResponseDto } from 'src/common/dto';
 
 export class SetAlarmDto {
   @IsString()
-  @IsNotEmpty()
+  pillBookmarkId: string;
+
+  @IsString()
   deviceToken: string;
 
   @IsArray()
-  @IsNotEmpty()
   vip: number[];
 
   @IsNumber()
-  @IsNotEmpty()
   hour: number;
 
   @IsNumber()
-  @IsNotEmpty()
   minute: number;
 
   @IsString()
-  @IsNotEmpty()
   pillName: string;
 
   @IsString()
-  @IsNotEmpty()
   userName: string;
 
   @IsNumber()

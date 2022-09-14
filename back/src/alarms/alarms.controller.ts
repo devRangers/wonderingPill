@@ -34,15 +34,15 @@ export class AlarmsController {
   private readonly logger = new Logger(`AlarmsController`);
   constructor(private readonly alarmsService: AlarmsService) {}
 
-  @HttpCode(201)
-  @Post('set-alarm')
+  @HttpCode(204)
+  @Post('set')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '알림 설정 API',
     description: '알림 예약을 설정한다.',
   })
   @ApiResponse({
-    status: 201,
+    status: 204,
     description: '알림 설정 성공',
     type: CommonResponseDto,
   })
@@ -55,39 +55,39 @@ export class AlarmsController {
   ) {
     await this.alarmsService.setAlarms(id, setAlarmDto);
     this.logger.verbose(`Setting User ${id} pill alarms`);
-    return { statusCode: 201, message: '알림을 설정했습니다.' };
+    return { statusCode: 204, message: '알림을 설정했습니다.' };
   }
 
-  @HttpCode(200)
-  @Delete('/:name')
+  @HttpCode(204)
+  @Delete(':pillBookmarkId')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '푸쉬 알림 취소 API',
     description: '푸쉬 알림을 취소한다.',
   })
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: '푸쉬 알림 취소 성공',
     type: CommonResponseDto,
   })
   @ApiParam({
-    name: 'name',
+    name: 'pillBookmarkId',
     required: true,
-    description: '약 이름',
+    description: '북마크 아이디',
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async cancelAlarm(
     @GetCurrentUserId() id: string,
-    @Param('name') name: string,
+    @Param('pillBookmarkId') pillBookmarkId: string,
   ) {
-    await this.alarmsService.cancelAlarm(id, name);
+    await this.alarmsService.cancelAlarm(id, pillBookmarkId);
     this.logger.verbose(`Canceling User ${id} pill alarm`);
-    return { statusCode: 200, message: '알림을 취소했습니다.' };
+    return { statusCode: 204, message: '알림을 취소했습니다.' };
   }
 
   @HttpCode(200)
-  @Get('set-alarm/:name')
+  @Get('set/:pillBookmarkId')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '알림 설정창 조회 API',
@@ -99,7 +99,7 @@ export class AlarmsController {
     type: GetAlarmSetResponseDto,
   })
   @ApiParam({
-    name: 'name',
+    name: 'pillBookmarkId',
     required: true,
     description: '약 이름',
   })
@@ -107,9 +107,9 @@ export class AlarmsController {
   @ApiCookieAuth('refreshToken')
   async getSetAlarm(
     @GetCurrentUserId() id: string,
-    @Param('name') name: string,
+    @Param('pillBookmarkId') pillBookmarkId: string,
   ): Promise<GetAlarmSetResponseDto> {
-    const alarm = await this.alarmsService.getSetAlarm(id, name);
+    const alarm = await this.alarmsService.getSetAlarm(id, pillBookmarkId);
     this.logger.verbose(`Get User ${id} pill alarm set`);
     return {
       statusCode: 200,
@@ -150,14 +150,15 @@ export class AlarmsController {
     };
   }
 
-  @Post('delete-alarms')
+  @HttpCode(204)
+  @Post('delete')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '알림 내역 삭제 API',
     description: '알림 내역을 삭제한다.',
   })
   @ApiResponse({
-    status: 201,
+    status: 204,
     description: '알림 내역 삭제 성공',
     type: CommonResponseDto,
   })
@@ -169,6 +170,6 @@ export class AlarmsController {
   ): Promise<CommonResponseDto> {
     await this.alarmsService.deleteAlarm(deleteAlarmsDto, userId);
     this.logger.verbose(`Removing User ${userId} pill alarms`);
-    return { statusCode: 201, message: '알림을 조회했습니다.' };
+    return { statusCode: 204, message: '알림을 삭제했습니다.' };
   }
 }
