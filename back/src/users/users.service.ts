@@ -17,8 +17,8 @@ export class UsersService {
   ) {}
 
   async deleteUser(id: string) {
+    const user = await this.authService.getUserById(id);
     try {
-      const user = await this.authService.getUserById(id);
       await this.prisma.user.update({
         where: { id },
         data: { isDeleted: true, email: user.email + '_' },
