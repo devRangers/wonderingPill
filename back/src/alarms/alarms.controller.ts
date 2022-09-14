@@ -59,7 +59,7 @@ export class AlarmsController {
   }
 
   @HttpCode(204)
-  @Delete(':pillBookmarkId')
+  @Delete(':id')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '푸쉬 알림 취소 API',
@@ -71,7 +71,7 @@ export class AlarmsController {
     type: CommonResponseDto,
   })
   @ApiParam({
-    name: 'pillBookmarkId',
+    name: 'id',
     required: true,
     description: '북마크 아이디',
   })
@@ -79,7 +79,7 @@ export class AlarmsController {
   @ApiCookieAuth('refreshToken')
   async cancelAlarm(
     @GetCurrentUserId() id: string,
-    @Param('pillBookmarkId') pillBookmarkId: string,
+    @Param('id') pillBookmarkId: string,
   ) {
     await this.alarmsService.cancelAlarm(id, pillBookmarkId);
     this.logger.verbose(`Canceling User ${id} pill alarm`);
@@ -87,7 +87,7 @@ export class AlarmsController {
   }
 
   @HttpCode(200)
-  @Get('set/:pillBookmarkId')
+  @Get('set/:id')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '알림 설정창 조회 API',
@@ -99,7 +99,7 @@ export class AlarmsController {
     type: GetAlarmSetResponseDto,
   })
   @ApiParam({
-    name: 'pillBookmarkId',
+    name: 'id',
     required: true,
     description: '약 이름',
   })
@@ -107,7 +107,7 @@ export class AlarmsController {
   @ApiCookieAuth('refreshToken')
   async getSetAlarm(
     @GetCurrentUserId() id: string,
-    @Param('pillBookmarkId') pillBookmarkId: string,
+    @Param('id') pillBookmarkId: string,
   ): Promise<GetAlarmSetResponseDto> {
     const alarm = await this.alarmsService.getSetAlarm(id, pillBookmarkId);
     this.logger.verbose(`Get User ${id} pill alarm set`);

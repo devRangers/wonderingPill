@@ -134,9 +134,7 @@ export class AlarmsService {
 
     try {
       console.log(id + '-' + pillBookmarkId);
-      console.log(agenda);
       await agenda.cancel({ name: id + '-' + pillBookmarkId });
-      console.log('?');
       await agenda.cancel({ name: id + '-' + pillBookmarkId + ':repeat' });
     } catch (error) {
       throw new NotFoundException('알림을 삭제하지 못했습니다.');
