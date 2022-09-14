@@ -68,7 +68,9 @@ const InfoPage: NextPage = () => {
         <Modal
           open={isInstallModalOpen || isInfoModalOpen || isTeamModalOpen}
           onClose={modalCloseHandler}>
-          {(isInstallModalOpen && <InstallModal />) ||
+          {(isInstallModalOpen && (
+            <InstallModal onClose={() => setIsInstallModalOpen(false)} />
+          )) ||
             (isInfoModalOpen && <InfoModal />) ||
             (isTeamModalOpen && <TeamModal />)}
         </Modal>
