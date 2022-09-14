@@ -62,4 +62,9 @@ export const BtnContainer = styled("div", {
 export const LinkBtn = styled("button", {
   color: "#fff",
   cursor: "pointer",
+  transition: "200ms",
+  borderBottom: "2px solid transparent",
+  ":hover": {
+    borderColor: "#fff",
+  },
 });
