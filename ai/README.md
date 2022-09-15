@@ -1,3 +1,88 @@
+# API documentation
+
+## POST
+
+**촬영한 알약 이미지 url POST**
+```
+http://34.64.168.83:5001/predict
+```
+**BODY**
+```json
+{  
+	"imgURL":"https://cdn.discordapp.com/attachments/1004560087886614620/1015072060688576533/20220902_103331.jpg"
+}
+```
+**Response** 
+```
+{
+	status: 204
+}
+```
+
+<br/>
+<br/>
+
+## GET
+**모델 결과**
+
+클라이언트는 서버로부터 스트림을 받아 `EventSource` 객체를 통해 서버가 푸시하는 데이터를 받아 처리할 수 있다.
+```js
+const eventSource = new EventSource('http://34.64.168.83:5001/classify')
+
+eventSource.addEventListener('sse', function (e) {
+	const  data = JSON.parse(e.data);
+	console.log(data);
+})
+```
+
+```
+{colors: 'brown', letters: 'BMT', shape: 'oval'}
+```
+
+<br/>
+<br/>
+
+
+## 출력값
+
+### shape
+```
+{
+	장방형: rectangle, 
+	타원형: oval,
+	원형: circle, 
+	오각형: pentagon, 
+	사각형: square, 
+	삼각형: triangle, 
+	마름모형: rhombus, 
+	육각형: hexagon, 
+	기타: etc
+}
+```
+
+### color
+
+```
+{
+	하양 : white,
+	갈색 : brown, 
+	초록 : green, 
+	노랑 : yellow, 
+	분홍 : pink, 
+	파랑 : blue, 
+	주황 : orange, 
+	빨강 : red, 
+	투명 : transparent, 
+	검정 : black, 
+	보라 : purple, 
+	회색 : gray
+}
+```
+
+<br/>
+<br/>
+
+
 # 로컬 환경에서 실행
 
 ## 가상환경 생성
