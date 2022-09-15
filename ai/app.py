@@ -1,13 +1,26 @@
-from flask import Flask, request, json
-from model import ShapeClassifier, ColorClassifier, LetterRecognizer, ImgPreprocesser 
+from flask_cors import CORS
+from flask import Flask, request, Response
+from model import ShapeClassifier, ColorClassifier, LetterRecognizer, ImgPreprocesser
+from flask_sse import sse
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+REDIS_HOST=os.environ.get('REDIS_HOST')
+REDIS_PORT=os.environ.get('REDIS_PORT')
+REDIS_PASSWORD=os.environ.get('REDIS_PASSWORD')
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
+app.config["REDIS_URL"] = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}" 
+app.register_blueprint(sse, url_prefix='/classify')
 
 # assign model as global variable
 img_preprocessor = ImgPreprocesser()
 shape_classifier = ShapeClassifier()
 color_classifier = ColorClassifier()
 letter_recognizer = LetterRecognizer()
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -24,14 +37,8 @@ def predict():
     color_pred = color_classifier.handle(preprocessed_for_model)
     letter_pred = letter_recognizer.handle(preprocessed_img_nparray)
 
-    # response
-    json_object = {
-    "shape" : shape_pred,
-    "colors" : color_pred,
-    "letters" : letter_pred,
-    }
-    result = json.dumps(json_object, indent=2)
-    return result
+    sse.publish({"shape": shape_pred, "colors": color_pred, "letters": letter_pred}, type="sse")
+    return Response(status=204)
 
 
 if __name__ == "__main__":

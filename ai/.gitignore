@@ -2,6 +2,8 @@ __pycache__
 
 myvenv
 
+.env
+
 pill-text-recognition-a3e91afb350f.json
 color_classifier
 shape_classifier

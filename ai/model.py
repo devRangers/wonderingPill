@@ -121,7 +121,7 @@ class LetterRecognizer():
                     response.error.message))
         if model_output:
             return model_output[0].description
-        return ''
+        return 'None'
 
     def handle(self, input):
         response, model_output = self.inference(input)
