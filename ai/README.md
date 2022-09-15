@@ -1,9 +1,9 @@
 # ai 폴더 구조
 
->> ### models 폴더 안에 넣어야할 모델 가중치 링크 ###
+> ### models 폴더 안에 넣어야할 모델 가중치 링크 ###
 [구글공유드라이브](https://drive.google.com/drive/folders/19w4LiKE6K9aR3a0vxnZSZuSkA3W7KjVP?usp=sharing)
 
->> ### 아래 파일은 디스코드 ai 채널 고정메세지에서 다운로드 ###
+> ### 아래 파일은 디스코드 ai 채널 고정메세지에서 다운로드 ###
 -  pill-text-recognition-a3e91afb350f.json 
 -  .env
 
