@@ -26,6 +26,7 @@ http://34.64.168.83:5001/predict
 **모델 결과**
 
 클라이언트는 서버로부터 스트림을 받아 `EventSource` 객체를 통해 서버가 푸시하는 데이터를 받아 처리할 수 있다.
+
 ```js
 const eventSource = new EventSource('http://34.64.168.83:5001/classify')
 
@@ -40,10 +41,38 @@ eventSource.addEventListener('sse', function (e) {
 ```
 
 <br/>
+
+## example
+
+<p align="center"><img  src="https://cdn.discordapp.com/attachments/1004560087886614620/1015069980682895441/20220902_102301.jpg"  width="300"></p>
+
+```
+{colors: 'brown', letters: 'BMT', shape: 'oval'}
+```
+
 <br/>
 
+<p align="center"><img  src="https://cdn.discordapp.com/attachments/1004560087886614620/1015071710766170122/20220902_102945.jpg"  width="300"></p>
 
-## 출력값
+**글자가 없을 경우 'NONE' 이 반환됨**
+
+```
+{colors: 'green', letters: 'NONE', shape: 'oval'}
+```
+
+<br/>
+
+<p align="center"><img  src="https://cdn.discordapp.com/attachments/977566878522294312/1019989326936952943/unknown.png"  width="300"></p>
+
+**두 가지 색상일 경우 'red/yellow'로 반환됨**
+
+```
+{colors: 'red/yellow', letters: '65SINIL', shape: 'rectangle'}
+```
+
+<br/>
+
+## 출력값 라벨
 
 ### shape
 ```
