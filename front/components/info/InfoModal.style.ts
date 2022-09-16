@@ -80,7 +80,7 @@ export const SecondServiceInfo = styled(
   "div",
   (props: { $bgColor: string }) => ({
     display: "grid",
-    gridTemplateRows: "50px auto",
+    gridTemplateRows: "50px auto 50px",
     backgroundColor: props.$bgColor,
   }),
 );
@@ -98,4 +98,12 @@ export const ContentContainer = styled("div", {
   display: "grid",
   gridTemplateRows: "1fr 1fr 0.5fr",
   justifySelf: "center",
+});
+
+export const Sources = styled("p", {
+  justifySelf: "end",
+  alignSelf: "end",
+  fontSize: "0.5rem",
+  color: "#fff",
+  margin: "0 1rem 1rem 0",
 });

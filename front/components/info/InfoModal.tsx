@@ -15,6 +15,7 @@ import {
   SecondServiceInfo,
   CloseBtn,
   ContentContainer,
+  Sources,
 } from "./InfoModal.style";
 
 interface InfoModalProps {
@@ -99,6 +100,7 @@ function InfoModal({ onClose }: InfoModalProps) {
             찾아보세요!
           </Description>
         </ContentContainer>
+        <Sources>Pharmacy Image Designed by Freepik</Sources>
       </SecondServiceInfo>
     </Container>
   );
