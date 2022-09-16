@@ -3,6 +3,7 @@ import { styled } from "styletron-react";
 export const Container = styled("div", {
   width: "100vw",
   height: "100vh",
+  position: "relative",
 });
 
 export const Filter = styled("div", (props: { $bgColor: string }) => ({

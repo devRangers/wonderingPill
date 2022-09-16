@@ -16,7 +16,11 @@ import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
 import { RefreshResponse } from "@modelTypes/refreshResponse";
-import { URL_WITHOUT_HEADER, SILENT_REFRESH_TIME } from "@utils/constant";
+import {
+  URL_WITHOUT_HEADER,
+  SILENT_REFRESH_TIME,
+  ROUTE,
+} from "@utils/constant";
 import Header from "@header/Header";
 import Footer from "@footer/Footer";
 
@@ -48,8 +52,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   useEffect(() => {
-    if (isDesktop) {
-      router.push("/info");
+    if (isDesktop && router.asPath !== ROUTE.INFO) {
+      router.push(ROUTE.INFO);
     }
   }, [router]);
 
