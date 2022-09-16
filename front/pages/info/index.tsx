@@ -71,7 +71,9 @@ const InfoPage: NextPage = () => {
           {(isInstallModalOpen && (
             <InstallModal onClose={() => setIsInstallModalOpen(false)} />
           )) ||
-            (isInfoModalOpen && <InfoModal />) ||
+            (isInfoModalOpen && (
+              <InfoModal onClose={() => setIsInfoModalOpen(false)} />
+            )) ||
             (isTeamModalOpen && (
               <TeamModal onClose={() => setIsTeamModalOpen(false)} />
             ))}
