@@ -19,11 +19,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Inquiry } from 'prisma/postgresClient';
-import { AuthService } from 'src/auth/auth.service';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
-import { GcsService } from 'src/gcs/gcs.service';
 import {
   DeleteUserResponse,
   getSignedUrlResponse,
@@ -38,11 +36,7 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   private readonly logger = new Logger(`UsersController`);
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly authService: AuthService,
-    private readonly gcsService: GcsService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @HttpCode(200)
   @Get('presigned-url')
@@ -61,7 +55,7 @@ export class UsersController {
   async getPresignedUrl(
     @GetCurrentUserId() id: string,
   ): Promise<getSignedUrlResponse> {
-    const { url, fileName } = await this.gcsService.getPresignedUrl(id);
+    const { url, fileName } = await this.usersService.getPresignedUrl(id);
     this.logger.verbose(`get user profileImg signed url Success!`);
     return {
       statusCode: 200,
@@ -101,7 +95,7 @@ export class UsersController {
   }
 
   @HttpCode(200)
-  @Patch('delete-user')
+  @Patch('delete')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '회원탈퇴 API',
@@ -127,7 +121,7 @@ export class UsersController {
   }
 
   @HttpCode(200)
-  @Patch('update-user')
+  @Patch('update')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '회원 정보 수정 API',
@@ -180,7 +174,7 @@ export class UsersController {
   }
 
   @HttpCode(200)
-  @Post('send-inquiry')
+  @Post('inquiry')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '고객센터 API',
