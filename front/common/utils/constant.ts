@@ -29,6 +29,7 @@ export const ROUTE = {
   MESSAGES: "/messages",
   ERROR: "/error",
   BLOCK: "/blocked",
+  INFO: "/info",
 };
 
 export const URL_WITHOUT_HEADER = [
@@ -40,4 +41,5 @@ export const URL_WITHOUT_HEADER = [
   ROUTE.PASSWORD_NEW,
   ROUTE.ERROR,
   ROUTE.BLOCK,
+  ROUTE.INFO,
 ];

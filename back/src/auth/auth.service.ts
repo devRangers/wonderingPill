@@ -35,7 +35,7 @@ export class AuthService {
       if (this.getUserByEmail(email + '_')) {
         const newUser: User = await this.prisma.user.update({
           where: { email: email + '_' },
-          data: { email },
+          data: { email, isDeleted: true },
         });
 
         return newUser;

@@ -14,6 +14,7 @@ export class PillService {
 
   async bookmarkPill(id: string, pill_id: number) {
     const pill = await this.checkBookmark(id, pill_id);
+    // 알림 삭제 필요
     try {
       let pills;
       if (pill.length === 0) {
