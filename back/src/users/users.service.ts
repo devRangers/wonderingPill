@@ -6,6 +6,7 @@ import {
 import * as argon from 'argon2';
 import { Inquiry, User } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
+import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendInquiryDto, UpdateUserDto } from './dto';
 
@@ -14,6 +15,7 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
+    private readonly gcsService: GcsService,
   ) {}
 
   async deleteUser(id: string) {
@@ -54,6 +56,13 @@ export class UsersService {
     if (!check) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
+  }
+
+  async getPresignedUrl(id: string) {
+    const { url, fileName } = await this.gcsService.getPresignedUrl(id);
+    const img = url.split('?')[0];
+    await this.saveImg(id, img);
+    return { url, fileName };
   }
 
   async saveImg(id: string, img: string) {

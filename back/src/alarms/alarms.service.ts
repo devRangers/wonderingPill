@@ -133,7 +133,6 @@ export class AlarmsService {
     const agenda = await this.setAgenda(id, pillBookmarkId);
 
     try {
-      console.log(id + '-' + pillBookmarkId);
       await agenda.cancel({ name: id + '-' + pillBookmarkId });
       await agenda.cancel({ name: id + '-' + pillBookmarkId + ':repeat' });
     } catch (error) {
