@@ -1,12 +1,12 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Logger,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -59,7 +59,7 @@ export class AlarmsController {
   }
 
   @HttpCode(204)
-  @Delete(':id')
+  @Put(':id')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '푸쉬 알림 취소 API',
