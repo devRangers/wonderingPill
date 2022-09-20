@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
 import {
   Container,
@@ -27,11 +27,11 @@ const categoryBtn = {
 };
 
 function InstallModal({ onClose }: InstallModalProps) {
-  const [isCategoryBtnClicked, setIsCategoryBtnClicked] = useState([
-    true,
-    false,
-    false,
-  ]);
+  const [isCategoryBtnClicked, setIsCategoryBtnClicked] = useState(() => {
+    const tempArr = Array(Object.keys(categoryBtn).length).fill(false);
+    tempArr[0] = true;
+    return tempArr;
+  });
 
   const catrgoryBtnClickHandler = (idx: number) => {
     setIsCategoryBtnClicked(() => {
