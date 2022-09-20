@@ -12,6 +12,7 @@ import {
   TopBorder,
 } from "./Option.style";
 import ButtonSection from "./ButtonSection";
+import Form from "./OptionForm";
 
 export interface ButtonValue {
   name: string;
@@ -149,6 +150,7 @@ function Option() {
           isButtonSelected={isPatternSelected}
           handleClickButtonSelect={handleClickPatternButtonSelect}
         />
+        <Form />
       </MainContent>
     </Container>
   );
