@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment } from "react";
 import { useRouter } from "next/router";
 import {
   FULL_HEIGHT,
@@ -113,7 +113,7 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
           <BtnContainer>
             {Object.entries(ButtonTitle).map(([key, value]) =>
               !value.canUseWithoutLogin && !user.id ? (
-                <></>
+                <Fragment key={key}></Fragment>
               ) : (
                 <SidebarBtn
                   key={key}
