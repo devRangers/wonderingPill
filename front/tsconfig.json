@@ -29,6 +29,7 @@
       "@errorContainer/*": ["common/errorContainer/*"],
       "@utils/*": ["common/utils/*"],
       "@accountComp/*": ["components/account/*"],
+      "@infoComp/*": ["components/info/*"],
       "@loginComp/*": ["components/login/*"],
       "@mainComp/*": ["components/main/*"],
       "@mypage/*": ["components/my-page*"],

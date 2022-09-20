@@ -28,6 +28,7 @@ export const ROUTE = {
   MY_PAGE_MODIFY: "/my-page/modify",
   ERROR: "/error",
   BLOCK: "/blocked",
+  INFO: "/info",
 };
 
 export const URL_WITHOUT_HEADER = [
@@ -39,4 +40,5 @@ export const URL_WITHOUT_HEADER = [
   ROUTE.PASSWORD_NEW,
   ROUTE.ERROR,
   ROUTE.BLOCK,
+  ROUTE.INFO,
 ];
