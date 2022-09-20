@@ -80,3 +80,38 @@ export const OptionButton = styled(
     height: "1.5rem",
   }),
 );
+
+export const Form = styled("form", {
+  display: "grid",
+  gridTemplateRows: "1fr 1fr 1fr",
+  alignItems: "center",
+});
+
+export const InputWrapper = styled("div", (props: { $color: string }) => ({
+  display: "flex",
+  color: props.$color,
+  fontWeight: "bold",
+}));
+
+export const Label = styled("label", {
+  flex: 0.3,
+  textAlign: "center",
+});
+
+export const Input = styled("input", (props: { $borderColor: string }) => ({
+  flex: 0.6,
+  border: "none",
+  borderBottom: `2px solid ${props.$borderColor}`,
+  ":focus": {
+    outline: "none",
+  },
+}));
+
+export const Button = styled("button", (props: { $bgColor: string }) => ({
+  width: "55%",
+  height: "2.5rem",
+  color: "#fff",
+  backgroundColor: props.$bgColor,
+  margin: "0 auto",
+  borderRadius: "2rem",
+}));
