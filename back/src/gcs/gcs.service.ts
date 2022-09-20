@@ -6,14 +6,23 @@ import { ConfigService } from '@nestjs/config';
 export class GcsService {
   constructor(private readonly configService: ConfigService) {}
 
-  async getPresignedUrl(id: string) {
-    const fileName = id + '_profile.png';
-    const bucketName = 'wonderingpill-bucket/user_profileImg/';
+  async setStorage() {
     try {
       const storage = new Storage({
         keyFilename: `src/secure/${this.configService.get('GCS_KEY_FILE')}`,
       });
+      return storage;
+    } catch (error) {
+      throw new ForbiddenException('외부 스토리지에 연결하지 못했습니다.');
+    }
+  }
 
+  async getPresignedUrl(id: string) {
+    const fileName =
+      '_' + new Date(Date.now()).getTime() + '_' + id + '_profile.png';
+    const bucketName = 'wonderingpill-bucket/user_profileImg/';
+    const storage = await this.setStorage();
+    try {
       const url = await storage
         .bucket(bucketName)
         .file(fileName)
@@ -28,6 +37,22 @@ export class GcsService {
     } catch (error) {
       throw new ForbiddenException(
         '외부 스토리지에서 signed url를 받아오지 못했습니다.',
+      );
+    }
+  }
+
+  async deleteImg(oldDate: string, id: string) {
+    const fileName = '_' + oldDate + '_' + id + '_profile.png';
+    const bucketName = 'wonderingpill-bucket/user_profileImg/';
+    const storage = await this.setStorage();
+
+    try {
+      await storage.bucket(bucketName).file(fileName).delete({
+        ignoreNotFound: true,
+      });
+    } catch (error) {
+      throw new ForbiddenException(
+        '외부 스토리지에서 이미지를 삭제하지 못했습니다.',
       );
     }
   }
