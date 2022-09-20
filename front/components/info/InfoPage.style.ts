@@ -50,7 +50,6 @@ export const Button = styled("button", (props: { $btnColor: string }) => ({
   outlineOffset: "-4px",
   transition: "outline-offset 200ms ease",
   ":hover": {
-    outline: `4px solid ${props.$btnColor}`,
     outlineOffset: "4px",
   },
 }));
