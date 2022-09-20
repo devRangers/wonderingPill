@@ -33,7 +33,7 @@ model PharmacyBookMark {
 }
 
 model User {
-  id               String             @id @default(uuid())
+  id               String             @id
   email            String             @unique @db.VarChar(50)
   name             String?            @db.VarChar(20)
   birth            String?            @db.VarChar(9)
