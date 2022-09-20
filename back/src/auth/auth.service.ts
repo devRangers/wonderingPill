@@ -9,6 +9,7 @@ import * as argon from 'argon2';
 import { User } from 'prisma/postgresClient';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
+import { v4 as uuid } from 'uuid';
 import { providerType } from './auth-provider.enum';
 import {
   ChangePasswordDto,
@@ -32,23 +33,36 @@ export class AuthService {
     const { name, email, password, phone, birth } = createUserDto;
 
     try {
-      if (this.getUserByEmail(email + '_')) {
+      const user: User = await this.getUserByEmail(email + '_');
+      const hashedPassword: string = await argon.hash(password);
+      const id = uuid;
+
+      if (user) {
+        /** 이미 탈퇴한 회원이 존재할 경우 계정 복원 */
         const newUser: User = await this.prisma.user.update({
           where: { email: email + '_' },
-          data: { email, isDeleted: true },
+          data: {
+            email,
+            password: hashedPassword,
+            birth,
+            phone,
+            isDeleted: true,
+          },
         });
 
         return newUser;
       } else {
-        const hashedPassword: string = await argon.hash(password);
+        /** 탈퇴 이력이 없을 경우 신규 유저 생성 */
         const newUser: User = await this.prisma.user.create({
           data: {
+            id,
             name,
             password: hashedPassword,
             phone,
             birth,
             email,
             provider: providerType.LOCAL,
+            profileImg: `https://storage.googleapis.com/wonderingpill-bucket/user_profileImg/${id}_profile.png`,
           },
         });
 
@@ -265,6 +279,7 @@ export class AuthService {
     try {
       const newUser: User = await this.prisma.user.create({
         data: {
+          id: uuid,
           name: payload.name,
           password: payload.password,
           email: payload.email,
