@@ -10,6 +10,8 @@ import { useMutation } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
+import { GetAlarmSetResponseDto as GetAlarmResponse } from "@modelTypes/getAlarmSetResponseDto";
+import { GetAlarmSetResponseDtoAlarm as GetAlarmValues } from "@modelTypes/getAlarmSetResponseDtoAlarm";
 import { MAIN_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
 import { getToken } from "@utils/firebase";
 import {
@@ -31,29 +33,31 @@ import RemindForm from "@messagesComp/setting/RemindForm";
 
 type SettingFormValues = Pick<SetAlarmValues, "hour" | "minute" | "repeatTime">;
 
-const fakeData = {
-  name: "가스모틴정",
-  link: "/messages/setting/124",
-};
+interface SetNotificationPageProps {
+  bookmarkId: string;
+  setting: GetAlarmValues;
+}
 
-const initialValue: SettingFormValues = {
-  hour: 0,
-  minute: 0,
-  repeatTime: 0,
-};
-
-const SetNotificationPage: NextPage = () => {
+const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
+  bookmarkId,
+  setting,
+}) => {
   const [user] = useAtom(userAtom);
 
   const [isNotificationToggle, setIsNotificationToggle] = useState(false);
   const [isRemindToggle, setIsRemindToggle] = useState(false);
   const [isAfternoon, setIsAfternoon] = useState(false);
-  const [vip, setVip] = useState<number[]>([]);
+  const [vip, setVip] = useState<number[]>(
+    typeof setting.vip === "object" ? setting.vip : [],
+  );
+  const [pillName, setPillName] = useState(
+    typeof setting.pillName === "string" ? setting.pillName : "",
+  );
   const [deviceToken, setDeviceToken] = useState("");
 
   const setAlarmMutation = useMutation(
     (data: SetAlarmValues) =>
-      Api.post<Response, SetAlarmValues>("/alarms/set-alarm", data),
+      Api.post<Response, SetAlarmValues>("/alarms/set", data),
     {
       onSuccess: (data) => {
         console.log(data);
@@ -64,6 +68,12 @@ const SetNotificationPage: NextPage = () => {
     },
   );
 
+  const initialValue: SettingFormValues = {
+    hour: typeof setting.hour === "number" ? setting.hour : 0,
+    minute: typeof setting.minute === "number" ? setting.minute : 0,
+    repeatTime: typeof setting.repeatTime === "number" ? setting.repeatTime : 0,
+  };
+
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: Yup.object({}),
@@ -71,11 +81,12 @@ const SetNotificationPage: NextPage = () => {
       if (isNotificationToggle) {
         const { hour, repeatTime, minute } = values;
         const dataToSubmit: SetAlarmValues = {
+          pillBookmarkId: bookmarkId,
           deviceToken,
           vip,
           minute,
           hour: isAfternoon && hour < 12 ? hour + 12 : hour,
-          pillName: fakeData.name,
+          pillName,
           userName: typeof user.name === "string" ? user.name : "",
           repeatTime: isRemindToggle ? repeatTime : 0,
         };
@@ -96,13 +107,14 @@ const SetNotificationPage: NextPage = () => {
     getDeviceToken();
   }, []);
 
+  // TODO: 알림 설정되어있으면 설정된 값으로 렌더링하기
   return (
     <Container>
       <ContentContainer onSubmit={formik.handleSubmit}>
         <TitleContainer>
           <TopLine $bgColor={SEMI_ACCENT_COLOR} />
-          <Title $txtColor={SEMI_ACCENT_COLOR}>{fakeData.name}</Title>
-          <Link href={fakeData.link}>
+          <Title $txtColor={SEMI_ACCENT_COLOR}>{pillName}</Title>
+          <Link href={`/search/result/${pillName}`}>
             <LinkBtn $txtColor={MAIN_COLOR}>알약 상세 정보 보러가기 →</LinkBtn>
           </Link>
         </TitleContainer>
@@ -141,4 +153,24 @@ const SetNotificationPage: NextPage = () => {
 
 export default SetNotificationPage;
 
-// TODO: 알림 정보 가져오기(getServerSideProps)
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const bookmarkId = context.query.id;
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/alarms/set/${bookmarkId}`,
+    {
+      headers: {
+        Cookie: `AccessToken=${context.req.cookies["AccessToken"]}`,
+      },
+    },
+  );
+  const result: GetAlarmResponse = await res.json();
+  console.log(result);
+
+  return {
+    props: {
+      bookmarkId,
+      setting: result.alarm,
+    },
+  };
+};
