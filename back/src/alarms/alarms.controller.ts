@@ -101,7 +101,7 @@ export class AlarmsController {
   @ApiParam({
     name: 'id',
     required: true,
-    description: '약 이름',
+    description: '약 북마크 아이디',
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')

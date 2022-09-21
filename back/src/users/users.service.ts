@@ -60,12 +60,13 @@ export class UsersService {
 
   async getPresignedUrl(id: string) {
     const { url, fileName } = await this.gcsService.getPresignedUrl(id);
-    const img = url.split('?')[0];
-    await this.saveImg(id, img);
     return { url, fileName };
   }
 
   async saveImg(id: string, img: string) {
+    const user = await this.authService.getUserById(id);
+    const oldDate = user.profileImg.split('_')[2];
+    await this.gcsService.deleteImg(oldDate, id);
     try {
       await this.prisma.user.update({
         where: { id },

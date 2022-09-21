@@ -205,22 +205,50 @@ export class AlarmsService {
 
   async getSetAlarm(id: string, pillBookmarkId: string) {
     const agenda = await this.setAgenda(id, pillBookmarkId);
-    const result = (async function () {
-      await agenda.start();
-      const job = await agenda.jobs({ name: id + '-' + pillBookmarkId });
-      const alarm = job.pop().attrs;
+    const pillName = await this.getPillName(pillBookmarkId);
+    try {
+      const result = (async function () {
+        await agenda.start();
+        const job = await agenda.jobs({ name: id + '-' + pillBookmarkId });
+        if (job.length === 0) {
+          return {
+            minute: 0,
+            hour: 0,
+            vip: [],
+            repeatTime: 0,
+            pillName,
+          };
+        } else {
+          const alarm = job.pop().attrs;
 
-      const arr = alarm.repeatInterval.split(' ');
-      const repeat = alarm.data.repeatTime;
+          const arr = alarm.repeatInterval.split(' ');
+          const repeat = alarm.data.repeatTime;
 
-      return {
-        minute: Number(arr[0]),
-        hour: Number(arr[1]),
-        vip: arr[4].split(',').map((v) => Number(v)),
-        repeatTime: repeat,
-      };
-    })();
+          return {
+            minute: Number(arr[0]),
+            hour: Number(arr[1]),
+            vip: arr[4].split(',').map((v) => Number(v)),
+            repeatTime: repeat,
+            pillName,
+          };
+        }
+      })();
 
-    return result;
+      return result;
+    } catch (error) {
+      throw new ForbiddenException('알림을 조회하지 못했습니다.');
+    }
+  }
+
+  async getPillName(id: string) {
+    try {
+      const bookmark = await this.prisma.pillBookMark.findUnique({
+        where: { id },
+        select: { Pill: { select: { name: true } } },
+      });
+      return bookmark.Pill.name;
+    } catch (error) {
+      throw new ForbiddenException('약을 조회하지 못했습니다.');
+    }
   }
 }
