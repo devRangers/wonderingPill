@@ -88,7 +88,6 @@ export class AlarmsController {
 
   @HttpCode(200)
   @Get('set/:id')
-  @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '알림 설정창 조회 API',
     description: '알림 설정창에서 설정 내용을 조회한다.',
@@ -103,14 +102,11 @@ export class AlarmsController {
     required: true,
     description: '약 북마크 아이디',
   })
-  @ApiCookieAuth('accessToken')
-  @ApiCookieAuth('refreshToken')
   async getSetAlarm(
-    @GetCurrentUserId() id: string,
     @Param('id') pillBookmarkId: string,
   ): Promise<GetAlarmSetResponseDto> {
-    const alarm = await this.alarmsService.getSetAlarm(id, pillBookmarkId);
-    this.logger.verbose(`Get User ${id} pill alarm set`);
+    const alarm = await this.alarmsService.getSetAlarm(pillBookmarkId);
+    this.logger.verbose(`Get User ${alarm} pill alarm set`);
     return {
       statusCode: 200,
       message: '알림 설정을 읽어왔습니다.',

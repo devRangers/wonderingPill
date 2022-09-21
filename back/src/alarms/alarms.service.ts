@@ -203,9 +203,10 @@ export class AlarmsService {
     }
   }
 
-  async getSetAlarm(id: string, pillBookmarkId: string) {
+  async getSetAlarm(pillBookmarkId: string) {
+    const { pillName, id } = await this.getPillName(pillBookmarkId);
     const agenda = await this.setAgenda(id, pillBookmarkId);
-    const pillName = await this.getPillName(pillBookmarkId);
+
     try {
       const result = (async function () {
         await agenda.start();
@@ -244,9 +245,9 @@ export class AlarmsService {
     try {
       const bookmark = await this.prisma.pillBookMark.findUnique({
         where: { id },
-        select: { Pill: { select: { name: true } } },
+        select: { Pill: { select: { name: true } }, user_id: true },
       });
-      return bookmark.Pill.name;
+      return { pillName: bookmark.Pill.name, id: bookmark.user_id };
     } catch (error) {
       throw new ForbiddenException('약을 조회하지 못했습니다.');
     }
