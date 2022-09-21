@@ -205,22 +205,35 @@ export class AlarmsService {
 
   async getSetAlarm(id: string, pillBookmarkId: string) {
     const agenda = await this.setAgenda(id, pillBookmarkId);
-    const result = (async function () {
-      await agenda.start();
-      const job = await agenda.jobs({ name: id + '-' + pillBookmarkId });
-      const alarm = job.pop().attrs;
+    try {
+      const result = (async function () {
+        await agenda.start();
+        const job = await agenda.jobs({ name: id + '-' + pillBookmarkId });
+        if (job.length === 0) {
+          return {
+            minute: 0,
+            hour: 0,
+            vip: [],
+            repeatTime: 0,
+          };
+        } else {
+          const alarm = job.pop().attrs;
 
-      const arr = alarm.repeatInterval.split(' ');
-      const repeat = alarm.data.repeatTime;
+          const arr = alarm.repeatInterval.split(' ');
+          const repeat = alarm.data.repeatTime;
 
-      return {
-        minute: Number(arr[0]),
-        hour: Number(arr[1]),
-        vip: arr[4].split(',').map((v) => Number(v)),
-        repeatTime: repeat,
-      };
-    })();
+          return {
+            minute: Number(arr[0]),
+            hour: Number(arr[1]),
+            vip: arr[4].split(',').map((v) => Number(v)),
+            repeatTime: repeat,
+          };
+        }
+      })();
 
-    return result;
+      return result;
+    } catch (error) {
+      throw new ForbiddenException('알림을 삭제하지 못했습니다.');
+    }
   }
 }
