@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  ForbiddenException,
   Get,
   HttpCode,
   Logger,
@@ -24,8 +23,9 @@ import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import {
   DeleteUserResponse,
+  GetMypageResponse,
+  GetMypageResponseDto,
   getSignedUrlResponse,
-  getUserResponse,
   SendInquiryDto,
   SendInquiryResponse,
   UpdateUserDto,
@@ -37,6 +37,32 @@ import { UsersService } from './users.service';
 export class UsersController {
   private readonly logger = new Logger(`UsersController`);
   constructor(private readonly usersService: UsersService) {}
+
+  @HttpCode(200)
+  @Get('mypage')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '마이페이지 조회 API',
+    description: '마이페이지에서 북마크(약, 약국)를 조회 한다',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '마이페이지 조회 성공',
+    type: GetMypageResponseDto,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async getMypage(
+    @GetCurrentUserId() id: string,
+  ): Promise<GetMypageResponseDto> {
+    const user: GetMypageResponse = await this.usersService.getMypage(id);
+    this.logger.log(`GET /users/mypage Success!`);
+    return {
+      statusCode: 200,
+      message: '마이페이지 조회를 성공했습니다.',
+      result: { user },
+    };
+  }
 
   @HttpCode(200)
   @Get('presigned-url')
@@ -144,32 +170,6 @@ export class UsersController {
     return {
       statusCode: 200,
       message: '회원 정보가 수정되었습니다.',
-    };
-  }
-
-  @HttpCode(200)
-  @Get('mypage')
-  @UseGuards(AccessGuard)
-  @ApiOperation({
-    summary: '마이페이지 조회 API',
-    description: '마이페이지에서 북마크를 조회 한다(알림 추가되어야함)',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '마이페이지 조회 성공',
-    type: getUserResponse,
-  })
-  @ApiCookieAuth('accessToken')
-  @ApiCookieAuth('refreshToken')
-  async getUserInfo(@GetCurrentUserId() id: string): Promise<getUserResponse> {
-    const user = await this.usersService.getUserInfo(id);
-    if (!user) throw new ForbiddenException('회원 정보를 가져오지 못했습니다.');
-
-    this.logger.verbose(`get user mypage info Success!`);
-    return {
-      statusCode: 200,
-      message: '마이페이지 조회를 성공했습니다.',
-      result: { user },
     };
   }
 

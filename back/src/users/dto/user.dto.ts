@@ -8,6 +8,21 @@ import {
 import { providerType } from 'src/auth/auth-provider.enum';
 import { CommonResponseDto } from 'src/common/dto';
 
+export interface GetMypageResponse {
+  PharmacyBookMark: { Pharmacy: { name: string; phone: string } }[] | [];
+  PillBookMark: { Pill: { name: string }; alarm: boolean }[] | [];
+}
+
+export class GetMypageResponseDto extends CommonResponseDto {
+  @IsJSON()
+  result: {
+    user: {
+      PharmacyBookMark: { Pharmacy: { name: string; phone: string } }[] | [];
+      PillBookMark: { Pill: { name: string }; alarm: boolean }[] | [];
+    };
+  };
+}
+
 export class DeleteUserResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
@@ -44,12 +59,6 @@ export class SendInquiryResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   result: { inquiry };
-}
-
-export class getUserResponse extends CommonResponseDto {
-  @IsJSON()
-  @IsNotEmpty()
-  result: { user };
 }
 
 export class getSignedUrlResponse extends CommonResponseDto {

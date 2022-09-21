@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as argon from 'argon2';
@@ -8,7 +9,7 @@ import { Inquiry, User } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
 import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SendInquiryDto, UpdateUserDto } from './dto';
+import { GetMypageResponse, SendInquiryDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +18,31 @@ export class UsersService {
     private readonly authService: AuthService,
     private readonly gcsService: GcsService,
   ) {}
+
+  async getMypage(id: string): Promise<GetMypageResponse> {
+    try {
+      /** 현재 로그인된 user의 mypage에 필요한 bookmark 정보 조회 */
+      const user: GetMypageResponse = await this.prisma.user.findUnique({
+        where: { id },
+        select: {
+          PharmacyBookMark: {
+            select: { Pharmacy: { select: { name: true, phone: true } } },
+          },
+          PillBookMark: {
+            select: { Pill: { select: { name: true } }, alarm: true },
+          },
+        },
+      });
+
+      /** 현재 로그인된 user의 정보가 존재하지 않을 경우 에러처리 */
+      if (!user) {
+        throw new Error();
+      }
+      return user;
+    } catch (error) {
+      throw new NotFoundException('회원을 검색하지 못했습니다.');
+    }
+  }
 
   async deleteUser(id: string) {
     const user = await this.authService.getUserById(id);
@@ -74,25 +100,6 @@ export class UsersService {
       });
     } catch (error) {
       throw new ForbiddenException('프로필 이미지를 수정하지 못했습니다.');
-    }
-  }
-
-  async getUserInfo(id: string) {
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: { id },
-        select: {
-          PharmacyBookMark: {
-            select: { Pharmacy: { select: { name: true, phone: true } } },
-          },
-          PillBookMark: {
-            select: { Pill: { select: { name: true } }, alarm: true },
-          },
-        },
-      });
-      return user;
-    } catch (error) {
-      throw new ForbiddenException('회원을 검색할 수 없습니다.');
     }
   }
 
