@@ -31,7 +31,7 @@ interface MessageValues {
 }
 
 interface MessageResponse extends CommonResponse {
-  result: MessageValues[];
+  alarms: MessageValues[];
 }
 
 const MessageListPage: NextPage = () => {
@@ -45,8 +45,8 @@ const MessageListPage: NextPage = () => {
     {
       retry: false,
       refetchOnWindowFocus: false,
-      onSuccess: ({ result }) => {
-        setMessages((prev) => [...new Set([...prev, ...result])]);
+      onSuccess: ({ alarms }) => {
+        setMessages((prev) => [...new Set([...prev, ...alarms])]);
       },
     },
   );
