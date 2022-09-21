@@ -205,6 +205,7 @@ export class AlarmsService {
 
   async getSetAlarm(id: string, pillBookmarkId: string) {
     const agenda = await this.setAgenda(id, pillBookmarkId);
+    const pillName = await this.getPillName(pillBookmarkId);
     try {
       const result = (async function () {
         await agenda.start();
@@ -215,6 +216,7 @@ export class AlarmsService {
             hour: 0,
             vip: [],
             repeatTime: 0,
+            pillName,
           };
         } else {
           const alarm = job.pop().attrs;
@@ -227,13 +229,26 @@ export class AlarmsService {
             hour: Number(arr[1]),
             vip: arr[4].split(',').map((v) => Number(v)),
             repeatTime: repeat,
+            pillName,
           };
         }
       })();
 
       return result;
     } catch (error) {
-      throw new ForbiddenException('알림을 삭제하지 못했습니다.');
+      throw new ForbiddenException('알림을 조회하지 못했습니다.');
+    }
+  }
+
+  async getPillName(id: string) {
+    try {
+      const bookmark = await this.prisma.pillBookMark.findUnique({
+        where: { id },
+        select: { Pill: { select: { name: true } } },
+      });
+      return bookmark.Pill.name;
+    } catch (error) {
+      throw new ForbiddenException('약을 조회하지 못했습니다.');
     }
   }
 }
