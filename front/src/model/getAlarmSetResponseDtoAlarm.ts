@@ -11,4 +11,5 @@ export type GetAlarmSetResponseDtoAlarm = {
   hour?: number;
   vip?: number[];
   repeatTime?: number;
+  pillName?: string;
 };

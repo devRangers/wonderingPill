@@ -9,5 +9,5 @@
 export interface GetAlarmsResponseDto {
   statusCode: number;
   message: string;
-  result: string[];
+  alarms: string[];
 }

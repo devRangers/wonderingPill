@@ -7,6 +7,7 @@
  */
 
 export interface SetAlarmDto {
+  pillBookmarkId: string;
   deviceToken: string;
   vip: number[];
   hour: number;
