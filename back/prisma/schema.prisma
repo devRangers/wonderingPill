@@ -33,7 +33,7 @@ model PharmacyBookMark {
 }
 
 model User {
-  id               String             @id
+  id               String             @id @default(uuid())
   email            String             @unique @db.VarChar(50)
   name             String?            @db.VarChar(20)
   birth            String?            @db.VarChar(9)
@@ -41,7 +41,7 @@ model User {
   isDeleted        Boolean?           @default(false)
   password         String?            @db.VarChar(100)
   phone            String?            @unique @db.VarChar(20)
-  profileImg       String?            @default("")
+  profileImg       String?            @default("https://storage.googleapis.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png")
   provider         Provider?          @default(LOCAL)
   updatedAt        DateTime?          @updatedAt
   Inquiry          Inquiry[]

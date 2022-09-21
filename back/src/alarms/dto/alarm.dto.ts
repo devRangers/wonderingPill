@@ -51,5 +51,11 @@ export class GetAlarmsResponseDto extends CommonResponseDto {
 
 export class GetAlarmSetResponseDto extends CommonResponseDto {
   @IsJSON()
-  alarm: { minute: number; hour: number; vip: number[]; repeatTime: number };
+  alarm: {
+    minute: number;
+    hour: number;
+    vip: number[];
+    repeatTime: number;
+    pillName: string;
+  };
 }
