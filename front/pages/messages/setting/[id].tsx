@@ -165,7 +165,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   );
   const result: GetAlarmResponse = await res.json();
-  console.log(result);
 
   return {
     props: {
