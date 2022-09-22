@@ -115,17 +115,13 @@ export class AlarmsService {
 
   async getCurrTime() {
     const fullTime = new Date(Date.now());
-    const time =
-      fullTime.getFullYear().toString() +
-      '.' +
-      (fullTime.getMonth() + 1).toString() +
-      '.' +
-      fullTime.getDate().toString() +
-      ' ' +
-      fullTime.getHours().toString() +
-      ':' +
-      fullTime.getMinutes().toString();
+    const year = fullTime.getFullYear().toString();
+    const month = (fullTime.getMonth() + 1).toString();
+    const date = fullTime.getDate().toString();
+    const hour = ('0' + fullTime.getHours()).slice(-2);
+    const minute = ('0' + fullTime.getMinutes()).slice(-2);
 
+    const time = year + '.' + month + '.' + date + ' ' + hour + ':' + minute;
     return time;
   }
 
