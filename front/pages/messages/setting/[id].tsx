@@ -43,7 +43,9 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   const [user] = useAtom(userAtom);
 
   const [isNotificationToggle, setIsNotificationToggle] = useState(true);
-  const [isRemindToggle, setIsRemindToggle] = useState(false);
+  const [isRemindToggle, setIsRemindToggle] = useState(
+    typeof setting.repeatTime === "number" && setting.repeatTime > 0,
+  );
   const [isAfternoon, setIsAfternoon] = useState(
     typeof setting.hour === "number" && setting.hour >= 12,
   );
@@ -131,6 +133,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
           <RemindForm
             disabled={!isNotificationToggle}
             isRemindToggle={isRemindToggle}
+            repeatTime={formik.values.repeatTime}
             setIsRemindToggle={setIsRemindToggle}
             onChange={formik.handleChange}
           />

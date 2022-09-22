@@ -13,6 +13,7 @@ import Switch from "./Switch";
 interface RemindFormProps {
   disabled: boolean;
   isRemindToggle: boolean;
+  repeatTime: number;
   setIsRemindToggle: Dispatch<SetStateAction<boolean>>;
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
 }
@@ -20,6 +21,7 @@ interface RemindFormProps {
 function RemindForm({
   disabled,
   isRemindToggle,
+  repeatTime,
   setIsRemindToggle,
   onChange,
 }: RemindFormProps) {
@@ -40,6 +42,7 @@ function RemindForm({
           <Input
             type="number"
             name="repeatTime"
+            value={repeatTime}
             min="1"
             disabled={disabled || !isRemindToggle}
             onChange={onChange}
