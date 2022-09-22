@@ -12,7 +12,7 @@ import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import { GetAlarmSetResponseDto as GetAlarmResponse } from "@modelTypes/getAlarmSetResponseDto";
 import { GetAlarmSetResponseDtoAlarm as GetAlarmValues } from "@modelTypes/getAlarmSetResponseDtoAlarm";
-import { MAIN_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
+import { MAIN_COLOR, SEMI_ACCENT_COLOR, ROUTE } from "@utils/constant";
 import { getToken } from "@utils/firebase";
 import {
   ContentContainer,
@@ -28,10 +28,8 @@ import {
 } from "@messagesComp/setting/SetNotificationPage.style";
 import Container from "@container/Container";
 import Switch from "@messagesComp/setting/Switch";
-import TimeForm from "@messagesComp/setting/TimeForm";
+import TimeForm, { SettingFormValues } from "@messagesComp/setting/TimeForm";
 import RemindForm from "@messagesComp/setting/RemindForm";
-
-type SettingFormValues = Pick<SetAlarmValues, "hour" | "minute" | "repeatTime">;
 
 interface SetNotificationPageProps {
   bookmarkId: string;
@@ -44,9 +42,11 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
 }) => {
   const [user] = useAtom(userAtom);
 
-  const [isNotificationToggle, setIsNotificationToggle] = useState(false);
+  const [isNotificationToggle, setIsNotificationToggle] = useState(true);
   const [isRemindToggle, setIsRemindToggle] = useState(false);
-  const [isAfternoon, setIsAfternoon] = useState(false);
+  const [isAfternoon, setIsAfternoon] = useState(
+    typeof setting.hour === "number" && setting.hour >= 12,
+  );
   const [vip, setVip] = useState<number[]>(
     typeof setting.vip === "object" ? setting.vip : [],
   );
@@ -55,17 +55,8 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   );
   const [deviceToken, setDeviceToken] = useState("");
 
-  const setAlarmMutation = useMutation(
-    (data: SetAlarmValues) =>
-      Api.post<Response, SetAlarmValues>("/alarms/set", data),
-    {
-      onSuccess: (data) => {
-        console.log(data);
-      },
-      onError: (err) => {
-        console.log(err);
-      },
-    },
+  const setAlarmMutation = useMutation((data: SetAlarmValues) =>
+    Api.post<Response, SetAlarmValues>("/alarms/set", data),
   );
 
   const initialValue: SettingFormValues = {
@@ -107,7 +98,6 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
     getDeviceToken();
   }, []);
 
-  // TODO: 알림 설정되어있으면 설정된 값으로 렌더링하기
   return (
     <Container>
       <ContentContainer onSubmit={formik.handleSubmit}>
@@ -132,6 +122,8 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
           <TimeForm
             disabled={!isNotificationToggle}
             isAfternoon={isAfternoon}
+            values={formik.values}
+            vip={vip}
             onChange={formik.handleChange}
             setVip={setVip}
             setIsAfternoon={setIsAfternoon}
@@ -155,12 +147,20 @@ export default SetNotificationPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const bookmarkId = context.query.id;
+  const token = context.req.cookies["AccessToken"] || null;
+
+  if (!token) {
+    return {
+      redirect: { destination: ROUTE.MAIN, permanent: false },
+      props: {},
+    };
+  }
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_URL}/alarms/set/${bookmarkId}`,
     {
       headers: {
-        Cookie: `AccessToken=${context.req.cookies["AccessToken"]}`,
+        Cookie: `AccessToken=${token}`,
       },
     },
   );
