@@ -21,11 +21,13 @@ import { Inquiry } from 'prisma/postgresClient';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
+import { prefixConstant } from 'src/utils/prefix.constant';
 import {
   DeleteUserResponse,
   GetMypageResponse,
   GetMypageResponseDto,
-  getSignedUrlResponse,
+  GetPresignedUrlResponse,
+  GetPresignedUrlResponseDto,
   SendInquiryDto,
   SendInquiryResponse,
   UpdateUserDto,
@@ -35,7 +37,7 @@ import { UsersService } from './users.service';
 @ApiTags('Users API')
 @Controller('users')
 export class UsersController {
-  private readonly logger = new Logger(`UsersController`);
+  private readonly logger = new Logger(`${prefixConstant}/users`);
   constructor(private readonly usersService: UsersService) {}
 
   @HttpCode(200)
@@ -43,7 +45,7 @@ export class UsersController {
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '마이페이지 조회 API',
-    description: '마이페이지에서 북마크(약, 약국)를 조회 한다',
+    description: '마이페이지에서 필요한 북마크(약, 약국) 등 정보를 조회한다',
   })
   @ApiResponse({
     status: 200,
@@ -56,7 +58,7 @@ export class UsersController {
     @GetCurrentUserId() id: string,
   ): Promise<GetMypageResponseDto> {
     const user: GetMypageResponse = await this.usersService.getMypage(id);
-    this.logger.log(`GET /users/mypage Success!`);
+    this.logger.log(`GET /mypage Success!`);
     return {
       statusCode: 200,
       message: '마이페이지 조회를 성공했습니다.',
@@ -68,30 +70,31 @@ export class UsersController {
   @Get('presigned-url')
   @UseGuards(AccessGuard)
   @ApiOperation({
-    summary: 'signed url 요청 API',
-    description: '외부 스토리지 GCS에서 signed url 발급한다.',
+    summary: 'Presigned Url 발급 API',
+    description: '외부 스토리지 GCS에서 presigned url 발급한다.',
   })
   @ApiResponse({
     status: 200,
-    description: 'signed url 요청 성공',
-    type: getSignedUrlResponse,
+    description: 'Presigned Url 발급 성공',
+    type: GetPresignedUrlResponseDto,
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async getPresignedUrl(
     @GetCurrentUserId() id: string,
-  ): Promise<getSignedUrlResponse> {
-    const { url, fileName } = await this.usersService.getPresignedUrl(id);
-    this.logger.verbose(`get user profileImg signed url Success!`);
+  ): Promise<GetPresignedUrlResponseDto> {
+    const { url, fileName }: GetPresignedUrlResponse =
+      await this.usersService.getPresignedUrl(id);
+    this.logger.log(`GET /presigned-url Success!`);
     return {
       statusCode: 200,
-      message: 'signed url를 발급했습니다.',
+      message: 'presigned url를 발급했습니다.',
       result: { url, fileName },
     };
   }
 
   @HttpCode(200)
-  @Patch('save-profileImg')
+  @Patch('profile-img')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '프로필 이미지 수정 API',
@@ -121,32 +124,6 @@ export class UsersController {
   }
 
   @HttpCode(200)
-  @Patch('delete')
-  @UseGuards(AccessGuard)
-  @ApiOperation({
-    summary: '회원탈퇴 API',
-    description: '유저를 삭제 한다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '회원탈퇴 성공',
-    type: DeleteUserResponse,
-  })
-  @ApiCookieAuth('accessToken')
-  @ApiCookieAuth('refreshToken')
-  async deleteUser(
-    @GetCurrentUserId() id: string,
-  ): Promise<DeleteUserResponse> {
-    await this.usersService.deleteUser(id);
-    this.logger.verbose(`User ${id} delete Success!`);
-    return {
-      statusCode: 200,
-      message: '회원탈퇴가 완료되었습니다.',
-      result: { result: true },
-    };
-  }
-
-  @HttpCode(200)
   @Patch('update')
   @UseGuards(AccessGuard)
   @ApiOperation({
@@ -170,6 +147,32 @@ export class UsersController {
     return {
       statusCode: 200,
       message: '회원 정보가 수정되었습니다.',
+    };
+  }
+
+  @HttpCode(200)
+  @Patch('delete')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '회원탈퇴 API',
+    description: '유저를 삭제 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원탈퇴 성공',
+    type: DeleteUserResponse,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async deleteUser(
+    @GetCurrentUserId() id: string,
+  ): Promise<DeleteUserResponse> {
+    await this.usersService.deleteUser(id);
+    this.logger.verbose(`User ${id} delete Success!`);
+    return {
+      statusCode: 200,
+      message: '회원탈퇴가 완료되었습니다.',
+      result: { result: true },
     };
   }
 

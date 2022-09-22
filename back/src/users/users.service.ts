@@ -9,7 +9,12 @@ import { Inquiry, User } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
 import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GetMypageResponse, SendInquiryDto, UpdateUserDto } from './dto';
+import {
+  GetMypageResponse,
+  GetPresignedUrlResponse,
+  SendInquiryDto,
+  UpdateUserDto,
+} from './dto';
 
 @Injectable()
 export class UsersService {
@@ -19,9 +24,10 @@ export class UsersService {
     private readonly gcsService: GcsService,
   ) {}
 
+  /** 현재 로그인한 유저의 마이페이지 조회 */
   async getMypage(id: string): Promise<GetMypageResponse> {
     try {
-      /** 현재 로그인된 user의 mypage에 필요한 bookmark 정보 조회 */
+      /** 현재 로그인된 user의 mypage에 필요한 bookmark 등 정보를 DB에서 조회 */
       const user: GetMypageResponse = await this.prisma.user.findUnique({
         where: { id },
         select: {
@@ -34,7 +40,7 @@ export class UsersService {
         },
       });
 
-      /** 현재 로그인된 user의 정보가 존재하지 않을 경우 에러처리 */
+      /** DB에 현재 로그인된 user의 정보가 존재하지 않을 경우 에러처리 */
       if (!user) {
         throw new Error();
       }
@@ -42,6 +48,14 @@ export class UsersService {
     } catch (error) {
       throw new NotFoundException('회원을 검색하지 못했습니다.');
     }
+  }
+
+  /** 현재 로그인한 유저의 프로필 이미지 변경을 위한 PresignedUrl 발급 */
+  async getPresignedUrl(id: string): Promise<GetPresignedUrlResponse> {
+    /** 현재 로그인된 user의 mypage에 필요한 bookmark 등 정보를 DB에서 조회 */
+    const { url, fileName }: GetPresignedUrlResponse =
+      await this.gcsService.getPresignedUrl(id);
+    return { url, fileName };
   }
 
   async deleteUser(id: string) {
@@ -82,11 +96,6 @@ export class UsersService {
     if (!check) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
-  }
-
-  async getPresignedUrl(id: string) {
-    const { url, fileName } = await this.gcsService.getPresignedUrl(id);
-    return { url, fileName };
   }
 
   async saveImg(id: string, img: string) {

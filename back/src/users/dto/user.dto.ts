@@ -8,11 +8,15 @@ import {
 import { providerType } from 'src/auth/auth-provider.enum';
 import { CommonResponseDto } from 'src/common/dto';
 
+/** 마이페이지 조회 */
+/** -------------- */
+/** 1. 마이페이지 조회 서비스 반환 타입 */
 export interface GetMypageResponse {
   PharmacyBookMark: { Pharmacy: { name: string; phone: string } }[] | [];
   PillBookMark: { Pill: { name: string }; alarm: boolean }[] | [];
 }
 
+/** 2. 마이페이지 조회 API 반환 타입 */
 export class GetMypageResponseDto extends CommonResponseDto {
   @IsJSON()
   result: {
@@ -22,6 +26,22 @@ export class GetMypageResponseDto extends CommonResponseDto {
     };
   };
 }
+
+/** Presigned Url 발급 */
+/** -------------- */
+/** 1. Presigned Url 발급 서비스 반환 타입 */
+export interface GetPresignedUrlResponse {
+  url: string;
+  fileName: string;
+}
+
+/** 2.. Presigned Url 발급 API 반환 타입 */
+export class GetPresignedUrlResponseDto extends CommonResponseDto {
+  @IsJSON()
+  result: { url: string; fileName: string };
+}
+
+/** -------------- */
 
 export class DeleteUserResponse extends CommonResponseDto {
   @IsJSON()
@@ -59,12 +79,6 @@ export class SendInquiryResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   result: { inquiry };
-}
-
-export class getSignedUrlResponse extends CommonResponseDto {
-  @IsJSON()
-  @IsNotEmpty()
-  result: { url: string; fileName: string };
 }
 
 export class User {
