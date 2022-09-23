@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import * as argon from 'argon2';
 import { Inquiry, User } from 'prisma/postgresClient';
-import { AuthService } from 'src/auth/auth.service';
 import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
@@ -20,7 +19,6 @@ import {
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly authService: AuthService,
     private readonly gcsService: GcsService,
   ) {}
 
@@ -46,20 +44,54 @@ export class UsersService {
       }
       return user;
     } catch (error) {
-      throw new NotFoundException('회원을 검색하지 못했습니다.');
+      throw new NotFoundException('회원 정보를 찾지 못했습니다.');
     }
   }
 
-  /** 현재 로그인한 유저의 프로필 이미지 변경을 위한 PresignedUrl 발급 */
+  /** 현재 로그인한 유저의 프로필 이미지 변경을 위해 Presigned Url 발급 요청 */
   async getPresignedUrl(id: string): Promise<GetPresignedUrlResponse> {
-    /** 현재 로그인된 user의 mypage에 필요한 bookmark 등 정보를 DB에서 조회 */
     const { url, fileName }: GetPresignedUrlResponse =
       await this.gcsService.getPresignedUrl(id);
     return { url, fileName };
   }
 
+  /** 현재 로그인한 유저의 새로운 프로필 이미지를 DB에 저장하고 GCS의 원래 프로필 이미지 삭제 */
+  async updateImg(id: string, img: string) {
+    const user: User = await this.getUserById(id);
+    const oldDate: string = user.profileImg.split('_')[2];
+
+    await this.updateProfileImg(user.id, img);
+    await this.gcsService.deleteImg(oldDate, id);
+  }
+
+  /** DB에서 user id로 User 찾기 */
+  async getUserById(id: string): Promise<User> {
+    try {
+      /** DB에서 User 조회 */
+      const user: User = await this.prisma.user.findUnique({
+        where: { id },
+      });
+
+      return user;
+    } catch {
+      throw new NotFoundException('회원 정보를 찾지 못했습니다.');
+    }
+  }
+
+  /** user id로 DB에서 User를 찾아 profileImg 변경 */
+  async updateProfileImg(id: string, img: string) {
+    try {
+      await this.prisma.user.update({
+        where: { id },
+        data: { profileImg: img },
+      });
+    } catch (error) {
+      throw new NotFoundException('프로필 이미지를 수정하지 못했습니다.');
+    }
+  }
+
   async deleteUser(id: string) {
-    const user = await this.authService.getUserById(id);
+    const user = await this.getUserById(id);
     try {
       await this.prisma.user.update({
         where: { id },
@@ -72,7 +104,7 @@ export class UsersService {
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
     const { password, newPassword, name } = updateUserDto;
-    const user = await this.authService.getUserById(id);
+    const user = await this.getUserById(id);
 
     try {
       if (password) {
@@ -95,20 +127,6 @@ export class UsersService {
     const check = await argon.verify(user.password, password);
     if (!check) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-    }
-  }
-
-  async saveImg(id: string, img: string) {
-    const user = await this.authService.getUserById(id);
-    const oldDate = user.profileImg.split('_')[2];
-    await this.gcsService.deleteImg(oldDate, id);
-    try {
-      await this.prisma.user.update({
-        where: { id },
-        data: { profileImg: img },
-      });
-    } catch (error) {
-      throw new ForbiddenException('프로필 이미지를 수정하지 못했습니다.');
     }
   }
 

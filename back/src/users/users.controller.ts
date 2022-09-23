@@ -71,7 +71,7 @@ export class UsersController {
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: 'Presigned Url 발급 API',
-    description: '외부 스토리지 GCS에서 presigned url 발급한다.',
+    description: '외부 스토리지 GCS에서 Presigned Url를 발급한다.',
   })
   @ApiResponse({
     status: 200,
@@ -88,7 +88,7 @@ export class UsersController {
     this.logger.log(`GET /presigned-url Success!`);
     return {
       statusCode: 200,
-      message: 'presigned url를 발급했습니다.',
+      message: 'Presigned Url를 발급했습니다.',
       result: { url, fileName },
     };
   }
@@ -116,7 +116,7 @@ export class UsersController {
     @GetCurrentUserId() id: string,
     @Query('img') img: string,
   ) {
-    await this.usersService.saveImg(id, img);
+    await this.usersService.updateImg(id, img);
     return {
       statusCode: 200,
       message: '프로필 이미지를 수정했습니다.',
