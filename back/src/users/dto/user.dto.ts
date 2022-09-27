@@ -1,18 +1,22 @@
 import {
+  IsArray,
+  IsBoolean,
   IsJSON,
   IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
 } from 'class-validator';
-import { providerType } from 'src/auth/auth-provider.enum';
 import { CommonResponseDto } from 'src/common/dto';
 
 /** 마이페이지 조회 */
 /** -------------- */
 /** 1. 마이페이지 조회 서비스 반환 타입 */
-export interface GetMypageResponse {
+export class GetMypageResponse {
+  @IsArray()
   PharmacyBookMark: { Pharmacy: { name: string; phone: string } }[] | [];
+
+  @IsArray()
   PillBookMark: { Pill: { name: string }; alarm: boolean }[] | [];
 }
 
@@ -20,41 +24,30 @@ export interface GetMypageResponse {
 export class GetMypageResponseDto extends CommonResponseDto {
   @IsJSON()
   result: {
-    user: {
-      PharmacyBookMark: { Pharmacy: { name: string; phone: string } }[] | [];
-      PillBookMark: { Pill: { name: string }; alarm: boolean }[] | [];
-    };
+    user: GetMypageResponse;
   };
 }
+/** -------------- */
 
 /** Presigned Url 발급 */
 /** -------------- */
 /** 1. Presigned Url 발급 서비스 반환 타입 */
-export interface GetPresignedUrlResponse {
+export class GetPresignedUrlResponse {
+  @IsString()
   url: string;
+
+  @IsString()
   fileName: string;
 }
 
 /** 2.. Presigned Url 발급 API 반환 타입 */
 export class GetPresignedUrlResponseDto extends CommonResponseDto {
   @IsJSON()
-  result: { url: string; fileName: string };
+  result: GetPresignedUrlResponse;
 }
-
 /** -------------- */
 
-export class DeleteUserResponse extends CommonResponseDto {
-  @IsJSON()
-  @IsNotEmpty()
-  result: { result: boolean };
-}
-
-export class SendInquiryDto {
-  @IsString()
-  @IsNotEmpty()
-  content: string;
-}
-
+/** name, password 변경 요청 */
 export class UpdateUserDto {
   @IsString()
   @IsOptional()
@@ -75,22 +68,24 @@ export class UpdateUserDto {
   newPassword?: string;
 }
 
+export class DeleteUserResponse {
+  @IsBoolean()
+  result: boolean;
+}
+
+export class DeleteUserResponseDto extends CommonResponseDto {
+  @IsJSON()
+  result: DeleteUserResponse;
+}
+
+export class SendInquiryDto {
+  @IsString()
+  @IsNotEmpty()
+  content: string;
+}
+
 export class SendInquiryResponse extends CommonResponseDto {
   @IsJSON()
   @IsNotEmpty()
   result: { inquiry };
-}
-
-export class User {
-  id: number;
-  email: string;
-  name: string;
-  phone: string;
-  password: string;
-  profileImg: string;
-  birth: string;
-  provider: providerType;
-  isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }

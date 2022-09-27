@@ -57,11 +57,12 @@ export class UsersService {
 
   /** 현재 로그인한 유저의 새로운 프로필 이미지를 DB에 저장하고 GCS의 원래 프로필 이미지 삭제 */
   async updateImg(id: string, img: string) {
+    // User와 파일 이름에 사용할 Date 선언
     const user: User = await this.getUserById(id);
     const oldDate: string = user.profileImg.split('_')[2];
 
-    await this.updateProfileImg(user.id, img);
-    await this.gcsService.deleteImg(oldDate, id);
+    await this.updateProfileImg(user.id, img); // DB에서 프로필 이미지 변경
+    await this.gcsService.deleteImg(oldDate, id); // GCS에서 이전 프로필 이미지 삭제
   }
 
   /** DB에서 user id로 User 찾기 */
@@ -90,43 +91,54 @@ export class UsersService {
     }
   }
 
-  async deleteUser(id: string) {
-    const user = await this.getUserById(id);
+  /** 현재 로그인한 유저의 name, password 변경 */
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+    // UpdateUserDto 구조분해와 기존 User 선언
+    const { password, newPassword, name }: UpdateUserDto = updateUserDto;
+    const user: User = await this.getUserById(id);
+
     try {
+      let hashedNewPassword: string;
+      // password가 일치하는지 검사
+      if (password) {
+        await this.verifyPassword(user, password);
+        hashedNewPassword = await argon.hash(newPassword); // argon으로 암호화
+      }
+
+      // name, password를 DB에서 변경
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password: hashedNewPassword !== null ? hashedNewPassword : undefined, // hashedNewPassword가 존재하면 저장, 없으면 undefined
+          name: name !== null ? name : undefined, // name가 존재하면 저장, 없으면 undefined
+        },
+      });
+    } catch (error) {
+      throw new NotFoundException('회원정보를 수정하지 못했습니다.');
+    }
+  }
+
+  /** DB에 저장된 user의 password와 입력받은 password가 일치하는지 여부 확인 */
+  async verifyPassword(user: User, password: string) {
+    const check = await argon.verify(user.password, password);
+    if (!check) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+  }
+
+  /** 현재 로그인한 유저의 회원 탈퇴 */
+  async deleteUser(id: string) {
+    // user 정보 조회
+    const user = await this.getUserById(id);
+
+    try {
+      // isDeleted true로 변경(soft delete), email에 '_' 추가
       await this.prisma.user.update({
         where: { id },
         data: { isDeleted: true, email: user.email + '_' },
       });
     } catch (error) {
-      throw new ForbiddenException('회원탈퇴 실패!');
-    }
-  }
-
-  async updateUser(id: string, updateUserDto: UpdateUserDto) {
-    const { password, newPassword, name } = updateUserDto;
-    const user = await this.getUserById(id);
-
-    try {
-      if (password) {
-        await this.verifyPassword(user, password);
-        const hashedNewPassword = await argon.hash(newPassword);
-        await this.prisma.user.update({
-          where: { id: user.id },
-          data: {
-            password: hashedNewPassword,
-            name: name !== null ? name : undefined,
-          },
-        });
-      }
-    } catch (error) {
-      throw new ForbiddenException('회원정보를 수정하지 못했습니다.');
-    }
-  }
-
-  async verifyPassword(user: User, password: string) {
-    const check = await argon.verify(user.password, password);
-    if (!check) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+      throw new ForbiddenException('회원 탈퇴를 실패했습니다.');
     }
   }
 

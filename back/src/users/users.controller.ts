@@ -23,7 +23,7 @@ import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import { prefixConstant } from 'src/utils/prefix.constant';
 import {
-  DeleteUserResponse,
+  DeleteUserResponseDto,
   GetMypageResponse,
   GetMypageResponseDto,
   GetPresignedUrlResponse,
@@ -117,6 +117,7 @@ export class UsersController {
     @Query('img') img: string,
   ) {
     await this.usersService.updateImg(id, img);
+    this.logger.log(`PATCH /profile-img Success!`);
     return {
       statusCode: 200,
       message: '프로필 이미지를 수정했습니다.',
@@ -143,7 +144,7 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<CommonResponseDto> {
     await this.usersService.updateUser(id, updateUserDto);
-    this.logger.verbose(`User ${id} update Success!`);
+    this.logger.log(`PATCH /update Success!`);
     return {
       statusCode: 200,
       message: '회원 정보가 수정되었습니다.',
@@ -160,15 +161,15 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: '회원탈퇴 성공',
-    type: DeleteUserResponse,
+    type: DeleteUserResponseDto,
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async deleteUser(
     @GetCurrentUserId() id: string,
-  ): Promise<DeleteUserResponse> {
+  ): Promise<DeleteUserResponseDto> {
     await this.usersService.deleteUser(id);
-    this.logger.verbose(`User ${id} delete Success!`);
+    this.logger.verbose(`PATCH /delete Success!`);
     return {
       statusCode: 200,
       message: '회원탈퇴가 완료되었습니다.',
@@ -181,7 +182,7 @@ export class UsersController {
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '고객센터 API',
-    description: '고객이 문의한 내용을 DB로 저장 한다(관리자 페이지)',
+    description: '고객이 문의한 내용을 저장 한다(관리자 페이지에서 확인)',
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
