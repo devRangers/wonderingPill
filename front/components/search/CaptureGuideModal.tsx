@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { MAIN_COLOR } from "@utils/constant";
 import { isWideDevice } from "@utils/isWideDevice";
@@ -17,6 +18,7 @@ import {
   ImageDescription,
   PillImage,
 } from "./FindWithImage.style";
+import { setCookie } from "@utils/cookie";
 
 interface CaptureGuideModalProp {
   handleCloseModal: () => void;
@@ -24,6 +26,16 @@ interface CaptureGuideModalProp {
 
 function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
   const isWide = isWideDevice();
+
+  const handleClickHideModalOneWeek = () => {
+    setCookie("1week", "1week", {
+      path: "/",
+      maxAge: 60 * 10,
+      secure: true,
+      httpOnly: true,
+    });
+    handleCloseModal();
+  };
 
   return (
     <ModalInner>
@@ -76,7 +88,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
         <CloseBtn onClick={handleCloseModal} $isWide={isWide}>
           닫기
         </CloseBtn>
-        <CloseWeekendBtn onClick={handleCloseModal} $isWide={isWide}>
+        <CloseWeekendBtn onClick={handleClickHideModalOneWeek} $isWide={isWide}>
           일주일 동안 보지 않기
         </CloseWeekendBtn>
       </ModalFooter>

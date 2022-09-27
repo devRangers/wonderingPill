@@ -23,18 +23,22 @@ import {
 } from "./FindWithImage.style";
 import Capture from "./capture/Capture";
 import CaptureGuideModal from "./CaptureGuideModal";
+import { getCookie } from "@utils/cookie";
 
 function FindWithImage() {
   const isWide = isWideDevice();
   const [modalOpen, setModalOpen] = useState(true);
-
+  const [isValidCookie, setValidCookie] = useState(false);
   const handleCloseModal = () => {
     setModalOpen(false);
   };
 
   useEffect(() => {
-    // 여기서 이제 일주일동안 안보이기 했는지 체크한다.
-    // 현재는 일단 한번 뜨게 함
+    if (!getCookie("1week")) {
+      setValidCookie(false);
+    } else {
+      setValidCookie(true);
+    }
   }, []);
 
   return (
@@ -72,10 +76,12 @@ function FindWithImage() {
           </DescriptionContainer>
         </FindWithImageContainer>
       </Container>
-      {modalOpen && (
+      {!isValidCookie && modalOpen ? (
         <Modal open={modalOpen} onClose={handleCloseModal}>
           <CaptureGuideModal handleCloseModal={handleCloseModal} />
         </Modal>
+      ) : (
+        <></>
       )}
     </>
   );
