@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -132,14 +131,26 @@ export class UsersService {
     const user = await this.getUserById(id); // user 정보 조회
 
     try {
+      // 트랜젝션
       // isDeleted true로 변경(soft delete), email에 '_' 추가
-      await this.prisma.user.update({
-        where: { id },
-        data: { isDeleted: true, email: user.email + '_' },
-      });
-      return { result: true };
+      if (user.provider === 'LOCAL') {
+        await this.prisma.user.update({
+          where: { id },
+          data: {
+            isDeleted: true,
+            email: user.email + '_',
+            phone: null,
+            profileImg: null,
+          },
+        });
+        // 알림 지우기
+        // GCS에서도 profileimg 삭제
+        return { result: true };
+      } else {
+        throw new Error();
+      }
     } catch (error) {
-      throw new ForbiddenException('회원 탈퇴를 실패했습니다.');
+      throw new NotFoundException('회원 탈퇴를 실패했습니다.');
     }
   }
 
@@ -152,7 +163,7 @@ export class UsersService {
         data: { user_id: id, content },
       });
     } catch (error) {
-      throw new ForbiddenException('고객 센터 문의가 실패했습니다.');
+      throw new NotFoundException('고객 센터 문의가 실패했습니다.');
     }
   }
 }
