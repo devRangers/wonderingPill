@@ -34,7 +34,7 @@ export class AlarmsController {
   private readonly logger = new Logger(`AlarmsController`);
   constructor(private readonly alarmsService: AlarmsService) {}
 
-  @HttpCode(204)
+  @HttpCode(201)
   @Post('set')
   @UseGuards(AccessGuard)
   @ApiOperation({
@@ -42,7 +42,7 @@ export class AlarmsController {
     description: '알림 예약을 설정한다.',
   })
   @ApiResponse({
-    status: 204,
+    status: 201,
     description: '알림 설정 성공',
     type: CommonResponseDto,
   })
@@ -55,10 +55,10 @@ export class AlarmsController {
   ) {
     await this.alarmsService.setAlarms(id, setAlarmDto);
     this.logger.verbose(`Setting User ${id} pill alarms`);
-    return { statusCode: 204, message: '알림을 설정했습니다.' };
+    return { statusCode: 201, message: '알림을 설정했습니다.' };
   }
 
-  @HttpCode(204)
+  @HttpCode(200)
   @Put(':id')
   @UseGuards(AccessGuard)
   @ApiOperation({
@@ -66,7 +66,7 @@ export class AlarmsController {
     description: '푸쉬 알림을 취소한다.',
   })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: '푸쉬 알림 취소 성공',
     type: CommonResponseDto,
   })
@@ -83,7 +83,7 @@ export class AlarmsController {
   ) {
     await this.alarmsService.cancelAlarm(id, pillBookmarkId);
     this.logger.verbose(`Canceling User ${id} pill alarm`);
-    return { statusCode: 204, message: '알림을 취소했습니다.' };
+    return { statusCode: 200, message: '알림을 취소했습니다.' };
   }
 
   @HttpCode(200)
@@ -150,7 +150,7 @@ export class AlarmsController {
     };
   }
 
-  @HttpCode(204)
+  @HttpCode(200)
   @Post('delete')
   @UseGuards(AccessGuard)
   @ApiOperation({
@@ -158,7 +158,7 @@ export class AlarmsController {
     description: '알림 내역을 삭제한다.',
   })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: '알림 내역 삭제 성공',
     type: CommonResponseDto,
   })
@@ -170,6 +170,6 @@ export class AlarmsController {
   ): Promise<CommonResponseDto> {
     await this.alarmsService.deleteAlarm(deleteAlarmsDto, userId);
     this.logger.verbose(`Removing User ${userId} pill alarms`);
-    return { statusCode: 204, message: '알림을 삭제했습니다.' };
+    return { statusCode: 200, message: '알림을 삭제했습니다.' };
   }
 }

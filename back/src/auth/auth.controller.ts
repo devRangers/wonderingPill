@@ -99,13 +99,13 @@ export class AuthController {
     };
   }
 
-  @HttpCode(204)
+  @HttpCode(200)
   @ApiOperation({
     summary: '회원가입시 회원 검사 API',
     description: '회원가입시 회원이 존재하는지, 탈퇴한 이력이 있는지 조사한다.',
   })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: '회원가입시 회원 검사 성공',
     type: CommonResponseDto,
   })
@@ -130,18 +130,18 @@ export class AuthController {
 
     this.logger.verbose(`User check Success!`);
     return {
-      statusCode: 204,
+      statusCode: 200,
       message: '회원 검사를 성공했습니다.',
     };
   }
 
-  @HttpCode(204)
+  @HttpCode(200)
   @ApiOperation({
     summary: '계정 복원 API',
     description: '탈퇴한 계정을 다시 복원한다.',
   })
   @ApiResponse({
-    status: 204,
+    status: 2000,
     description: '계정 복원 성공',
     type: CommonResponseDto,
   })
@@ -155,7 +155,7 @@ export class AuthController {
     console.log(email);
     this.logger.verbose(`User check Success!`);
     return {
-      statusCode: 204,
+      statusCode: 200,
       message: '회원 검사를 성공했습니다.',
     };
   }

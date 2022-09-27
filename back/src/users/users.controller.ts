@@ -178,12 +178,17 @@ export class UsersController {
     };
   }
 
-  @HttpCode(200)
+  @HttpCode(201)
   @Post('inquiry')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '고객센터 API',
     description: '고객이 문의한 내용을 저장 한다(관리자 페이지에서 확인)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '고객센터 발송 성공',
+    type: CommonResponseDto,
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
@@ -197,9 +202,8 @@ export class UsersController {
     );
     this.logger.verbose(`User send inquiry Success!`);
     return {
-      statusCode: 200,
+      statusCode: 201,
       message: '문의를 성공적으로 전송했습니다.',
-      result: { inquiry },
     };
   }
 }
