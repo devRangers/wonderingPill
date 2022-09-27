@@ -1,9 +1,10 @@
 import type { NextPage } from "next";
+import { GetServerSideProps } from "next";
 import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
-import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR } from "@utils/constant";
+import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
 import {
   ContentContainer,
   TitleContainer,
@@ -35,7 +36,7 @@ interface MessageResponse extends CommonResponse {
 }
 
 const MessageListPage: NextPage = () => {
-  const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
+  const [selectedMessagesId, setSelectedMessagesId] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageValues[]>([]);
   const [pageCount, setPageCount] = useState(1);
 
@@ -52,9 +53,21 @@ const MessageListPage: NextPage = () => {
   );
 
   const selectAllMessageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedMessages(
+    setSelectedMessagesId(
       e.target.checked ? messages.map((message) => message.id) : [],
     );
+  };
+
+  const selectMessageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked, id } = e.target;
+
+    if (checked) {
+      setSelectedMessagesId((cur) => [...cur, id]);
+    } else {
+      setSelectedMessagesId((cur) =>
+        cur.filter((messageId) => messageId !== id),
+      );
+    }
   };
 
   return (
@@ -82,8 +95,10 @@ const MessageListPage: NextPage = () => {
               <List key={message.id}>
                 <input
                   type="checkbox"
+                  id={message.id}
                   name="messages"
-                  checked={selectedMessages.includes(message.id) || false}
+                  checked={selectedMessagesId.includes(message.id)}
+                  onChange={selectMessageHandler}
                 />
                 <MessageContainer $borderColor={MAIN_COLOR}>
                   <Message>
@@ -108,3 +123,18 @@ const MessageListPage: NextPage = () => {
 };
 
 export default MessageListPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = context.req.cookies["AccessToken"] || null;
+
+  if (!token) {
+    return {
+      redirect: { destination: ROUTE.MAIN, permanent: false },
+      props: {},
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
