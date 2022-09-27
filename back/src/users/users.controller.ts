@@ -23,6 +23,7 @@ import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import { prefixConstant } from 'src/utils/prefix.constant';
 import {
+  DeleteUserResponse,
   DeleteUserResponseDto,
   GetMypageResponse,
   GetMypageResponseDto,
@@ -168,12 +169,12 @@ export class UsersController {
   async deleteUser(
     @GetCurrentUserId() id: string,
   ): Promise<DeleteUserResponseDto> {
-    await this.usersService.deleteUser(id);
+    const result: DeleteUserResponse = await this.usersService.deleteUser(id);
     this.logger.verbose(`PATCH /delete Success!`);
     return {
       statusCode: 200,
       message: '회원탈퇴가 완료되었습니다.',
-      result: { result: true },
+      result,
     };
   }
 

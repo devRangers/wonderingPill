@@ -9,6 +9,7 @@ import { Inquiry, User } from 'prisma/postgresClient';
 import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
+  DeleteUserResponse,
   GetMypageResponse,
   GetPresignedUrlResponse,
   SendInquiryDto,
@@ -127,7 +128,7 @@ export class UsersService {
   }
 
   /** 현재 로그인한 유저의 회원 탈퇴 */
-  async deleteUser(id: string) {
+  async deleteUser(id: string): Promise<DeleteUserResponse> {
     // user 정보 조회
     const user = await this.getUserById(id);
 
@@ -137,6 +138,7 @@ export class UsersService {
         where: { id },
         data: { isDeleted: true, email: user.email + '_' },
       });
+      return { result: true };
     } catch (error) {
       throw new ForbiddenException('회원 탈퇴를 실패했습니다.');
     }

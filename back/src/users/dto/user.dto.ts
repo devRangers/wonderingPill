@@ -68,15 +68,20 @@ export class UpdateUserDto {
   newPassword?: string;
 }
 
+/** 회원탈퇴 */
+/** -------------- */
+/** 1. 회원탈퇴 서비스 반환 타입 */
 export class DeleteUserResponse {
   @IsBoolean()
   result: boolean;
 }
 
+/** 2. 회원탈퇴 API 반환 타입 */
 export class DeleteUserResponseDto extends CommonResponseDto {
   @IsJSON()
   result: DeleteUserResponse;
 }
+/** -------------- */
 
 export class SendInquiryDto {
   @IsString()
