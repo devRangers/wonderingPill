@@ -239,7 +239,7 @@ export class AuthController {
   @HttpCode(201)
   @Post('signin')
   @Throttle(5, 1)
-  // @UseGuards(RecaptchaGuard)
+  @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '유저 로그인 API',
     description:
@@ -270,28 +270,22 @@ export class AuthController {
       refreshToken,
     );
 
-    let secure;
-    if (this.configService.get('NODE_ENV') === 'production') secure = true;
-    else secure = false;
-
     try {
       res.cookie('AccessToken', accessToken, {
         maxAge: this.configService.get('JWT_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
 
-      let maxAge;
-      if (signinUserDto.isSignin) {
-        maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
-      } else {
-        maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN');
-      }
-
       res.cookie('RefreshToken', refreshToken, {
-        maxAge,
+        maxAge:
+          signinUserDto.isSignin === true
+            ? this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE')
+            : this.configService.get('JWT_REFRESH_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
     } catch (error) {
       throw new ForbiddenException('Cookie Failed!');
@@ -338,15 +332,12 @@ export class AuthController {
       refreshToken,
     );
 
-    let secure;
-    if (this.configService.get('NODE_ENV') === 'production') secure = true;
-    else secure = false;
-
     try {
       res.cookie('AccessToken', accessToken, {
         maxAge: this.configService.get('JWT_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
     } catch (error) {
       throw new ForbiddenException('Cookie Failed!');
@@ -558,20 +549,18 @@ export class AuthController {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.googleLogin(req.user as OauthLoginDto, res);
 
-    let secure;
-    if (this.configService.get('NODE_ENV') === 'production') secure = true;
-    else secure = false;
-
     try {
       res.cookie('AccessToken', accessToken, {
         maxAge: this.configService.get('JWT_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
       res.cookie('RefreshToken', refreshToken, {
         maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
 
       res.redirect(`${this.configService.get('CLIENT_URL')}/`);
