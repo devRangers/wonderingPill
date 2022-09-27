@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
-import { useState, useEffect } from "react";
-import { useQuery } from "react-query";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
 import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
@@ -35,7 +35,13 @@ interface MessageResponse extends CommonResponse {
   alarms: MessageValues[];
 }
 
+interface deleteMessageValues {
+  ids: string[];
+}
+
 const MessageListPage: NextPage = () => {
+  const queryClient = useQueryClient();
+
   const [selectedMessagesId, setSelectedMessagesId] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageValues[]>([]);
   const [pageCount, setPageCount] = useState(1);
@@ -44,13 +50,37 @@ const MessageListPage: NextPage = () => {
     ["getMessages", pageCount],
     () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
     {
+      staleTime: 1000,
+      cacheTime: Infinity,
       retry: false,
       refetchOnWindowFocus: false,
       onSuccess: ({ alarms }) => {
-        setMessages((prev) => [...new Set([...prev, ...alarms])]);
+        setMessages((prev) =>
+          [...new Set([...prev, ...alarms])].filter(
+            (message) => !selectedMessagesId.includes(message.id),
+          ),
+        );
       },
     },
   );
+
+  const deleteMessagesMutation = useMutation(
+    (data: deleteMessageValues) =>
+      Api.post<CommonResponse, deleteMessageValues>("/alarms/delete", data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["getMessages", 1]);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    },
+  );
+
+  const deleteMessages = () => {
+    const dataToSubmit = { ids: selectedMessagesId };
+    deleteMessagesMutation.mutate(dataToSubmit);
+  };
 
   const selectAllMessageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedMessagesId(
@@ -88,7 +118,7 @@ const MessageListPage: NextPage = () => {
               />
               <Label htmlFor="select-all-messages">알림 전체 선택</Label>
             </div>
-            <DeleteBtn>선택된 알림 삭제</DeleteBtn>
+            <DeleteBtn onClick={deleteMessages}>선택된 알림 삭제</DeleteBtn>
           </Header>
           <Body $scrollColor={ACCENT_COLOR}>
             {messages.map((message) => (
