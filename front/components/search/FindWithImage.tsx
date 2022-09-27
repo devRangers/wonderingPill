@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Modal from "@modal/Modal";
 import {
+  CAPTURE_GUIDE_MOAL_COOKIE,
   FOOTER_HEIGHT,
   FULL_HEIGHT,
   HEADER_HEIGHT,
@@ -34,7 +35,7 @@ function FindWithImage() {
   };
 
   useEffect(() => {
-    if (!getCookie("1week")) {
+    if (!getCookie(CAPTURE_GUIDE_MOAL_COOKIE)) {
       setValidCookie(false);
     } else {
       setValidCookie(true);
