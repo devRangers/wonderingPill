@@ -30,7 +30,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
   const handleClickHideModalOneWeek = () => {
     setCookie("1week", "1week", {
       path: "/",
-      maxAge: 60 * 10,
+      maxAge: 60 * 60 * 24 * 7,
       secure: true,
       httpOnly: true,
     });
