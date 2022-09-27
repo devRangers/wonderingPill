@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as argon from 'argon2';
-import { Inquiry, User } from 'prisma/postgresClient';
+import { User } from 'prisma/postgresClient';
 import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
@@ -129,8 +129,7 @@ export class UsersService {
 
   /** 현재 로그인한 유저의 회원 탈퇴 */
   async deleteUser(id: string): Promise<DeleteUserResponse> {
-    // user 정보 조회
-    const user = await this.getUserById(id);
+    const user = await this.getUserById(id); // user 정보 조회
 
     try {
       // isDeleted true로 변경(soft delete), email에 '_' 추가
@@ -144,11 +143,16 @@ export class UsersService {
     }
   }
 
+  /** 현재 로그인한 유저의 고객 센터 이용글 저장 */
   async sendInquiry(id: string, sendInquiryDto: SendInquiryDto) {
     const { content } = sendInquiryDto;
-    const inquiry: Inquiry = await this.prisma.inquiry.create({
-      data: { user_id: id, content },
-    });
-    return inquiry;
+
+    try {
+      await this.prisma.inquiry.create({
+        data: { user_id: id, content },
+      });
+    } catch (error) {
+      throw new ForbiddenException('고객 센터 문의가 실패했습니다.');
+    }
   }
 }

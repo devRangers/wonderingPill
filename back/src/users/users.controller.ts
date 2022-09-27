@@ -12,12 +12,12 @@ import {
 import {
   ApiBody,
   ApiCookieAuth,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Inquiry } from 'prisma/postgresClient';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
@@ -30,7 +30,6 @@ import {
   GetPresignedUrlResponse,
   GetPresignedUrlResponseDto,
   SendInquiryDto,
-  SendInquiryResponse,
   UpdateUserDto,
 } from './dto';
 import { UsersService } from './users.service';
@@ -52,6 +51,10 @@ export class UsersController {
     status: 200,
     description: '마이페이지 조회 성공',
     type: GetMypageResponseDto,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '회원 정보를 찾지 못했습니다.',
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
@@ -79,6 +82,10 @@ export class UsersController {
     description: 'Presigned Url 발급 성공',
     type: GetPresignedUrlResponseDto,
   })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '외부 스토리지에서 Presigned Url를 발급하지 못했습니다.',
+  })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async getPresignedUrl(
@@ -101,15 +108,19 @@ export class UsersController {
     summary: '프로필 이미지 수정 API',
     description: '프로필 이미지를 수정한다.',
   })
+  @ApiQuery({
+    name: 'img',
+    required: true,
+    description: '유저 프로필 이미지',
+  })
   @ApiResponse({
     status: 200,
     description: '프로필 이미지 수정 성공',
     type: CommonResponseDto,
   })
-  @ApiQuery({
-    name: 'img',
-    required: true,
-    description: '유저 프로필 이미지',
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '프로필 이미지를 수정하지 못했습니다.',
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
@@ -136,6 +147,10 @@ export class UsersController {
     status: 200,
     description: '회원 정보 수정 성공',
     type: CommonResponseDto,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '회원정보를 수정하지 못했습니다.',
   })
   @ApiBody({ type: UpdateUserDto })
   @ApiCookieAuth('accessToken')
@@ -164,6 +179,10 @@ export class UsersController {
     description: '회원탈퇴 성공',
     type: DeleteUserResponseDto,
   })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '회원 탈퇴를 실패했습니다.',
+  })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async deleteUser(
@@ -186,21 +205,22 @@ export class UsersController {
     description: '고객이 문의한 내용을 저장 한다(관리자 페이지에서 확인)',
   })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: '고객센터 발송 성공',
     type: CommonResponseDto,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '고객 센터 문의가 실패했습니다.',
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
   async sendInquiry(
     @GetCurrentUserId() id: string,
     @Body() sendInquiryDto: SendInquiryDto,
-  ): Promise<SendInquiryResponse> {
-    const inquiry: Inquiry = await this.usersService.sendInquiry(
-      id,
-      sendInquiryDto,
-    );
-    this.logger.verbose(`User send inquiry Success!`);
+  ): Promise<CommonResponseDto> {
+    await this.usersService.sendInquiry(id, sendInquiryDto);
+    this.logger.verbose(`POST /inquiry Success!`);
     return {
       statusCode: 201,
       message: '문의를 성공적으로 전송했습니다.',

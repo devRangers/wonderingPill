@@ -2,7 +2,6 @@ import {
   IsArray,
   IsBoolean,
   IsJSON,
-  IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
@@ -47,7 +46,7 @@ export class GetPresignedUrlResponseDto extends CommonResponseDto {
 }
 /** -------------- */
 
-/** name, password 변경 요청 */
+/** name, password 변경 API 요청 */
 export class UpdateUserDto {
   @IsString()
   @IsOptional()
@@ -83,14 +82,8 @@ export class DeleteUserResponseDto extends CommonResponseDto {
 }
 /** -------------- */
 
+/** 고객센터 API 요청 */
 export class SendInquiryDto {
   @IsString()
-  @IsNotEmpty()
   content: string;
-}
-
-export class SendInquiryResponse extends CommonResponseDto {
-  @IsJSON()
-  @IsNotEmpty()
-  result: { inquiry };
 }
