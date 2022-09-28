@@ -30,43 +30,39 @@ interface SidebarProp {
 interface ButtonTitleValues {
   title: string;
   link: string;
-  canUseWithoutLogin?: boolean;
+  canUseWithLogin: boolean;
 }
 
 const ButtonTitle: { [key in string]: ButtonTitleValues } = {
   findWithPicture: {
     title: "사진으로 찾기",
     link: ROUTE.SEARCH_IMAGE,
-    canUseWithoutLogin: true,
+    canUseWithLogin: false,
   },
   findPharmacy: {
     title: "약국 찾기",
     link: ROUTE.MAIN,
-    canUseWithoutLogin: true,
+    canUseWithLogin: false,
   },
   searchPill: {
     title: "시제품 약 검색",
     link: ROUTE.MAIN,
-    canUseWithoutLogin: true,
-  },
-  searchSymptom: {
-    title: "증상으로 검색",
-    link: ROUTE.MAIN,
+    canUseWithLogin: false,
   },
   healthChallenge: {
     title: "내 건강 캘린더",
     link: ROUTE.MAIN,
-    canUseWithoutLogin: false,
+    canUseWithLogin: true,
   },
   myPage: {
     title: "마이페이지",
     link: ROUTE.MY_PAGE,
-    canUseWithoutLogin: false,
+    canUseWithLogin: true,
   },
   guide: {
     title: "설치 가이드",
     link: ROUTE.MAIN,
-    canUseWithoutLogin: true,
+    canUseWithLogin: false,
   },
 };
 
@@ -112,7 +108,7 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
         <SidebarBody $height={SIDE_BAR_HEADER_HEIGHT} $fullHeight={FULL_HEIGHT}>
           <BtnContainer>
             {Object.entries(ButtonTitle).map(([key, value]) =>
-              !value.canUseWithoutLogin && !user.id ? (
+              value.canUseWithLogin && !user.id ? (
                 <Fragment key={key}></Fragment>
               ) : (
                 <SidebarBtn
