@@ -56,7 +56,6 @@ const MessageListPage: NextPage = () => {
       retry: false,
       refetchOnWindowFocus: false,
       onSuccess: ({ alarms }) => {
-        console.log(messages, alarms);
         setMessages((prev) =>
           _.uniqBy([...prev, ...alarms], "id").filter(
             (message) => !selectedMessagesId.includes(message.id),
