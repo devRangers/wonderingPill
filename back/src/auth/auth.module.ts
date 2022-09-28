@@ -2,6 +2,8 @@ import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { AlarmsModule } from 'src/alarms/alarms.module';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
 import { MailModule } from 'src/mail/mail.module';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -28,12 +30,14 @@ import { GoogleStrategy } from './strategy/google.strategy';
     MailModule,
     RedisModule,
     UsersModule,
+    AlarmsModule,
   ],
   controllers: [AuthController],
   providers: [
     PrismaService,
     AuthService,
     UsersService,
+    AlarmsService,
     JwtStrategy,
     JwtRefreshStrategy,
     KakaoStrategy,

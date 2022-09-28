@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import * as argon from 'argon2';
 import { User } from 'prisma/postgresClient';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
@@ -19,6 +20,7 @@ import {
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly alarmsService: AlarmsService,
     private readonly gcsService: GcsService,
   ) {}
 
@@ -129,11 +131,17 @@ export class UsersService {
   /** 현재 로그인한 유저의 회원 탈퇴 */
   async deleteUser(id: string): Promise<DeleteUserResponse> {
     const user = await this.getUserById(id); // user 정보 조회
+    const oldDate: string = user.profileImg.split('_')[2]; // profileimg에 들어갈 oldDate 찾기
 
     try {
-      // 트랜젝션
-      // isDeleted true로 변경(soft delete), email에 '_' 추가
+      const pillBookmark = await this.prisma.pillBookMark.findMany({
+        where: { user_id: id },
+        select: { id: true },
+      });
+      await this.gcsService.deleteImg(oldDate, id); // GCS에서 profileimg 삭제
+
       if (user.provider === 'LOCAL') {
+        // local 회원일 때
         await this.prisma.user.update({
           where: { id },
           data: {
@@ -142,13 +150,18 @@ export class UsersService {
             phone: null,
             profileImg: null,
           },
-        });
-        // 알림 지우기
-        // GCS에서도 profileimg 삭제
-        return { result: true };
-      } else {
-        throw new Error();
+        }); // isDeleted true로 변경(soft delete), email에 '_' 추가
+      } else if (user.provider === 'GOOGLE') {
+        // google 회원일 때
+        await this.prisma.user.delete({ where: { id } }); // 삭제(hard delete)
       }
+
+      // 알림 지우기
+      pillBookmark.map(async (pillBookmark) => {
+        await this.alarmsService.cancelAlarm(id, pillBookmark.id);
+      });
+
+      return { result: true };
     } catch (error) {
       throw new NotFoundException('회원 탈퇴를 실패했습니다.');
     }
