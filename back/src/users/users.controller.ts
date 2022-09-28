@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
@@ -151,6 +152,10 @@ export class UsersController {
   @ApiNotFoundResponse({
     status: 404,
     description: '회원정보를 수정하지 못했습니다.',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: '비밀번호가 일치하지 않습니다.',
   })
   @ApiBody({ type: UpdateUserDto })
   @ApiCookieAuth('accessToken')
