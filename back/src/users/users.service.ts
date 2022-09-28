@@ -6,6 +6,7 @@ import {
 import * as argon from 'argon2';
 import { Inquiry, User } from 'prisma/postgresClient';
 import { AuthService } from 'src/auth/auth.service';
+import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendInquiryDto, UpdateUserDto } from './dto';
 
@@ -14,11 +15,12 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
+    private readonly gcsService: GcsService,
   ) {}
 
   async deleteUser(id: string) {
+    const user = await this.authService.getUserById(id);
     try {
-      const user = await this.authService.getUserById(id);
       await this.prisma.user.update({
         where: { id },
         data: { isDeleted: true, email: user.email + '_' },
@@ -56,7 +58,15 @@ export class UsersService {
     }
   }
 
+  async getPresignedUrl(id: string) {
+    const { url, fileName } = await this.gcsService.getPresignedUrl(id);
+    return { url, fileName };
+  }
+
   async saveImg(id: string, img: string) {
+    const user = await this.authService.getUserById(id);
+    const oldDate = user.profileImg.split('_')[2];
+    await this.gcsService.deleteImg(oldDate, id);
     try {
       await this.prisma.user.update({
         where: { id },

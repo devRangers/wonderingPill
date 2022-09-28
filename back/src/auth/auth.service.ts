@@ -32,15 +32,25 @@ export class AuthService {
     const { name, email, password, phone, birth } = createUserDto;
 
     try {
-      if (this.getUserByEmail(email + '_')) {
+      const user: User = await this.getUserByEmail(email + '_');
+      const hashedPassword: string = await argon.hash(password);
+
+      if (user) {
+        /** 이미 탈퇴한 회원이 존재할 경우 계정 복원 */
         const newUser: User = await this.prisma.user.update({
           where: { email: email + '_' },
-          data: { email },
+          data: {
+            email,
+            password: hashedPassword,
+            birth,
+            phone,
+            isDeleted: true,
+          },
         });
 
         return newUser;
       } else {
-        const hashedPassword: string = await argon.hash(password);
+        /** 탈퇴 이력이 없을 경우 신규 유저 생성 */
         const newUser: User = await this.prisma.user.create({
           data: {
             name,

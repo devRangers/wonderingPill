@@ -28,8 +28,8 @@ import {
 } from './dto';
 import { PillService } from './pill.service';
 
-@ApiTags('Pill API')
-@Controller('pill')
+@ApiTags('Pills API')
+@Controller('pills')
 export class PillController {
   private readonly logger = new Logger(`AlarmsController`);
   constructor(private readonly pillService: PillService) {}

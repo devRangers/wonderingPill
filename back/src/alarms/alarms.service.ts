@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Agenda } from 'agenda/es';
 import { FcmService } from 'src/fcm/fcm.service';
@@ -15,26 +19,34 @@ export class AlarmsService {
     private readonly fcmService: FcmService,
   ) {}
 
-  async setAgenda(id: string, pillName: string): Promise<Agenda> {
+  async setAgenda(id: string, pillBookmarkId: string): Promise<Agenda> {
     const agenda = new Agenda({
       db: {
         address: this.configService.get('DATABASE_URL_MONGO'),
         collection: 'pillAlarms',
       },
-      name: id + '-' + pillName,
+      name: id + '-' + pillBookmarkId + 'set',
     });
     return agenda;
   }
 
   async setAlarms(id: string, setAlarmDto: SetAlarmDto) {
-    const { vip, hour, minute, pillName, userName, repeatTime, deviceToken } =
-      setAlarmDto;
+    const {
+      vip,
+      hour,
+      minute,
+      pillName,
+      userName,
+      repeatTime,
+      deviceToken,
+      pillBookmarkId,
+    } = setAlarmDto;
 
-    await this.saveDevicetoken(deviceToken, id);
-    const agenda = await this.setAgenda(id, pillName);
+    await this.saveDevicetoken(deviceToken, id, pillBookmarkId);
+    const agenda = await this.setAgenda(id, pillBookmarkId);
 
     try {
-      agenda.define(id + '-' + pillName, async () => {
+      agenda.define(id + '-' + pillBookmarkId, async () => {
         await this.fcmService.sendPushAlarm(deviceToken, userName, pillName);
         const time = await this.getCurrTime();
 
@@ -48,11 +60,11 @@ export class AlarmsService {
         });
 
         if (repeatTime !== 0) {
-          await this.setRepeatAlarm(repeatTime, agenda, id, pillName);
+          await this.setRepeatAlarm(repeatTime, agenda, id, pillBookmarkId);
         }
 
         if (vip.length === 8) {
-          await agenda.cancel({ name: id + '-' + pillName });
+          await agenda.cancel({ name: id + '-' + pillBookmarkId });
         }
       });
 
@@ -64,7 +76,7 @@ export class AlarmsService {
         await agenda.start();
         await agenda.every(
           `${minute} ${hour} * * ${vip.join(',')}`,
-          id + '-' + pillName,
+          id + '-' + pillBookmarkId,
           {
             repeatTime,
             timezone: 'Asia/Seoul',
@@ -72,22 +84,27 @@ export class AlarmsService {
         );
       })();
 
-      await this.setAlarmMark(id, true, pillName);
+      await this.setAlarmMark(true, pillBookmarkId);
     } catch (error) {
       throw new ForbiddenException('알림을 예약하지 못했습니다.');
     }
   }
 
-  async saveDevicetoken(deviceToken: string, id: string) {
+  async saveDevicetoken(
+    deviceToken: string,
+    id: string,
+    pillBookmarkId: string,
+  ) {
     try {
       const user = await this.prismaMongo.user.findUnique({
-        where: { user_id: id },
+        where: { pill_bookmark_id: pillBookmarkId },
       });
       if (!user) {
         await this.prismaMongo.user.create({
           data: {
             deviceToken,
             user_id: id,
+            pill_bookmark_id: pillBookmarkId,
           },
         });
       }
@@ -112,35 +129,21 @@ export class AlarmsService {
     return time;
   }
 
-  async cancelAlarm(id: string, name: string) {
-    const agenda = await this.setAgenda(id, name);
-    await agenda.cancel({ name: id + '-' + name });
-    await agenda.cancel({ name: id + '-' + name + ':repeat' });
+  async cancelAlarm(id: string, pillBookmarkId: string) {
+    const agenda = await this.setAgenda(id, pillBookmarkId);
+
+    try {
+      await agenda.cancel({ name: id + '-' + pillBookmarkId });
+      await agenda.cancel({ name: id + '-' + pillBookmarkId + ':repeat' });
+    } catch (error) {
+      throw new NotFoundException('알림을 삭제하지 못했습니다.');
+    }
   }
 
-  async setAlarmMark(id: string, check: boolean, pillName: string) {
+  async setAlarmMark(check: boolean, pillBookmarkId: string) {
     try {
-      const userPills = await this.prisma.user.findUnique({
-        where: { id },
-        select: {
-          PillBookMark: {
-            select: { id: true, Pill: { select: { name: true } } },
-          },
-        },
-      });
-
-      let pillBookMark_id;
-      userPills.PillBookMark.every(function (pill) {
-        if (pill.Pill.name === pillName) {
-          pillBookMark_id = pill.id;
-          return false;
-        } else {
-          return true;
-        }
-      });
-
       await this.prisma.pillBookMark.update({
-        where: { id: pillBookMark_id },
+        where: { id: pillBookmarkId },
         data: { alarm: check },
       });
     } catch (error) {
@@ -152,11 +155,11 @@ export class AlarmsService {
     repeatTime: number,
     agenda: Agenda,
     id: string,
-    pillName: string,
+    pillBookmarkId: string,
   ) {
     try {
       (async function () {
-        const job = agenda.create(id + '-' + pillName + ':repeat');
+        const job = agenda.create(id + '-' + pillBookmarkId + ':repeat');
         await agenda.start();
         await job.schedule(`in ${repeatTime} minutes`).save();
       })();
@@ -174,7 +177,14 @@ export class AlarmsService {
             time: 'desc',
           },
         ],
-        take: (page - 1) * 10 + 10,
+        skip: (page - 1) * 10,
+        take: 10,
+        select: {
+          id: true,
+          user_name: true,
+          pill_name: true,
+          time: true,
+        },
       });
       return alarms;
     } catch (error) {
@@ -193,24 +203,52 @@ export class AlarmsService {
     }
   }
 
-  async getSetAlarm(id: string, name: string) {
-    const agenda = await this.setAgenda(id, name);
-    const result = (async function () {
-      await agenda.start();
-      const job = await agenda.jobs({ name: id + '-' + name });
-      const alarm = job.pop().attrs;
+  async getSetAlarm(id: string, pillBookmarkId: string) {
+    const agenda = await this.setAgenda(id, pillBookmarkId);
+    const pillName = await this.getPillName(pillBookmarkId);
+    try {
+      const result = (async function () {
+        await agenda.start();
+        const job = await agenda.jobs({ name: id + '-' + pillBookmarkId });
+        if (job.length === 0) {
+          return {
+            minute: 0,
+            hour: 0,
+            vip: [],
+            repeatTime: 0,
+            pillName,
+          };
+        } else {
+          const alarm = job.pop().attrs;
 
-      const arr = alarm.repeatInterval.split(' ');
-      const repeat = alarm.data.repeatTime;
+          const arr = alarm.repeatInterval.split(' ');
+          const repeat = alarm.data.repeatTime;
 
-      return {
-        minute: Number(arr[0]),
-        hour: Number(arr[1]),
-        vip: arr[4].split(',').map((v) => Number(v)),
-        repeatTime: repeat,
-      };
-    })();
+          return {
+            minute: Number(arr[0]),
+            hour: Number(arr[1]),
+            vip: arr[4].split(',').map((v) => Number(v)),
+            repeatTime: repeat,
+            pillName,
+          };
+        }
+      })();
 
-    return result;
+      return result;
+    } catch (error) {
+      throw new ForbiddenException('알림을 조회하지 못했습니다.');
+    }
+  }
+
+  async getPillName(id: string) {
+    try {
+      const bookmark = await this.prisma.pillBookMark.findUnique({
+        where: { id },
+        select: { Pill: { select: { name: true } } },
+      });
+      return bookmark.Pill.name;
+    } catch (error) {
+      throw new ForbiddenException('약을 조회하지 못했습니다.');
+    }
   }
 }
