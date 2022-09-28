@@ -4,9 +4,11 @@ import {
   Get,
   HttpCode,
   Logger,
+  NotFoundException,
   Patch,
   Post,
   Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -19,6 +21,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Response } from 'express';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
@@ -192,7 +195,15 @@ export class UsersController {
   @ApiCookieAuth('refreshToken')
   async deleteUser(
     @GetCurrentUserId() id: string,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<DeleteUserResponseDto> {
+    try {
+      res.clearCookie('AccessToken');
+      res.clearCookie('RefreshToken');
+    } catch (error) {
+      throw new NotFoundException('Cookie Failed!');
+    }
+
     const result: DeleteUserResponse = await this.usersService.deleteUser(id);
     this.logger.log(`PATCH /delete Success!`);
     return {

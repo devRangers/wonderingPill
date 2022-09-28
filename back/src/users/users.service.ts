@@ -8,6 +8,7 @@ import { User } from 'prisma/postgresClient';
 import { AlarmsService } from 'src/alarms/alarms.service';
 import { GcsService } from 'src/gcs/gcs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { RedisService } from 'src/redis/redis.service';
 import {
   DeleteUserResponse,
   GetMypageResponse,
@@ -22,6 +23,7 @@ export class UsersService {
     private readonly prisma: PrismaService,
     private readonly alarmsService: AlarmsService,
     private readonly gcsService: GcsService,
+    private readonly redisService: RedisService,
   ) {}
 
   /** 현재 로그인한 유저의 마이페이지 조회 */
@@ -138,6 +140,7 @@ export class UsersService {
         where: { user_id: id },
         select: { id: true },
       });
+      await this.redisService.delKey('re' + id); // redis에서 refreshtoken 삭제
       await this.gcsService.deleteImg(oldDate, id); // GCS에서 profileimg 삭제
 
       if (user.provider === 'LOCAL') {
