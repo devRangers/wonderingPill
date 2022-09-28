@@ -119,7 +119,7 @@ const MessageListPage: NextPage = () => {
               />
               <Label htmlFor="select-all-messages">알림 전체 선택</Label>
             </div>
-            <DeleteBtn onClick={deleteMessages}>선택된 알림 삭제</DeleteBtn>
+            <DeleteBtn onClick={deleteMessages}>선택한 알림 삭제</DeleteBtn>
           </Header>
           <Body $scrollColor={ACCENT_COLOR}>
             {messages.map((message) => (
