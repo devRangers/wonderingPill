@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
+import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
@@ -55,8 +56,9 @@ const MessageListPage: NextPage = () => {
       retry: false,
       refetchOnWindowFocus: false,
       onSuccess: ({ alarms }) => {
+        console.log(messages, alarms);
         setMessages((prev) =>
-          [...new Set([...prev, ...alarms])].filter(
+          _.uniqBy([...prev, ...alarms], "id").filter(
             (message) => !selectedMessagesId.includes(message.id),
           ),
         );
@@ -69,7 +71,7 @@ const MessageListPage: NextPage = () => {
       Api.post<CommonResponse, deleteMessageValues>("/alarms/delete", data),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["getMessages", 1]);
+        queryClient.invalidateQueries(["getMessages", pageCount]);
       },
       onError: (err) => {
         console.log(err);
