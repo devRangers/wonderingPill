@@ -189,7 +189,7 @@ export class UsersController {
     @GetCurrentUserId() id: string,
   ): Promise<DeleteUserResponseDto> {
     const result: DeleteUserResponse = await this.usersService.deleteUser(id);
-    this.logger.verbose(`PATCH /delete Success!`);
+    this.logger.log(`PATCH /delete Success!`);
     return {
       statusCode: 200,
       message: '회원탈퇴가 완료되었습니다.',
@@ -220,7 +220,7 @@ export class UsersController {
     @Body() sendInquiryDto: SendInquiryDto,
   ): Promise<CommonResponseDto> {
     await this.usersService.sendInquiry(id, sendInquiryDto);
-    this.logger.verbose(`POST /inquiry Success!`);
+    this.logger.log(`POST /inquiry Success!`);
     return {
       statusCode: 201,
       message: '문의를 성공적으로 전송했습니다.',
