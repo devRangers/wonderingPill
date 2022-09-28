@@ -122,7 +122,7 @@ export class UsersService {
 
   /** DB에 저장된 user의 password와 입력받은 password가 일치하는지 여부 확인 */
   async verifyPassword(user: User, password: string) {
-    const check = await argon.verify(user.password, password);
+    const check: boolean = await argon.verify(user.password, password);
     if (!check) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
@@ -130,7 +130,7 @@ export class UsersService {
 
   /** 현재 로그인한 유저의 회원 탈퇴 */
   async deleteUser(id: string): Promise<DeleteUserResponse> {
-    const user = await this.getUserById(id); // user 정보 조회
+    const user: User = await this.getUserById(id); // user 정보 조회
     const oldDate: string = user.profileImg.split('_')[2]; // profileimg에 들어갈 oldDate 찾기
 
     try {
