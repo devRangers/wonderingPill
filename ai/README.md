@@ -77,7 +77,7 @@ http://34.64.168.83:5001/predict
 **Response** 
 ```
 {
-	status: 204
+	status: 200
 }
 ```
 

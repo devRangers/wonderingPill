@@ -38,7 +38,7 @@ def predict():
     letter_pred = letter_recognizer.handle(preprocessed_img_nparray)
 
     sse.publish({"shape": shape_pred, "colors": color_pred, "letters": letter_pred}, type="sse")
-    return Response(status=204)
+    return Response(status=200)
 
 
 if __name__ == "__main__":
