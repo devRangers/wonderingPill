@@ -51,7 +51,7 @@ function TimeForm({
 }: TimeFormProps) {
   const [selectedDays, setSelectedDays] = useState(
     Array.from({ length: 7 }, (_, idx) => vip.includes(idx)),
-  );
+  ); // 버튼 활성화 여부를 위해 boolean[]으로 변경
   const [selectedDaysText, setSelectedDaysText] = useState("");
 
   const selectChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -63,7 +63,7 @@ function TimeForm({
     const selectedIdx = selectedDays.reduce(
       (a: number[], e, i) => (e === true ? a.concat(i) : a),
       [],
-    );
+    ); // 알림 vip 설정을 위해 number[]로 변경
     setVip(selectedIdx);
     const text = Object.values(Day).reduce(
       (a, e, i) => (selectedIdx.includes(i) ? (a += e + ", ") : a),
