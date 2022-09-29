@@ -51,8 +51,7 @@ const MessageListPage: NextPage = () => {
     ["getMessages", pageCount],
     () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
     {
-      staleTime: 1000,
-      cacheTime: Infinity,
+      staleTime: 60 * 1000,
       retry: false,
       refetchOnWindowFocus: false,
       onSuccess: ({ alarms }) => {
