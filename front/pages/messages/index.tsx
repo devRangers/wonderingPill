@@ -43,7 +43,7 @@ interface deleteMessageValues {
 const MessageListPage: NextPage = () => {
   const queryClient = useQueryClient();
 
-  const [selectedMessagesId, setSelectedMessagesId] = useState<string[]>([]);
+  const [selectedMessagesId, setSelectedMessagesId] = useState<string[]>([]); // 삭제할(된) 알림 목록 ID
   const [messages, setMessages] = useState<MessageValues[]>([]);
   const [pageCount, setPageCount] = useState(1);
 
@@ -55,6 +55,7 @@ const MessageListPage: NextPage = () => {
       retry: false,
       refetchOnWindowFocus: false,
       onSuccess: ({ alarms }) => {
+        // 알림 목록 중복 제거, 삭제된 알림 목록 필터링
         setMessages((prev) =>
           _.uniqBy([...prev, ...alarms], "id").filter(
             (message) => !selectedMessagesId.includes(message.id),
@@ -69,6 +70,7 @@ const MessageListPage: NextPage = () => {
       Api.post<CommonResponse, deleteMessageValues>("/alarms/delete", data),
     {
       onSuccess: () => {
+        // 삭제 성공 후 알림 목록 갱신
         queryClient.invalidateQueries(["getMessages", pageCount]);
       },
       onError: (err) => {
