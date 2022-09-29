@@ -69,7 +69,6 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
 
   const formik = useFormik({
     initialValues: initialValue,
-    validationSchema: Yup.object({}),
     onSubmit: async (values) => {
       if (isNotificationToggle) {
         const { hour, repeatTime, minute } = values;
