@@ -1,5 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AgendaService } from 'src/agenda/agenda.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -10,7 +13,6 @@ export class AlarmsService {
   constructor(
     private readonly prismaMongo: PrismaMongoService,
     private readonly prisma: PrismaService,
-    private readonly configService: ConfigService,
     private readonly agnedaService: AgendaService,
   ) {}
 
@@ -39,6 +41,7 @@ export class AlarmsService {
         vip,
       );
 
+      // 한번만 알림을 전송하고 싶을 때 길이가 8인 vip 생성
       if (vip.length === 0) {
         vip.push(0, 1, 2, 3, 4, 5, 6, 7);
       }
@@ -77,7 +80,7 @@ export class AlarmsService {
         });
       }
     } catch (error) {
-      throw new ForbiddenException('user를 저장하지 못했습니다.');
+      throw new NotFoundException('user를 저장하지 못했습니다.');
     }
   }
 
@@ -93,7 +96,7 @@ export class AlarmsService {
         data: { alarm: check },
       });
     } catch (error) {
-      throw new ForbiddenException('알림을 체크하지 못했습니다.');
+      throw new NotFoundException('알림을 체크하지 못했습니다.');
     }
   }
 
@@ -117,7 +120,7 @@ export class AlarmsService {
       });
       return alarms;
     } catch (error) {
-      throw new ForbiddenException('알림을 조회하지 못했습니다.');
+      throw new NotFoundException('알림을 조회하지 못했습니다.');
     }
   }
 
@@ -128,7 +131,7 @@ export class AlarmsService {
         where: { id: { in: ids }, user_id: userId },
       });
     } catch (error) {
-      throw new ForbiddenException('알림을 삭제하지 못했습니다.');
+      throw new NotFoundException('알림을 삭제하지 못했습니다.');
     }
   }
 
@@ -145,7 +148,7 @@ export class AlarmsService {
       });
       return bookmark.Pill.name;
     } catch (error) {
-      throw new ForbiddenException('약을 조회하지 못했습니다.');
+      throw new NotFoundException('약을 조회하지 못했습니다.');
     }
   }
 }
