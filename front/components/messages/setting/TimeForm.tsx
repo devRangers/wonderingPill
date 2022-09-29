@@ -50,7 +50,7 @@ function TimeForm({
   setIsAfternoon,
 }: TimeFormProps) {
   const [selectedDays, setSelectedDays] = useState(
-    Array.from({ length: 7 }, (_, idx) => (vip.includes(idx) ? true : false)),
+    Array.from({ length: 7 }, (_, idx) => vip.includes(idx)),
   );
   const [selectedDaysText, setSelectedDaysText] = useState("");
 
