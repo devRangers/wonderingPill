@@ -49,7 +49,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
         </GuideDescriptionBox>
         <GuideImageWrapper>
           <Image
-            src="/images/search/image/rightImage.png"
+            src="/images/search/rightImage.png"
             layout="fill"
             objectFit="contain"
             priority={true}
@@ -66,7 +66,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
         <GuideTwoImageWrapper $isWide={isWide}>
           <PillImage $isWide={isWide}>
             <Image
-              src="/images/search/image/brightImage.png"
+              src="/images/search/brightImage.png"
               layout="fill"
               objectFit="contain"
               priority={true}
@@ -74,7 +74,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
           </PillImage>
           <PillImage $isWide={isWide}>
             <Image
-              src="/images/search/image/darkImage.png"
+              src="/images/search/darkImage.png"
               layout="fill"
               objectFit="contain"
               priority={true}
