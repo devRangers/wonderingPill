@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
+import { prefixConstant } from 'src/utils/prefix.constant';
 
-/**
- * Swagger 세팅
- *
- * @param {INestApplication} app
- */
 export function setupSwagger(app: INestApplication): void {
   const options = new DocumentBuilder()
     .setTitle('WonderingPill API Docs')
@@ -31,6 +31,17 @@ export function setupSwagger(app: INestApplication): void {
     )
     .build();
 
+  const swaggerCustomOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  };
+
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup(
+    `${prefixConstant}/swagger`,
+    app,
+    document,
+    swaggerCustomOptions,
+  );
 }

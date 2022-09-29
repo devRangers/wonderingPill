@@ -11,4 +11,6 @@ export type SigninResponseUser = {
   email?: string;
   name?: string;
   profileImg?: string;
+  provider?: string;
+  phone?: string;
 };

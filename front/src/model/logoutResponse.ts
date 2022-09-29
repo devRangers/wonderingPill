@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { LogoutResponseCheckLogout } from './logoutResponseCheckLogout';
+import type { LogoutResponseResult } from './logoutResponseResult';
 
 export interface LogoutResponse {
   statusCode: number;
   message: string;
-  checkLogout: LogoutResponseCheckLogout;
+  result: LogoutResponseResult;
 }

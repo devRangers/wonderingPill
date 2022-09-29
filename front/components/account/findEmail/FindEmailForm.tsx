@@ -1,7 +1,17 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { BUTTON_COLOR, ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useMutation } from "react-query";
+import * as Api from "@api";
+import { FindAccountResponse } from "@modelTypes/findAccountResponse";
+import { FindAccountDto as FindAccountValues } from "@modelTypes/findAccountDto";
+import {
+  ERROR_MSG_COLOR,
+  SUB_COLOR,
+  ACCENT_COLOR,
+  GRAY_COLOR,
+} from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -18,7 +28,6 @@ import {
   Hyphen,
   BtnContainer,
 } from "./FindEmailForm.style";
-import Recaptcha from "@recaptcha/Recaptcha";
 import Modal from "@modal/Modal";
 import AuthForm from "./AuthForm";
 
@@ -39,8 +48,23 @@ const initialValue: FindEmailValues = {
 };
 
 function FindEmailForm() {
-  const [startVerification, setStartVerification] = useState(false); // ReCaptcha 검증 시점 결정
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [phone, setPhone] = useState("");
+
+  const findEmailMutation = useMutation(
+    (data: FindAccountValues) =>
+      Api.post<FindAccountResponse, FindAccountValues>("/auth/send-sms", data),
+    {
+      onSuccess: () => {
+        setAuthModalOpen(true);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    },
+  );
 
   const formik = useFormik({
     initialValues: initialValue,
@@ -62,12 +86,27 @@ function FindEmailForm() {
         .matches(/^[0-9]{4}$/, "유효하지 않은 번호입니다.")
         .required("휴대폰 번호를 입력해 주세요."),
     }),
-    onSubmit: async (values, actions) => {
-      // Submit Handler 구현 예정
-      setStartVerification(true);
+    onSubmit: async ({
+      name,
+      birth,
+      firstPhoneNum,
+      middlePhoneNum,
+      lastPhoneNum,
+    }) => {
+      const token = (await recaptchaRef?.current?.executeAsync()) as string;
+      const phoneNumber = firstPhoneNum + middlePhoneNum + lastPhoneNum;
 
-      // 성공 시 로직
-      // setAuthModalOpen(true);
+      const dataToSubmit = {
+        name,
+        birth,
+        token,
+        phone: phoneNumber,
+      };
+
+      setPhone(phoneNumber);
+      recaptchaRef.current?.reset();
+      setAuthModalOpen(true);
+      findEmailMutation.mutate(dataToSubmit);
     },
   });
 
@@ -88,6 +127,7 @@ function FindEmailForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.name}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.name && formik.errors.name}
@@ -105,6 +145,7 @@ function FindEmailForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.birth}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.birth && formik.errors.birth}
@@ -113,7 +154,7 @@ function FindEmailForm() {
         </div>
 
         <PhoneContainer>
-          <PhoneTitle $txtColor={SUB_COLOR}>휴대폰 번호</PhoneTitle>
+          <PhoneTitle $txtColor={ACCENT_COLOR}>휴대폰 번호</PhoneTitle>
 
           <PhoneNumberContainer>
             <PhoneNumberSelect
@@ -125,7 +166,7 @@ function FindEmailForm() {
               <option value="010">010</option>
               <option value="070">070</option>
             </PhoneNumberSelect>
-            <Hyphen $txtColor={SUB_COLOR}>―</Hyphen>
+            <Hyphen $txtColor={ACCENT_COLOR}>―</Hyphen>
 
             <PhoneNumberInput
               id="middlePhoneNum"
@@ -137,7 +178,7 @@ function FindEmailForm() {
               onBlur={formik.handleBlur}
               value={formik.values.middlePhoneNum}
             />
-            <Hyphen $txtColor={SUB_COLOR}>―</Hyphen>
+            <Hyphen $txtColor={ACCENT_COLOR}>―</Hyphen>
 
             <PhoneNumberInput
               id="lastPhoneNum"
@@ -153,21 +194,21 @@ function FindEmailForm() {
         </PhoneContainer>
 
         <BtnContainer>
-          <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
+          <SubmitBtn type="submit" $btnColor={SUB_COLOR}>
             계정 찾기
           </SubmitBtn>
         </BtnContainer>
 
         {authModalOpen && (
           <Modal open={authModalOpen} onClose={modalCloseHandler}>
-            <AuthForm onClose={modalCloseHandler} />
+            <AuthForm onClose={modalCloseHandler} phone={phone} />
           </Modal>
         )}
       </Form>
-
-      <Recaptcha
-        startVerification={startVerification}
-        setStartVerification={setStartVerification}
+      <ReCAPTCHA
+        ref={recaptchaRef}
+        size="invisible"
+        sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
       />
     </>
   );

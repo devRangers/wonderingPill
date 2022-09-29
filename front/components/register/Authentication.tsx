@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SUB_COLOR } from "@utils/constant";
+import { ACCENT_COLOR, GRAY_COLOR, ERROR_MSG_COLOR } from "@utils/constant";
 import {
   AuthenticationForm,
   AuthenticationInput,
@@ -218,10 +218,11 @@ function Authentication({
             maxLength={11}
             {...phoneNumberFormik.getFieldProps("phoneNumber")}
             placeholder="- 제외 휴대폰번호"
+            $placeholderColor={GRAY_COLOR}
           />
           <SubmitAuthenticationBtn
             type="submit"
-            $btnColor={SUB_COLOR}
+            $btnColor={ACCENT_COLOR}
             $isDisabled={authSelf.authPhone}
             disabled={authSelf.authPhone ? true : false}>
             전송
@@ -229,9 +230,11 @@ function Authentication({
         </PhoneNumberContainer>
         {phoneNumberFormik.touched.phoneNumber &&
         phoneNumberFormik.errors.phoneNumber ? (
-          <ErrorMessage>{phoneNumberFormik.errors.phoneNumber}</ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+            {phoneNumberFormik.errors.phoneNumber}
+          </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </AuthenticationForm>
 
@@ -242,10 +245,11 @@ function Authentication({
             type="number"
             {...authenticationFormik.getFieldProps("authenticationNumber")}
             placeholder="인증번호"
+            $placeholderColor={GRAY_COLOR}
           />
           <SubmitAuthenticationBtn
             type="submit"
-            $btnColor={SUB_COLOR}
+            $btnColor={ACCENT_COLOR}
             $isDisabled={authSelf.authNumberConfirm}
             disabled={
               authenticationFormik.errors.authenticationNumber &&
@@ -258,11 +262,11 @@ function Authentication({
         </PhoneNumberContainer>
         {authenticationFormik.touched.authenticationNumber &&
         authenticationFormik.errors.authenticationNumber ? (
-          <ErrorMessage>
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
             {authenticationFormik.errors.authenticationNumber}
           </ErrorMessage>
         ) : (
-          <ErrorMessage />
+          <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
         )}
       </AuthenticationForm>
       <CheckboxContainer>
@@ -277,7 +281,7 @@ function Authentication({
               />
               <CustomCheckmark
                 $checked={selectedCheckbox[index]}
-                $markColor={SUB_COLOR}
+                $markColor={ACCENT_COLOR}
               />
               {value}
             </Label>
@@ -290,8 +294,8 @@ function Authentication({
           open={openModal[index + 1]}
           onClose={() => handleClickModalBackground(index + 1)}>
           <ModalChildrenContainer>
-            <ModalTitle $fontColor={SUB_COLOR}>{value.title}</ModalTitle>
-            <ModalContent $scrollColor={SUB_COLOR}>
+            <ModalTitle $fontColor={ACCENT_COLOR}>{value.title}</ModalTitle>
+            <ModalContent $scrollColor={ACCENT_COLOR}>
               {value.content}
             </ModalContent>
             <ModalButton onClick={() => handleClickModalBtn(index + 1)}>

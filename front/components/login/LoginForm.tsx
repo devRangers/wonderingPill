@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,9 +9,16 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
+import * as Api from "@api";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
-import { BUTTON_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
+import {
+  SUB_COLOR,
+  ERROR_MSG_COLOR,
+  GRAY_COLOR,
+  ROUTE,
+  TOASTIFY,
+} from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -30,25 +38,9 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
+import { toast } from "react-toastify";
 
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
-
-const loginHandler = async (data: LoginTypes) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-    credentials: "include",
-  });
-
-  const result: SigninResponse = await res.json();
-  if (result.statusCode >= 400) {
-    throw new Error(result.message);
-  }
-  return result;
-};
 
 function LoginForm() {
   const router = useRouter();
@@ -61,6 +53,8 @@ function LoginForm() {
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
 
+  const nofityLoginFail = () => toast.error(TOASTIFY.LOGIN_FAIL);
+
   const initialValue: LoginFormValues = {
     email: userEmail,
     password: "",
@@ -70,15 +64,20 @@ function LoginForm() {
     setIsAutoLoginChecked(e.target.checked);
   };
 
-  const loginMutation = useMutation(loginHandler, {
-    onSuccess: (result) => {
-      setUser(result.user);
-      router.push("/");
+  const loginMutation = useMutation(
+    (data: LoginTypes) =>
+      Api.post<SigninResponse, LoginTypes>("/auth/signin", data),
+    {
+      onSuccess: ({ user }) => {
+        setUser(user);
+        router.push(ROUTE.MAIN);
+      },
+      onError: ({ message }) => {
+        console.log(message);
+        nofityLoginFail();
+      },
     },
-    onError: ({ message }) => {
-      console.log(message);
-    },
-  });
+  );
 
   const formik = useFormik({
     initialValues: initialValue,
@@ -117,6 +116,7 @@ function LoginForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.email}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.email && formik.errors.email}
@@ -135,6 +135,7 @@ function LoginForm() {
               data-tip="password-tooltip"
               data-for="password-tooltip"
               autoComplete="true"
+              $placeholderColor={GRAY_COLOR}
             />
             {formik.touched.password && formik.errors.password ? (
               <>
@@ -154,7 +155,7 @@ function LoginForm() {
             )}
           </InputContainer>
 
-          <SubmitBtn type="submit" $btnColor={BUTTON_COLOR}>
+          <SubmitBtn type="submit" $btnColor={SUB_COLOR}>
             로그인하기
           </SubmitBtn>
         </ContentContainer>
@@ -194,23 +195,27 @@ function LoginForm() {
       <SnsLoginContainer>
         <SnsTitle>간편로그인</SnsTitle>
         <SnsBtnContainer>
-          <KakaoBtn>
-            <Image
-              src="/images/sns/kakao.png"
-              alt="kakao-login"
-              width="45"
-              height="45"
-            />
-          </KakaoBtn>
+          <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/kakao`}>
+            <KakaoBtn>
+              <Image
+                src="/images/sns/kakao.png"
+                alt="kakao-login"
+                width="45"
+                height="45"
+              />
+            </KakaoBtn>
+          </Link>
 
-          <GoogleBtn>
-            <Image
-              src="/images/sns/google.png"
-              alt="google-login"
-              width="25"
-              height="25"
-            />
-          </GoogleBtn>
+          <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google`}>
+            <GoogleBtn>
+              <Image
+                src="/images/sns/google.png"
+                alt="google-login"
+                width="25"
+                height="25"
+              />
+            </GoogleBtn>
+          </Link>
         </SnsBtnContainer>
       </SnsLoginContainer>
     </LoginFormContainer>

@@ -1,52 +1,63 @@
-import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { providerType } from './auth-provider.enum';
+import { MockAuthService } from './auth.mock';
 import { AuthService } from './auth.service';
+import { CreateUserDto } from './dto';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prismaService: PrismaService;
 
   beforeEach(async () => {
+    const mockProvider = { provide: AuthService, useClass: MockAuthService };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [AuthService, mockProvider],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    prismaService = module.get<PrismaService>(PrismaService);
-
-    await prismaService.user.create({
-      data: {
-        id: '1',
-        email: 'string124453@email.com',
-        name: 'string',
-        password: 'string1324533@',
-        birth: '19551212',
-        phone: '01000000000',
-      },
-    });
   });
 
-  afterAll(() => {});
+  afterEach(async () => {
+    jest.clearAllMocks();
+  });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getUserByEmail', () => {
-    it('should return a user', async () => {
-      const user = await service.getUserByEmail('string124453@email.com');
-      expect(user).toBeDefined();
-      expect(user.email).toEqual('string124453@email.com');
-    });
+  describe('create user', () => {
+    const res = {
+      send: jest.fn(),
+      status: jest.fn(() => res),
+      json: jest.fn(),
+    };
 
-    it('should throw forbidden error', async () => {
-      try {
-        await service.getUserByEmail('999');
-      } catch (e) {
-        expect(e).toBeInstanceOf(ForbiddenException);
-        expect(e.message).toEqual('회원이 존재하지 않습니다.');
-      }
+    const newUser = {
+      id: 'uuid_test_1234',
+      email: 'test@mail.com',
+      name: 'tester',
+      password: 'password',
+      phone: '01000000000',
+      profileImg: 'image.png',
+      isDeleted: true,
+      birth: '19900101',
+      createdAt: new Date('2022 - 08 - 28'),
+      updatedAt: new Date('2022-08-28 05:00:47.583'),
+      provider: providerType.LOCAL,
+    };
+
+    it('should create a user', async () => {
+      const createUserSpy = jest
+        .spyOn(service, 'createUser')
+        .mockResolvedValue(newUser);
+
+      const dto = new CreateUserDto();
+
+      const result = await service.createUser(dto);
+      res.status.mockReturnValue(200);
+
+      expect(createUserSpy).toHaveBeenCalledWith(dto);
+      expect(result).toEqual(newUser);
+      expect(res.status()).toBe(200);
     });
   });
 });

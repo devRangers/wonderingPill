@@ -19,20 +19,27 @@
     "paths": {
       "@lib/*": ["lib/*"],
       "@atom/*": ["atom/*"],
-      "@utils/*": ["common/utils/*"],
-      "@userContainer/*": ["common/userContainer/*"],
-      "@modal/*": ["common/modal/*"],
+      "@api": ["api/api"],
+      "@container/*": ["common/container/*"],
       "@footer/*": ["common/footer/*"],
       "@header/*": ["common/header/*"],
+      "@modal/*": ["common/modal/*"],
       "@sidebar/*": ["common/sidebar/*"],
+      "@userContainer/*": ["common/userContainer/*"],
+      "@errorContainer/*": ["common/errorContainer/*"],
+      "@utils/*": ["common/utils/*"],
       "@accountComp/*": ["components/account/*"],
+      "@infoComp/*": ["components/info/*"],
       "@loginComp/*": ["components/login/*"],
       "@mainComp/*": ["components/main/*"],
+      "@mypage/*": ["components/my-page*"],
       "@registerComp/*": ["components/register/*"],
       "@searchComp/*": ["components/search/*"],
+      "@searchPharmComp/*": ["components/search/pharmacy/*"],
+      "@resultComp/*": ["components/search/result/*"],
       "@modelTypes/*": ["src/model/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "firebase/index.js"],
   "exclude": ["node_modules"]
 }
