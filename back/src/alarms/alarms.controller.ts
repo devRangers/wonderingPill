@@ -54,7 +54,7 @@ export class AlarmsController {
     @Body() setAlarmDto: SetAlarmDto,
   ) {
     await this.alarmsService.setAlarms(id, setAlarmDto);
-    this.logger.verbose(`Setting User ${id} pill alarms`);
+    this.logger.log(`POST /set Success!`);
     return { statusCode: 201, message: '알림을 설정했습니다.' };
   }
 

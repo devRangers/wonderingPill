@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { AgendaService } from 'src/agenda/agenda.service';
 import { AlarmsModule } from 'src/alarms/alarms.module';
 import { AlarmsService } from 'src/alarms/alarms.service';
 import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
@@ -38,6 +39,7 @@ import { GoogleStrategy } from './strategy/google.strategy';
     AuthService,
     UsersService,
     AlarmsService,
+    AgendaService,
     JwtStrategy,
     JwtRefreshStrategy,
     KakaoStrategy,
