@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "@modal/Modal";
 import {
-  CAPTURE_GUIDE_MOAL_COOKIE,
   FOOTER_HEIGHT,
   FULL_HEIGHT,
   HEADER_HEIGHT,
@@ -24,7 +23,6 @@ import {
 } from "./FindWithImage.style";
 import Capture from "./capture/Capture";
 import CaptureGuideModal from "./CaptureGuideModal";
-import { getCookie } from "@utils/cookie";
 
 export interface FindWithImageProp {
   foundCookie: boolean;
@@ -33,7 +31,6 @@ export interface FindWithImageProp {
 function FindWithImage({ foundCookie }: FindWithImageProp) {
   const isWide = isWideDevice();
   const [modalOpen, setModalOpen] = useState(true);
-  const [isValidCookie, setIsValidCookie] = useState(foundCookie);
   const handleCloseModal = () => {
     setModalOpen(false);
   };
@@ -73,7 +70,7 @@ function FindWithImage({ foundCookie }: FindWithImageProp) {
           </DescriptionContainer>
         </FindWithImageContainer>
       </Container>
-      {!isValidCookie && modalOpen ? (
+      {!foundCookie && modalOpen ? (
         <Modal open={modalOpen} onClose={handleCloseModal}>
           <CaptureGuideModal handleCloseModal={handleCloseModal} />
         </Modal>
