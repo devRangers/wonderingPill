@@ -15,7 +15,7 @@ function Capture() {
   return (
     <>
       <Image
-        src={"/images/search/image/captureImage.png"}
+        src={"/images/search/captureImage.png"}
         alt="wondering-pill-logo"
         layout="fill"
         objectFit="contain"
