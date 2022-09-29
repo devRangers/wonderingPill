@@ -76,11 +76,11 @@ const PATTERN = "문양";
 
 function Option() {
   const [isShapeSelected, setIsShapeSelected] = useState(
-    Array.from({ length: Object.keys(ShapeInfo).length }, () => false),
+    Array(Object.keys(ShapeInfo).length).fill(false),
   );
 
   const [isColorSelected, setIsColorSelected] = useState(
-    Array.from({ length: Object.keys(ColorInfo).length }, () => false),
+    Array(Object.keys(ColorInfo).length).fill(false),
   );
 
   const [isPatternSelected, setIsPatternSelected] = useState([true, false]);
