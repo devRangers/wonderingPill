@@ -1,9 +1,7 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
-import FindWithImage, {
-  FindWithImageProp,
-} from "components/search/FindWithImage";
 import { CAPTURE_GUIDE_MOAL_COOKIE } from "@utils/constant";
+import FindWithImage, { FindWithImageProp } from "@searchComp/FindWithImage";
 
 const Image: NextPage<FindWithImageProp> = ({ foundCookie }) => {
   return <FindWithImage foundCookie={foundCookie} />;
