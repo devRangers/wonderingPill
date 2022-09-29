@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Agenda from 'agenda/es';
+import { Agenda } from 'agenda/es';
 import { FcmService } from 'src/fcm/fcm.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 
@@ -13,13 +13,13 @@ export class AgendaService {
   ) {}
 
   /** Agneda 설정 */
-  async setAgenda(): Promise<Agenda> {
+  async setAgenda(id: string, pillBookmarkId: string): Promise<Agenda> {
     const agenda = new Agenda({
       db: {
         address: this.configService.get('DATABASE_URL_MONGO'),
         collection: 'pillAlarms',
       },
-      name: 'pill-alarms-set',
+      name: id + '-' + pillBookmarkId,
     });
     return agenda;
   }
@@ -34,7 +34,7 @@ export class AgendaService {
     repeatTime: number,
     vip: number[],
   ) {
-    const agenda: Agenda = await this.setAgenda();
+    const agenda: Agenda = await this.setAgenda(id, pillBookmarkId);
     const time: string = await this.getCurrTime();
 
     try {
@@ -84,7 +84,7 @@ export class AgendaService {
     id: string,
     pillBookmarkId: string,
   ) {
-    const agenda = await this.setAgenda();
+    const agenda = await this.setAgenda(id, pillBookmarkId);
     try {
       (async function () {
         const job = agenda.create(id + '-' + pillBookmarkId + ':repeat');
@@ -104,7 +104,7 @@ export class AgendaService {
     id: string,
     pillBookmarkId: string,
   ) {
-    const agenda = await this.setAgenda();
+    const agenda = await this.setAgenda(id, pillBookmarkId);
     try {
       (async function () {
         await agenda.start();
@@ -123,7 +123,7 @@ export class AgendaService {
   }
 
   async getAgenda(id, pillBookmarkId, pillName) {
-    const agenda = await this.setAgenda();
+    const agenda = await this.setAgenda(id, pillBookmarkId);
     try {
       const result = (async function () {
         await agenda.start();
@@ -156,8 +156,9 @@ export class AgendaService {
   }
 
   async deleteAgenda(id: string, pillBookmarkId: string) {
-    const agenda = await this.setAgenda();
+    const agenda = await this.setAgenda(id, pillBookmarkId);
     try {
+      await agenda.start();
       await agenda.cancel({
         name: id + '-' + pillBookmarkId,
       });
