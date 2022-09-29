@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import { CAPTURE_GUIDE_MOAL_COOKIE, MAIN_COLOR } from "@utils/constant";
+import { setCookie } from "@utils/cookie";
 import { isWideDevice } from "@utils/isWideDevice";
+import { CAPTURE_GUIDE_MOAL_COOKIE, MAIN_COLOR } from "@utils/constant";
 import {
   CloseBtn,
   CloseWeekendBtn,
@@ -18,7 +18,6 @@ import {
   ImageDescription,
   PillImage,
 } from "./FindWithImage.style";
-import { setCookie } from "@utils/cookie";
 
 const ONE_WEEK = 60 * 60 * 24 * 7;
 
@@ -30,7 +29,7 @@ function CaptureGuideModal({ handleCloseModal }: CaptureGuideModalProp) {
   const isWide = isWideDevice();
 
   const handleClickHideModalOneWeek = () => {
-    setCookie(CAPTURE_GUIDE_MOAL_COOKIE, "", {
+    setCookie(CAPTURE_GUIDE_MOAL_COOKIE, CAPTURE_GUIDE_MOAL_COOKIE, {
       path: "/",
       maxAge: ONE_WEEK,
     });

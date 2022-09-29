@@ -26,21 +26,17 @@ import Capture from "./capture/Capture";
 import CaptureGuideModal from "./CaptureGuideModal";
 import { getCookie } from "@utils/cookie";
 
-function FindWithImage() {
+export interface FindWithImageProp {
+  foundCookie: boolean;
+}
+
+function FindWithImage({ foundCookie }: FindWithImageProp) {
   const isWide = isWideDevice();
   const [modalOpen, setModalOpen] = useState(true);
-  const [isValidCookie, setValidCookie] = useState(false);
+  const [isValidCookie, setIsValidCookie] = useState(foundCookie);
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-
-  useEffect(() => {
-    if (!getCookie(CAPTURE_GUIDE_MOAL_COOKIE)) {
-      setValidCookie(false);
-    } else {
-      setValidCookie(true);
-    }
-  }, []);
 
   return (
     <>
