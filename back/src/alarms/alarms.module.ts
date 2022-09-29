@@ -1,13 +1,15 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { AgendaModule } from 'src/agenda/agenda.module';
+import { AgendaService } from 'src/agenda/agenda.service';
 import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
-import { FcmModule } from 'src/fcm/fcm.module';
 import { AlarmsController } from './alarms.controller';
 import { AlarmsService } from './alarms.service';
 
 @Module({
-  imports: [FcmModule],
-  providers: [AlarmsService],
+  imports: [AgendaModule],
+  providers: [AlarmsService, AgendaService],
   controllers: [AlarmsController],
+  exports: [AgendaModule],
 })
 export class AlarmsModule {
   configure(consumer: MiddlewareConsumer) {

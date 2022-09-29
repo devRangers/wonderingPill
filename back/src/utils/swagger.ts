@@ -4,6 +4,7 @@ import {
   SwaggerCustomOptions,
   SwaggerModule,
 } from '@nestjs/swagger';
+import { prefixConstant } from 'src/utils/prefix.constant';
 
 export function setupSwagger(app: INestApplication): void {
   const options = new DocumentBuilder()
@@ -37,5 +38,10 @@ export function setupSwagger(app: INestApplication): void {
   };
 
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api/v1/swagger', app, document, swaggerCustomOptions);
+  SwaggerModule.setup(
+    `${prefixConstant}/swagger`,
+    app,
+    document,
+    swaggerCustomOptions,
+  );
 }

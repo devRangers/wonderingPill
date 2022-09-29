@@ -9,6 +9,7 @@ import * as argon from 'argon2';
 import { User } from 'prisma/postgresClient';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
+import { UsersService } from 'src/users/users.service';
 import { providerType } from './auth-provider.enum';
 import {
   ChangePasswordDto,
@@ -26,6 +27,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -73,18 +75,6 @@ export class AuthService {
     try {
       const user: User = await this.prisma.user.findUnique({
         where: { email },
-      });
-
-      return user;
-    } catch {
-      throw new NotFoundException('회원을 찾지 못했습니다.');
-    }
-  }
-
-  async getUserById(id: string): Promise<User> {
-    try {
-      const user: User = await this.prisma.user.findUnique({
-        where: { id },
       });
 
       return user;
@@ -186,7 +176,7 @@ export class AuthService {
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
-    const user: User = await this.getUserById(id);
+    const user: User = await this.usersService.getUserById(id);
     if (!user || user.isDeleted)
       throw new NotFoundException('회원이 존재하지 않습니다.');
 

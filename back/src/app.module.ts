@@ -19,6 +19,7 @@ import { RedisModule } from './redis/redis.module';
 import { SmsModule } from './sms/sms.module';
 import { UsersModule } from './users/users.module';
 import { postgresResourceArr, validation } from './utils';
+import { AgendaModule } from './agenda/agenda.module';
 import config from './utils/config';
 
 AdminJS.registerAdapter({ Database, Resource });
@@ -85,6 +86,7 @@ AdminJS.registerAdapter({ Database, Resource });
         };
       },
     }),
+    AgendaModule,
   ],
   providers: [
     {

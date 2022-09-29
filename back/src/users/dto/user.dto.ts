@@ -1,25 +1,52 @@
 import {
+  IsArray,
+  IsBoolean,
   IsJSON,
-  IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
 } from 'class-validator';
-import { providerType } from 'src/auth/auth-provider.enum';
 import { CommonResponseDto } from 'src/common/dto';
 
-export class DeleteUserResponse extends CommonResponseDto {
+/** 마이페이지 조회 */
+/** -------------- */
+/** 1. 마이페이지 조회 서비스 반환 타입 */
+export class GetMypageResponse {
+  @IsArray()
+  PharmacyBookMark: { Pharmacy: { name: string; phone: string } }[] | [];
+
+  @IsArray()
+  PillBookMark: { Pill: { name: string }; alarm: boolean }[] | [];
+}
+
+/** 2. 마이페이지 조회 API 반환 타입 */
+export class GetMypageResponseDto extends CommonResponseDto {
   @IsJSON()
-  @IsNotEmpty()
-  result: { result: boolean };
+  result: {
+    user: GetMypageResponse;
+  };
 }
+/** -------------- */
 
-export class SendInquiryDto {
+/** Presigned Url 발급 */
+/** -------------- */
+/** 1. Presigned Url 발급 서비스 반환 타입 */
+export class GetPresignedUrlResponse {
   @IsString()
-  @IsNotEmpty()
-  content: string;
+  url: string;
+
+  @IsString()
+  fileName: string;
 }
 
+/** 2.. Presigned Url 발급 API 반환 타입 */
+export class GetPresignedUrlResponseDto extends CommonResponseDto {
+  @IsJSON()
+  result: GetPresignedUrlResponse;
+}
+/** -------------- */
+
+/** name, password 변경 API 요청 */
 export class UpdateUserDto {
   @IsString()
   @IsOptional()
@@ -40,34 +67,23 @@ export class UpdateUserDto {
   newPassword?: string;
 }
 
-export class SendInquiryResponse extends CommonResponseDto {
-  @IsJSON()
-  @IsNotEmpty()
-  result: { inquiry };
+/** 회원탈퇴 */
+/** -------------- */
+/** 1. 회원탈퇴 서비스 반환 타입 */
+export class DeleteUserResponse {
+  @IsBoolean()
+  result: boolean;
 }
 
-export class getUserResponse extends CommonResponseDto {
+/** 2. 회원탈퇴 API 반환 타입 */
+export class DeleteUserResponseDto extends CommonResponseDto {
   @IsJSON()
-  @IsNotEmpty()
-  result: { user };
+  result: DeleteUserResponse;
 }
+/** -------------- */
 
-export class getSignedUrlResponse extends CommonResponseDto {
-  @IsJSON()
-  @IsNotEmpty()
-  result: { url: string; fileName: string };
-}
-
-export class User {
-  id: number;
-  email: string;
-  name: string;
-  phone: string;
-  password: string;
-  profileImg: string;
-  birth: string;
-  provider: providerType;
-  isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+/** 고객센터 API 요청 */
+export class SendInquiryDto {
+  @IsString()
+  content: string;
 }

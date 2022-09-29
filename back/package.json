@@ -96,7 +96,7 @@
     "roots": [
       "src"
     ],
-    "testRegex": "auth.service.spec.ts",
+    "testRegex": "*.service.spec.ts",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
