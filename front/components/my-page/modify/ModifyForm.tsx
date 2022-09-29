@@ -76,10 +76,10 @@ function ModifyForm() {
   };
 
   const checkValidForm = (values: ModifyValues) => {
-    const firstCheck =
+    const totalCheck =
       !values.name && !values.curPassword && !values.newPassword;
-    const secondCheck = values.curPassword && !values.newPassword;
-    if (firstCheck || secondCheck) {
+    const passwordCheck = values.curPassword && !values.newPassword;
+    if (totalCheck || passwordCheck) {
       handleFailModal();
       return false;
     }
