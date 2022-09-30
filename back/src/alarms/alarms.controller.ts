@@ -70,15 +70,19 @@ export class AlarmsController {
     summary: '푸쉬 알림 취소 API',
     description: '푸쉬 알림을 취소한다.',
   })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '북마크 아이디',
+  })
   @ApiResponse({
     status: 200,
     description: '푸쉬 알림 취소 성공',
     type: CommonResponseDto,
   })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: '북마크 아이디',
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '푸쉬 알림 취소 실패',
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
