@@ -51,9 +51,6 @@ const MessageListPage: NextPage = () => {
     ["getMessages", pageCount],
     () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
     {
-      staleTime: 60 * 1000,
-      retry: false,
-      refetchOnWindowFocus: false,
       onSuccess: ({ alarms }) => {
         // 알림 목록 중복 제거, 삭제된 알림 목록 필터링
         setMessages((prev) =>
