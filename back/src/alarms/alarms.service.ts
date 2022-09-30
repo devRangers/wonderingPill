@@ -7,7 +7,7 @@ import { User } from 'prisma/mongoClient';
 import { AgendaService } from 'src/agenda/agenda.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { DeleteAlarmsDto, SetAlarmDto } from './dto';
+import { DeleteAlarmsDto, GetAlarmSettingResponse, SetAlarmDto } from './dto';
 
 @Injectable()
 export class AlarmsService {
@@ -93,9 +93,19 @@ export class AlarmsService {
     }
   }
 
+  /** 알림 설정 여부 체크 */
   async cancelAlarm(id: string, pillBookmarkId: string) {
     await this.agnedaService.deleteAgenda(id, pillBookmarkId);
     await this.setAlarmMark(false, pillBookmarkId);
+  }
+
+  /** 알림 설정 조회 */
+  async getAlarmSetting(
+    id: string,
+    pillBookmarkId: string,
+  ): Promise<GetAlarmSettingResponse> {
+    const pillName: string = await this.getPillName(pillBookmarkId);
+    return await this.agnedaService.getAgenda(id, pillBookmarkId, pillName);
   }
 
   async getAlarms(id: string, page: number) {
@@ -133,11 +143,6 @@ export class AlarmsService {
     } catch (error) {
       throw new NotFoundException('알림을 삭제하지 못했습니다.');
     }
-  }
-
-  async getSetAlarm(id: string, pillBookmarkId: string) {
-    const pillName = await this.getPillName(pillBookmarkId);
-    return await this.agnedaService.getAgenda(id, pillBookmarkId, pillName);
   }
 
   async getPillName(id: string) {

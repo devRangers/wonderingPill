@@ -24,7 +24,8 @@ import { AccessGuard } from 'src/common/guards';
 import { AlarmsService } from './alarms.service';
 import {
   DeleteAlarmsDto,
-  GetAlarmSetResponseDto,
+  GetAlarmSettingResponse,
+  GetAlarmSettingResponseDto,
   GetAlarmsResponseDto,
   SetAlarmDto,
 } from './dto';
@@ -91,7 +92,7 @@ export class AlarmsController {
     @Param('id') pillBookmarkId: string,
   ) {
     await this.alarmsService.cancelAlarm(id, pillBookmarkId);
-    this.logger.verbose(`PUT /:id Success!`);
+    this.logger.log(`PUT /:id Success!`);
     return { statusCode: 200, message: '알림을 취소했습니다.' };
   }
 
@@ -102,24 +103,29 @@ export class AlarmsController {
     summary: '알림 설정창 조회 API',
     description: '알림 설정창에서 설정 내용을 조회한다.',
   })
-  @ApiResponse({
-    status: 200,
-    description: '알림 설정창 조회 성공',
-    type: GetAlarmSetResponseDto,
-  })
   @ApiParam({
     name: 'id',
     required: true,
     description: '약 북마크 아이디',
   })
+  @ApiResponse({
+    status: 200,
+    description: '알림 설정창 조회 성공',
+    type: GetAlarmSettingResponseDto,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '알림 설정창 조회 실패',
+  })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
-  async getSetAlarm(
+  async getAlarmSetting(
     @GetCurrentUserId() id: string,
     @Param('id') pillBookmarkId: string,
-  ): Promise<GetAlarmSetResponseDto> {
-    const alarm = await this.alarmsService.getSetAlarm(id, pillBookmarkId);
-    this.logger.verbose(`GET /set/:id Success!`);
+  ): Promise<GetAlarmSettingResponseDto> {
+    const alarm: GetAlarmSettingResponse =
+      await this.alarmsService.getAlarmSetting(id, pillBookmarkId);
+    this.logger.log(`GET /set/:id Success!`);
     return {
       statusCode: 200,
       message: '알림 설정을 읽어왔습니다.',
@@ -151,7 +157,7 @@ export class AlarmsController {
     @Param('page') page: number,
   ): Promise<GetAlarmsResponseDto> {
     const alarms = await this.alarmsService.getAlarms(id, page);
-    this.logger.verbose(`GET /:page Success!`);
+    this.logger.log(`GET /:page Success!`);
     return {
       statusCode: 200,
       message: '알림을 조회했습니다.',
@@ -179,7 +185,7 @@ export class AlarmsController {
     @GetCurrentUserId() userId: string,
   ): Promise<CommonResponseDto> {
     await this.alarmsService.checkAlarm();
-    this.logger.verbose(`PUT /check Success!`);
+    this.logger.log(`PUT /check Success!`);
     return { statusCode: 200, message: '알림을 삭제했습니다.' };
   }
 
@@ -202,7 +208,7 @@ export class AlarmsController {
     @GetCurrentUserId() userId: string,
   ): Promise<CommonResponseDto> {
     await this.alarmsService.deleteAlarm(deleteAlarmsDto, userId);
-    this.logger.verbose(`POST /delete Success!`);
+    this.logger.log(`POST /delete Success!`);
     return { statusCode: 200, message: '알림을 삭제했습니다.' };
   }
 }
