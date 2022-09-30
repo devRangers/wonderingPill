@@ -6,6 +6,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SendInquiryDto {
-  content: string;
-}
+export type PillSearchResponseDtoPills = {
+  id?: number;
+  name?: string;
+  code?: string;
+  PillBookMark?: string[];
+};

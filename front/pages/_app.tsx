@@ -83,9 +83,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const timer = setInterval(async () => {
       try {
-        if (document.hasFocus()) {
-          await Api.get<RefreshResponse>("/auth/refresh");
-        }
+        await Api.get<RefreshResponse>("/auth/refresh");
       } catch (err) {}
     }, SILENT_REFRESH_TIME);
 

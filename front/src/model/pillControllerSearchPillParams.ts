@@ -6,6 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SendInquiryDto {
-  content: string;
-}
+export type PillControllerSearchPillParams = { shape: string; colors: string; mark: string; letters?: string; name?: string };
