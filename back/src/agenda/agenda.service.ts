@@ -6,22 +6,19 @@ import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 
 @Injectable()
 export class AgendaService {
+  private agenda;
   constructor(
     private readonly configService: ConfigService,
     private readonly fcmService: FcmService,
     private readonly prismaMongo: PrismaMongoService,
-  ) {}
-
-  /** Agneda 설정 */
-  async setAgenda(id: string, pillBookmarkId: string): Promise<Agenda> {
-    const agenda = new Agenda({
+  ) {
+    this.agenda = new Agenda({
       db: {
         address: this.configService.get('DATABASE_URL_MONGO'),
         collection: 'pillAlarms',
       },
-      name: id + '-' + pillBookmarkId,
+      name: 'pill-alarms-set',
     });
-    return agenda;
   }
 
   /** Agneda 정의 */
@@ -34,7 +31,7 @@ export class AgendaService {
     repeatTime: number,
     vip: number[],
   ) {
-    const agenda: Agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda: Agenda = await this.agenda;
     const time: string = await this.getCurrTime();
 
     try {
@@ -65,7 +62,7 @@ export class AgendaService {
   }
 
   /** 알림에 사용할 알림 전송 시간 생성 */
-  async getCurrTime() {
+  async getCurrTime(): Promise<string> {
     const fullTime = new Date(Date.now());
     const year: string = fullTime.getFullYear().toString();
     const month: string = (fullTime.getMonth() + 1).toString();
@@ -84,7 +81,7 @@ export class AgendaService {
     id: string,
     pillBookmarkId: string,
   ) {
-    const agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda = await this.agenda;
     try {
       (async function () {
         const job = agenda.create(id + '-' + pillBookmarkId + ':repeat');
@@ -96,6 +93,7 @@ export class AgendaService {
     }
   }
 
+  /** defineEveryAgenda에서 정의된 스케줄 생성  */
   async setEveryAgenda(
     minute: number,
     hour: number,
@@ -104,7 +102,7 @@ export class AgendaService {
     id: string,
     pillBookmarkId: string,
   ) {
-    const agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda = await this.agenda;
     try {
       (async function () {
         await agenda.start();
@@ -122,8 +120,10 @@ export class AgendaService {
     }
   }
 
+  /** 정의된 스케줄을 조회해서 설정 된 알림을 읽어옴  */
   async getAgenda(id, pillBookmarkId, pillName) {
-    const agenda = await this.setAgenda(id, pillBookmarkId);
+    // TODO: 타입 지정
+    const agenda = await this.agenda;
     try {
       const result = (async function () {
         await agenda.start();
@@ -155,8 +155,9 @@ export class AgendaService {
     }
   }
 
+  /** 설정된 스케줄을 완전히 삭제함  */
   async deleteAgenda(id: string, pillBookmarkId: string) {
-    const agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda = await this.agenda;
     try {
       await agenda.start();
       await agenda.cancel({
