@@ -3,9 +3,6 @@
 const withPWA = require("next-pwa");
 
 const nextConfig = {
-  images: {
-    domains: ["localhost", "*"],
-  },
   reactStrictMode: true,
   swcMinify: true,
 };
@@ -16,4 +13,7 @@ module.exports = withPWA({
     dest: "public",
   },
   nextConfig,
+  images: {
+    domains: ["storage.googleapis.com", "storage.cloud.google.com"],
+  },
 });

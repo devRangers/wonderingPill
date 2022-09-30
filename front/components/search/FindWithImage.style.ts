@@ -40,7 +40,6 @@ export const ImageWrapper = styled("div", {
   height: "80%",
   maxWidth: "16rem",
   maxHeight: "16rem",
-  border: "1px solid black",
   borderRadius: "50%",
   margin: "0 auto",
 });
@@ -159,7 +158,6 @@ export const GuideImageWrapper = styled("div", {
   maxWidth: "15rem",
   height: "60%",
   maxHeight: "15rem",
-  border: "1px solid",
   margin: "1rem auto",
 });
 

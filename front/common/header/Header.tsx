@@ -39,7 +39,7 @@ function Header() {
             </Button>
           )}
         </ImageWrapper>
-        <BellBtn>
+        <BellBtn onClick={() => router.push(ROUTE.MESSAGES)}>
           <BsFillBellFill />
         </BellBtn>
       </HeaderContainer>

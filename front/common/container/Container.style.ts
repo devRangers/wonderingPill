@@ -10,6 +10,7 @@ export const Container = styled(
   }) => ({
     backgroundColor: props.$bgColor,
     height: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
+    minHeight: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
   }),
 );
 

@@ -65,6 +65,7 @@ function ModifyForm() {
       };
     });
   };
+
   const handleFailModal = () => {
     setIsOpenModal((cur) => {
       return {
@@ -72,6 +73,17 @@ function ModifyForm() {
         fail: !cur.fail,
       };
     });
+  };
+
+  const checkValidForm = (values: ModifyValues) => {
+    const totalCheck =
+      !values.name && !values.curPassword && !values.newPassword;
+    const passwordCheck = values.curPassword && !values.newPassword;
+    if (totalCheck || passwordCheck) {
+      handleFailModal();
+      return false;
+    }
+    return true;
   };
 
   const mutation = useMutation(
@@ -110,16 +122,13 @@ function ModifyForm() {
         .matches(
           /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
           "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
-        ),
+        ), // 패스워드만 있을 떄 뉴 패스워드를 적어야 하는지
       checkPassword: Yup.string()
         .oneOf([Yup.ref("newPassword"), null], "비밀번호가 일치하지 않습니다.")
         .max(20, "20자 이하로 입력 해 주세요."),
     }),
     onSubmit: async (values) => {
-      if (!values.name && !values.curPassword && !values.newPassword) {
-        handleFailModal();
-        return;
-      }
+      if (!checkValidForm(values)) return;
       mutation.mutate(values);
       setNamePlaceholder(values.name);
     },

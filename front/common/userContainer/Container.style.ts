@@ -60,7 +60,6 @@ export const Input = styled(
     padding: "0 1rem",
     "::-webkit-input-placeholder": {
       textAlign: "center",
-      fontFamily: "'Noto Sans KR', sans-serif",
       color: props.$placeholderColor,
     },
   }),

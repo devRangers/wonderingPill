@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { CommonResponseDto } from 'src/common/dto';
 
+/** 북마크한 알약의 알림 설정 API 요청 */
 export class SetAlarmDto {
   @IsString()
   pillBookmarkId: string;

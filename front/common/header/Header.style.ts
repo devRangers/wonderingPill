@@ -5,7 +5,7 @@ export const HeaderContainer = styled(
   (props: { $height: string; $bgColor: string }) => ({
     position: "fixed",
     width: "100vw",
-    height: props.$height,
+    minHeight: props.$height,
     backgroundColor: props.$bgColor,
 
     padding: "0.7rem",

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "@modal/Modal";
 import {
   FOOTER_HEIGHT,
@@ -24,18 +24,16 @@ import {
 import Capture from "./capture/Capture";
 import CaptureGuideModal from "./CaptureGuideModal";
 
-function FindWithImage() {
+export interface FindWithImageProp {
+  foundCookie: boolean;
+}
+
+function FindWithImage({ foundCookie }: FindWithImageProp) {
   const isWide = isWideDevice();
   const [modalOpen, setModalOpen] = useState(true);
-
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-
-  useEffect(() => {
-    // 여기서 이제 일주일동안 안보이기 했는지 체크한다.
-    // 현재는 일단 한번 뜨게 함
-  }, []);
 
   return (
     <>
@@ -72,10 +70,12 @@ function FindWithImage() {
           </DescriptionContainer>
         </FindWithImageContainer>
       </Container>
-      {modalOpen && (
+      {!foundCookie && modalOpen ? (
         <Modal open={modalOpen} onClose={handleCloseModal}>
           <CaptureGuideModal handleCloseModal={handleCloseModal} />
         </Modal>
+      ) : (
+        <></>
       )}
     </>
   );
