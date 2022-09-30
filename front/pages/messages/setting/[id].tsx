@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
@@ -46,6 +47,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   setting,
 }) => {
   const [user] = useAtom(userAtom);
+  const router = useRouter();
 
   const [isNotificationToggle, setIsNotificationToggle] = useState(true);
   const [isRemindToggle, setIsRemindToggle] = useState(
@@ -68,6 +70,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
     {
       onSuccess: () => {
         toast.success(TOASTIFY.SAVE_ALARM);
+        router.push(ROUTE.MY_PAGE);
       },
       onError: () => {
         toast.error(TOASTIFY.FAIL);
