@@ -5,15 +5,20 @@ import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useMutation } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import { GetAlarmSetResponseDto as GetAlarmResponse } from "@modelTypes/getAlarmSetResponseDto";
 import { GetAlarmSetResponseDtoAlarm as GetAlarmValues } from "@modelTypes/getAlarmSetResponseDtoAlarm";
-import { MAIN_COLOR, SEMI_ACCENT_COLOR, ROUTE } from "@utils/constant";
+import {
+  MAIN_COLOR,
+  SEMI_ACCENT_COLOR,
+  ROUTE,
+  TOASTIFY,
+} from "@utils/constant";
 import { getToken } from "@utils/firebase";
+import { toast } from "react-toastify";
 import {
   ContentContainer,
   TitleContainer,
@@ -57,8 +62,17 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   );
   const [deviceToken, setDeviceToken] = useState("");
 
-  const setAlarmMutation = useMutation((data: SetAlarmValues) =>
-    Api.post<Response, SetAlarmValues>("/alarms/set", data),
+  const setAlarmMutation = useMutation(
+    (data: SetAlarmValues) =>
+      Api.post<Response, SetAlarmValues>("/alarms/set", data),
+    {
+      onSuccess: () => {
+        toast.success(TOASTIFY.SAVE_ALARM);
+      },
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
+      },
+    },
   );
 
   const initialValue: SettingFormValues = {
