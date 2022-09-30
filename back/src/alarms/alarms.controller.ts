@@ -12,6 +12,7 @@ import {
 import {
   ApiBody,
   ApiCookieAuth,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -45,6 +46,10 @@ export class AlarmsController {
     status: 201,
     description: '알림 설정 성공',
     type: CommonResponseDto,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: '알림 설정 실패',
   })
   @ApiBody({ type: SetAlarmDto })
   @ApiCookieAuth('accessToken')
