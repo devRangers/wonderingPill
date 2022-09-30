@@ -21,18 +21,6 @@ export class AgendaService {
     });
   }
 
-  // /** Agneda 설정 */
-  // async setAgenda(id: string, pillBookmarkId: string): Promise<Agenda> {
-  //   const agenda = new Agenda({
-  //     db: {
-  //       address: this.configService.get('DATABASE_URL_MONGO'),
-  //       collection: 'pillAlarms',
-  //     },
-  //     name: 'pill-alarms-set',
-  //   });
-  //   return agenda;
-  // }
-
   /** Agneda 정의 */
   async defineEveryAgenda(
     id: string,
@@ -105,6 +93,7 @@ export class AgendaService {
     }
   }
 
+  /** defineEveryAgenda에서 정의된 스케줄 생성  */
   async setEveryAgenda(
     minute: number,
     hour: number,
@@ -131,6 +120,7 @@ export class AgendaService {
     }
   }
 
+  /** 정의된 스케줄을 조회해서 설정 된 알림을 읽어옴  */
   async getAgenda(id, pillBookmarkId, pillName) {
     const agenda = await this.agenda;
     try {
@@ -164,6 +154,7 @@ export class AgendaService {
     }
   }
 
+  /** 설정된 스케줄을 완전히 삭제함  */
   async deleteAgenda(id: string, pillBookmarkId: string) {
     const agenda = await this.agenda;
     try {

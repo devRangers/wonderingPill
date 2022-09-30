@@ -82,7 +82,7 @@ export class AlarmsController {
     @Param('id') pillBookmarkId: string,
   ) {
     await this.alarmsService.cancelAlarm(id, pillBookmarkId);
-    this.logger.verbose(`Canceling User ${id} pill alarm`);
+    this.logger.verbose(`PUT /:id Success!`);
     return { statusCode: 200, message: '알림을 취소했습니다.' };
   }
 
@@ -110,7 +110,7 @@ export class AlarmsController {
     @Param('id') pillBookmarkId: string,
   ): Promise<GetAlarmSetResponseDto> {
     const alarm = await this.alarmsService.getSetAlarm(id, pillBookmarkId);
-    this.logger.verbose(`Get User ${id} pill alarm set`);
+    this.logger.verbose(`GET /set/:id Success!`);
     return {
       statusCode: 200,
       message: '알림 설정을 읽어왔습니다.',
@@ -142,12 +142,36 @@ export class AlarmsController {
     @Param('page') page: number,
   ): Promise<GetAlarmsResponseDto> {
     const alarms = await this.alarmsService.getAlarms(id, page);
-    this.logger.verbose(`get User ${id} Alarms Success!`);
+    this.logger.verbose(`GET /:page Success!`);
     return {
       statusCode: 200,
       message: '알림을 조회했습니다.',
       alarms,
     };
+  }
+
+  // TODO: 복용 체크
+  @HttpCode(200)
+  @Put('check')
+  @UseGuards(AccessGuard)
+  @ApiOperation({
+    summary: '복용 체크 API',
+    description: '알림 내역 중, 약 복용 여부를 체크한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '복용 체크 성공',
+    type: CommonResponseDto,
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  async checkAlarm(
+    @Body() deleteAlarmsDto: DeleteAlarmsDto,
+    @GetCurrentUserId() userId: string,
+  ): Promise<CommonResponseDto> {
+    await this.alarmsService.checkAlarm();
+    this.logger.verbose(`PUT /check Success!`);
+    return { statusCode: 200, message: '알림을 삭제했습니다.' };
   }
 
   @HttpCode(200)
@@ -169,7 +193,7 @@ export class AlarmsController {
     @GetCurrentUserId() userId: string,
   ): Promise<CommonResponseDto> {
     await this.alarmsService.deleteAlarm(deleteAlarmsDto, userId);
-    this.logger.verbose(`Removing User ${userId} pill alarms`);
+    this.logger.verbose(`POST /delete Success!`);
     return { statusCode: 200, message: '알림을 삭제했습니다.' };
   }
 }
