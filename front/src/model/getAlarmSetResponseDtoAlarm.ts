@@ -6,6 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SendInquiryDto {
-  content: string;
-}
+export type GetAlarmSetResponseDtoAlarm = {
+  minute?: number;
+  hour?: number;
+  vip?: number[];
+  repeatTime?: number;
+  pillName?: string;
+};
