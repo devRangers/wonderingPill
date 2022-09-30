@@ -21,6 +21,5 @@ model User{
     id                String             @id @default(auto()) @map("_id") @db.ObjectId
     user_id           String             @unique 
     deviceToken       String 
-    pill_bookmark_id  String             @unique 
     Reminder          Reminder[]
 }
