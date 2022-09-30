@@ -7,6 +7,7 @@ import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 @Injectable()
 export class AgendaService {
   private agenda;
+
   constructor(
     private readonly configService: ConfigService,
     private readonly fcmService: FcmService,
@@ -32,11 +33,10 @@ export class AgendaService {
     vip: number[],
   ) {
     const agenda: Agenda = await this.agenda;
-    const time: string = await this.getCurrTime();
-
     try {
       agenda.define(id + '-' + pillBookmarkId, async () => {
         await this.fcmService.sendPushAlarm(deviceToken, userName, pillName); // 알림 전송
+        const time: string = await this.getCurrTime();
         await this.prismaMongo.reminder.create({
           data: {
             user_id: id,
@@ -48,7 +48,14 @@ export class AgendaService {
 
         // 반복 시간 설정
         if (repeatTime !== 0) {
-          await this.setRepeatAgenda(repeatTime, id, pillBookmarkId);
+          await this.setRepeatAgenda(
+            repeatTime,
+            id,
+            pillBookmarkId,
+            deviceToken,
+            userName,
+            pillName,
+          );
         }
 
         // vip은 정상적일 때 7이하의 길이를 가짐. 8이라면 한번만 작동해야하는 알림이므로 삭제
@@ -80,13 +87,34 @@ export class AgendaService {
     repeatTime: number,
     id: string,
     pillBookmarkId: string,
+    deviceToken: string,
+    userName: string,
+    pillName: string,
   ) {
     const agenda = await this.agenda;
     try {
+      agenda.define(id + '-' + pillBookmarkId + ':repeat', async () => {
+        await this.fcmService.sendPushAlarm(deviceToken, userName, pillName); // 알림 전송
+        const time: string = await this.getCurrTime();
+        await this.prismaMongo.reminder.create({
+          data: {
+            user_id: id,
+            user_name: userName,
+            pill_name: pillName,
+            time,
+          },
+        }); // 알림 전송 기록
+      });
+
       (async function () {
         const job = agenda.create(id + '-' + pillBookmarkId + ':repeat');
         await agenda.start();
-        await job.schedule(`in ${repeatTime} minutes`).save();
+        await job
+          .schedule(
+            `in ${repeatTime} minutes`,
+            id + '-' + pillBookmarkId + ':repeat',
+          )
+          .save();
       })();
     } catch (error) {
       throw new NotFoundException('반복 스케줄을 설정하지 못했습니다.');
@@ -128,7 +156,7 @@ export class AgendaService {
       const result = (async function () {
         await agenda.start();
         const job = await agenda.jobs({ name: id + '-' + pillBookmarkId });
-        if (job.length === 0) {
+        if (job.length === 0 && job.length === 8) {
           return {
             minute: 0,
             hour: 0,
