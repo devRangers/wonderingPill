@@ -62,7 +62,7 @@ export class AgendaService {
   }
 
   /** 알림에 사용할 알림 전송 시간 생성 */
-  async getCurrTime() {
+  async getCurrTime(): Promise<string> {
     const fullTime = new Date(Date.now());
     const year: string = fullTime.getFullYear().toString();
     const month: string = (fullTime.getMonth() + 1).toString();
@@ -122,6 +122,7 @@ export class AgendaService {
 
   /** 정의된 스케줄을 조회해서 설정 된 알림을 읽어옴  */
   async getAgenda(id, pillBookmarkId, pillName) {
+    // TODO: 타입 지정
     const agenda = await this.agenda;
     try {
       const result = (async function () {

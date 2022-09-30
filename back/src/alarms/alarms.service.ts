@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { User } from 'prisma/mongoClient';
 import { AgendaService } from 'src/agenda/agenda.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -29,7 +30,7 @@ export class AlarmsService {
       pillBookmarkId,
     } = setAlarmDto;
 
-    await this.saveDevicetoken(deviceToken, id, pillBookmarkId);
+    await this.saveDevicetoken(deviceToken, id);
     try {
       await this.agnedaService.defineEveryAgenda(
         id,
@@ -61,43 +62,40 @@ export class AlarmsService {
     }
   }
 
-  async saveDevicetoken(
-    deviceToken: string,
-    id: string,
-    pillBookmarkId: string,
-  ) {
+  /** MongoDB에 유저 정보가 존재하지 않으면 deviceToken 저장 */
+  async saveDevicetoken(deviceToken: string, id: string) {
     try {
-      const user = await this.prismaMongo.user.findUnique({
-        where: { pill_bookmark_id: pillBookmarkId },
+      const user: User = await this.prismaMongo.user.findUnique({
+        where: { user_id: id },
       });
       if (!user) {
         await this.prismaMongo.user.create({
           data: {
             deviceToken,
             user_id: id,
-            pill_bookmark_id: pillBookmarkId,
           },
         });
       }
     } catch (error) {
-      throw new NotFoundException('user를 저장하지 못했습니다.');
+      throw new NotFoundException('회원 정보를 저장하지 못했습니다.');
+    }
+  }
+
+  /** 알림 설정 여부 체크 */
+  async setAlarmMark(check: boolean, pillBookmarkId: string) {
+    try {
+      await this.prisma.pillBookMark.update({
+        where: { id: pillBookmarkId },
+        data: { alarm: check }, // 알림 설정할땐 true, 알림 삭제할땐 false
+      });
+    } catch (error) {
+      throw new NotFoundException('알림을 체크하지 못했습니다.');
     }
   }
 
   async cancelAlarm(id: string, pillBookmarkId: string) {
     await this.agnedaService.deleteAgenda(id, pillBookmarkId);
     await this.setAlarmMark(false, pillBookmarkId);
-  }
-
-  async setAlarmMark(check: boolean, pillBookmarkId: string) {
-    try {
-      await this.prisma.pillBookMark.update({
-        where: { id: pillBookmarkId },
-        data: { alarm: check },
-      });
-    } catch (error) {
-      throw new NotFoundException('알림을 체크하지 못했습니다.');
-    }
   }
 
   async getAlarms(id: string, page: number) {
