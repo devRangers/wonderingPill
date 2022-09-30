@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
 import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
+import { AiOutlineCheck } from "react-icons/ai";
 import {
   ContentContainer,
   TitleContainer,
@@ -19,6 +20,9 @@ import {
   List,
   MessageContainer,
   Message,
+  SettingBtn,
+  CheckBtn,
+  CheckBtnText,
   Time,
   MoreBtn,
 } from "@messagesComp/MessagesPage.style";
@@ -135,6 +139,12 @@ const MessageListPage: NextPage = () => {
                     <br />
                     {message.pill_name}
                   </Message>
+                  <SettingBtn $btnColor={ACCENT_COLOR}>
+                    설정하러 가기
+                  </SettingBtn>
+                  <CheckBtn $btnColor={GRAY_COLOR}>
+                    <CheckBtnText>복약 여부</CheckBtnText> <AiOutlineCheck />
+                  </CheckBtn>
                   <Time $txtColor={GRAY_COLOR}>{message.time}</Time>
                 </MessageContainer>
               </List>
