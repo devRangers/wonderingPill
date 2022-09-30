@@ -40,9 +40,9 @@ import {
   RecaptchaGuard,
   RefreshGuard,
 } from 'src/common/guards';
-import { MailService } from 'src/mail/mail.service';
-import { RedisService } from 'src/redis/redis.service';
-import { SmsService } from 'src/sms/sms.service';
+import { MailService } from 'src/infras/mail/mail.service';
+import { RedisService } from 'src/infras/redis/redis.service';
+import { SmsService } from 'src/infras/sms/sms.service';
 import { UsersService } from 'src/users/users.service';
 import { v4 as uuid } from 'uuid';
 import { AuthService } from './auth.service';

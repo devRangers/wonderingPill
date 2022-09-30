@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { FcmModule } from 'src/fcm/fcm.module';
-import { FcmService } from 'src/fcm/fcm.service';
+import { FcmModule } from 'src/infras/fcm/fcm.module';
+import { FcmService } from 'src/infras/fcm/fcm.service';
 import { AgendaService } from './agenda.service';
 
 @Module({

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from 'prisma/mongoClient';
-import { AgendaService } from 'src/agenda/agenda.service';
+import { AgendaService } from 'src/infras/agenda/agenda.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DeleteAlarmsDto, GetAlarmSettingResponse, SetAlarmDto } from './dto';

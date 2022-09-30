@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Agenda } from 'agenda/es';
-import { FcmService } from 'src/fcm/fcm.service';
+import { FcmService } from 'src/infras/fcm/fcm.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 
 @Injectable()

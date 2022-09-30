@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AgendaModule } from 'src/agenda/agenda.module';
-import { AgendaService } from 'src/agenda/agenda.service';
 import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
+import { AgendaModule } from 'src/infras/agenda/agenda.module';
+import { AgendaService } from 'src/infras/agenda/agenda.service';
 import { AlarmsController } from './alarms.controller';
 import { AlarmsService } from './alarms.service';
 
