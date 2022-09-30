@@ -78,6 +78,19 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
     },
   );
 
+  const cancelAlarmMutation = useMutation(
+    () => Api.put(`/alarms/${bookmarkId}`),
+    {
+      onSuccess: () => {
+        toast.success(TOASTIFY.CANCEL_ALARM);
+        router.push(ROUTE.MY_PAGE);
+      },
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
+      },
+    },
+  );
+
   const initialValue: SettingFormValues = {
     hour: typeof setting.hour === "number" ? setting.hour : 0,
     minute: typeof setting.minute === "number" ? setting.minute : 0,
@@ -88,6 +101,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
     initialValues: initialValue,
     onSubmit: async (values) => {
       if (isNotificationToggle) {
+        // 알림 세팅
         const { hour, repeatTime, minute } = values;
         const dataToSubmit: SetAlarmValues = {
           pillBookmarkId: bookmarkId,
@@ -101,7 +115,8 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
         };
         setAlarmMutation.mutate(dataToSubmit);
       } else {
-        // TODO: 알림 취소
+        // 알림 취소
+        cancelAlarmMutation.mutate();
       }
     },
   });
