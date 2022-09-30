@@ -6,23 +6,32 @@ import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 
 @Injectable()
 export class AgendaService {
+  private agenda;
   constructor(
     private readonly configService: ConfigService,
     private readonly fcmService: FcmService,
     private readonly prismaMongo: PrismaMongoService,
-  ) {}
-
-  /** Agneda 설정 */
-  async setAgenda(id: string, pillBookmarkId: string): Promise<Agenda> {
-    const agenda = new Agenda({
+  ) {
+    this.agenda = new Agenda({
       db: {
         address: this.configService.get('DATABASE_URL_MONGO'),
         collection: 'pillAlarms',
       },
-      name: id + '-' + pillBookmarkId,
+      name: 'pill-alarms-set',
     });
-    return agenda;
   }
+
+  // /** Agneda 설정 */
+  // async setAgenda(id: string, pillBookmarkId: string): Promise<Agenda> {
+  //   const agenda = new Agenda({
+  //     db: {
+  //       address: this.configService.get('DATABASE_URL_MONGO'),
+  //       collection: 'pillAlarms',
+  //     },
+  //     name: 'pill-alarms-set',
+  //   });
+  //   return agenda;
+  // }
 
   /** Agneda 정의 */
   async defineEveryAgenda(
@@ -34,7 +43,7 @@ export class AgendaService {
     repeatTime: number,
     vip: number[],
   ) {
-    const agenda: Agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda: Agenda = await this.agenda;
     const time: string = await this.getCurrTime();
 
     try {
@@ -84,7 +93,7 @@ export class AgendaService {
     id: string,
     pillBookmarkId: string,
   ) {
-    const agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda = await this.agenda;
     try {
       (async function () {
         const job = agenda.create(id + '-' + pillBookmarkId + ':repeat');
@@ -104,7 +113,7 @@ export class AgendaService {
     id: string,
     pillBookmarkId: string,
   ) {
-    const agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda = await this.agenda;
     try {
       (async function () {
         await agenda.start();
@@ -123,7 +132,7 @@ export class AgendaService {
   }
 
   async getAgenda(id, pillBookmarkId, pillName) {
-    const agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda = await this.agenda;
     try {
       const result = (async function () {
         await agenda.start();
@@ -156,7 +165,7 @@ export class AgendaService {
   }
 
   async deleteAgenda(id: string, pillBookmarkId: string) {
-    const agenda = await this.setAgenda(id, pillBookmarkId);
+    const agenda = await this.agenda;
     try {
       await agenda.start();
       await agenda.cancel({
