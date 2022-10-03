@@ -1,36 +1,33 @@
 import {
   IsArray,
   IsJSON,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 import { CommonResponseDto } from 'src/common/dto';
 
+/** 북마크한 알약의 알림 설정 API 요청 */
 export class SetAlarmDto {
   @IsString()
-  @IsNotEmpty()
+  pillBookmarkId: string;
+
+  @IsString()
   deviceToken: string;
 
   @IsArray()
-  @IsNotEmpty()
   vip: number[];
 
   @IsNumber()
-  @IsNotEmpty()
   hour: number;
 
   @IsNumber()
-  @IsNotEmpty()
   minute: number;
 
   @IsString()
-  @IsNotEmpty()
   pillName: string;
 
   @IsString()
-  @IsNotEmpty()
   userName: string;
 
   @IsNumber()
@@ -38,23 +35,52 @@ export class SetAlarmDto {
   repeatTime: number;
 }
 
-export class DeleteAlarmsDto {
+/** 알림 설정 내역 조회 */
+/** -------------- */
+/** 1. 알림 설정 내역 조회 서비스 반환 타입 */
+export class GetAlarmSettingResponse {
+  @IsNumber()
+  minute: number;
+
+  @IsNumber()
+  hour: number;
+
   @IsArray()
-  ids: string[];
+  vip: number[];
+
+  @IsNumber()
+  repeatTime: number;
+
+  @IsString()
+  pillName: string;
 }
+
+/** 2. 알림 설정 내역 조회 API 반환 타입 */
+export class GetAlarmSettingResponseDto extends CommonResponseDto {
+  @IsJSON()
+  alarm: GetAlarmSettingResponse;
+}
+/** -------------- */
+
+/** 알림 설정 내역 조회 */
+// export class GetAlarmsResponse {
+//   id: string;
+//   user_name: string;
+//   pill_name: string;
+//   time: string;
+// }
 
 export class GetAlarmsResponseDto extends CommonResponseDto {
   @IsJSON()
-  result: {
+  alarms: {
     id: string;
     user_name: string;
     pill_name: string;
     time: string;
-    user_id: string;
   }[];
 }
 
-export class GetAlarmSetResponseDto extends CommonResponseDto {
-  @IsJSON()
-  alarm: { minute: number; hour: number; vip: number[]; repeatTime: number };
+export class DeleteAlarmsDto {
+  @IsArray()
+  ids: string[];
 }

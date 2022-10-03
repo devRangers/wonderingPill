@@ -40,9 +40,10 @@ import {
   RecaptchaGuard,
   RefreshGuard,
 } from 'src/common/guards';
-import { MailService } from 'src/mail/mail.service';
-import { RedisService } from 'src/redis/redis.service';
-import { SmsService } from 'src/sms/sms.service';
+import { MailService } from 'src/infras/mail/mail.service';
+import { RedisService } from 'src/infras/redis/redis.service';
+import { SmsService } from 'src/infras/sms/sms.service';
+import { UsersService } from 'src/users/users.service';
 import { v4 as uuid } from 'uuid';
 import { AuthService } from './auth.service';
 import {
@@ -71,6 +72,7 @@ export class AuthController {
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly smsService: SmsService,
+    private readonly usersService: UsersService,
   ) {}
 
   @HttpCode(201)
@@ -94,6 +96,143 @@ export class AuthController {
       statusCode: 201,
       message: '회원가입에 성공했습니다.',
       user: { id: user.id, email: user.email },
+    };
+  }
+
+  @HttpCode(200)
+  @ApiOperation({
+    summary: '회원가입시 회원 검사 API',
+    description: '회원가입시 회원이 존재하는지, 탈퇴한 이력이 있는지 조사한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원가입시 회원 검사 성공',
+    type: CommonResponseDto,
+  })
+  @ApiParam({
+    name: 'email',
+    required: true,
+    description: '유저 이메일',
+  })
+  @Get('signup/check/:email')
+  async checkUser(@Param('email') email: string): Promise<CommonResponseDto> {
+    const user: User = await this.authService.getUserByEmail(email);
+    if (user) {
+      throw new ForbiddenException('이미 존재하는 회원입니다.');
+    }
+
+    const deletedUser: User = await this.authService.getUserByEmail(
+      email + '_',
+    );
+    if (deletedUser) {
+      throw new ForbiddenException('탈퇴한 이력이 존재하는 회원입니다.');
+    }
+
+    this.logger.verbose(`User check Success!`);
+    return {
+      statusCode: 200,
+      message: '회원 검사를 성공했습니다.',
+    };
+  }
+
+  @HttpCode(200)
+  @ApiOperation({
+    summary: '계정 복원 API',
+    description: '탈퇴한 계정을 다시 복원한다.',
+  })
+  @ApiResponse({
+    status: 2000,
+    description: '계정 복원 성공',
+    type: CommonResponseDto,
+  })
+  @ApiParam({
+    name: 'email',
+    required: true,
+    description: '유저 이메일',
+  })
+  @Put('signup/restore/:email')
+  async restoreUser(@Param('email') email: string): Promise<CommonResponseDto> {
+    console.log(email);
+    this.logger.verbose(`User check Success!`);
+    return {
+      statusCode: 200,
+      message: '회원 검사를 성공했습니다.',
+    };
+  }
+
+  @HttpCode(201)
+  @Post('signup/send-email')
+  @Throttle(5, 360)
+  @ApiOperation({
+    summary: '회원가입시 이메일 전송 API',
+    description: '회원가입시 이메일 인증을 위해 이메일을 전송 한다.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '회원가입시 이메일 전송 성공',
+    type: FindPasswordResponse,
+  })
+  @ApiBody({ type: FindPasswordDto })
+  async sendEmailForSignup(
+    @Body() findPasswordDto: FindPasswordDto,
+  ): Promise<FindPasswordResponse> {
+    const user: User = await this.authService.getUserByEmail(
+      findPasswordDto.email,
+    );
+
+    const emailToken: string = uuid().toString();
+    await this.authService.setPWChangeToken(user.id, emailToken);
+
+    const check: boolean = await this.mailService.sendEmail(
+      user.id,
+      user.name,
+      emailToken,
+    );
+
+    this.logger.verbose(`User ${user.email} send email to update Success!`);
+    return {
+      statusCode: 201,
+      message: '이메일을 성공적으로 전송했습니다.',
+      result: { check },
+    };
+  }
+
+  @HttpCode(200)
+  @ApiOperation({
+    summary: '비밀번호 변경 토큰 유효 검사 API',
+    description: '비밀번호 변경 토큰이 유효한지 검사 한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '토큰 검사 성공',
+    type: FindPasswordResponse,
+  })
+  @ApiQuery({
+    name: 'id',
+    required: true,
+    description: '유저 아이디',
+  })
+  @ApiQuery({
+    name: 'token',
+    required: true,
+    description: '비밀번호 토큰',
+  })
+  @Get('/signup/token')
+  async checkTokenForSignup(@Query() query): Promise<FindPasswordResponse> {
+    const token: string = await this.redisService.getKey('pw' + query.id);
+
+    if (
+      query.token !==
+      token.slice(this.configService.get('CHANGE_PASSWORD_KEY').length)
+    ) {
+      throw new ForbiddenException('토큰이 일치하지 않습니다.');
+    }
+
+    this.logger.verbose(`User ${query.id} check pw token Success!`);
+    return {
+      statusCode: 200,
+      message: '토큰의 유효기간이 만료되지 않았습니다.',
+      result: { check: true },
     };
   }
 
@@ -131,28 +270,22 @@ export class AuthController {
       refreshToken,
     );
 
-    let secure;
-    if (this.configService.get('NODE_ENV') === 'production') secure = true;
-    else secure = false;
-
     try {
       res.cookie('AccessToken', accessToken, {
         maxAge: this.configService.get('JWT_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
 
-      let maxAge;
-      if (signinUserDto.isSignin) {
-        maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
-      } else {
-        maxAge = this.configService.get('JWT_REFRESH_EXPIRESIN');
-      }
-
       res.cookie('RefreshToken', refreshToken, {
-        maxAge,
+        maxAge:
+          signinUserDto.isSignin === true
+            ? this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE')
+            : this.configService.get('JWT_REFRESH_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
     } catch (error) {
       throw new ForbiddenException('Cookie Failed!');
@@ -199,15 +332,12 @@ export class AuthController {
       refreshToken,
     );
 
-    let secure;
-    if (this.configService.get('NODE_ENV') === 'production') secure = true;
-    else secure = false;
-
     try {
       res.cookie('AccessToken', accessToken, {
         maxAge: this.configService.get('JWT_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
     } catch (error) {
       throw new ForbiddenException('Cookie Failed!');
@@ -270,7 +400,7 @@ export class AuthController {
   @ApiCookieAuth('refreshToken')
   @ApiCookieAuth('accessToken')
   async current(@GetCurrentUserId() id: string): Promise<SigninResponse> {
-    const user: User = await this.authService.getUserById(id);
+    const user: User = await this.usersService.getUserById(id);
     if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
 
     this.logger.verbose(`Call Current User ${id} Success!`);
@@ -419,20 +549,18 @@ export class AuthController {
     const { accessToken, refreshToken }: Tokens =
       await this.authService.googleLogin(req.user as OauthLoginDto, res);
 
-    let secure;
-    if (this.configService.get('NODE_ENV') === 'production') secure = true;
-    else secure = false;
-
     try {
       res.cookie('AccessToken', accessToken, {
         maxAge: this.configService.get('JWT_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
       res.cookie('RefreshToken', refreshToken, {
         maxAge: this.configService.get('JWT_REFRESH_EXPIRESIN'),
         httpOnly: true,
-        secure,
+        secure:
+          this.configService.get('NODE_ENV') === 'production' ? true : false,
       });
 
       res.redirect(`${this.configService.get('CLIENT_URL')}/`);
@@ -538,7 +666,7 @@ export class AuthController {
   async getAccount(
     @Param('id', ValidationPipe) id: string,
   ): Promise<FindAccountResponse> {
-    const user: User = await this.authService.getUserById(id);
+    const user: User = await this.usersService.getUserById(id);
 
     let name;
     let email;

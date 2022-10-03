@@ -9,6 +9,7 @@ import firebase from "firebase/app";
 import "firebase/messaging";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { useMediaQuery } from "react-responsive";
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
 import { useAtom } from "jotai";
@@ -16,7 +17,11 @@ import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
 import { RefreshResponse } from "@modelTypes/refreshResponse";
-import { URL_WITHOUT_HEADER, SILENT_REFRESH_TIME } from "@utils/constant";
+import {
+  URL_WITHOUT_HEADER,
+  SILENT_REFRESH_TIME,
+  ROUTE,
+} from "@utils/constant";
 import Header from "@header/Header";
 import Footer from "@footer/Footer";
 import { ToastContainer } from "react-toastify";
@@ -41,12 +46,19 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [, setUser] = useAtom(userAtom);
   const [queryClient] = useState(() => new QueryClient());
+  const isDesktop = useMediaQuery({ query: "(min-width : 675px)" });
 
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   } else {
     firebase.app();
   }
+
+  useEffect(() => {
+    if (isDesktop && router.asPath !== ROUTE.INFO) {
+      router.push(ROUTE.INFO);
+    }
+  }, [router]);
 
   useEffect(() => {
     setScreenSize();
@@ -71,9 +83,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const timer = setInterval(async () => {
       try {
-        if (document.hasFocus()) {
-          await Api.get<RefreshResponse>("/auth/refresh");
-        }
+        await Api.get<RefreshResponse>("/auth/refresh");
       } catch (err) {}
     }, SILENT_REFRESH_TIME);
 

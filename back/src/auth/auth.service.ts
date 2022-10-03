@@ -7,8 +7,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { User } from 'prisma/postgresClient';
+import { RedisService } from 'src/infras/redis/redis.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RedisService } from 'src/redis/redis.service';
+import { UsersService } from 'src/users/users.service';
 import { providerType } from './auth-provider.enum';
 import {
   ChangePasswordDto,
@@ -26,21 +27,34 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { name, email, password, phone, birth } = createUserDto;
 
     try {
-      if (this.getUserByEmail(email + '_')) {
+      const deletedUser: User = await this.getUserByEmail(email + '_');
+      const hashedPassword: string = await argon.hash(password);
+
+      if (deletedUser) {
+        /** 이미 탈퇴한 회원이 존재할 경우 계정 복원 */
         const newUser: User = await this.prisma.user.update({
           where: { email: email + '_' },
-          data: { email },
+          data: {
+            name,
+            email,
+            password: hashedPassword,
+            birth,
+            phone,
+            isDeleted: false,
+            provider: providerType.LOCAL,
+          },
         });
 
         return newUser;
       } else {
-        const hashedPassword: string = await argon.hash(password);
+        /** 탈퇴 이력이 없을 경우 신규 유저 생성 */
         const newUser: User = await this.prisma.user.create({
           data: {
             name,
@@ -63,18 +77,6 @@ export class AuthService {
     try {
       const user: User = await this.prisma.user.findUnique({
         where: { email },
-      });
-
-      return user;
-    } catch {
-      throw new NotFoundException('회원을 찾지 못했습니다.');
-    }
-  }
-
-  async getUserById(id: string): Promise<User> {
-    try {
-      const user: User = await this.prisma.user.findUnique({
-        where: { id },
       });
 
       return user;
@@ -176,7 +178,7 @@ export class AuthService {
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
-    const user: User = await this.getUserById(id);
+    const user: User = await this.usersService.getUserById(id);
     if (!user || user.isDeleted)
       throw new NotFoundException('회원이 존재하지 않습니다.');
 

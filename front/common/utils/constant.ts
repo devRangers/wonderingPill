@@ -32,8 +32,10 @@ export const ROUTE = {
   SEARCH_PHARMACY: "/search/pharmacy",
   MY_PAGE: "/my-page",
   MY_PAGE_MODIFY: "/my-page/modify",
+  MESSAGES: "/messages",
   ERROR: "/error",
   BLOCK: "/blocked",
+  INFO: "/info",
 };
 
 export const URL_WITHOUT_HEADER = [
@@ -45,6 +47,7 @@ export const URL_WITHOUT_HEADER = [
   ROUTE.PASSWORD_NEW,
   ROUTE.ERROR,
   ROUTE.BLOCK,
+  ROUTE.INFO,
 ];
 
 export const TOASTIFY = {
