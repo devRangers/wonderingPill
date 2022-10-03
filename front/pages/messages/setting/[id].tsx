@@ -198,6 +198,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     },
   );
+
+  if (!res.ok) {
+    return {
+      redirect: { destination: ROUTE.MAIN, permanent: false },
+      props: {},
+    };
+  }
+
   const result: GetAlarmResponse = await res.json();
 
   return {
