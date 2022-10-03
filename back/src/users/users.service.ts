@@ -6,9 +6,9 @@ import {
 import * as argon from 'argon2';
 import { User } from 'prisma/postgresClient';
 import { AlarmsService } from 'src/alarms/alarms.service';
-import { GcsService } from 'src/gcs/gcs.service';
+import { GcsService } from 'src/infras/gcs/gcs.service';
+import { RedisService } from 'src/infras/redis/redis.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RedisService } from 'src/redis/redis.service';
 import {
   DeleteUserResponse,
   GetMypageResponse,

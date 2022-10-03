@@ -1,6 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { MailModule } from 'src/mail/mail.module';
+import { MailModule } from 'src/infras/mail/mail.module';
 import { SmsService } from './sms.service';
 
 @Module({
