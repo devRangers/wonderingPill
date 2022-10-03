@@ -134,7 +134,16 @@ export class AlarmsService {
     }
   }
 
-  async checkAlarm() {}
+  async checkAlarm(id: string) {
+    try {
+      await this.prismaMongo.reminder.update({
+        where: { id },
+        data: { check: true },
+      });
+    } catch (error) {
+      throw new NotFoundException('알림을 체크하지 못했습니다.');
+    }
+  }
 
   async deleteAlarm(deleteAlarmsDto: DeleteAlarmsDto, userId: string) {
     try {

@@ -165,9 +165,8 @@ export class AlarmsController {
     };
   }
 
-  // TODO: 복용 체크
   @HttpCode(200)
-  @Put('check')
+  @Put('check/:id')
   @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '복용 체크 API',
@@ -180,13 +179,10 @@ export class AlarmsController {
   })
   @ApiCookieAuth('accessToken')
   @ApiCookieAuth('refreshToken')
-  async checkAlarm(
-    @Body() deleteAlarmsDto: DeleteAlarmsDto,
-    @GetCurrentUserId() userId: string,
-  ): Promise<CommonResponseDto> {
-    await this.alarmsService.checkAlarm();
+  async checkAlarm(@Param('id') id: string): Promise<CommonResponseDto> {
+    await this.alarmsService.checkAlarm(id);
     this.logger.log(`PUT /check Success!`);
-    return { statusCode: 200, message: '알림을 삭제했습니다.' };
+    return { statusCode: 200, message: '복용 여부를 체크했습니다.' };
   }
 
   @HttpCode(200)
