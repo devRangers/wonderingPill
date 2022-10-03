@@ -12,7 +12,7 @@ export const OuterContainer = styled(
   }),
 );
 
-export const Contianer = styled("div", (props: { $bgColor: string }) => ({
+export const Container = styled("div", (props: { $bgColor: string }) => ({
   width: "100%",
   height: "100%",
   backgroundColor: props.$bgColor,
@@ -21,7 +21,7 @@ export const Contianer = styled("div", (props: { $bgColor: string }) => ({
   margin: "0 auto",
 }));
 
-export const ContianerHeader = styled(
+export const ContainerHeader = styled(
   "section",
   (props: { $bgColor: string }) => ({
     height: "3rem",
