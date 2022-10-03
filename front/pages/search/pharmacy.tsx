@@ -10,6 +10,9 @@ import {
   HEADER_HEIGHT,
   MAIN_COLOR,
   BOX_COLOR,
+  GREEN_COLOR,
+  YELLOW_COLOR,
+  RED_COLOR,
 } from "@utils/constant";
 import {
   PageContainer,
@@ -93,9 +96,9 @@ const SearchPharmPage: NextPage = () => {
       </SearchPharmContainer>
       <PharmListBox $bgColor={MAIN_COLOR}>
         <PharmListBoxHeader $isWide={isWide}>
-          <Dot $bgColor="#FB4646" />
-          <Dot $bgColor="#FEB024" />
-          <Dot $bgColor="#28C131" />
+          <Dot $bgColor={RED_COLOR} />
+          <Dot $bgColor={YELLOW_COLOR} />
+          <Dot $bgColor={GREEN_COLOR} />
         </PharmListBoxHeader>
         <PharmListBoxBody>
           {pharmList.length > 0 && <PharmList pharmList={pharmList} />}

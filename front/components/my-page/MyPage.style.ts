@@ -81,14 +81,14 @@ export const UserInfoItem = styled("p", {
 
 export const ContentContainer = styled(
   "div",
-  (props: { $borderColor: string }) => ({
+  (props: { $borderColor: string; $bgColor: string }) => ({
     display: "flex",
     alignItems: "center",
     position: "relative",
     padding: "1rem 1.5rem",
     border: `1px solid ${props.$borderColor}`,
     borderRadius: "10px",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: props.$bgColor,
   }),
 );
 

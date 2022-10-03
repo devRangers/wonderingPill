@@ -1,7 +1,12 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useRouter } from "next/router";
-import { MAIN_COLOR, ROUTE, SUB_COLOR } from "@utils/constant";
+import {
+  LIGHT_GRAY_COLOR,
+  MAIN_COLOR,
+  ROUTE,
+  SUB_COLOR,
+} from "@utils/constant";
 import {
   BottomContainer,
   ContentClip,
@@ -76,7 +81,7 @@ function MyPage() {
   };
   return (
     <Template gridTemplateRows="1fr 1.4fr 1.5fr 0.5fr">
-      <ContentContainer $borderColor={SUB_COLOR}>
+      <ContentContainer $borderColor={SUB_COLOR} $bgColor={LIGHT_GRAY_COLOR}>
         <ContentClip $bgColor={SUB_COLOR}>복용약</ContentClip>
         <MedicineBadgeContainer>
           {Object.entries(medicinesName).map(([key, value], index) => (
@@ -84,7 +89,7 @@ function MyPage() {
           ))}
         </MedicineBadgeContainer>
       </ContentContainer>
-      <ContentContainer $borderColor={SUB_COLOR}>
+      <ContentContainer $borderColor={SUB_COLOR} $bgColor={LIGHT_GRAY_COLOR}>
         <ContentClip $bgColor={SUB_COLOR}>관심 약국</ContentClip>
         <PharmarcyContainer>
           <Slider
