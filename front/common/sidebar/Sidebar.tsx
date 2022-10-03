@@ -34,6 +34,11 @@ interface ButtonTitleValues {
 }
 
 const ButtonTitle: { [key in string]: ButtonTitleValues } = {
+  main: {
+    title: "메인으로 가기",
+    link: ROUTE.MAIN,
+    canUseWithLogin: false,
+  },
   findWithPicture: {
     title: "사진으로 찾기",
     link: ROUTE.SEARCH_IMAGE,
