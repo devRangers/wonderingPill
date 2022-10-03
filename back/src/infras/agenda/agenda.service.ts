@@ -43,6 +43,8 @@ export class AgendaService {
             user_name: userName,
             pill_name: pillName,
             time,
+            check: false,
+            pillBookmarkId,
           },
         }); // 알림 전송 기록
 
@@ -91,7 +93,7 @@ export class AgendaService {
     userName: string,
     pillName: string,
   ) {
-    const agenda = await this.agenda;
+    const agenda: Agenda = await this.agenda;
     try {
       agenda.define(id + '-' + pillBookmarkId + ':repeat', async () => {
         await this.fcmService.sendPushAlarm(deviceToken, userName, pillName); // 알림 전송
@@ -102,6 +104,8 @@ export class AgendaService {
             user_name: userName,
             pill_name: pillName,
             time,
+            check: false,
+            pillBookmarkId,
           },
         }); // 알림 전송 기록
       });

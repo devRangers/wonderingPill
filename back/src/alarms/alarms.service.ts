@@ -124,8 +124,10 @@ export class AlarmsService {
           user_name: true,
           pill_name: true,
           time: true,
+          check: true,
+          pillBookmarkId: true,
         },
-      }); // TODO: check도 추가해야함, pillBookmarkid도 추가
+      });
       return alarms;
     } catch (error) {
       throw new NotFoundException('알림을 조회하지 못했습니다.');
