@@ -5,6 +5,9 @@ export const SEMI_ACCENT_COLOR = "#567BC4";
 export const ERROR_MSG_COLOR = "#bd0000";
 export const BOX_COLOR = "#2A306A";
 export const GRAY_COLOR = "#A4A4A4";
+export const RED_COLOR = "#FB4646";
+export const YELLOW_COLOR = "#FEB024";
+export const GREEN_COLOR = "#28C131";
 
 export const HEADER_HEIGHT = "10vh";
 export const FOOTER_HEIGHT = "8vh";
