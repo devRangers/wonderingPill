@@ -44,16 +44,6 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
     link: ROUTE.MAIN,
     canUseWithLogin: false,
   },
-  searchPill: {
-    title: "시제품 약 검색",
-    link: ROUTE.MAIN,
-    canUseWithLogin: false,
-  },
-  healthChallenge: {
-    title: "내 건강 캘린더",
-    link: ROUTE.MAIN,
-    canUseWithLogin: true,
-  },
   myPage: {
     title: "마이페이지",
     link: ROUTE.MY_PAGE,
