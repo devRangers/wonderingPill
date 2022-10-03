@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from 'prisma/mongoClient';
-import { AgendaService } from 'src/agenda/agenda.service';
+import { AgendaService } from 'src/infras/agenda/agenda.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DeleteAlarmsDto, GetAlarmSettingResponse, SetAlarmDto } from './dto';
@@ -124,15 +124,26 @@ export class AlarmsService {
           user_name: true,
           pill_name: true,
           time: true,
+          check: true,
+          pillBookmarkId: true,
         },
-      }); // TODO: check도 추가해야함
+      });
       return alarms;
     } catch (error) {
       throw new NotFoundException('알림을 조회하지 못했습니다.');
     }
   }
 
-  async checkAlarm() {}
+  async checkAlarm(id: string) {
+    try {
+      await this.prismaMongo.reminder.update({
+        where: { id },
+        data: { check: true },
+      });
+    } catch (error) {
+      throw new NotFoundException('알림을 체크하지 못했습니다.');
+    }
+  }
 
   async deleteAlarm(deleteAlarmsDto: DeleteAlarmsDto, userId: string) {
     try {

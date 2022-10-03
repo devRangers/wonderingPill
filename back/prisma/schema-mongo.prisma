@@ -13,6 +13,8 @@ model Reminder{
   user_name        String
   pill_name        String
   time             String
+  check            Boolean            @default(false)
+  pillBookmarkId   String
   user_id          String
   User             User               @relation(fields: [user_id], references: [user_id])
 }

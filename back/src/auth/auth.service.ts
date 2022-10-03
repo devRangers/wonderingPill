@@ -7,8 +7,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { User } from 'prisma/postgresClient';
+import { RedisService } from 'src/infras/redis/redis.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RedisService } from 'src/redis/redis.service';
 import { UsersService } from 'src/users/users.service';
 import { providerType } from './auth-provider.enum';
 import {
@@ -34,19 +34,21 @@ export class AuthService {
     const { name, email, password, phone, birth } = createUserDto;
 
     try {
-      const user: User = await this.getUserByEmail(email + '_');
+      const deletedUser: User = await this.getUserByEmail(email + '_');
       const hashedPassword: string = await argon.hash(password);
 
-      if (user) {
+      if (deletedUser) {
         /** 이미 탈퇴한 회원이 존재할 경우 계정 복원 */
         const newUser: User = await this.prisma.user.update({
           where: { email: email + '_' },
           data: {
+            name,
             email,
             password: hashedPassword,
             birth,
             phone,
-            isDeleted: true,
+            isDeleted: false,
+            provider: providerType.LOCAL,
           },
         });
 
