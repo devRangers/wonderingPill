@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
+import Link from "next/link";
 import { useState } from "react";
 import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
@@ -64,12 +65,18 @@ const MessageListPage: NextPage = () => {
   const [selectedMessage, setSelectedMessage] =
     useState<MessageValues>(messageInitialValue);
 
+  /*
+   * 1. check 기준으로 sort 후 reverse (check: true가 앞에 위치하도록)
+   * 2. id를 기준으로 중복 제거
+   * 3. time을 기준으로 sort 후 reverse (최신 알림이 위에 위치하도록)
+   * 4. 삭제된 메세지 filter
+   */
+
   useQuery(
     ["getMessages", pageCount],
     () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
     {
       onSuccess: ({ alarms }) => {
-        // 알림 목록 중복 제거, 삭제된 알림 목록 필터링
         setMessages((prev) =>
           _.sortBy(
             _.uniqBy(_.sortBy([...prev, ...alarms], "check").reverse(), "id"),
@@ -165,9 +172,11 @@ const MessageListPage: NextPage = () => {
                       <br />
                       {message.pill_name}
                     </Message>
-                    <SettingBtn $btnColor={ACCENT_COLOR}>
-                      설정하러 가기
-                    </SettingBtn>
+                    <Link href={`/messages/setting/${message.pillBookmarkId}`}>
+                      <SettingBtn $btnColor={ACCENT_COLOR}>
+                        설정하러 가기
+                      </SettingBtn>
+                    </Link>
                     <CheckBtn
                       disabled={message.check}
                       onClick={() => checkBtnClickHandler(message)}
