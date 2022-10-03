@@ -5,6 +5,7 @@ import {
   FULL_HEIGHT,
   GREEN_COLOR,
   HEADER_HEIGHT,
+  LIGHT_GRAY_COLOR,
   MAIN_COLOR,
   RED_COLOR,
   YELLOW_COLOR,
@@ -20,6 +21,7 @@ import {
   Item,
   OuterContainer,
   PillImageSection,
+  TotalSearchCount,
 } from "./ResultList.style";
 
 interface PillDataValue {
@@ -64,15 +66,16 @@ function ResultList() {
       $headerHeight={HEADER_HEIGHT}
       $fullHeight={FULL_HEIGHT}
       $footerHeight={FOOTER_HEIGHT}>
-      <Container $bgColor={MAIN_COLOR}>
-        <ContainerHeader $bgColor={MAIN_COLOR}>
+      <Container $borderColor={MAIN_COLOR}>
+        <ContainerHeader>
           <DotWrapper>
             <Dot $bgColor={RED_COLOR} />
             <Dot $bgColor={YELLOW_COLOR} />
             <Dot $bgColor={GREEN_COLOR} />
           </DotWrapper>
+          <TotalSearchCount>총 14개가 검색되었습니다.</TotalSearchCount>
         </ContainerHeader>
-        <InnerContainer $scrollColor={MAIN_COLOR}>
+        <InnerContainer $scrollColor={MAIN_COLOR} $bgColor={LIGHT_GRAY_COLOR}>
           {Object.entries(PillData).map(([key, value], index) => (
             <Item key={key} $borderColor={MAIN_COLOR}>
               <PillImageSection>

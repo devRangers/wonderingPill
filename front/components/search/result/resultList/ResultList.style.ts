@@ -12,23 +12,22 @@ export const OuterContainer = styled(
   }),
 );
 
-export const Container = styled("div", (props: { $bgColor: string }) => ({
+export const Container = styled("div", (props: { $borderColor: string }) => ({
   width: "100%",
   height: "100%",
-  backgroundColor: props.$bgColor,
+  border: `2px solid ${props.$borderColor}`,
   borderRadius: "1rem",
   padding: "0 1rem 0 1rem",
   margin: "0 auto",
 }));
 
-export const ContainerHeader = styled(
-  "section",
-  (props: { $bgColor: string }) => ({
-    height: "3rem",
-    backgroundColor: props.$bgColor,
-    padding: "1rem 0",
-  }),
-);
+export const ContainerHeader = styled("section", {
+  display: "flex",
+  alignItems: "center",
+  height: "3rem",
+  padding: "1rem 0",
+  columnGap: "1rem",
+});
 
 export const DotWrapper = styled("div", {
   display: "flex",
@@ -37,6 +36,11 @@ export const DotWrapper = styled("div", {
   width: "20%",
   height: "100%",
 });
+
+export const TotalSearchCount = styled("div", {
+  fontSize: "0.7rem",
+});
+
 export const Dot = styled("div", (props: { $bgColor: string }) => ({
   width: "0.8rem",
   height: "0.8rem",
@@ -46,13 +50,13 @@ export const Dot = styled("div", (props: { $bgColor: string }) => ({
 
 export const InnerContainer = styled(
   "div",
-  (props: { $scrollColor: string }) => ({
+  (props: { $scrollColor: string; $bgColor: string }) => ({
     display: "flex",
     flexWrap: "wrap",
     width: "100%",
     rowGap: "0.3rem",
     height: "calc(100% - 4rem)",
-    backgroundColor: "#fff",
+    backgroundColor: props.$bgColor,
     borderRadius: "1rem",
     padding: "1rem",
     overflow: "hidden",
