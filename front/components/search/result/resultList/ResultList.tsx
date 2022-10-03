@@ -1,4 +1,5 @@
-import { ImageWrapper } from "@header/Header.style";
+import React from "react";
+import Image from "next/image";
 import {
   FOOTER_HEIGHT,
   FULL_HEIGHT,
@@ -8,8 +9,7 @@ import {
   RED_COLOR,
   YELLOW_COLOR,
 } from "@utils/constant";
-import Image from "next/image";
-import React from "react";
+import { ImageWrapper } from "@header/Header.style";
 import {
   Contianer,
   ContianerHeader,
