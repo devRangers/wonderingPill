@@ -1,7 +1,8 @@
-import FilteringSearch from "@searchComp/result/Result";
+import ResultList from "@searchComp/result/resultList/ResultList";
+import React from "react";
 
-function Filter() {
-  return <FilteringSearch />;
+function ResultPage() {
+  return <ResultList />;
 }
 
-export default Filter;
+export default ResultPage;
