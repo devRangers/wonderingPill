@@ -11,8 +11,8 @@ import {
 } from "@utils/constant";
 import { ImageWrapper } from "@header/Header.style";
 import {
-  Contianer,
-  ContianerHeader,
+  Container,
+  ContainerHeader,
   DescribeSection,
   Dot,
   DotWrapper,
@@ -64,14 +64,14 @@ function ResultList() {
       $headerHeight={HEADER_HEIGHT}
       $fullHeight={FULL_HEIGHT}
       $footerHeight={FOOTER_HEIGHT}>
-      <Contianer $bgColor={MAIN_COLOR}>
-        <ContianerHeader $bgColor={MAIN_COLOR}>
+      <Container $bgColor={MAIN_COLOR}>
+        <ContainerHeader $bgColor={MAIN_COLOR}>
           <DotWrapper>
             <Dot $bgColor={RED_COLOR} />
             <Dot $bgColor={YELLOW_COLOR} />
             <Dot $bgColor={GREEN_COLOR} />
           </DotWrapper>
-        </ContianerHeader>
+        </ContainerHeader>
         <InnerContainer $scrollColor={MAIN_COLOR}>
           {Object.entries(PillData).map(([key, value], index) => (
             <Item key={key} $borderColor={MAIN_COLOR}>
@@ -80,7 +80,6 @@ function ResultList() {
                   <Image
                     src={value.image}
                     alt={value.describe}
-                    priority={true}
                     layout="fill"
                     objectFit="fill"
                   />
@@ -90,7 +89,7 @@ function ResultList() {
             </Item>
           ))}
         </InnerContainer>
-      </Contianer>
+      </Container>
     </OuterContainer>
   );
 }
