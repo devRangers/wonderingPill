@@ -155,12 +155,12 @@ export class AgendaService {
   /** 정의된 스케줄을 조회해서 설정 된 알림을 읽어옴  */
   async getAgenda(id, pillBookmarkId, pillName) {
     // TODO: 타입 지정
-    const agenda = await this.agenda;
+    const agenda: Agenda = await this.agenda;
     try {
       const result = (async function () {
         await agenda.start();
         const job = await agenda.jobs({ name: id + '-' + pillBookmarkId });
-        if (job.length === 0 && job.length === 8) {
+        if (job.length === 0) {
           return {
             minute: 0,
             hour: 0,
@@ -175,7 +175,10 @@ export class AgendaService {
           return {
             minute: Number(arr[0]),
             hour: Number(arr[1]),
-            vip: arr[4].split(',').map((v) => Number(v)),
+            vip:
+              arr[4].split(',').length === 8
+                ? []
+                : arr[4].split(',').map((v) => Number(v)),
             repeatTime: repeat,
             pillName,
           };
