@@ -126,3 +126,44 @@ export const MoreBtn = styled("button", (props: { $btnColor: string }) => ({
   justifySelf: "center",
   alignSelf: "end",
 }));
+
+export const CheckModalContainer = styled("div", {
+  height: "30vh",
+  display: "grid",
+  gridTemplateRows: "1fr 3fr 2fr",
+  alignItems: "center",
+});
+
+export const CloseBtn = styled("button", (props: { $btnColor: string }) => ({
+  justifySelf: "end",
+  marginRight: "0.5rem",
+  color: props.$btnColor,
+}));
+
+export const ModalText = styled("p", {
+  fontSize: "1.2rem",
+  fontWeight: "bold",
+  lineHeight: 1.5,
+  textAlign: "center",
+});
+
+export const BtnContainer = styled("div", {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  height: "100%",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+export const CheckModalBtn = styled(
+  "button",
+  (props: { $positive?: boolean; $btnColor?: string }) => ({
+    backgroundColor: props.$positive ? props.$btnColor : "transparent",
+    border: `1px solid ${props.$btnColor}`,
+    borderRadius: "20px",
+    color: props.$positive ? "#fff" : props.$btnColor,
+    height: "60%",
+    width: "70%",
+    justifySelf: "center",
+  }),
+);

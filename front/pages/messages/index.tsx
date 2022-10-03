@@ -5,7 +5,13 @@ import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
-import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
+import {
+  MAIN_COLOR,
+  ACCENT_COLOR,
+  GRAY_COLOR,
+  GREEN_COLOR,
+  ROUTE,
+} from "@utils/constant";
 import { AiOutlineCheck } from "react-icons/ai";
 import {
   ContentContainer,
@@ -27,14 +33,8 @@ import {
   MoreBtn,
 } from "@messagesComp/MessagesPage.style";
 import Container from "@container/Container";
-
-interface MessageValues {
-  id: string;
-  user_name: string;
-  pill_name: string;
-  time: string;
-  user_id: string;
-}
+import Modal from "@modal/Modal";
+import CheckModal, { MessageValues } from "@messagesComp/CheckModal";
 
 interface MessageResponse extends CommonResponse {
   alarms: MessageValues[];
@@ -44,12 +44,25 @@ interface deleteMessageValues {
   ids: string[];
 }
 
+const messageInitialValue: MessageValues = {
+  id: "",
+  user_id: "",
+  user_name: "",
+  pill_name: "",
+  time: "",
+  check: false,
+  pillBookmarkId: "",
+};
+
 const MessageListPage: NextPage = () => {
   const queryClient = useQueryClient();
 
   const [selectedMessagesId, setSelectedMessagesId] = useState<string[]>([]); // 삭제할(된) 알림 목록 ID
   const [messages, setMessages] = useState<MessageValues[]>([]);
   const [pageCount, setPageCount] = useState(1);
+  const [isCheckModalOpen, setIsCheckModalOpen] = useState(false);
+  const [selectedMessage, setSelectedMessage] =
+    useState<MessageValues>(messageInitialValue);
 
   useQuery(
     ["getMessages", pageCount],
@@ -58,9 +71,12 @@ const MessageListPage: NextPage = () => {
       onSuccess: ({ alarms }) => {
         // 알림 목록 중복 제거, 삭제된 알림 목록 필터링
         setMessages((prev) =>
-          _.uniqBy([...prev, ...alarms], "id").filter(
-            (message) => !selectedMessagesId.includes(message.id),
-          ),
+          _.sortBy(
+            _.uniqBy(_.sortBy([...prev, ...alarms], "check").reverse(), "id"),
+            "time",
+          )
+            .reverse()
+            .filter((message) => !selectedMessagesId.includes(message.id)),
         );
       },
     },
@@ -103,61 +119,84 @@ const MessageListPage: NextPage = () => {
     }
   };
 
+  const checkBtnClickHandler = (message: MessageValues) => {
+    setSelectedMessage(message);
+    setIsCheckModalOpen(true);
+  };
+
+  const closeCheckModalHandler = () => {
+    setIsCheckModalOpen(false);
+  };
+
   return (
-    <Container>
-      <ContentContainer>
-        <TitleContainer>
-          <Title $txtColor={ACCENT_COLOR}>알림 목록</Title>
-          <UnderLine $bgColor={MAIN_COLOR} />
-        </TitleContainer>
-        <ListContainer>
-          <Header>
-            <div>
-              <input
-                type="checkbox"
-                name="select-all-messages"
-                id="select-all-messages"
-                onChange={selectAllMessageHandler}
-              />
-              <Label htmlFor="select-all-messages">알림 전체 선택</Label>
-            </div>
-            <DeleteBtn onClick={deleteMessages}>선택한 알림 삭제</DeleteBtn>
-          </Header>
-          <Body $scrollColor={ACCENT_COLOR}>
-            {messages.map((message) => (
-              <List key={message.id}>
+    <>
+      <Container>
+        <ContentContainer>
+          <TitleContainer>
+            <Title $txtColor={ACCENT_COLOR}>알림 목록</Title>
+            <UnderLine $bgColor={MAIN_COLOR} />
+          </TitleContainer>
+          <ListContainer>
+            <Header>
+              <div>
                 <input
                   type="checkbox"
-                  id={message.id}
-                  name="messages"
-                  checked={selectedMessagesId.includes(message.id)}
-                  onChange={selectMessageHandler}
+                  name="select-all-messages"
+                  id="select-all-messages"
+                  onChange={selectAllMessageHandler}
                 />
-                <MessageContainer $borderColor={MAIN_COLOR}>
-                  <Message>
-                    약을 먹을 시간입니다!
-                    <br />
-                    {message.pill_name}
-                  </Message>
-                  <SettingBtn $btnColor={ACCENT_COLOR}>
-                    설정하러 가기
-                  </SettingBtn>
-                  <CheckBtn $btnColor={GRAY_COLOR}>
-                    <CheckBtnText>복약 여부</CheckBtnText> <AiOutlineCheck />
-                  </CheckBtn>
-                  <Time $txtColor={GRAY_COLOR}>{message.time}</Time>
-                </MessageContainer>
-              </List>
-            ))}
-          </Body>
-          <MoreBtn
-            $btnColor={ACCENT_COLOR}
-            onClick={() => setPageCount((cur) => cur + 1)}>
-            더보기
-          </MoreBtn>
-        </ListContainer>
-      </ContentContainer>
-    </Container>
+                <Label htmlFor="select-all-messages">알림 전체 선택</Label>
+              </div>
+              <DeleteBtn onClick={deleteMessages}>선택한 알림 삭제</DeleteBtn>
+            </Header>
+            <Body $scrollColor={ACCENT_COLOR}>
+              {messages.map((message) => (
+                <List key={message.id}>
+                  <input
+                    type="checkbox"
+                    id={message.id}
+                    name="messages"
+                    checked={selectedMessagesId.includes(message.id)}
+                    onChange={selectMessageHandler}
+                  />
+                  <MessageContainer $borderColor={MAIN_COLOR}>
+                    <Message>
+                      약을 먹을 시간입니다!
+                      <br />
+                      {message.pill_name}
+                    </Message>
+                    <SettingBtn $btnColor={ACCENT_COLOR}>
+                      설정하러 가기
+                    </SettingBtn>
+                    <CheckBtn
+                      disabled={message.check}
+                      onClick={() => checkBtnClickHandler(message)}
+                      $btnColor={message.check ? GREEN_COLOR : GRAY_COLOR}>
+                      <CheckBtnText>복약 여부</CheckBtnText> <AiOutlineCheck />
+                    </CheckBtn>
+                    <Time $txtColor={GRAY_COLOR}>{message.time}</Time>
+                  </MessageContainer>
+                </List>
+              ))}
+            </Body>
+            <MoreBtn
+              $btnColor={ACCENT_COLOR}
+              onClick={() => setPageCount((cur) => cur + 1)}>
+              더보기
+            </MoreBtn>
+          </ListContainer>
+        </ContentContainer>
+      </Container>
+      {isCheckModalOpen && (
+        <Modal open={isCheckModalOpen} onClose={closeCheckModalHandler}>
+          <CheckModal
+            onClose={closeCheckModalHandler}
+            selectedMessage={selectedMessage}
+            pageCount={pageCount}
+          />
+        </Modal>
+      )}
+    </>
   );
 };
 
