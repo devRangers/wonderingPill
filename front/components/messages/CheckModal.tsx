@@ -29,7 +29,7 @@ function CheckModal({ selectedMessage, pageCount, onClose }: CheckModalProps) {
   const queryClient = useQueryClient();
 
   const checkMutation = useMutation(() => Api.put(`/alarms/check/${id}`), {
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries(["getMessages", pageCount]);
       onClose();
     },

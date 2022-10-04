@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
@@ -66,10 +66,10 @@ const MessageListPage: NextPage = () => {
     useState<MessageValues>(messageInitialValue);
 
   /*
-   * 1. check 기준으로 sort 후 reverse (check: true가 앞에 위치하도록)
-   * 2. id를 기준으로 중복 제거
-   * 3. time을 기준으로 sort 후 reverse (최신 알림이 위에 위치하도록)
-   * 4. 삭제된 메세지 filter
+   * 1. time 기준으로 역순 정렬(최신 알림 기록이 앞으로 가도록)
+   * 2. check 기준으로 역순 정렬(true가 앞으로 가도록)
+   * 3. id 기준으로 중복 제거
+   * 4. 삭제된 메세지 필터링
    */
 
   useQuery(
@@ -78,12 +78,21 @@ const MessageListPage: NextPage = () => {
     {
       onSuccess: ({ alarms }) => {
         setMessages((prev) =>
-          _.sortBy(
-            _.uniqBy(_.sortBy([...prev, ...alarms], "check").reverse(), "id"),
-            "time",
-          )
-            .reverse()
-            .filter((message) => !selectedMessagesId.includes(message.id)),
+          _.uniqBy(
+            [...prev, ...alarms].sort(function (cur, prev) {
+              const prevCheck = Number(prev.check);
+              const curCheck = Number(cur.check);
+              const prevTime = Date.parse(prev.time);
+              const curTime = Date.parse(cur.time);
+
+              if (prevTime > curTime) return 1;
+              if (prevTime < curTime) return -1;
+              if (prevCheck > curCheck) return 1;
+              if (prevCheck < curCheck) return -1;
+              return 0;
+            }),
+            "id",
+          ).filter((message) => !selectedMessagesId.includes(message.id)),
         );
       },
     },
