@@ -1,5 +1,9 @@
-import { useState, Dispatch, SetStateAction } from "react";
-import { SEMI_ACCENT_COLOR, GRAY_COLOR } from "@utils/constant";
+import { Dispatch, SetStateAction } from "react";
+import {
+  SEMI_ACCENT_COLOR,
+  GRAY_COLOR,
+  LIGHT_GRAY_COLOR,
+} from "@utils/constant";
 import {
   FormContainer,
   FormTitle,
@@ -37,7 +41,7 @@ function RemindForm({
           setIsToggle={setIsRemindToggle}
         />
       </FormTitle>
-      <Form $height="60%">
+      <Form $height="60%" $bgColor={LIGHT_GRAY_COLOR}>
         <FormContent>
           <Input
             type="number"
