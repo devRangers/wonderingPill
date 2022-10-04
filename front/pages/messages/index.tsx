@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
