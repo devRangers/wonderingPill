@@ -63,7 +63,7 @@ const MessageListPage: NextPage = () => {
   const [pageCount, setPageCount] = useState(1);
   const [isCheckModalOpen, setIsCheckModalOpen] = useState(false);
   const [selectedMessage, setSelectedMessage] =
-    useState<MessageValues>(messageInitialValue);
+    useState<MessageValues>(messageInitialValue); // 복약 여부 버튼을 클릭한 메세지
 
   /*
    * 1. time 기준으로 역순 정렬(최신 알림 기록이 앞으로 가도록)
