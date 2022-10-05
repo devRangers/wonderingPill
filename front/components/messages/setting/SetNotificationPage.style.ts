@@ -90,12 +90,15 @@ export const FormTitle = styled(
   }),
 );
 
-export const Form = styled("div", (props: { $height: string }) => ({
-  backgroundColor: "#f7f7f7",
-  width: "90%",
-  height: props.$height,
-  borderRadius: "20px",
-}));
+export const Form = styled(
+  "div",
+  (props: { $height: string; $bgColor: string }) => ({
+    backgroundColor: props.$bgColor,
+    width: "90%",
+    height: props.$height,
+    borderRadius: "20px",
+  }),
+);
 
 export const TimeSelectContainer = styled("div", {
   display: "grid",
