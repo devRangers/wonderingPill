@@ -1,74 +1,36 @@
 import {
-  ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as argon from 'argon2';
-import { Inquiry, User } from 'prisma/postgresClient';
-import { AuthService } from 'src/auth/auth.service';
+import { User } from 'prisma/postgresClient';
+import { AlarmsService } from 'src/alarms/alarms.service';
+import { GcsService } from 'src/infras/gcs/gcs.service';
+import { RedisService } from 'src/infras/redis/redis.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SendInquiryDto, UpdateUserDto } from './dto';
+import {
+  DeleteUserResponse,
+  GetMypageResponse,
+  GetPresignedUrlResponse,
+  SendInquiryDto,
+  UpdateUserDto,
+} from './dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly authService: AuthService,
+    private readonly alarmsService: AlarmsService,
+    private readonly gcsService: GcsService,
+    private readonly redisService: RedisService,
   ) {}
 
-  async deleteUser(id: string) {
+  /** 현재 로그인한 유저의 마이페이지 조회 */
+  async getMypage(id: string): Promise<GetMypageResponse> {
     try {
-      await this.prisma.user.update({
-        where: { id },
-        data: { isDeleted: true },
-      });
-    } catch (error) {
-      throw new ForbiddenException('회원탈퇴 실패!');
-    }
-  }
-
-  async updateUser(id: string, updateUserDto: UpdateUserDto) {
-    const { password, newPassword, name } = updateUserDto;
-    const user = await this.authService.getUserById(id);
-
-    try {
-      if (password) {
-        await this.verifyPassword(user, password);
-        const hashedNewPassword = await argon.hash(newPassword);
-        await this.prisma.user.update({
-          where: { id: user.id },
-          data: {
-            password: hashedNewPassword,
-            name: name !== null ? name : undefined,
-          },
-        });
-      }
-    } catch (error) {
-      throw new ForbiddenException('회원정보를 수정하지 못했습니다.');
-    }
-  }
-
-  async verifyPassword(user: User, password: string) {
-    const check = await argon.verify(user.password, password);
-    if (!check) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-    }
-  }
-
-  async saveImg(id: string, img: string) {
-    try {
-      await this.prisma.user.update({
-        where: { id },
-        data: { profileImg: img },
-      });
-    } catch (error) {
-      throw new ForbiddenException('프로필 이미지를 수정하지 못했습니다.');
-    }
-  }
-
-  async getUserInfo(id: string) {
-    try {
-      const user = await this.prisma.user.findUnique({
+      /** 현재 로그인된 user의 mypage에 필요한 bookmark 등 정보를 DB에서 조회 */
+      const user: GetMypageResponse = await this.prisma.user.findUnique({
         where: { id },
         select: {
           PharmacyBookMark: {
@@ -79,17 +41,145 @@ export class UsersService {
           },
         },
       });
+
+      /** DB에 현재 로그인된 user의 정보가 존재하지 않을 경우 에러처리 */
+      if (!user) {
+        throw new Error();
+      }
       return user;
     } catch (error) {
-      throw new ForbiddenException('회원을 검색할 수 없습니다.');
+      throw new NotFoundException('회원 정보를 찾지 못했습니다.');
     }
   }
 
+  /** 현재 로그인한 유저의 프로필 이미지 변경을 위해 Presigned Url 발급 요청 */
+  async getPresignedUrl(id: string): Promise<GetPresignedUrlResponse> {
+    const { url, fileName }: GetPresignedUrlResponse =
+      await this.gcsService.getPresignedUrl(id);
+    return { url, fileName };
+  }
+
+  /** 현재 로그인한 유저의 새로운 프로필 이미지를 DB에 저장하고 GCS의 원래 프로필 이미지 삭제 */
+  async updateImg(id: string, img: string) {
+    // User와 파일 이름에 사용할 Date 선언
+    const user: User = await this.getUserById(id);
+    const oldDate: string = user.profileImg.split('_')[2];
+
+    await this.updateProfileImg(user.id, img); // DB에서 프로필 이미지 변경
+    await this.gcsService.deleteImg(oldDate, id); // GCS에서 이전 프로필 이미지 삭제
+  }
+
+  /** DB에서 user id로 User 찾기 */
+  async getUserById(id: string): Promise<User> {
+    try {
+      /** DB에서 User 조회 */
+      const user: User = await this.prisma.user.findUnique({
+        where: { id },
+      });
+
+      return user;
+    } catch {
+      throw new NotFoundException('회원 정보를 찾지 못했습니다.');
+    }
+  }
+
+  /** user id로 DB에서 User를 찾아 profileImg 변경 */
+  async updateProfileImg(id: string, img: string) {
+    try {
+      await this.prisma.user.update({
+        where: { id },
+        data: { profileImg: img },
+      });
+    } catch (error) {
+      throw new NotFoundException('프로필 이미지를 수정하지 못했습니다.');
+    }
+  }
+
+  /** 현재 로그인한 유저의 name, password 변경 */
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+    // UpdateUserDto 구조분해와 기존 User 선언
+    const { password, newPassword, name }: UpdateUserDto = updateUserDto;
+    const user: User = await this.getUserById(id);
+
+    try {
+      let hashedNewPassword: string;
+      // password가 일치하는지 검사
+      if (password) {
+        await this.verifyPassword(user, password);
+        hashedNewPassword = await argon.hash(newPassword); // argon으로 암호화
+      }
+
+      // name, password를 DB에서 변경
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password: hashedNewPassword !== null ? hashedNewPassword : undefined, // hashedNewPassword가 존재하면 저장, 없으면 undefined
+          name: name !== null ? name : undefined, // name가 존재하면 저장, 없으면 undefined
+        },
+      });
+    } catch (error) {
+      throw new NotFoundException('회원정보를 수정하지 못했습니다.');
+    }
+  }
+
+  /** DB에 저장된 user의 password와 입력받은 password가 일치하는지 여부 확인 */
+  async verifyPassword(user: User, password: string) {
+    const check: boolean = await argon.verify(user.password, password);
+    if (!check) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+  }
+
+  /** 현재 로그인한 유저의 회원 탈퇴 */
+  async deleteUser(id: string): Promise<DeleteUserResponse> {
+    const user: User = await this.getUserById(id); // user 정보 조회
+    const oldDate: string = user.profileImg.split('_')[2]; // profileimg에 들어갈 oldDate 찾기
+
+    try {
+      const pillBookmark = await this.prisma.pillBookMark.findMany({
+        where: { user_id: id },
+        select: { id: true },
+      });
+      await this.redisService.delKey('re' + id); // redis에서 refreshtoken 삭제
+      await this.gcsService.deleteImg(oldDate, id); // GCS에서 profileimg 삭제
+
+      if (user.provider === 'LOCAL') {
+        // local 회원일 때
+        await this.prisma.user.update({
+          where: { id },
+          data: {
+            isDeleted: true,
+            email: user.email + '_',
+            phone: null,
+            profileImg: null,
+          },
+        }); // isDeleted true로 변경(soft delete), email에 '_' 추가
+      } else if (user.provider === 'GOOGLE') {
+        // google 회원일 때
+        await this.prisma.user.delete({ where: { id } }); // 삭제(hard delete)
+      }
+
+      // 알림 지우기
+      pillBookmark.map(async (pillBookmark) => {
+        await this.alarmsService.cancelAlarm(id, pillBookmark.id);
+      });
+
+      return { result: true };
+    } catch (error) {
+      throw new NotFoundException('회원 탈퇴를 실패했습니다.');
+    }
+  }
+
+  /** 현재 로그인한 유저의 고객 센터 이용글 저장 */
   async sendInquiry(id: string, sendInquiryDto: SendInquiryDto) {
     const { content } = sendInquiryDto;
-    const inquiry: Inquiry = await this.prisma.inquiry.create({
-      data: { user_id: id, content },
-    });
-    return inquiry;
+
+    try {
+      await this.prisma.inquiry.create({
+        data: { user_id: id, content },
+      });
+    } catch (error) {
+      throw new NotFoundException('고객 센터 문의가 실패했습니다.');
+    }
   }
 }

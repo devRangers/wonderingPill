@@ -62,4 +62,19 @@ const del = async <T extends Response>(endpoint: string) => {
   return result;
 };
 
-export { get, post, put, del as delete };
+const patch = async <T extends Response, U>(endpoint: string, data?: U) => {
+  const url = baseUrl + endpoint;
+
+  const res = await fetch(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: data && JSON.stringify(data),
+    credentials: "include",
+  });
+  const result: T = await res.json();
+
+  if (result.statusCode >= 400) throw new Error(result.message);
+  return result;
+};
+
+export { get, post, put, del as delete, patch };

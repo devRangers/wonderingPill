@@ -13,4 +13,7 @@ module.exports = withPWA({
     dest: "public",
   },
   nextConfig,
+  images: {
+    domains: ["storage.googleapis.com", "storage.cloud.google.com"],
+  },
 });

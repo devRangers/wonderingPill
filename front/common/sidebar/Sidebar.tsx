@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useRouter } from "next/router";
 import {
   FULL_HEIGHT,
@@ -6,6 +7,8 @@ import {
   SIDE_BAR_HEADER_HEIGHT,
   ACCENT_COLOR,
 } from "@utils/constant";
+import { get } from "@api";
+import { userAtom } from "@atom/userAtom";
 import { BsArrowLeftShort } from "react-icons/bs";
 import {
   BackArrow,
@@ -17,6 +20,7 @@ import {
   SidebarContainer,
   SidebarHeader,
 } from "./Sidebar.style";
+import { useAtom } from "jotai";
 
 interface SidebarProp {
   openSideBar: boolean;
@@ -26,46 +30,63 @@ interface SidebarProp {
 interface ButtonTitleValues {
   title: string;
   link: string;
+  canUseWithLogin: boolean;
 }
 
 const ButtonTitle: { [key in string]: ButtonTitleValues } = {
+  main: {
+    title: "메인으로 가기",
+    link: ROUTE.MAIN,
+    canUseWithLogin: false,
+  },
   findWithPicture: {
     title: "사진으로 찾기",
     link: ROUTE.SEARCH_IMAGE,
+    canUseWithLogin: false,
   },
   findPharmacy: {
     title: "약국 찾기",
     link: ROUTE.MAIN,
-  },
-  searchPill: {
-    title: "시제품 약 검색",
-    link: ROUTE.MAIN,
-  },
-  searchSymptom: {
-    title: "증상으로 검색",
-    link: ROUTE.MAIN,
-  },
-  healthChallenge: {
-    title: "내 건강 캘린더",
-    link: ROUTE.MAIN,
+    canUseWithLogin: false,
   },
   myPage: {
     title: "마이페이지",
-    link: ROUTE.MAIN,
+    link: ROUTE.MY_PAGE,
+    canUseWithLogin: true,
   },
   guide: {
     title: "설치 가이드",
     link: ROUTE.MAIN,
+    canUseWithLogin: false,
   },
 };
 
 function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
   const router = useRouter();
+  const [user, setUser] = useAtom(userAtom);
 
   const handleClickBtn = (url: string) => {
     closeSideBar();
     router.push(url);
   };
+
+  const logout = async () => {
+    try {
+      await get("/auth/logout");
+      await router.push(ROUTE.LOGIN);
+      setUser({
+        id: "",
+        email: "",
+        name: "",
+        profileImg: "",
+        provider: "",
+        phone: "",
+      });
+    } catch (err: any) {
+      console.error(err);
+    }
+  };
+
   return (
     <>
       <BackGround
@@ -81,20 +102,30 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
         </SidebarHeader>
         <SidebarBody $height={SIDE_BAR_HEADER_HEIGHT} $fullHeight={FULL_HEIGHT}>
           <BtnContainer>
-            {Object.entries(ButtonTitle).map(([key, value]) => (
-              <SidebarBtn
-                key={key}
-                $bgColor={MAIN_COLOR}
-                onClick={() => handleClickBtn(value.link)}>
-                {value.title}
-              </SidebarBtn>
-            ))}
+            {Object.entries(ButtonTitle).map(([key, value]) =>
+              value.canUseWithLogin && !user.id ? (
+                <Fragment key={key}></Fragment>
+              ) : (
+                <SidebarBtn
+                  key={key}
+                  $bgColor={MAIN_COLOR}
+                  onClick={() => handleClickBtn(value.link)}>
+                  {value.title}
+                </SidebarBtn>
+              ),
+            )}
           </BtnContainer>
-          <LoginBtn
-            $bgColor={MAIN_COLOR}
-            onClick={() => router.push(ROUTE.LOGIN)}>
-            로그인
-          </LoginBtn>
+          {user.id ? (
+            <LoginBtn $bgColor={MAIN_COLOR} onClick={logout}>
+              로그아웃
+            </LoginBtn>
+          ) : (
+            <LoginBtn
+              $bgColor={MAIN_COLOR}
+              onClick={() => router.push(ROUTE.LOGIN)}>
+              로그인
+            </LoginBtn>
+          )}
         </SidebarBody>
       </SidebarContainer>
     </>

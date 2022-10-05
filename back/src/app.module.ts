@@ -9,14 +9,15 @@ import AdminJS from 'adminjs';
 import { AlarmsModule } from './alarms/alarms.module';
 import { AuthModule } from './auth/auth.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
-import { FcmModule } from './fcm/fcm.module';
-import { GcsModule } from './gcs/gcs.module';
-import { MailModule } from './mail/mail.module';
+import { AgendaModule } from './infras/agenda/agenda.module';
+import { FcmModule } from './infras/fcm/fcm.module';
+import { GcsModule } from './infras/gcs/gcs.module';
+import { MailModule } from './infras/mail/mail.module';
+import { RedisModule } from './infras/redis/redis.module';
+import { SmsModule } from './infras/sms/sms.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { PillModule } from './pill/pill.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { RedisModule } from './redis/redis.module';
-import { SmsModule } from './sms/sms.module';
 import { UsersModule } from './users/users.module';
 import { postgresResourceArr, validation } from './utils';
 import config from './utils/config';
@@ -85,6 +86,7 @@ AdminJS.registerAdapter({ Database, Resource });
         };
       },
     }),
+    AgendaModule,
   ],
   providers: [
     {

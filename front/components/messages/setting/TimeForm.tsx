@@ -1,5 +1,6 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { SEMI_ACCENT_COLOR, GRAY_COLOR, SUB_COLOR } from "@utils/constant";
+import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import {
   FormContainer,
   FormTitle,
@@ -14,9 +15,16 @@ import {
   Text,
 } from "./SetNotificationPage.style";
 
+export type SettingFormValues = Pick<
+  SetAlarmValues,
+  "hour" | "minute" | "repeatTime"
+>;
+
 interface TimeFormProps {
   disabled: boolean;
   isAfternoon: boolean;
+  values: SettingFormValues;
+  vip: number[];
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
   setVip: Dispatch<SetStateAction<number[]>>;
   setIsAfternoon: Dispatch<SetStateAction<boolean>>;
@@ -35,11 +43,15 @@ const Day = {
 function TimeForm({
   disabled,
   isAfternoon,
+  values,
+  vip,
   onChange,
   setVip,
   setIsAfternoon,
 }: TimeFormProps) {
-  const [selectedDays, setSelectedDays] = useState(Array(7).fill(false));
+  const [selectedDays, setSelectedDays] = useState(
+    Array.from({ length: 7 }, (_, idx) => vip.includes(idx)),
+  ); // 버튼 활성화 여부를 위해 boolean[]으로 변경
   const [selectedDaysText, setSelectedDaysText] = useState("");
 
   const selectChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -49,9 +61,9 @@ function TimeForm({
 
   useEffect(() => {
     const selectedIdx = selectedDays.reduce(
-      (a, e, i) => (e === true ? a.concat(i) : a),
+      (a: number[], e, i) => (e === true ? a.concat(i) : a),
       [],
-    );
+    ); // 알림 vip 설정을 위해 number[]로 변경
     setVip(selectedIdx);
     const text = Object.values(Day).reduce(
       (a, e, i) => (selectedIdx.includes(i) ? (a += e + ", ") : a),
@@ -90,7 +102,10 @@ function TimeForm({
             ))}
           </BtnContainer>
           <SelectTime>
-            <Select disabled={disabled} onChange={selectChangeHandler}>
+            <Select
+              disabled={disabled}
+              onChange={selectChangeHandler}
+              defaultValue={values.hour < 12 ? "오전" : "오후"}>
               <option value="오전">오전</option>
               <option value="오후">오후</option>
             </Select>
@@ -98,6 +113,7 @@ function TimeForm({
               <Input
                 type="number"
                 name="hour"
+                value={values.hour > 12 ? values.hour - 12 : values.hour}
                 min={isAfternoon ? "1" : "0"}
                 max={isAfternoon ? "12" : "11"}
                 disabled={disabled}
@@ -110,6 +126,7 @@ function TimeForm({
               <Input
                 type="number"
                 name="minute"
+                value={values.minute}
                 min="0"
                 max="59"
                 disabled={disabled}

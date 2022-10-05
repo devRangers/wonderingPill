@@ -14,6 +14,7 @@ export class PillService {
 
   async bookmarkPill(id: string, pill_id: number) {
     const pill = await this.checkBookmark(id, pill_id);
+    // 알림 삭제 필요
     try {
       let pills;
       if (pill.length === 0) {
@@ -37,17 +38,34 @@ export class PillService {
       const pill = await this.prisma.pillBookMark.findMany({
         where: { user_id: id, pill_id },
       });
-      console.log(pill);
+
       return pill;
     } catch (error) {
       throw new ForbiddenException('북마크를 조회하지 못했습니다.');
     }
   }
 
-  // async searchPill(query) {
-  //   const pills = await this.prisma.pill.findMany({});
-  //   return pills;
-  // }
+  async searchPill({ query }) {
+    const pills = await this.prisma.pill.findMany({
+      where: {
+        AND: [
+          { shape: { startsWith: query.shape } },
+          { colors: { startsWith: query.colors } },
+          { mark: Number(query.mark) },
+          { letters: { startsWith: query.letters } },
+          { name: { startsWith: query.name } },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        PillBookMark: { select: { user_id: true } },
+      },
+    });
+
+    return pills;
+  }
 
   async resultPill(name: string) {
     try {

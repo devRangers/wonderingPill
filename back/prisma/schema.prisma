@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output = "./postgresClient"
+  output   = "./postgresClient"
 }
 
 datasource db {
@@ -12,7 +12,7 @@ model Pharmacy {
   id               Int                @id @default(autoincrement())
   name             String?            @db.VarChar(50)
   phone            String?            @db.VarChar(20)
-  address          String?            @db.Text
+  address          String?            @db.Text  
   monday           String?            @db.VarChar(50)
   tuesday          String?            @db.VarChar(50)
   wednesday        String?            @db.VarChar(50)
@@ -36,14 +36,14 @@ model User {
   id               String             @id @default(uuid())
   email            String             @unique @db.VarChar(50)
   name             String?            @db.VarChar(20)
-  password         String?            @db.VarChar(100)
-  phone            String?            @unique @db.VarChar(20)
-  profileImg       String?            @default("imageUrl")
-  isDeleted        Boolean?           @default(false)
   birth            String?            @db.VarChar(9)
   createdAt        DateTime?          @default(now()) @db.Date
-  updatedAt        DateTime?          @updatedAt
+  isDeleted        Boolean?           @default(false)
+  password         String?            @db.VarChar(100)
+  phone            String?            @unique @db.VarChar(20)
+  profileImg       String?            @default("https://storage.googleapis.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png")
   provider         Provider?          @default(LOCAL)
+  updatedAt        DateTime?          @updatedAt
   Inquiry          Inquiry[]
   PharmacyBookMark PharmacyBookMark[]
   PillBookMark     PillBookMark[]
@@ -57,11 +57,11 @@ model Inquiry {
 }
 
 model Pill {
-  id           Int            @id @default(autoincrement())
   code         String?        @unique @db.VarChar(20)
   name         String?        @unique @db.VarChar(50)
-  shape        String?
   letters      String?        @db.VarChar(50)
+  id           Int            @id @default(autoincrement())
+  shape        String?
   colors       String?
   mark         Int?
   PillBookMark PillBookMark[]
@@ -69,11 +69,11 @@ model Pill {
 
 model PillBookMark {
   id      String  @id @default(uuid())
+  user_id String?
   alarm   Boolean @default(false)
-  pill_id Int? 
-  user_id String? 
-  Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pill_id Int?
+  Pill    Pill?   @relation(fields: [pill_id], references: [id], onDelete: Cascade)
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 enum Provider {

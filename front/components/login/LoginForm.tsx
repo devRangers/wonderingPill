@@ -12,7 +12,13 @@ import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
-import { SUB_COLOR, ERROR_MSG_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
+import {
+  SUB_COLOR,
+  ERROR_MSG_COLOR,
+  GRAY_COLOR,
+  ROUTE,
+  TOASTIFY,
+} from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -32,6 +38,7 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
+import { toast } from "react-toastify";
 
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
@@ -45,6 +52,8 @@ function LoginForm() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
+
+  const nofityLoginFail = () => toast.error(TOASTIFY.LOGIN_FAIL);
 
   const initialValue: LoginFormValues = {
     email: userEmail,
@@ -65,6 +74,7 @@ function LoginForm() {
       },
       onError: ({ message }) => {
         console.log(message);
+        nofityLoginFail();
       },
     },
   );

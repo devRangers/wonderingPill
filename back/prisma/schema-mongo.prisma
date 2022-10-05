@@ -13,13 +13,15 @@ model Reminder{
   user_name        String
   pill_name        String
   time             String
-  user_id          String             @unique
+  check            Boolean            @default(false)
+  pillBookmarkId   String
+  user_id          String
   User             User               @relation(fields: [user_id], references: [user_id])
 }
 
 model User{
-    id               String             @id @default(auto()) @map("_id") @db.ObjectId
-    user_id          String             @unique          
-    deviceToken      String 
-    Reminder         Reminder[]
+    id                String             @id @default(auto()) @map("_id") @db.ObjectId
+    user_id           String             @unique 
+    deviceToken       String 
+    Reminder          Reminder[]
 }

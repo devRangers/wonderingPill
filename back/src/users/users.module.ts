@@ -1,15 +1,19 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AuthModule } from 'src/auth/auth.module';
-import { AuthService } from 'src/auth/auth.service';
+import { AlarmsModule } from 'src/alarms/alarms.module';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
-import { GcsModule } from 'src/gcs/gcs.module';
+import { AgendaModule } from 'src/infras/agenda/agenda.module';
+import { AgendaService } from 'src/infras/agenda/agenda.service';
+import { GcsModule } from 'src/infras/gcs/gcs.module';
+import { RedisModule } from 'src/infras/redis/redis.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [AuthModule, GcsModule],
-  providers: [UsersService, AuthService],
+  imports: [GcsModule, AlarmsModule, RedisModule, AgendaModule],
+  providers: [UsersService, AlarmsService, AgendaService],
   controllers: [UsersController],
+  exports: [GcsModule, AlarmsModule, RedisModule, AgendaModule],
 })
 export class UsersModule {
   configure(consumer: MiddlewareConsumer) {
