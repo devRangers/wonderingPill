@@ -1,6 +1,6 @@
 import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
 import React from "react";
-import { ButtonValue } from "./Option";
+import { ButtonValue } from "./optionData";
 import {
   ButtonContainer,
   OptionButton,
