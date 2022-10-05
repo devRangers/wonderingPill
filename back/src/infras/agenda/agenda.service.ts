@@ -154,7 +154,6 @@ export class AgendaService {
 
   /** 정의된 스케줄을 조회해서 설정 된 알림을 읽어옴  */
   async getAgenda(id, pillBookmarkId, pillName) {
-    // TODO: 타입 지정
     const agenda: Agenda = await this.agenda;
     try {
       const result = (async function () {
