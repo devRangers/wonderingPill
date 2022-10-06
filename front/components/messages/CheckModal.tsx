@@ -9,16 +9,7 @@ import {
   BtnContainer,
   CheckModalBtn,
 } from "./MessagesPage.style";
-
-export interface MessageValues {
-  id: string;
-  user_id: string;
-  user_name: string;
-  pill_name: string;
-  time: string;
-  check: boolean;
-  pillBookmarkId: string;
-}
+import { MessageValues } from "./Messages";
 
 interface CheckModalProps {
   selectedMessage: MessageValues;

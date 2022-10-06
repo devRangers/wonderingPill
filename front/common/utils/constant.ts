@@ -33,6 +33,7 @@ export const ROUTE = {
   MY_PAGE: "/my-page",
   MY_PAGE_MODIFY: "/my-page/modify",
   MESSAGES: "/messages",
+  MESSAGES_SETTING: (bookmarkId: string) => `/messages/setting/${bookmarkId}`,
   ERROR: "/error",
   BLOCK: "/blocked",
   INFO: "/info",
