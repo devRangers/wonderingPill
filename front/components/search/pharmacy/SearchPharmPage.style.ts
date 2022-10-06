@@ -18,6 +18,7 @@ export const PageContainer = styled(
 export const SearchPharmContainer = styled(
   "div",
   (props: { $bgColor: string }) => ({
+    minHeight: "44vh",
     display: "grid",
     gridTemplateRows: "1fr 5fr",
     backgroundColor: props.$bgColor,
@@ -74,6 +75,7 @@ export const PharmListBox = styled("div", (props: { $bgColor: string }) => ({
   backgroundColor: props.$bgColor,
   width: "90%",
   height: "90%",
+  minHeight: "33vh",
   borderRadius: "15px",
   justifySelf: "center",
   alignSelf: "center",
