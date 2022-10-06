@@ -1,19 +1,13 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
-import Link from "next/link";
 import { useState } from "react";
 import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
-import {
-  MAIN_COLOR,
-  ACCENT_COLOR,
-  GRAY_COLOR,
-  GREEN_COLOR,
-  ROUTE,
-} from "@utils/constant";
-import { AiOutlineCheck } from "react-icons/ai";
+import { messageKeys } from "@utils/queryKey";
+import { MAIN_COLOR, ACCENT_COLOR, ROUTE, TOASTIFY } from "@utils/constant";
+
 import {
   ContentContainer,
   TitleContainer,
@@ -24,18 +18,13 @@ import {
   Label,
   DeleteBtn,
   Body,
-  List,
-  MessageContainer,
-  Message,
-  SettingBtn,
-  CheckBtn,
-  CheckBtnText,
-  Time,
   MoreBtn,
 } from "@messagesComp/MessagesPage.style";
 import Container from "@container/Container";
 import Modal from "@modal/Modal";
-import CheckModal, { MessageValues } from "@messagesComp/CheckModal";
+import CheckModal from "@messagesComp/CheckModal";
+import Messages, { MessageValues } from "@messagesComp/Messages";
+import { toast } from "react-toastify";
 
 interface MessageResponse extends CommonResponse {
   alarms: MessageValues[];
@@ -73,7 +62,7 @@ const MessageListPage: NextPage = () => {
    */
 
   useQuery(
-    ["getMessages", pageCount],
+    messageKeys.getMessages(pageCount),
     () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
     {
       onSuccess: ({ alarms }) => {
@@ -104,10 +93,10 @@ const MessageListPage: NextPage = () => {
     {
       onSuccess: () => {
         // 삭제 성공 후 알림 목록 갱신
-        queryClient.invalidateQueries(["getMessages", pageCount]);
+        queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       },
-      onError: (err) => {
-        console.log(err);
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
       },
     },
   );
@@ -167,34 +156,13 @@ const MessageListPage: NextPage = () => {
             </Header>
             <Body $scrollColor={ACCENT_COLOR}>
               {messages.map((message) => (
-                <List key={message.id}>
-                  <input
-                    type="checkbox"
-                    id={message.id}
-                    name="messages"
-                    checked={selectedMessagesId.includes(message.id)}
-                    onChange={selectMessageHandler}
-                  />
-                  <MessageContainer $borderColor={MAIN_COLOR}>
-                    <Message>
-                      약을 먹을 시간입니다!
-                      <br />
-                      {message.pill_name}
-                    </Message>
-                    <Link href={`/messages/setting/${message.pillBookmarkId}`}>
-                      <SettingBtn $btnColor={ACCENT_COLOR}>
-                        설정하러 가기
-                      </SettingBtn>
-                    </Link>
-                    <CheckBtn
-                      disabled={message.check}
-                      onClick={() => checkBtnClickHandler(message)}
-                      $btnColor={message.check ? GREEN_COLOR : GRAY_COLOR}>
-                      <CheckBtnText>복약 여부</CheckBtnText> <AiOutlineCheck />
-                    </CheckBtn>
-                    <Time $txtColor={GRAY_COLOR}>{message.time}</Time>
-                  </MessageContainer>
-                </List>
+                <Messages
+                  key={message.id}
+                  message={message}
+                  selectedMessagesId={selectedMessagesId}
+                  selectMessageHandler={selectMessageHandler}
+                  checkBtnClickHandler={checkBtnClickHandler}
+                />
               ))}
             </Body>
             <MoreBtn

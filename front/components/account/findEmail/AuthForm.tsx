@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useQuery } from "react-query";
+import { findEmailKeys } from "@utils/queryKey";
 import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
 import {
   FormContainer,
@@ -15,13 +16,14 @@ import {
   CloseBtnContainer,
   CloseBtn,
 } from "./AuthForm.style";
+import { toast } from "react-toastify";
 
 interface AuthFormProps {
   onClose: () => void;
   phone: string;
 }
 
-const verifyCode = async (phone: string, code: string) => {
+const sendToVerifyCode = async (phone: string, code: string) => {
   const res = await fetch("/api/verify-code", {
     method: "POST",
     body: JSON.stringify({ phone, code }),
@@ -36,20 +38,24 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
   const [code, setCode] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useQuery(["verifyCode", code], () => verifyCode(phone, code), {
-    enabled: !!code && isSubmitted,
-    retry: false,
-    onSuccess: ({ user }) => {
-      router.push({
-        pathname: ROUTE.EMAIL_RESULT,
-        query: { userId: user.id },
-      });
+  useQuery(
+    findEmailKeys.verifyCode(code),
+    () => sendToVerifyCode(phone, code),
+    {
+      enabled: !!code && isSubmitted,
+      retry: false,
+      onSuccess: ({ user }) => {
+        router.push({
+          pathname: ROUTE.EMAIL_RESULT,
+          query: { userId: user.id },
+        });
+      },
+      onError: ({ message }) => {
+        toast.error(message);
+        setIsSubmitted(false);
+      },
     },
-    onError: (err) => {
-      console.log(err);
-      setIsSubmitted(false);
-    },
-  });
+  );
 
   return (
     <FormContainer>
