@@ -35,3 +35,9 @@ export const ALARMS = {
   ALARMS_CHECK_ID: (id: string) => `alarms/check/${id}`,
   ALARMS_DELETE: "alarms/delete",
 };
+
+export const BOOKMARK = {
+  BOOKMARK: "bookmark",
+  BOOKMARK_LIST: "bookmark/list",
+  BOOKMARK_ID: (id: string) => `bookmark/${id}`,
+};
