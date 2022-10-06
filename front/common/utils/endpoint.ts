@@ -14,41 +14,42 @@ export const AUTH = {
   GOOGLE_REDIRECT: "/auth/google-redirect",
   SEND_SMS: "/auth/send-sms",
   VERIFY_CODE: "/auth/verify-code",
-  FIND_ACCOUNT: (id: string) => `/find-account/${id}`,
+  FIND_ACCOUNT: (id: string | string[] | undefined) =>
+    `/auth/find-account/${id}`,
 };
 
 export const USERS = {
-  USERS_MYPAGE: "/users/mypage",
-  USERS_PRESIGNED_URL: "/users/presigned-url",
-  USERS_PROFILE_IMG: "/users/profile-img",
-  USERS_UPDATE: "/users/update",
-  USERS_DELETE: "/users/delete",
-  USERS_INQUIRY: "/users/inquiry",
+  MYPAGE: "/users/mypage",
+  PRESIGNED_URL: "/users/presigned-url",
+  PROFILE_IMG: "/users/profile-img",
+  UPDATE: "/users/update",
+  DELETE: "/users/delete",
+  INQUIRY: "/users/inquiry",
 };
 
 export const ALARMS = {
-  ALARMS_SET: "alarms/set",
-  ALARMS_ID: (id: string) => `/alarms/${id}`,
-  ALARMS_SET_ID: (id: string) => `/alarms/set/${id}`,
-  ALARMS_PAGE: (page: string) => `/alarms/${page}`,
-  ALARMS_CHECK_ID: (id: string) => `/alarms/check/${id}`,
-  ALARMS_DELETE: "/alarms/delete",
+  SET: "/alarms/set",
+  ID: (id: string) => `/${id}`,
+  SET_ID: (id: string | string[] | undefined) => `/alarms/set/${id}`,
+  PAGE: (page: number) => `/alarms/${page}`,
+  CHECK_ID: (id: string) => `/alarms/check/${id}`,
+  DELETE: "/alarms/delete",
 };
 
 export const BOOKMARK = {
   BOOKMARK: "/bookmark",
-  BOOKMARK_LIST: "/bookmark/list",
-  BOOKMARK_ID: (id: string) => `/bookmark/${id}`,
+  LIST: "/bookmark/list",
+  ID: (id: string) => `/bookmark/${id}`,
 };
 
 export const PHARMACY = {
   PHARMACY: "/pharmacy",
-  PHARMACY_SEARCH: "/pharmacy/search",
-  PHARMACY_COUNT: "/pharmacy/count",
+  SEARCH: "/pharmacy/search",
+  COUNT: "/pharmacy/count",
 };
 
 export const PILLS = {
-  PILLS_SEARCH: "/pills/search",
-  PILLS_BOOKMARK_ID: (id: string) => `/pills/bookmark/${id}`,
-  PILLS_RESULT_NAME: (name: string) => `/pills/result/${name}`,
+  SEARCH: "/pills/search",
+  BOOKMARK_ID: (id: string) => `/pills/bookmark/${id}`,
+  RESULT_NAME: (name: string) => `/pills/result/${name}`,
 };
