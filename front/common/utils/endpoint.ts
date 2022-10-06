@@ -11,45 +11,44 @@ export const AUTH = {
   SEND_EMAIL: "/auth/send-email",
   CHANGE_PASSWORD_CHECK: "/auth/change-password/check",
   CHANGE_PASSWORD_EMAIL: (email: string) => `/auth/change-password/${email}`,
-  GOOGLE: "auth/google",
   GOOGLE_REDIRECT: "/auth/google-redirect",
   SEND_SMS: "/auth/send-sms",
   VERIFY_CODE: "/auth/verify-code",
-  FIND_ACCOUNT: (id: string) => `find-account/${id}`,
+  FIND_ACCOUNT: (id: string) => `/find-account/${id}`,
 };
 
 export const USERS = {
-  USERS_MYPAGE: "users/mypage",
-  USERS_PRESIGNED_URL: "users/presigned-url",
-  USERS_PROFILE_IMG: "users/profile-img",
-  USERS_UPDATE: "users/update",
-  USERS_DELETE: "users/delete",
-  USERS_INQUIRY: "users/inquiry",
+  USERS_MYPAGE: "/users/mypage",
+  USERS_PRESIGNED_URL: "/users/presigned-url",
+  USERS_PROFILE_IMG: "/users/profile-img",
+  USERS_UPDATE: "/users/update",
+  USERS_DELETE: "/users/delete",
+  USERS_INQUIRY: "/users/inquiry",
 };
 
 export const ALARMS = {
   ALARMS_SET: "alarms/set",
-  ALARMS_ID: (id: string) => `alarms/${id}`,
-  ALARMS_SET_ID: (id: string) => `alarms/set/${id}`,
-  ALARMS_PAGE: (page: string) => `alarms/${page}`,
-  ALARMS_CHECK_ID: (id: string) => `alarms/check/${id}`,
-  ALARMS_DELETE: "alarms/delete",
+  ALARMS_ID: (id: string) => `/alarms/${id}`,
+  ALARMS_SET_ID: (id: string) => `/alarms/set/${id}`,
+  ALARMS_PAGE: (page: string) => `/alarms/${page}`,
+  ALARMS_CHECK_ID: (id: string) => `/alarms/check/${id}`,
+  ALARMS_DELETE: "/alarms/delete",
 };
 
 export const BOOKMARK = {
-  BOOKMARK: "bookmark",
-  BOOKMARK_LIST: "bookmark/list",
-  BOOKMARK_ID: (id: string) => `bookmark/${id}`,
+  BOOKMARK: "/bookmark",
+  BOOKMARK_LIST: "/bookmark/list",
+  BOOKMARK_ID: (id: string) => `/bookmark/${id}`,
 };
 
 export const PHARMACY = {
-  PHARMACY: "pharmacy",
-  PHARMACY_SEARCH: "pharmacy/search",
-  PHARMACY_COUNT: "pharmacy/count",
+  PHARMACY: "/pharmacy",
+  PHARMACY_SEARCH: "/pharmacy/search",
+  PHARMACY_COUNT: "/pharmacy/count",
 };
 
 export const PILLS = {
-  PILLS_SEARCH: "pills/search",
-  PILLS_BOOKMARK_ID: (id: string) => `pills/bookmark/${id}`,
-  PILLS_RESULT_NAME: (name: string) => `pills/result/${name}`,
+  PILLS_SEARCH: "/pills/search",
+  PILLS_BOOKMARK_ID: (id: string) => `/pills/bookmark/${id}`,
+  PILLS_RESULT_NAME: (name: string) => `/pills/result/${name}`,
 };
