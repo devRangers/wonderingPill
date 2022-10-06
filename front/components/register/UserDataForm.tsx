@@ -25,6 +25,7 @@ import { useMutation } from "react-query";
 import * as Yup from "yup";
 import ReactTooltip from "react-tooltip";
 import * as Api from "@api";
+import { AUTH } from "@utils/endpoint";
 
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
@@ -78,7 +79,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
 
   const mutation = useMutation(
     (data: PostUserData) =>
-      Api.post<CreateUserResponse, PostUserData>("/auth/signup", data),
+      Api.post<CreateUserResponse, PostUserData>(AUTH.SIGN_UP, data),
     {
       onSuccess: (data, variables) => {
         router.push(

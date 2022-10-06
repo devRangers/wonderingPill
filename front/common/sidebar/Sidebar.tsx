@@ -7,6 +7,7 @@ import {
   SIDE_BAR_HEADER_HEIGHT,
   ACCENT_COLOR,
 } from "@utils/constant";
+import { AUTH } from "@utils/endpoint";
 import { get } from "@api";
 import { userAtom } from "@atom/userAtom";
 import { BsArrowLeftShort } from "react-icons/bs";
@@ -72,7 +73,7 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
 
   const logout = async () => {
     try {
-      await get("/auth/logout");
+      await get(AUTH.LOGOUT);
       await router.push(ROUTE.LOGIN);
       setUser({
         id: "",

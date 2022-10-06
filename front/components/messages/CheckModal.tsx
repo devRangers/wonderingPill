@@ -10,6 +10,7 @@ import {
   CheckModalBtn,
 } from "./MessagesPage.style";
 import { MessageValues } from "./Messages";
+import { ALARMS } from "@utils/endpoint";
 
 interface CheckModalProps {
   selectedMessage: MessageValues;
@@ -20,7 +21,7 @@ function CheckModal({ selectedMessage, pageCount, onClose }: CheckModalProps) {
   const { id, pill_name } = selectedMessage;
   const queryClient = useQueryClient();
 
-  const checkMutation = useMutation(() => Api.put(`/alarms/check/${id}`), {
+  const checkMutation = useMutation(() => Api.put(ALARMS.CHECK_ID(id)), {
     onSuccess: () => {
       queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       onClose();

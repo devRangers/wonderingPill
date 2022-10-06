@@ -10,6 +10,7 @@ import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
+import { AUTH } from "@utils/endpoint";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
 import {
@@ -66,7 +67,7 @@ function LoginForm() {
 
   const loginMutation = useMutation(
     (data: LoginTypes) =>
-      Api.post<SigninResponse, LoginTypes>("/auth/signin", data),
+      Api.post<SigninResponse, LoginTypes>(AUTH.SIGN_IN, data),
     {
       onSuccess: ({ user }) => {
         setUser(user);

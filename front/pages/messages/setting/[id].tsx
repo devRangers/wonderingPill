@@ -36,6 +36,7 @@ import Container from "@container/Container";
 import Switch from "@messagesComp/setting/Switch";
 import TimeForm, { SettingFormValues } from "@messagesComp/setting/TimeForm";
 import RemindForm from "@messagesComp/setting/RemindForm";
+import { ALARMS } from "@utils/endpoint";
 
 interface SetNotificationPageProps {
   bookmarkId: string;
@@ -66,7 +67,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
 
   const setAlarmMutation = useMutation(
     (data: SetAlarmValues) =>
-      Api.post<Response, SetAlarmValues>("/alarms/set", data),
+      Api.post<Response, SetAlarmValues>(ALARMS.SET, data),
     {
       onSuccess: () => {
         toast.success(TOASTIFY.SAVE_ALARM);
@@ -191,7 +192,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/alarms/set/${bookmarkId}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}${ALARMS.SET_ID(bookmarkId)}`,
     {
       headers: {
         Cookie: `AccessToken=${token}`,
