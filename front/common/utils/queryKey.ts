@@ -13,3 +13,10 @@ export const messageKeys = {
 export const findEmailKeys = {
   verifyCode: (code: string) => ["verifyCode", code] as const,
 };
+
+/*
+ * path: /search/pharmacy
+ */
+export const pharmKeys = {
+  searchPharm: ["searchPharm"] as const,
+};
