@@ -53,7 +53,7 @@ function LoginForm() {
   const [, setUser] = useAtom(userAtom);
   const [isAutoLoginChecked, setIsAutoLoginChecked] = useState(false);
 
-  const nofityLoginFail = () => toast.error(TOASTIFY.LOGIN_FAIL);
+  const notifyLoginFail = () => toast.error(TOASTIFY.LOGIN_FAIL);
 
   const initialValue: LoginFormValues = {
     email: userEmail,
@@ -72,9 +72,8 @@ function LoginForm() {
         setUser(user);
         router.push(ROUTE.MAIN);
       },
-      onError: ({ message }) => {
-        console.log(message);
-        nofityLoginFail();
+      onError: () => {
+        notifyLoginFail();
       },
     },
   );
