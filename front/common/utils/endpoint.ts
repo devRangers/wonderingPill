@@ -26,3 +26,12 @@ export const USERS = {
   USERS_DELETE: "users/delete",
   USERS_INQUIRY: "users/inquiry",
 };
+
+export const ALARMS = {
+  ALARMS_SET: "alarms/set",
+  ALARMS_ID: (id: string) => `alarms/${id}`,
+  ALARMS_SET_ID: (id: string) => `alarms/set/${id}`,
+  ALARMS_PAGE: (page: string) => `alarms/${page}`,
+  ALARMS_CHECK_ID: (id: string) => `alarms/check/${id}`,
+  ALARMS_DELETE: "alarms/delete",
+};
