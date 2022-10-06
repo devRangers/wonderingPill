@@ -30,6 +30,7 @@ import {
 } from "./FindEmailForm.style";
 import Modal from "@modal/Modal";
 import AuthForm from "./AuthForm";
+import { toast } from "react-toastify";
 
 interface FindEmailValues {
   name: string;
@@ -60,8 +61,8 @@ function FindEmailForm() {
       onSuccess: () => {
         setAuthModalOpen(true);
       },
-      onError: (err) => {
-        console.log(err);
+      onError: ({ message }) => {
+        toast.error(message);
       },
     },
   );

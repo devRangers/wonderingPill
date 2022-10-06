@@ -16,6 +16,7 @@ import {
   CloseBtnContainer,
   CloseBtn,
 } from "./AuthForm.style";
+import { toast } from "react-toastify";
 
 interface AuthFormProps {
   onClose: () => void;
@@ -49,8 +50,8 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
           query: { userId: user.id },
         });
       },
-      onError: (err) => {
-        console.log(err);
+      onError: ({ message }) => {
+        toast.error(message);
         setIsSubmitted(false);
       },
     },
