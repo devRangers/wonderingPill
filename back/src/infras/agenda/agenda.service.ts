@@ -7,6 +7,7 @@ import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 @Injectable()
 export class AgendaService {
   private agenda;
+  private NO_REPEAT_VIP;
 
   constructor(
     private readonly configService: ConfigService,
@@ -20,6 +21,7 @@ export class AgendaService {
       },
       name: 'pill-alarms-set',
     });
+    this.NO_REPEAT_VIP = 8;
   }
 
   /** Agneda 정의 */
@@ -61,7 +63,7 @@ export class AgendaService {
         }
 
         // vip은 정상적일 때 7이하의 길이를 가짐. 8이라면 한번만 작동해야하는 알림이므로 삭제
-        if (vip.length === 8) {
+        if (vip.length === this.NO_REPEAT_VIP) {
           await agenda.cancel({ name: id + '-' + pillBookmarkId });
         }
       });
@@ -175,7 +177,7 @@ export class AgendaService {
             minute: Number(arr[0]),
             hour: Number(arr[1]),
             vip:
-              arr[4].split(',').length === 8
+              arr[4].split(',').length === this.NO_REPEAT_VIP
                 ? []
                 : arr[4].split(',').map((v) => Number(v)),
             repeatTime: repeat,
