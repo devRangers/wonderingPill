@@ -9,6 +9,7 @@ export const PageContainer = styled(
   }) => ({
     width: "100vw",
     display: "grid",
+    height: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
     minHeight: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
     gridTemplateRows: "1.2fr 1fr",
   }),
@@ -49,6 +50,7 @@ export const SearchOption = styled("option", {
 
 export const SearchInput = styled("input", {
   width: "90%",
+  height: "2.3rem",
   justifySelf: "center",
   paddingLeft: "1rem",
   borderRadius: "15px",
