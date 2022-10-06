@@ -47,3 +47,9 @@ export const PHARMACY = {
   PHARMACY_SEARCH: "pharmacy/search",
   PHARMACY_COUNT: "pharmacy/count",
 };
+
+export const PILLS = {
+  PILLS_SEARCH: "pills/search",
+  PILLS_BOOKMARK_ID: (id: string) => `pills/bookmark/${id}`,
+  PILLS_RESULT_NAME: (name: string) => `pills/result/${name}`,
+};
