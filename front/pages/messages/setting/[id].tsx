@@ -137,7 +137,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
         <TitleContainer>
           <TopLine $bgColor={SEMI_ACCENT_COLOR} />
           <Title $txtColor={SEMI_ACCENT_COLOR}>{pillName}</Title>
-          <Link href={`/search/result/${pillName}`}>
+          <Link href={ROUTE.SEARCH_RESULT_PILLNAME(pillName)}>
             <LinkBtn $txtColor={MAIN_COLOR}>알약 상세 정보 보러가기 →</LinkBtn>
           </Link>
         </TitleContainer>
