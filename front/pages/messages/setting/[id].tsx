@@ -1,19 +1,25 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useMutation } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import { GetAlarmSetResponseDto as GetAlarmResponse } from "@modelTypes/getAlarmSetResponseDto";
 import { GetAlarmSetResponseDtoAlarm as GetAlarmValues } from "@modelTypes/getAlarmSetResponseDtoAlarm";
-import { MAIN_COLOR, SEMI_ACCENT_COLOR, ROUTE } from "@utils/constant";
+import {
+  MAIN_COLOR,
+  SEMI_ACCENT_COLOR,
+  ROUTE,
+  TOASTIFY,
+} from "@utils/constant";
 import { getToken } from "@utils/firebase";
+import { toast } from "react-toastify";
 import {
   ContentContainer,
   TitleContainer,
@@ -41,6 +47,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   setting,
 }) => {
   const [user] = useAtom(userAtom);
+  const router = useRouter();
 
   const [isNotificationToggle, setIsNotificationToggle] = useState(true);
   const [isRemindToggle, setIsRemindToggle] = useState(
@@ -57,8 +64,31 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   );
   const [deviceToken, setDeviceToken] = useState("");
 
-  const setAlarmMutation = useMutation((data: SetAlarmValues) =>
-    Api.post<Response, SetAlarmValues>("/alarms/set", data),
+  const setAlarmMutation = useMutation(
+    (data: SetAlarmValues) =>
+      Api.post<Response, SetAlarmValues>("/alarms/set", data),
+    {
+      onSuccess: () => {
+        toast.success(TOASTIFY.SAVE_ALARM);
+        router.push(ROUTE.MY_PAGE);
+      },
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
+      },
+    },
+  );
+
+  const cancelAlarmMutation = useMutation(
+    () => Api.put(`/alarms/${bookmarkId}`),
+    {
+      onSuccess: () => {
+        toast.success(TOASTIFY.CANCEL_ALARM);
+        router.push(ROUTE.MY_PAGE);
+      },
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
+      },
+    },
   );
 
   const initialValue: SettingFormValues = {
@@ -71,6 +101,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
     initialValues: initialValue,
     onSubmit: async (values) => {
       if (isNotificationToggle) {
+        // 알림 세팅
         const { hour, repeatTime, minute } = values;
         const dataToSubmit: SetAlarmValues = {
           pillBookmarkId: bookmarkId,
@@ -84,7 +115,8 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
         };
         setAlarmMutation.mutate(dataToSubmit);
       } else {
-        // TODO: 알림 취소
+        // 알림 취소
+        cancelAlarmMutation.mutate();
       }
     },
   });
@@ -105,7 +137,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
         <TitleContainer>
           <TopLine $bgColor={SEMI_ACCENT_COLOR} />
           <Title $txtColor={SEMI_ACCENT_COLOR}>{pillName}</Title>
-          <Link href={`/search/result/${pillName}`}>
+          <Link href={ROUTE.SEARCH_RESULT_PILLNAME(pillName)}>
             <LinkBtn $txtColor={MAIN_COLOR}>알약 상세 정보 보러가기 →</LinkBtn>
           </Link>
         </TitleContainer>
@@ -166,6 +198,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     },
   );
+
+  if (!res.ok) {
+    return {
+      redirect: { destination: ROUTE.MAIN, permanent: false },
+      props: {},
+    };
+  }
+
   const result: GetAlarmResponse = await res.json();
 
   return {

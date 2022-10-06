@@ -1,5 +1,10 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { SEMI_ACCENT_COLOR, GRAY_COLOR, SUB_COLOR } from "@utils/constant";
+import {
+  SEMI_ACCENT_COLOR,
+  GRAY_COLOR,
+  SUB_COLOR,
+  LIGHT_GRAY_COLOR,
+} from "@utils/constant";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import {
   FormContainer,
@@ -77,7 +82,7 @@ function TimeForm({
       <FormTitle $txtColor={disabled ? GRAY_COLOR : SEMI_ACCENT_COLOR}>
         시간 설정
       </FormTitle>
-      <Form $height="90%">
+      <Form $height="90%" $bgColor={LIGHT_GRAY_COLOR}>
         <TimeSelectContainer>
           <SelectedDays>
             {!!selectedDaysText ? "매주 " + selectedDaysText : " "}

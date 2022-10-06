@@ -33,13 +33,13 @@ const post = async <T extends Response, U>(endpoint: string, data: U) => {
   return result;
 };
 
-const put = async <T extends Response, U>(endpoint: string, data: U) => {
+const put = async <T extends Response, U>(endpoint: string, data?: U) => {
   const url = baseUrl + endpoint;
 
   const res = await fetch(url, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: data && JSON.stringify(data),
     credentials: "include",
   });
   const result: T = await res.json();
