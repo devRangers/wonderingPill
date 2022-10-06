@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import { useState } from "react";
 import * as Api from "@api";
 import { useQuery } from "react-query";
+import { pharmKeys } from "@utils/queryKey";
 import { PharmacyResponse as PharmacyType } from "@modelTypes/pharmacyResponse";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
@@ -46,7 +47,7 @@ const SearchPharmPage: NextPage = () => {
   const [pharmList, setPharmList] = useState<PharmacyType[]>([]);
 
   useQuery(
-    "searchPharm",
+    pharmKeys.searchPharm,
     () => Api.get<PharmacyResponse>(`/pharmacy/search?${option}=${keyword}`),
     {
       enabled: !!keyword && isSubmitBtnClicked,

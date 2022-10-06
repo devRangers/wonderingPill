@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useQuery } from "react-query";
+import { findEmailKeys } from "@utils/queryKey";
 import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
 import {
   FormContainer,
@@ -36,7 +37,7 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
   const [code, setCode] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useQuery(["verifyCode", code], () => verifyCode(phone, code), {
+  useQuery(findEmailKeys.verifyCode(code), () => verifyCode(phone, code), {
     enabled: !!code && isSubmitted,
     retry: false,
     onSuccess: ({ user }) => {
