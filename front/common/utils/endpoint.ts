@@ -41,3 +41,9 @@ export const BOOKMARK = {
   BOOKMARK_LIST: "bookmark/list",
   BOOKMARK_ID: (id: string) => `bookmark/${id}`,
 };
+
+export const PHARMACY = {
+  PHARMACY: "pharmacy",
+  PHARMACY_SEARCH: "pharmacy/search",
+  PHARMACY_COUNT: "pharmacy/count",
+};
