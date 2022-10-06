@@ -6,6 +6,7 @@ import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
+import { messageKeys } from "@utils/queryKey";
 import {
   MAIN_COLOR,
   ACCENT_COLOR,
@@ -73,7 +74,7 @@ const MessageListPage: NextPage = () => {
    */
 
   useQuery(
-    ["getMessages", pageCount],
+    messageKeys.getMessages(pageCount),
     () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
     {
       onSuccess: ({ alarms }) => {
@@ -104,7 +105,7 @@ const MessageListPage: NextPage = () => {
     {
       onSuccess: () => {
         // 삭제 성공 후 알림 목록 갱신
-        queryClient.invalidateQueries(["getMessages", pageCount]);
+        queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       },
       onError: (err) => {
         console.log(err);
