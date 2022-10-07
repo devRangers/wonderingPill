@@ -9,7 +9,6 @@ export const PageContainer = styled(
   }) => ({
     width: "100vw",
     display: "grid",
-    height: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
     minHeight: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
     gridTemplateRows: "1.2fr 1fr",
   }),
@@ -34,6 +33,7 @@ export const SearchContainer = styled("form", {
   gridTemplateColumns: "1fr 4fr 1fr",
   justifySelf: "center",
   alignSelf: "end",
+  margin: "0.3rem 0",
 });
 
 export const SearchSelect = styled("select", (props: { $bgColor: string }) => ({

@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { HEADER_HEIGHT, MAIN_COLOR, ROUTE } from "@utils/constant";
 import { BsFillBellFill, BsJustify } from "react-icons/bs";
 import {
-  HeaderEmptyBox,
   HeaderContainer,
   HamburgerBtn,
   ImageWrapper,
@@ -43,7 +42,6 @@ function Header() {
           <BsFillBellFill />
         </BellBtn>
       </HeaderContainer>
-      <HeaderEmptyBox $height={HEADER_HEIGHT} />
       <Sidebar openSideBar={openSideBar} closeSideBar={closeSideBar} />
     </>
   );

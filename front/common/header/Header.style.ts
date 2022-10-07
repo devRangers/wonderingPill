@@ -3,7 +3,6 @@ import { styled } from "styletron-react";
 export const HeaderContainer = styled(
   "header",
   (props: { $height: string; $bgColor: string }) => ({
-    position: "fixed",
     width: "100vw",
     minHeight: props.$height,
     backgroundColor: props.$bgColor,
@@ -14,7 +13,7 @@ export const HeaderContainer = styled(
     gridTemplateColumns: "1fr 1fr 1fr",
     justifyItems: "start",
     alignItems: "center",
-    zIndex: "1",
+    zIndex: 3,
   }),
 );
 
@@ -29,7 +28,7 @@ export const ImageWrapper = styled("div", {
 export const HamburgerBtn = styled("button", {
   fontSize: "2rem",
   color: "#fff",
-  zIndex: "1",
+  zIndex: 3,
 });
 
 export const BellBtn = styled("button", {
@@ -43,11 +42,3 @@ export const Button = styled("button", {
   width: "100%",
   height: "100%",
 });
-
-export const HeaderEmptyBox = styled(
-  "header",
-  (props: { $height: string }) => ({
-    width: "100vw",
-    height: props.$height,
-  }),
-);
