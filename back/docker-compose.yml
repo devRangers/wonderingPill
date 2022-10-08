@@ -18,19 +18,22 @@ services:
     restart: always
     command: redis-server /usr/local/conf/redis.conf
     volumes:
-      - ./data/:/data
-      - ./back/conf/redis.conf:/usr/local/conf/redis.conf
+      - ./:/data
+      - ./conf/redis.conf:/usr/local/conf/redis.conf
     networks:
       - wonderingpill_networks
   postgres:
-    image: postgres:latest
+    image: postgres:14-alpine
     container_name: postgres_db
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file: .env
     healthcheck:
       test: ['CMD', 'pg_isready']
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
