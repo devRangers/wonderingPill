@@ -3,6 +3,7 @@ import { styled } from "styletron-react";
 export const HeaderContainer = styled(
   "header",
   (props: { $height: string; $bgColor: string }) => ({
+    position: "fixed",
     width: "100vw",
     minHeight: props.$height,
     backgroundColor: props.$bgColor,
@@ -42,3 +43,11 @@ export const Button = styled("button", {
   width: "100%",
   height: "100%",
 });
+
+export const HeaderEmptyBox = styled(
+  "header",
+  (props: { $height: string }) => ({
+    width: "100vw",
+    minHeight: props.$height,
+  }),
+);
