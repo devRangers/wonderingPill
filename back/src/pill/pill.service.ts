@@ -1,8 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import {
-  Injectable,
-  NotFoundException
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -52,11 +49,11 @@ export class PillService {
       const pills = await this.prisma.pill.findMany({
         where: {
           AND: [
-            { shape: { startsWith: query.shape } },
-            { colors: { startsWith: query.colors } },
+            { shape: { contains: query.shape } },
+            { colors: { contains: query.colors } },
             { mark: Number(query.mark) },
-            { letters: { startsWith: query.letters } },
-            { name: { startsWith: query.name } },
+            { letters: { contains: query.letters } },
+            { name: { contains: query.name } },
           ],
         },
         select: {
