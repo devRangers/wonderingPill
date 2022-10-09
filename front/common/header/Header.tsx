@@ -26,7 +26,7 @@ function Header() {
 
   useEffect(() => {
     if (headerRef.current) {
-      setHeaderHeight(headerRef.current.offsetHeight + "px");
+      setHeaderHeight(headerRef.current.clientHeight + "px");
     }
   }, [headerRef]);
 
