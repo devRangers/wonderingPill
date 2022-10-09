@@ -1,99 +1,83 @@
-import { Controller, Get, HttpCode, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PharmacyQueryDto } from './dto/pharmacy.search.dto';
 import {
-  PharmacyCountResponse,
-  PharmacyListResponse,
-} from './interface/pharmacy.interface';
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Put,
+  Query,
+  UseGuards
+} from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
+import { Pharmacy } from 'prisma/postgresClient';
+import { GetCurrentUserId } from 'src/common/decorators';
+import { CommonResponseDto } from 'src/common/dto';
+import { AccessGuard } from 'src/common/guards';
+import {
+  PharmacySearchDto,
+  PharmacySearchResponseDto
+} from './dto/pharmacy.search.dto';
 import { PharmacyService } from './pharmacy.service';
 @ApiTags('Pharmacy API')
-@Controller('pharmacy')
+@Controller('pharmacies')
 export class PharmacyController {
   constructor(private pharmacyService: PharmacyService) {}
-  @ApiOperation({ summary: '모든 약국 리스트 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '조회 성공',
-  })
-  @Get()
-  @HttpCode(200)
-  async pharmacyList(): Promise<PharmacyListResponse> {
-    const pharmacy = this.pharmacyService.pharmacyList();
-    return pharmacy;
-  }
 
-  @ApiOperation({ summary: '약국 검색 API' })
-  @ApiQuery({
-    name: 'phone',
-    required: false,
-    description: '검색할 전화번호',
-  })
-  @ApiQuery({
-    name: 'address',
-    required: false,
-    description: '검색할 주소',
-  })
-  @ApiQuery({
-    name: 'name',
-    required: false,
-    description: '검색할 약국 이름',
-  })
-  @ApiQuery({
-    name: 'start',
-    required: false,
-    description: '페이지네이션 시작 위치',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '조회 성공',
-  })
+  @HttpCode(200)
   @Get('search')
-  @HttpCode(200)
-  async pharmacySearch(
-    @Query() query: PharmacyQueryDto,
-  ): Promise<PharmacyListResponse> {
-    const { phone, name, address, start } = query;
-    if (phone) {
-      return await this.pharmacyService.pharmacySearchPhone(phone, start);
-    } else if (name) {
-      return await this.pharmacyService.pharmacySearchName(name, start);
-    } else if (address) {
-      return await this.pharmacyService.pharmacySearchAddress(address, start);
-    }
-  }
-
-  @ApiOperation({ summary: '약국 검색 결과 카운트 API' })
+  @ApiOperation({ summary: '약국 검색 API', description: '유저를 생성한다.' })
   @ApiQuery({
-    name: 'phone',
-    required: false,
-    description: '검색할 전화번호',
+    name: 'option',
+    required: true,
+    description: '검색할 옵션 종류',
   })
   @ApiQuery({
-    name: 'address',
-    required: false,
-    description: '검색할 주소',
-  })
-  @ApiQuery({
-    name: 'name',
-    required: false,
-    description: '검색할 약국 이름',
+    name: 'keyword',
+    required: true,
+    description: '검색할 내용',
   })
   @ApiResponse({
     status: 200,
     description: '조회 성공',
+    type: PharmacySearchResponseDto,
   })
-  @Get('count')
+  async pharmacySearch(
+    @Query() pharmacySearchDto: PharmacySearchDto,
+  ): Promise<PharmacySearchResponseDto> {
+    const pharmacies: Pharmacy[] = await this.pharmacyService.pharmacySearch(
+      pharmacySearchDto,
+    );
+    return {
+      statusCode: 200,
+      message: '약국 검색을 성공했습니다.',
+      pharmacies,
+    };
+  }
+
+  @ApiOperation({ summary: '북마크 생성 혹은 삭제' })
+  @Put('bookmark/:id')
+  @UseGuards(AccessGuard)
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '약국 id',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '생성 혹은 삭제 성공',
+    type: CommonResponseDto,
+  })
   @HttpCode(200)
-  async pharmacyCount(
-    @Query() query: PharmacyQueryDto,
-  ): Promise<PharmacyCountResponse> {
-    const { phone, name, address } = query;
-    if (phone) {
-      return await this.pharmacyService.pharmacyCountPhone(phone);
-    } else if (name) {
-      return await this.pharmacyService.pharmacyCountName(name);
-    } else if (address) {
-      return await this.pharmacyService.pharmacyCountAddress(address);
-    }
+  async createBookmark(
+    @GetCurrentUserId() id: string,
+    @Param('id') pharmacyId: number,
+  ): Promise<CommonResponseDto> {
+    await this.pharmacyService.pharmacyBookmark(id, pharmacyId);
+    return { statusCode: 200, message: '약국 북마크를 성공했습니다.' };
   }
 }
