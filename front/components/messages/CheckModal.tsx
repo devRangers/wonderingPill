@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { messageKeys } from "@utils/queryKey";
-import { GRAY_COLOR, ACCENT_COLOR } from "@utils/constant";
+import { GRAY_COLOR, ACCENT_COLOR, TOASTIFY } from "@utils/constant";
+import { ALARMS } from "@utils/endpoint";
 import {
   CheckModalContainer,
   CloseBtn,
@@ -10,7 +11,7 @@ import {
   CheckModalBtn,
 } from "./MessagesPage.style";
 import { MessageValues } from "./Messages";
-import { ALARMS } from "@utils/endpoint";
+import { toast } from "react-toastify";
 
 interface CheckModalProps {
   selectedMessage: MessageValues;
@@ -26,8 +27,8 @@ function CheckModal({ selectedMessage, pageCount, onClose }: CheckModalProps) {
       queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       onClose();
     },
-    onError: (err) => {
-      console.log(err);
+    onError: () => {
+      toast.error(TOASTIFY.FAIL);
     },
   });
 

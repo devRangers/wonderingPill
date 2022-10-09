@@ -6,8 +6,8 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
 import { messageKeys } from "@utils/queryKey";
-import { MAIN_COLOR, ACCENT_COLOR, ROUTE } from "@utils/constant";
-
+import { MAIN_COLOR, ACCENT_COLOR, ROUTE, TOASTIFY } from "@utils/constant";
+import { ALARMS } from "@utils/endpoint";
 import {
   ContentContainer,
   TitleContainer,
@@ -24,7 +24,7 @@ import Container from "@container/Container";
 import Modal from "@modal/Modal";
 import CheckModal from "@messagesComp/CheckModal";
 import Messages, { MessageValues } from "@messagesComp/Messages";
-import { ALARMS } from "@utils/endpoint";
+import { toast } from "react-toastify";
 
 interface MessageResponse extends CommonResponse {
   alarms: MessageValues[];
@@ -95,8 +95,8 @@ const MessageListPage: NextPage = () => {
         // 삭제 성공 후 알림 목록 갱신
         queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       },
-      onError: (err) => {
-        console.log(err);
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
       },
     },
   );

@@ -40,7 +40,13 @@ import { ALARMS } from "@utils/endpoint";
 
 interface SetNotificationPageProps {
   bookmarkId: string;
-  setting: GetAlarmValues;
+  setting: {
+    minute: number;
+    hour: number;
+    vip: number[];
+    repeatTime: number;
+    pillName: string;
+  };
 }
 
 const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
@@ -51,18 +57,10 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   const router = useRouter();
 
   const [isNotificationToggle, setIsNotificationToggle] = useState(true);
-  const [isRemindToggle, setIsRemindToggle] = useState(
-    typeof setting.repeatTime === "number" && setting.repeatTime > 0,
-  );
-  const [isAfternoon, setIsAfternoon] = useState(
-    typeof setting.hour === "number" && setting.hour >= 12,
-  );
-  const [vip, setVip] = useState<number[]>(
-    typeof setting.vip === "object" ? setting.vip : [],
-  );
-  const [pillName, setPillName] = useState(
-    typeof setting.pillName === "string" ? setting.pillName : "",
-  );
+  const [isRemindToggle, setIsRemindToggle] = useState(setting.repeatTime > 0);
+  const [isAfternoon, setIsAfternoon] = useState(setting.hour >= 12);
+  const [vip, setVip] = useState<number[]>(setting.vip);
+  const [pillName, setPillName] = useState(setting.pillName);
   const [deviceToken, setDeviceToken] = useState("");
 
   const setAlarmMutation = useMutation(
@@ -93,9 +91,9 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   );
 
   const initialValue: SettingFormValues = {
-    hour: typeof setting.hour === "number" ? setting.hour : 0,
-    minute: typeof setting.minute === "number" ? setting.minute : 0,
-    repeatTime: typeof setting.repeatTime === "number" ? setting.repeatTime : 0,
+    hour: setting.hour,
+    minute: setting.minute,
+    repeatTime: setting.repeatTime,
   };
 
   const formik = useFormik({
@@ -207,12 +205,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const result: GetAlarmResponse = await res.json();
+  const { alarm }: GetAlarmResponse = await res.json();
 
   return {
     props: {
       bookmarkId,
-      setting: result.alarm,
+      setting: {
+        minute: typeof alarm.minute === "number" ? alarm.minute : 0,
+        hour: typeof alarm.hour === "number" ? alarm.hour : 0,
+        vip: typeof alarm.vip === "object" ? alarm.vip : [],
+        repeatTime: typeof alarm.repeatTime === "number" ? alarm.repeatTime : 0,
+        pillName: typeof alarm.pillName === "string" ? alarm.pillName : "",
+      },
     },
   };
 };
