@@ -1,23 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
+import { Pharmacy } from 'prisma/postgresClient';
+import { CommonResponseDto } from 'src/common/dto';
+import { pharmacySearchKeyword } from '../pharmacy-search-keyword.enum';
 
-export class PharmacyQueryDto {
+export class PharmacySearchDto {
   @ApiProperty()
-  @IsOptional()
   @IsString()
-  readonly phone?: string;
+  option: pharmacySearchKeyword;
+
   @ApiProperty()
-  @IsOptional()
   @IsString()
-  readonly name?: string;
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  readonly address?: string;
-  @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  readonly start?: number;
+  keyword: string;
+}
+
+export class PharmacySearchResponseDto extends CommonResponseDto {
+  pharmacies: Pharmacy[];
 }
