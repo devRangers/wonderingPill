@@ -1,7 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ForbiddenError } from 'adminjs';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -29,7 +31,7 @@ export class PillService {
 
       return pills;
     } catch (error) {
-      throw new ForbiddenException('북마크를 변경하지 못했습니다.');
+      throw new NotFoundException('북마크를 변경하지 못했습니다.');
     }
   }
 
@@ -41,30 +43,34 @@ export class PillService {
 
       return pill;
     } catch (error) {
-      throw new ForbiddenException('북마크를 조회하지 못했습니다.');
+      throw new NotFoundException('북마크를 조회하지 못했습니다.');
     }
   }
 
   async searchPill({ query }) {
-    const pills = await this.prisma.pill.findMany({
-      where: {
-        AND: [
-          { shape: { startsWith: query.shape } },
-          { colors: { startsWith: query.colors } },
-          { mark: Number(query.mark) },
-          { letters: { startsWith: query.letters } },
-          { name: { startsWith: query.name } },
-        ],
-      },
-      select: {
-        id: true,
-        name: true,
-        code: true,
-        PillBookMark: { select: { user_id: true } },
-      },
-    });
+    try {
+      const pills = await this.prisma.pill.findMany({
+        where: {
+          AND: [
+            { shape: { startsWith: query.shape } },
+            { colors: { startsWith: query.colors } },
+            { mark: Number(query.mark) },
+            { letters: { startsWith: query.letters } },
+            { name: { startsWith: query.name } },
+          ],
+        },
+        select: {
+          id: true,
+          name: true,
+          code: true,
+          PillBookMark: { select: { user_id: true } },
+        },
+      });
 
-    return pills;
+      return pills;
+    } catch (error) {
+      throw new NotFoundException('검색을 하지 못했습니다.');
+    }
   }
 
   async resultPill(name: string) {
@@ -116,7 +122,7 @@ export class PillService {
           interactionContent == null || interactionContent.replace(reg, ''),
       };
     } catch (error) {
-      throw new ForbiddenError('알약 검색 결과를 불러오지 못했습니다.');
+      throw new NotFoundException('알약 검색 결과를 불러오지 못했습니다.');
     }
   }
 }
