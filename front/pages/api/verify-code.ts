@@ -6,7 +6,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { phone, code } = JSON.parse(req.body);
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}${AUTH.VERIFY_CODE}?phone=${phone}&code=${code}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}${AUTH.VERIFY_CODE(phone, code)}`,
   );
   const result: FindAccountResponse = await response.json();
 
