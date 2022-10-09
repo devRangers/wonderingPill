@@ -7,9 +7,10 @@ export const PageContainer = styled(
     $footerHeight: string;
     $fullHeight: string;
   }) => ({
+    position: "relative",
     width: "100vw",
-    display: "grid",
     minHeight: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
+    display: "grid",
     gridTemplateRows: "1.2fr 1fr",
   }),
 );
@@ -42,6 +43,7 @@ export const SearchSelect = styled("select", (props: { $bgColor: string }) => ({
   borderRadius: "15px",
   padding: "0 0.3rem",
   textAlign: "center",
+  height: "2.3rem",
 }));
 
 export const SearchOption = styled("option", {
@@ -62,6 +64,7 @@ export const SearchBtn = styled("button", (props: { $bgColor: string }) => ({
   color: "#fff",
   borderRadius: "15px",
   padding: "0 0.3rem",
+  height: "2.3rem",
 }));
 
 export const Map = styled("div", {
