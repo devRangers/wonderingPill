@@ -2,13 +2,22 @@ import {
   Controller,
   Get,
   HttpCode,
+  Param,
   Put,
   Query,
   UseGuards
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
 import { Pharmacy } from 'prisma/postgresClient';
 import { GetCurrentUserId } from 'src/common/decorators';
+import { CommonResponseDto } from 'src/common/dto';
+import { AccessGuard } from 'src/common/guards';
 import {
   PharmacySearchDto,
   PharmacySearchResponseDto
@@ -52,24 +61,23 @@ export class PharmacyController {
 
   @ApiOperation({ summary: '북마크 생성 혹은 삭제' })
   @Put('bookmark/:id')
-  @UseGuards()
-  @ApiResponse({
-    status: 201,
-    description: '생성 혹은 삭제 성공',
-    // type: BookmarkCreateDto,
+  @UseGuards(AccessGuard)
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '약국 id',
   })
-  @HttpCode(204)
+  @ApiResponse({
+    status: 200,
+    description: '생성 혹은 삭제 성공',
+    type: CommonResponseDto,
+  })
+  @HttpCode(200)
   async createBookmark(
     @GetCurrentUserId() id: string,
-    // @Body() bookmarkCreateDto: BookmarkCreateDto,
-  ) {
-    //: Promise<BookmarkCreateResponse | void>
-    // this.logger.verbose(
-    //   `Bookmark ${bookmarkCreateDto.pharmacyId} Created Or Delete Success!`,
-    // );
-    // return this.bookmarkService.createOrDeleteBookmark(
-    //   userId,
-    //   bookmarkCreateDto.pharmacyId,
-    // );
+    @Param('id') pharmacyId: number,
+  ): Promise<CommonResponseDto> {
+    await this.pharmacyService.pharmacyBookmark(id, pharmacyId);
+    return { statusCode: 200, message: '약국 북마크를 성공했습니다.' };
   }
 }
