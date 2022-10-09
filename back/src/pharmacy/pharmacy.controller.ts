@@ -24,10 +24,12 @@ export class PharmacyController {
   @ApiOperation({ summary: '약국 검색 API', description: '유저를 생성한다.' })
   @ApiQuery({
     name: 'option',
+    required: true,
     description: '검색할 옵션 종류',
   })
   @ApiQuery({
     name: 'keyword',
+    required: true,
     description: '검색할 내용',
   })
   @ApiResponse({
