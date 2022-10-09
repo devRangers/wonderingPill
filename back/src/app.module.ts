@@ -8,7 +8,6 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import AdminJS from 'adminjs';
 import { AlarmsModule } from './alarms/alarms.module';
 import { AuthModule } from './auth/auth.module';
-import { BookmarkModule } from './bookmark/bookmark.module';
 import { AgendaModule } from './infras/agenda/agenda.module';
 import { FcmModule } from './infras/fcm/fcm.module';
 import { GcsModule } from './infras/gcs/gcs.module';
@@ -46,7 +45,6 @@ AdminJS.registerAdapter({ Database, Resource });
       limit: 30,
     }),
     RedisModule,
-    BookmarkModule,
     PharmacyModule,
     SmsModule,
     AlarmsModule,
