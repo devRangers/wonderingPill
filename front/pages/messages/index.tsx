@@ -24,6 +24,7 @@ import Container from "@container/Container";
 import Modal from "@modal/Modal";
 import CheckModal from "@messagesComp/CheckModal";
 import Messages, { MessageValues } from "@messagesComp/Messages";
+import { ALARMS } from "@utils/endpoint";
 
 interface MessageResponse extends CommonResponse {
   alarms: MessageValues[];
@@ -62,7 +63,7 @@ const MessageListPage: NextPage = () => {
 
   useQuery(
     messageKeys.getMessages(pageCount),
-    () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
+    () => Api.get<MessageResponse>(ALARMS.PAGE(pageCount)),
     {
       onSuccess: ({ alarms }) => {
         setMessages((prev) =>
@@ -88,7 +89,7 @@ const MessageListPage: NextPage = () => {
 
   const deleteMessagesMutation = useMutation(
     (data: deleteMessageValues) =>
-      Api.post<CommonResponse, deleteMessageValues>("/alarms/delete", data),
+      Api.post<CommonResponse, deleteMessageValues>(ALARMS.DELETE, data),
     {
       onSuccess: () => {
         // 삭제 성공 후 알림 목록 갱신

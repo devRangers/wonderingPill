@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useQuery } from "react-query";
+import { NEXT_API } from "@utils/endpoint";
 import { findEmailKeys } from "@utils/queryKey";
 import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
 import {
@@ -23,7 +24,7 @@ interface AuthFormProps {
 }
 
 const verifyCode = async (phone: string, code: string) => {
-  const res = await fetch("/api/verify-code", {
+  const res = await fetch(NEXT_API.VERIFY_CODE, {
     method: "POST",
     body: JSON.stringify({ phone, code }),
   });

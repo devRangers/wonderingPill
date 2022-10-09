@@ -12,6 +12,7 @@ import {
   ROUTE,
   FULL_HEIGHT,
 } from "@utils/constant";
+import { AUTH } from "@utils/endpoint";
 import {
   Container,
   TitleContainer,
@@ -109,7 +110,7 @@ export default FindEmailResultPage;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const userId = context.query.userId;
   const { user } = await Api.get<FindAccountResponse>(
-    `/auth/find-account/${userId}`,
+    AUTH.FIND_ACCOUNT(userId),
   );
   return {
     props: user,

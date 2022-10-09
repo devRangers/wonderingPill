@@ -6,6 +6,7 @@ import { useMutation } from "react-query";
 import * as Api from "@api";
 import { FindAccountResponse } from "@modelTypes/findAccountResponse";
 import { FindAccountDto as FindAccountValues } from "@modelTypes/findAccountDto";
+import { AUTH } from "@utils/endpoint";
 import {
   ERROR_MSG_COLOR,
   SUB_COLOR,
@@ -55,7 +56,7 @@ function FindEmailForm() {
 
   const findEmailMutation = useMutation(
     (data: FindAccountValues) =>
-      Api.post<FindAccountResponse, FindAccountValues>("/auth/send-sms", data),
+      Api.post<FindAccountResponse, FindAccountValues>(AUTH.SEND_SMS, data),
     {
       onSuccess: () => {
         setAuthModalOpen(true);
