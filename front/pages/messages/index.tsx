@@ -7,7 +7,7 @@ import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
 import { messageKeys } from "@utils/queryKey";
 import { MAIN_COLOR, ACCENT_COLOR, ROUTE, TOASTIFY } from "@utils/constant";
-
+import { ALARMS } from "@utils/endpoint";
 import {
   ContentContainer,
   TitleContainer,
@@ -63,7 +63,7 @@ const MessageListPage: NextPage = () => {
 
   useQuery(
     messageKeys.getMessages(pageCount),
-    () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
+    () => Api.get<MessageResponse>(ALARMS.PAGE(pageCount)),
     {
       onSuccess: ({ alarms }) => {
         setMessages((prev) =>
@@ -89,7 +89,7 @@ const MessageListPage: NextPage = () => {
 
   const deleteMessagesMutation = useMutation(
     (data: deleteMessageValues) =>
-      Api.post<CommonResponse, deleteMessageValues>("/alarms/delete", data),
+      Api.post<CommonResponse, deleteMessageValues>(ALARMS.DELETE, data),
     {
       onSuccess: () => {
         // 삭제 성공 후 알림 목록 갱신

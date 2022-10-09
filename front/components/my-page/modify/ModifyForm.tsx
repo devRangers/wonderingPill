@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { patch } from "@api";
 import { userAtom } from "@atom/userAtom";
+import { USERS } from "@utils/endpoint";
 import { ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
 import { UpdateUserDto } from "@modelTypes/updateUserDto";
 import {
@@ -89,7 +90,7 @@ function ModifyForm() {
   const mutation = useMutation(
     (data: ModifyValues) =>
       patch<{ statusCode: number; message: string }, UpdateUserDto>(
-        "/users/update-user",
+        USERS.UPDATE,
         {
           name: data.name || undefined,
           password: data.curPassword || undefined,

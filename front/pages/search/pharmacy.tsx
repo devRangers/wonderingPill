@@ -30,6 +30,7 @@ import {
 } from "@searchPharmComp/SearchPharmPage.style";
 import KakaoMap from "@searchPharmComp/KakaoMap";
 import PharmList from "@searchPharmComp/PharmList";
+import { PHARMACY } from "@utils/endpoint";
 
 interface PharmacyResponse {
   statusCode: number;
@@ -48,7 +49,7 @@ const SearchPharmPage: NextPage = () => {
 
   useQuery(
     pharmKeys.searchPharm,
-    () => Api.get<PharmacyResponse>(`/pharmacy/search?${option}=${keyword}`),
+    () => Api.get<PharmacyResponse>(`${PHARMACY.SEARCH}?${option}=${keyword}`),
     {
       enabled: !!keyword && isSubmitBtnClicked,
       onSuccess: (data) => {

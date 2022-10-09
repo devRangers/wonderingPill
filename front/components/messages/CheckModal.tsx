@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { messageKeys } from "@utils/queryKey";
 import { GRAY_COLOR, ACCENT_COLOR, TOASTIFY } from "@utils/constant";
+import { ALARMS } from "@utils/endpoint";
 import {
   CheckModalContainer,
   CloseBtn,
@@ -21,7 +22,7 @@ function CheckModal({ selectedMessage, pageCount, onClose }: CheckModalProps) {
   const { id, pill_name } = selectedMessage;
   const queryClient = useQueryClient();
 
-  const checkMutation = useMutation(() => Api.put(`/alarms/check/${id}`), {
+  const checkMutation = useMutation(() => Api.put(ALARMS.CHECK_ID(id)), {
     onSuccess: () => {
       queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       onClose();

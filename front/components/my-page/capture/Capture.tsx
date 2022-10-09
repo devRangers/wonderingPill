@@ -2,6 +2,7 @@ import Image from "next/image";
 import { get, patch } from "@api";
 import { userAtom } from "@atom/userAtom";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
+import { AUTH, USERS } from "@utils/endpoint";
 import { CaptureContainer, CaptureButton } from "./Capture.style";
 import { useAtom } from "jotai";
 
@@ -35,7 +36,7 @@ function Capture() {
       });
 
       await patch(`/users/save-profileImg?img=${newUrl}`);
-      const { user: curUser } = await get<CurrentUserResponse>("/auth/current");
+      const { user: curUser } = await get<CurrentUserResponse>(AUTH.CURRENT);
 
       setUser(curUser);
     } catch (e: any) {
@@ -44,7 +45,7 @@ function Capture() {
   };
 
   const getSignedURL = () => {
-    return get<SignedURLValues>("/users/presigned-url");
+    return get<SignedURLValues>(USERS.PRESIGNED_URL);
   };
 
   return (
