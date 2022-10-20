@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { PillResultResponseDtoResult } from './pillResultResponseDtoResult';
+import type { GetPresignedUrlResponse } from './getPresignedUrlResponse';
 
-export interface PillResultResponseDto {
+export interface GetPresignedUrlResponseDto {
   statusCode: number;
   message: string;
-  result: PillResultResponseDtoResult;
+  result: GetPresignedUrlResponse;
 }

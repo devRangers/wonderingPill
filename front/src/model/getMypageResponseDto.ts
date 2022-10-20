@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { PillResultResponseDtoResult } from './pillResultResponseDtoResult';
+import type { GetMypageResponseDtoResult } from './getMypageResponseDtoResult';
 
-export interface PillResultResponseDto {
+export interface GetMypageResponseDto {
   statusCode: number;
   message: string;
-  result: PillResultResponseDtoResult;
+  result: GetMypageResponseDtoResult;
 }
