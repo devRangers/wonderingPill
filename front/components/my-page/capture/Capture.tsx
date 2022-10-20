@@ -35,7 +35,7 @@ function Capture() {
         },
       });
 
-      await patch(`/users/save-profileImg?img=${newUrl}`);
+      await patch(`${USERS.PROFILE_IMG}?img=${newUrl}`);
       const { user: curUser } = await get<CurrentUserResponse>(AUTH.CURRENT);
 
       setUser(curUser);

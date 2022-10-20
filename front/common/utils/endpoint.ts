@@ -31,7 +31,7 @@ export const AUTH = {
 
 export const USERS = {
   MYPAGE: `${apiBase.users}/mypage`,
-  PRESIGNED_URL: `${apiBase.users}/users/presigned-url`,
+  PRESIGNED_URL: `${apiBase.users}/presigned-url`,
   PROFILE_IMG: `${apiBase.users}/profile-img`,
   UPDATE: `${apiBase.users}/update`,
   DELETE: `${apiBase.users}/delete`,
