@@ -7,6 +7,9 @@ services:
       - 5000:5000
     depends_on:
       - redis
+      - postgres
+    networks:
+      - wonderingpill_networks
   redis:
     image: redis:alpine
     container_name: wondering-redis
@@ -15,5 +18,26 @@ services:
     restart: always
     command: redis-server /usr/local/conf/redis.conf
     volumes:
-      - ./data/:/data
+      - ./:/data
       - ./conf/redis.conf:/usr/local/conf/redis.conf
+    networks:
+      - wonderingpill_networks
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file: .env
+    healthcheck:
+      test: ['CMD', 'pg_isready']
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - wonderingpill_networks
+networks:
+  wonderingpill_networks:
+    driver: bridge

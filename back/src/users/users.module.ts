@@ -1,11 +1,11 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AgendaModule } from 'src/agenda/agenda.module';
-import { AgendaService } from 'src/agenda/agenda.service';
 import { AlarmsModule } from 'src/alarms/alarms.module';
 import { AlarmsService } from 'src/alarms/alarms.service';
 import { LoggerMiddleware } from 'src/common/middlewares/LoggerMiddleware';
-import { GcsModule } from 'src/gcs/gcs.module';
-import { RedisModule } from 'src/redis/redis.module';
+import { AgendaModule } from 'src/infras/agenda/agenda.module';
+import { AgendaService } from 'src/infras/agenda/agenda.service';
+import { GcsModule } from 'src/infras/gcs/gcs.module';
+import { RedisModule } from 'src/infras/redis/redis.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 

@@ -35,10 +35,40 @@ export class SetAlarmDto {
   repeatTime: number;
 }
 
-export class DeleteAlarmsDto {
+/** 알림 설정 내역 조회 */
+/** -------------- */
+/** 1. 알림 설정 내역 조회 서비스 반환 타입 */
+export class GetAlarmSettingResponse {
+  @IsNumber()
+  minute: number;
+
+  @IsNumber()
+  hour: number;
+
   @IsArray()
-  ids: string[];
+  vip: number[];
+
+  @IsNumber()
+  repeatTime: number;
+
+  @IsString()
+  pillName: string;
 }
+
+/** 2. 알림 설정 내역 조회 API 반환 타입 */
+export class GetAlarmSettingResponseDto extends CommonResponseDto {
+  @IsJSON()
+  alarm: GetAlarmSettingResponse;
+}
+/** -------------- */
+
+/** 알림 설정 내역 조회 */
+// export class GetAlarmsResponse {
+//   id: string;
+//   user_name: string;
+//   pill_name: string;
+//   time: string;
+// }
 
 export class GetAlarmsResponseDto extends CommonResponseDto {
   @IsJSON()
@@ -50,13 +80,7 @@ export class GetAlarmsResponseDto extends CommonResponseDto {
   }[];
 }
 
-export class GetAlarmSetResponseDto extends CommonResponseDto {
-  @IsJSON()
-  alarm: {
-    minute: number;
-    hour: number;
-    vip: number[];
-    repeatTime: number;
-    pillName: string;
-  };
+export class DeleteAlarmsDto {
+  @IsArray()
+  ids: string[];
 }

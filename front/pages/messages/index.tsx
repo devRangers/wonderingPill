@@ -5,7 +5,9 @@ import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
-import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
+import { messageKeys } from "@utils/queryKey";
+import { MAIN_COLOR, ACCENT_COLOR, ROUTE, TOASTIFY } from "@utils/constant";
+import { ALARMS } from "@utils/endpoint";
 import {
   ContentContainer,
   TitleContainer,
@@ -16,21 +18,13 @@ import {
   Label,
   DeleteBtn,
   Body,
-  List,
-  MessageContainer,
-  Message,
-  Time,
   MoreBtn,
 } from "@messagesComp/MessagesPage.style";
 import Container from "@container/Container";
-
-interface MessageValues {
-  id: string;
-  user_name: string;
-  pill_name: string;
-  time: string;
-  user_id: string;
-}
+import Modal from "@modal/Modal";
+import CheckModal from "@messagesComp/CheckModal";
+import Messages, { MessageValues } from "@messagesComp/Messages";
+import { toast } from "react-toastify";
 
 interface MessageResponse extends CommonResponse {
   alarms: MessageValues[];
@@ -40,26 +34,54 @@ interface deleteMessageValues {
   ids: string[];
 }
 
+const messageInitialValue: MessageValues = {
+  id: "",
+  user_id: "",
+  user_name: "",
+  pill_name: "",
+  time: "",
+  check: false,
+  pillBookmarkId: "",
+};
+
 const MessageListPage: NextPage = () => {
   const queryClient = useQueryClient();
 
   const [selectedMessagesId, setSelectedMessagesId] = useState<string[]>([]); // 삭제할(된) 알림 목록 ID
   const [messages, setMessages] = useState<MessageValues[]>([]);
   const [pageCount, setPageCount] = useState(1);
+  const [isCheckModalOpen, setIsCheckModalOpen] = useState(false);
+  const [selectedMessage, setSelectedMessage] =
+    useState<MessageValues>(messageInitialValue); // 복약 여부 버튼을 클릭한 메세지
+
+  /*
+   * 1. time 기준으로 역순 정렬(최신 알림 기록이 앞으로 가도록)
+   * 2. check 기준으로 역순 정렬(true가 앞으로 가도록)
+   * 3. id 기준으로 중복 제거
+   * 4. 삭제된 메세지 필터링
+   */
 
   useQuery(
-    ["getMessages", pageCount],
-    () => Api.get<MessageResponse>(`/alarms/${pageCount}`),
+    messageKeys.getMessages(pageCount),
+    () => Api.get<MessageResponse>(ALARMS.PAGE(pageCount)),
     {
-      staleTime: 60 * 1000,
-      retry: false,
-      refetchOnWindowFocus: false,
       onSuccess: ({ alarms }) => {
-        // 알림 목록 중복 제거, 삭제된 알림 목록 필터링
         setMessages((prev) =>
-          _.uniqBy([...prev, ...alarms], "id").filter(
-            (message) => !selectedMessagesId.includes(message.id),
-          ),
+          _.uniqBy(
+            [...prev, ...alarms].sort(function (cur, prev) {
+              const prevCheck = Number(prev.check);
+              const curCheck = Number(cur.check);
+              const prevTime = Date.parse(prev.time);
+              const curTime = Date.parse(cur.time);
+
+              if (prevTime > curTime) return 1;
+              if (prevTime < curTime) return -1;
+              if (prevCheck > curCheck) return 1;
+              if (prevCheck < curCheck) return -1;
+              return 0;
+            }),
+            "id",
+          ).filter((message) => !selectedMessagesId.includes(message.id)),
         );
       },
     },
@@ -67,14 +89,14 @@ const MessageListPage: NextPage = () => {
 
   const deleteMessagesMutation = useMutation(
     (data: deleteMessageValues) =>
-      Api.post<CommonResponse, deleteMessageValues>("/alarms/delete", data),
+      Api.post<CommonResponse, deleteMessageValues>(ALARMS.DELETE, data),
     {
       onSuccess: () => {
         // 삭제 성공 후 알림 목록 갱신
-        queryClient.invalidateQueries(["getMessages", pageCount]);
+        queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       },
-      onError: (err) => {
-        console.log(err);
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
       },
     },
   );
@@ -102,55 +124,65 @@ const MessageListPage: NextPage = () => {
     }
   };
 
+  const checkBtnClickHandler = (message: MessageValues) => {
+    setSelectedMessage(message);
+    setIsCheckModalOpen(true);
+  };
+
+  const closeCheckModalHandler = () => {
+    setIsCheckModalOpen(false);
+  };
+
   return (
-    <Container>
-      <ContentContainer>
-        <TitleContainer>
-          <Title $txtColor={ACCENT_COLOR}>알림 목록</Title>
-          <UnderLine $bgColor={MAIN_COLOR} />
-        </TitleContainer>
-        <ListContainer>
-          <Header>
-            <div>
-              <input
-                type="checkbox"
-                name="select-all-messages"
-                id="select-all-messages"
-                onChange={selectAllMessageHandler}
-              />
-              <Label htmlFor="select-all-messages">알림 전체 선택</Label>
-            </div>
-            <DeleteBtn onClick={deleteMessages}>선택한 알림 삭제</DeleteBtn>
-          </Header>
-          <Body $scrollColor={ACCENT_COLOR}>
-            {messages.map((message) => (
-              <List key={message.id}>
+    <>
+      <Container>
+        <ContentContainer>
+          <TitleContainer>
+            <Title $txtColor={ACCENT_COLOR}>알림 목록</Title>
+            <UnderLine $bgColor={MAIN_COLOR} />
+          </TitleContainer>
+          <ListContainer>
+            <Header>
+              <div>
                 <input
                   type="checkbox"
-                  id={message.id}
-                  name="messages"
-                  checked={selectedMessagesId.includes(message.id)}
-                  onChange={selectMessageHandler}
+                  name="select-all-messages"
+                  id="select-all-messages"
+                  onChange={selectAllMessageHandler}
                 />
-                <MessageContainer $borderColor={MAIN_COLOR}>
-                  <Message>
-                    약을 먹을 시간입니다!
-                    <br />
-                    {message.pill_name}
-                  </Message>
-                  <Time $txtColor={GRAY_COLOR}>{message.time}</Time>
-                </MessageContainer>
-              </List>
-            ))}
-          </Body>
-          <MoreBtn
-            $btnColor={ACCENT_COLOR}
-            onClick={() => setPageCount((cur) => cur + 1)}>
-            더보기
-          </MoreBtn>
-        </ListContainer>
-      </ContentContainer>
-    </Container>
+                <Label htmlFor="select-all-messages">알림 전체 선택</Label>
+              </div>
+              <DeleteBtn onClick={deleteMessages}>선택한 알림 삭제</DeleteBtn>
+            </Header>
+            <Body $scrollColor={ACCENT_COLOR}>
+              {messages.map((message) => (
+                <Messages
+                  key={message.id}
+                  message={message}
+                  selectedMessagesId={selectedMessagesId}
+                  selectMessageHandler={selectMessageHandler}
+                  checkBtnClickHandler={checkBtnClickHandler}
+                />
+              ))}
+            </Body>
+            <MoreBtn
+              $btnColor={ACCENT_COLOR}
+              onClick={() => setPageCount((cur) => cur + 1)}>
+              더보기
+            </MoreBtn>
+          </ListContainer>
+        </ContentContainer>
+      </Container>
+      {isCheckModalOpen && (
+        <Modal open={isCheckModalOpen} onClose={closeCheckModalHandler}>
+          <CheckModal
+            onClose={closeCheckModalHandler}
+            selectedMessage={selectedMessage}
+            pageCount={pageCount}
+          />
+        </Modal>
+      )}
+    </>
   );
 };
 

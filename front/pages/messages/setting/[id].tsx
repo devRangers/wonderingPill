@@ -1,19 +1,25 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useMutation } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import { GetAlarmSetResponseDto as GetAlarmResponse } from "@modelTypes/getAlarmSetResponseDto";
 import { GetAlarmSetResponseDtoAlarm as GetAlarmValues } from "@modelTypes/getAlarmSetResponseDtoAlarm";
-import { MAIN_COLOR, SEMI_ACCENT_COLOR, ROUTE } from "@utils/constant";
+import {
+  MAIN_COLOR,
+  SEMI_ACCENT_COLOR,
+  ROUTE,
+  TOASTIFY,
+} from "@utils/constant";
 import { getToken } from "@utils/firebase";
+import { toast } from "react-toastify";
 import {
   ContentContainer,
   TitleContainer,
@@ -30,10 +36,17 @@ import Container from "@container/Container";
 import Switch from "@messagesComp/setting/Switch";
 import TimeForm, { SettingFormValues } from "@messagesComp/setting/TimeForm";
 import RemindForm from "@messagesComp/setting/RemindForm";
+import { ALARMS } from "@utils/endpoint";
 
 interface SetNotificationPageProps {
   bookmarkId: string;
-  setting: GetAlarmValues;
+  setting: {
+    minute: number;
+    hour: number;
+    vip: number[];
+    repeatTime: number;
+    pillName: string;
+  };
 }
 
 const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
@@ -41,36 +54,53 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   setting,
 }) => {
   const [user] = useAtom(userAtom);
+  const router = useRouter();
 
   const [isNotificationToggle, setIsNotificationToggle] = useState(true);
-  const [isRemindToggle, setIsRemindToggle] = useState(
-    typeof setting.repeatTime === "number" && setting.repeatTime > 0,
-  );
-  const [isAfternoon, setIsAfternoon] = useState(
-    typeof setting.hour === "number" && setting.hour >= 12,
-  );
-  const [vip, setVip] = useState<number[]>(
-    typeof setting.vip === "object" ? setting.vip : [],
-  );
-  const [pillName, setPillName] = useState(
-    typeof setting.pillName === "string" ? setting.pillName : "",
-  );
+  const [isRemindToggle, setIsRemindToggle] = useState(setting.repeatTime > 0);
+  const [isAfternoon, setIsAfternoon] = useState(setting.hour >= 12);
+  const [vip, setVip] = useState<number[]>(setting.vip);
+  const [pillName, setPillName] = useState(setting.pillName);
   const [deviceToken, setDeviceToken] = useState("");
 
-  const setAlarmMutation = useMutation((data: SetAlarmValues) =>
-    Api.post<Response, SetAlarmValues>("/alarms/set", data),
+  const setAlarmMutation = useMutation(
+    (data: SetAlarmValues) =>
+      Api.post<Response, SetAlarmValues>(ALARMS.SET, data),
+    {
+      onSuccess: () => {
+        toast.success(TOASTIFY.SAVE_ALARM);
+        router.push(ROUTE.MY_PAGE);
+      },
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
+      },
+    },
+  );
+
+  const cancelAlarmMutation = useMutation(
+    () => Api.put(`/alarms/${bookmarkId}`),
+    {
+      onSuccess: () => {
+        toast.success(TOASTIFY.CANCEL_ALARM);
+        router.push(ROUTE.MY_PAGE);
+      },
+      onError: () => {
+        toast.error(TOASTIFY.FAIL);
+      },
+    },
   );
 
   const initialValue: SettingFormValues = {
-    hour: typeof setting.hour === "number" ? setting.hour : 0,
-    minute: typeof setting.minute === "number" ? setting.minute : 0,
-    repeatTime: typeof setting.repeatTime === "number" ? setting.repeatTime : 0,
+    hour: setting.hour,
+    minute: setting.minute,
+    repeatTime: setting.repeatTime,
   };
 
   const formik = useFormik({
     initialValues: initialValue,
     onSubmit: async (values) => {
       if (isNotificationToggle) {
+        // 알림 세팅
         const { hour, repeatTime, minute } = values;
         const dataToSubmit: SetAlarmValues = {
           pillBookmarkId: bookmarkId,
@@ -84,7 +114,8 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
         };
         setAlarmMutation.mutate(dataToSubmit);
       } else {
-        // TODO: 알림 취소
+        // 알림 취소
+        cancelAlarmMutation.mutate();
       }
     },
   });
@@ -105,7 +136,7 @@ const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
         <TitleContainer>
           <TopLine $bgColor={SEMI_ACCENT_COLOR} />
           <Title $txtColor={SEMI_ACCENT_COLOR}>{pillName}</Title>
-          <Link href={`/search/result/${pillName}`}>
+          <Link href={ROUTE.SEARCH_RESULT_PILLNAME(pillName)}>
             <LinkBtn $txtColor={MAIN_COLOR}>알약 상세 정보 보러가기 →</LinkBtn>
           </Link>
         </TitleContainer>
@@ -159,19 +190,33 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/alarms/set/${bookmarkId}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}${ALARMS.SET_ID(bookmarkId)}`,
     {
       headers: {
         Cookie: `AccessToken=${token}`,
       },
     },
   );
-  const result: GetAlarmResponse = await res.json();
+
+  if (!res.ok) {
+    return {
+      redirect: { destination: ROUTE.MAIN, permanent: false },
+      props: {},
+    };
+  }
+
+  const { alarm }: GetAlarmResponse = await res.json();
 
   return {
     props: {
       bookmarkId,
-      setting: result.alarm,
+      setting: {
+        minute: typeof alarm.minute === "number" ? alarm.minute : 0,
+        hour: typeof alarm.hour === "number" ? alarm.hour : 0,
+        vip: typeof alarm.vip === "object" ? alarm.vip : [],
+        repeatTime: typeof alarm.repeatTime === "number" ? alarm.repeatTime : 0,
+        pillName: typeof alarm.pillName === "string" ? alarm.pillName : "",
+      },
     },
   };
 };

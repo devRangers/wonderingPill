@@ -7,6 +7,7 @@ import {
   SIDE_BAR_HEADER_HEIGHT,
   ACCENT_COLOR,
 } from "@utils/constant";
+import { AUTH } from "@utils/endpoint";
 import { get } from "@api";
 import { userAtom } from "@atom/userAtom";
 import { BsArrowLeftShort } from "react-icons/bs";
@@ -34,6 +35,11 @@ interface ButtonTitleValues {
 }
 
 const ButtonTitle: { [key in string]: ButtonTitleValues } = {
+  main: {
+    title: "메인으로 가기",
+    link: ROUTE.MAIN,
+    canUseWithLogin: false,
+  },
   findWithPicture: {
     title: "사진으로 찾기",
     link: ROUTE.SEARCH_IMAGE,
@@ -43,16 +49,6 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
     title: "약국 찾기",
     link: ROUTE.MAIN,
     canUseWithLogin: false,
-  },
-  searchPill: {
-    title: "시제품 약 검색",
-    link: ROUTE.MAIN,
-    canUseWithLogin: false,
-  },
-  healthChallenge: {
-    title: "내 건강 캘린더",
-    link: ROUTE.MAIN,
-    canUseWithLogin: true,
   },
   myPage: {
     title: "마이페이지",
@@ -77,7 +73,7 @@ function Sidebar({ openSideBar, closeSideBar }: SidebarProp) {
 
   const logout = async () => {
     try {
-      await get("/auth/logout");
+      await get(AUTH.LOGOUT);
       await router.push(ROUTE.LOGIN);
       setUser({
         id: "",
