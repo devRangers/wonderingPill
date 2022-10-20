@@ -9,4 +9,4 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-    command: bash -c "cd /app && export FLASK_ENV=production && python /app/app.py -p 5001"
+    command: bash -c "cd /app && export FLASK_DEBUG=production && python /app/app.py -p 5001"
