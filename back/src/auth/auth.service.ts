@@ -34,40 +34,21 @@ export class AuthService {
     const { name, email, password, phone, birth } = createUserDto;
 
     try {
-      const deletedUser: User = await this.getUserByEmail(email + '_');
       const hashedPassword: string = await argon.hash(password);
 
-      if (deletedUser) {
-        /** 이미 탈퇴한 회원이 존재할 경우 계정 복원 */
-        const newUser: User = await this.prisma.user.update({
-          where: { email: email + '_' },
-          data: {
-            name,
-            email,
-            password: hashedPassword,
-            birth,
-            phone,
-            isDeleted: false,
-            provider: providerType.LOCAL,
-          },
-        });
+      /** 신규 유저 생성 */
+      const newUser: User = await this.prisma.user.create({
+        data: {
+          name,
+          password: hashedPassword,
+          phone,
+          birth,
+          email,
+          provider: providerType.LOCAL,
+        },
+      });
 
-        return newUser;
-      } else {
-        /** 탈퇴 이력이 없을 경우 신규 유저 생성 */
-        const newUser: User = await this.prisma.user.create({
-          data: {
-            name,
-            password: hashedPassword,
-            phone,
-            birth,
-            email,
-            provider: providerType.LOCAL,
-          },
-        });
-
-        return newUser;
-      }
+      return newUser;
     } catch (error) {
       throw new NotFoundException('회원을 저장하지 못했습니다.');
     }
@@ -82,6 +63,20 @@ export class AuthService {
       return user;
     } catch {
       throw new NotFoundException('회원을 찾지 못했습니다.');
+    }
+  }
+
+  async restoreUser(email: string) {
+    try {
+      const newEmail: string = email.slice(0, -1);
+      console.log(newEmail);
+
+      await this.prisma.user.update({
+        where: { email: email + '_' },
+        data: { email: newEmail },
+      });
+    } catch {
+      throw new NotFoundException('회원을 복원했습니다.');
     }
   }
 
