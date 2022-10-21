@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  ai_server:
+    image: ghcr.io/kimbyeolhee/wonderingpill-flask:lts
+    restart: "always"
+    ports:
+      - 5001:5001
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: bash -c "cd /app && python /app/app.py -p 5001"

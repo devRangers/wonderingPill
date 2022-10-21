@@ -1,7 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { ERROR_MSG_COLOR, SUB_COLOR, ACCENT_COLOR } from "@utils/constant";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useMutation } from "react-query";
+import * as Api from "@api";
+import { FindAccountResponse } from "@modelTypes/findAccountResponse";
+import { FindAccountDto as FindAccountValues } from "@modelTypes/findAccountDto";
+import { AUTH } from "@utils/endpoint";
+import {
+  ERROR_MSG_COLOR,
+  SUB_COLOR,
+  ACCENT_COLOR,
+  GRAY_COLOR,
+} from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -20,6 +31,7 @@ import {
 } from "./FindEmailForm.style";
 import Modal from "@modal/Modal";
 import AuthForm from "./AuthForm";
+import { toast } from "react-toastify";
 
 interface FindEmailValues {
   name: string;
@@ -38,8 +50,23 @@ const initialValue: FindEmailValues = {
 };
 
 function FindEmailForm() {
-  const [startVerification, setStartVerification] = useState(false); // ReCaptcha 검증 시점 결정
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [phone, setPhone] = useState("");
+
+  const findEmailMutation = useMutation(
+    (data: FindAccountValues) =>
+      Api.post<FindAccountResponse, FindAccountValues>(AUTH.SEND_SMS, data),
+    {
+      onSuccess: () => {
+        setAuthModalOpen(true);
+      },
+      onError: ({ message }) => {
+        toast.error(message);
+      },
+    },
+  );
 
   const formik = useFormik({
     initialValues: initialValue,
@@ -61,12 +88,27 @@ function FindEmailForm() {
         .matches(/^[0-9]{4}$/, "유효하지 않은 번호입니다.")
         .required("휴대폰 번호를 입력해 주세요."),
     }),
-    onSubmit: async (values, actions) => {
-      // Submit Handler 구현 예정
-      setStartVerification(true);
+    onSubmit: async ({
+      name,
+      birth,
+      firstPhoneNum,
+      middlePhoneNum,
+      lastPhoneNum,
+    }) => {
+      const token = (await recaptchaRef?.current?.executeAsync()) as string;
+      const phoneNumber = firstPhoneNum + middlePhoneNum + lastPhoneNum;
 
-      // 성공 시 로직
-      // setAuthModalOpen(true);
+      const dataToSubmit = {
+        name,
+        birth,
+        token,
+        phone: phoneNumber,
+      };
+
+      setPhone(phoneNumber);
+      recaptchaRef.current?.reset();
+      setAuthModalOpen(true);
+      findEmailMutation.mutate(dataToSubmit);
     },
   });
 
@@ -87,6 +129,7 @@ function FindEmailForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.name}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.name && formik.errors.name}
@@ -104,6 +147,7 @@ function FindEmailForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.birth}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.birth && formik.errors.birth}
@@ -159,10 +203,15 @@ function FindEmailForm() {
 
         {authModalOpen && (
           <Modal open={authModalOpen} onClose={modalCloseHandler}>
-            <AuthForm onClose={modalCloseHandler} />
+            <AuthForm onClose={modalCloseHandler} phone={phone} />
           </Modal>
         )}
       </Form>
+      <ReCAPTCHA
+        ref={recaptchaRef}
+        size="invisible"
+        sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+      />
     </>
   );
 }

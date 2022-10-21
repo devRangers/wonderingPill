@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import "../styles/reset.css";
+import "react-toastify/dist/ReactToastify.min.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -8,6 +9,7 @@ import firebase from "firebase/app";
 import "firebase/messaging";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { useMediaQuery } from "react-responsive";
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
 import { useAtom } from "jotai";
@@ -15,9 +17,16 @@ import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
 import { RefreshResponse } from "@modelTypes/refreshResponse";
-import { URL_WITHOUT_HEADER, SILENT_REFRESH_TIME } from "@utils/constant";
+import {
+  URL_WITHOUT_HEADER,
+  SILENT_REFRESH_TIME,
+  ROUTE,
+} from "@utils/constant";
 import Header from "@header/Header";
 import Footer from "@footer/Footer";
+import { AUTH } from "@utils/endpoint";
+import { ToastContainer } from "react-toastify";
+import { CookiesProvider } from "react-cookie";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -38,12 +47,19 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [, setUser] = useAtom(userAtom);
   const [queryClient] = useState(() => new QueryClient());
+  const isDesktop = useMediaQuery({ query: "(min-width : 675px)" });
 
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   } else {
     firebase.app();
   }
+
+  useEffect(() => {
+    if (isDesktop && router.asPath !== ROUTE.INFO) {
+      router.push(ROUTE.INFO);
+    }
+  }, [router]);
 
   useEffect(() => {
     setScreenSize();
@@ -56,9 +72,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function getUsers() {
       try {
+        await Api.get<RefreshResponse>(AUTH.REFRESH);
         const { user } = await Api.get<CurrentUserResponse>("/auth/current");
         setUser(user);
-        Api.get<RefreshResponse>("/auth/refresh");
       } catch (err) {}
     }
     getUsers();
@@ -66,8 +82,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // refresh token이 있을 경우 access token 주기적으로 재발급
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (document.hasFocus()) Api.get<RefreshResponse>("/auth/refresh");
+    const timer = setInterval(async () => {
+      try {
+        await Api.get<RefreshResponse>(AUTH.REFRESH);
+      } catch (err) {}
     }, SILENT_REFRESH_TIME);
 
     return () => {
@@ -79,22 +97,22 @@ function MyApp({ Component, pageProps }: AppProps) {
     <StyletronProvider value={styletron}>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps?.dehydratedState}>
-          <Head>
-            <meta
-              name="viewport"
-              content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
-            />
-          </Head>
-
-          {!URL_WITHOUT_HEADER.includes(router.pathname) && <Header />}
-          <Component {...pageProps} />
-          {!URL_WITHOUT_HEADER.includes(router.pathname) && <Footer />}
-
-          <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+          <CookiesProvider>
+            <Head>
+              <meta
+                name="viewport"
+                content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+              />
+            </Head>
+            <ToastContainer theme="colored" position="top-center" limit={3} />
+            {!URL_WITHOUT_HEADER.includes(router.pathname) && <Header />}
+            <Component {...pageProps} />
+            {!URL_WITHOUT_HEADER.includes(router.pathname) && <Footer />}
+            <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+          </CookiesProvider>
         </Hydrate>
       </QueryClientProvider>
     </StyletronProvider>
   );
 }
-
 export default MyApp;

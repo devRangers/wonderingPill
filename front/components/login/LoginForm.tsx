@@ -10,9 +10,16 @@ import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
+import { AUTH } from "@utils/endpoint";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
-import { SUB_COLOR, ERROR_MSG_COLOR, ROUTE } from "@utils/constant";
+import {
+  SUB_COLOR,
+  ERROR_MSG_COLOR,
+  GRAY_COLOR,
+  ROUTE,
+  TOASTIFY,
+} from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -32,6 +39,7 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
+import { toast } from "react-toastify";
 
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
@@ -57,14 +65,14 @@ function LoginForm() {
 
   const loginMutation = useMutation(
     (data: LoginTypes) =>
-      Api.post<SigninResponse, LoginTypes>("/auth/signin", data),
+      Api.post<SigninResponse, LoginTypes>(AUTH.SIGN_IN, data),
     {
       onSuccess: ({ user }) => {
         setUser(user);
-        router.push("/");
+        router.push(ROUTE.MAIN);
       },
       onError: ({ message }) => {
-        console.log(message);
+        toast.error(message);
       },
     },
   );
@@ -106,6 +114,7 @@ function LoginForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.email}
+              $placeholderColor={GRAY_COLOR}
             />
             <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
               {formik.touched.email && formik.errors.email}
@@ -124,6 +133,7 @@ function LoginForm() {
               data-tip="password-tooltip"
               data-for="password-tooltip"
               autoComplete="true"
+              $placeholderColor={GRAY_COLOR}
             />
             {formik.touched.password && formik.errors.password ? (
               <>

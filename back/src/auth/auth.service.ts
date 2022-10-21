@@ -1,20 +1,20 @@
 import {
-  ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
 import * as argon from 'argon2';
+import { User } from 'prisma/postgresClient';
+import { RedisService } from 'src/infras/redis/redis.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RedisService } from 'src/redis/redis.service';
+import { UsersService } from 'src/users/users.service';
 import { providerType } from './auth-provider.enum';
 import {
   ChangePasswordDto,
   CreateUserDto,
   FindAccountDto,
-  FindPasswordDto,
   OauthLoginDto,
   SigninUserDto,
 } from './dto';
@@ -23,11 +23,55 @@ import { JwtPayload, Tokens } from './types';
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
   ) {}
+
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    const { name, email, password, phone, birth } = createUserDto;
+
+    try {
+      const deletedUser: User = await this.getUserByEmail(email + '_');
+      const hashedPassword: string = await argon.hash(password);
+
+      if (deletedUser) {
+        /** 이미 탈퇴한 회원이 존재할 경우 계정 복원 */
+        const newUser: User = await this.prisma.user.update({
+          where: { email: email + '_' },
+          data: {
+            name,
+            email,
+            password: hashedPassword,
+            birth,
+            phone,
+            isDeleted: false,
+            provider: providerType.LOCAL,
+          },
+        });
+
+        return newUser;
+      } else {
+        /** 탈퇴 이력이 없을 경우 신규 유저 생성 */
+        const newUser: User = await this.prisma.user.create({
+          data: {
+            name,
+            password: hashedPassword,
+            phone,
+            birth,
+            email,
+            provider: providerType.LOCAL,
+          },
+        });
+
+        return newUser;
+      }
+    } catch (error) {
+      throw new NotFoundException('회원을 저장하지 못했습니다.');
+    }
+  }
 
   async getUserByEmail(email: string): Promise<User> {
     try {
@@ -37,19 +81,7 @@ export class AuthService {
 
       return user;
     } catch {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
-    }
-  }
-
-  async getUserById(id: string): Promise<User> {
-    try {
-      const user: User = await this.prisma.user.findUnique({
-        where: { id },
-      });
-
-      return user;
-    } catch {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
+      throw new NotFoundException('회원을 찾지 못했습니다.');
     }
   }
 
@@ -61,28 +93,7 @@ export class AuthService {
 
       return user;
     } catch {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
-    }
-  }
-
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const { name, email, password, phone, birth } = createUserDto;
-    const hashedPassword: string = await argon.hash(password);
-    try {
-      const newUser: User = await this.prisma.user.create({
-        data: {
-          name,
-          password: hashedPassword,
-          phone,
-          birth,
-          email,
-          provider: providerType.LOCAL,
-        },
-      });
-
-      return newUser;
-    } catch (error) {
-      throw new ForbiddenException('회원을 저장하지 못했습니다.');
+      throw new NotFoundException('회원을 찾지 못했습니다.');
     }
   }
 
@@ -91,14 +102,16 @@ export class AuthService {
       const { email, password, isSignin } = signinUserDto;
 
       const isPwMatching: boolean = await argon.verify(user.password, password);
+
       if (!isPwMatching)
-        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+        throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
       const { accessToken, refreshToken }: Tokens = await this.getTokens(
         user.id,
         email,
         isSignin,
       );
+
       return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('로그인에 실패했습니다.');
@@ -119,16 +132,19 @@ export class AuthService {
         secret: this.configService.get('JWT_SECRET'),
         expiresIn: this.configService.get('JWT_EXPIRESIN'),
       });
+
       let expiresIn;
       if (isSignin) {
         expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN_AUTOSAVE');
       } else {
         expiresIn = this.configService.get('JWT_REFRESH_EXPIRESIN');
       }
+
       const refreshToken: string = await this.jwtService.signAsync(jwtPayload, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
         expiresIn,
       });
+
       return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedException('토큰 생성에 실패했습니다.');
@@ -157,25 +173,28 @@ export class AuthService {
 
       return result;
     } catch (error) {
-      throw new ForbiddenException('refresh token이 저장되지 않았습니다.');
+      throw new NotFoundException('refresh token이 저장되지 않았습니다.');
     }
   }
 
   async updateAccessToken(id: string, refreshToken: string): Promise<string> {
-    const user: User = await this.getUserById(id);
+    const user: User = await this.usersService.getUserById(id);
+    if (!user || user.isDeleted)
+      throw new NotFoundException('회원이 존재하지 않습니다.');
+
     try {
       const result: string = await (
         await this.redisService.getKey('re' + id)
       ).slice(this.configService.get('REFRESHTOKEN_KEY').length);
 
       if (result !== refreshToken) {
-        throw new ForbiddenException('Access Denied');
+        throw new UnauthorizedException('Access Denied');
       }
 
       const accessToken: string = await this.getAccessToken(id, user.email);
       return accessToken;
     } catch (error) {
-      throw new ForbiddenException('엑세스 토큰 발급을 실패했습니다.');
+      throw new UnauthorizedException('엑세스 토큰 발급을 실패했습니다.');
     }
   }
 
@@ -192,7 +211,7 @@ export class AuthService {
 
       return accessToken;
     } catch (error) {
-      throw new ForbiddenException('accessToken을 생성하지 못했습니다.');
+      throw new UnauthorizedException('accessToken을 생성하지 못했습니다.');
     }
   }
 
@@ -201,23 +220,11 @@ export class AuthService {
       await this.redisService.delKey('re' + id);
       return true;
     } catch (error) {
-      throw new ForbiddenException('로그아웃을 실패했습니다.');
+      throw new NotFoundException('로그아웃 실패!.');
     }
   }
 
-  async findUser(findPasswordDto: FindPasswordDto): Promise<User> {
-    try {
-      const user: User = await this.getUserByEmail(findPasswordDto.email);
-      if (user.name !== findPasswordDto.name) {
-        throw new ForbiddenException('회원이 존재하지 않습니다.');
-      }
-      return user;
-    } catch (error) {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
-    }
-  }
-
-  async findUserByPhone(findAccountDto: FindAccountDto): Promise<User> {
+  async getUserForAccount(findAccountDto: FindAccountDto): Promise<User> {
     const { name, birth, phone } = findAccountDto;
     try {
       const user: User[] = await this.prisma.user.findMany({
@@ -230,13 +237,13 @@ export class AuthService {
         },
       });
 
-      if (!user || user.length !== 1) {
-        throw new ForbiddenException('회원이 존재하지 않습니다.');
+      if (!user || user.length !== 1 || user.pop().isDeleted) {
+        throw new NotFoundException('회원이 존재하지 않습니다.');
       }
 
       return user.pop();
     } catch (error) {
-      throw new ForbiddenException('회원을 찾지 못했습니다.');
+      throw new NotFoundException('회원을 찾지 못했습니다.');
     }
   }
 
@@ -249,7 +256,7 @@ export class AuthService {
       );
       return token;
     } catch (error) {
-      throw new ForbiddenException('토큰을 저장하지 못했습니다.');
+      throw new NotFoundException('토큰을 저장하지 못했습니다.');
     }
   }
 
@@ -268,7 +275,7 @@ export class AuthService {
       });
       return newUser;
     } catch (error) {
-      throw new ForbiddenException('회원 정보를 저장하지 못했습니다.');
+      throw new NotFoundException('회원 정보를 저장하지 못했습니다.');
     }
   }
 
@@ -277,26 +284,35 @@ export class AuthService {
       where: { email: googleLoginDto.email },
     });
 
+    if (user.isDeleted) throw new NotFoundException('이미 탈퇴된 회원입니다.');
+
+    const { accessToken, refreshToken } = googleLoginDto;
+    let key;
     try {
-      if (!user) {
-        await this.createOauthUser(googleLoginDto, 'google');
+      if (!user || user.isDeleted) {
+        const newUser: User = await this.createOauthUser(
+          googleLoginDto,
+          'google',
+        );
+
+        key = 'go' + newUser.id;
       } else if (user.provider !== 'GOOGLE') {
         res
           .status(403)
           .redirect(`${this.configService.get('CLIENT_URL')}/login/error`);
+      } else {
+        key = 'go' + user.id;
       }
 
-      const { accessToken, refreshToken } = googleLoginDto;
-
       await this.redisService.setKey(
-        'go' + user.id,
+        key,
         this.configService.get('REFRESHTOKEN_KEY') + refreshToken,
         Number(this.configService.get('JWT_REFRESH_EXPIRESIN')) / 1000,
       );
 
       return { accessToken, refreshToken };
     } catch (error) {
-      throw new ForbiddenException('구글 로그인 중에 문제 발생!');
+      throw new NotFoundException('구글 로그인 중에 문제 발생!');
     }
   }
 
@@ -316,7 +332,7 @@ export class AuthService {
       });
       return user;
     } catch (error) {
-      throw new ForbiddenException('비밀번호를 변경하지 못했습니다.');
+      throw new NotFoundException('비밀번호를 변경하지 못했습니다.');
     }
   }
 

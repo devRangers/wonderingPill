@@ -1,5 +1,9 @@
 import type { NextPage } from "next";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import * as Api from "@api";
+import { FindAccountResponse } from "@modelTypes/findAccountResponse";
+import { FindAccountResponseUser as InfoType } from "@modelTypes/findAccountResponseUser";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
   MAIN_COLOR,
@@ -8,6 +12,7 @@ import {
   ROUTE,
   FULL_HEIGHT,
 } from "@utils/constant";
+import { AUTH } from "@utils/endpoint";
 import {
   Container,
   TitleContainer,
@@ -23,19 +28,7 @@ import {
   LinkButton,
 } from "@accountComp/result/Result.style";
 
-interface InfoType {
-  name: string;
-  email: string;
-}
-
-const fakeData: InfoType[] = [
-  {
-    name: "테스트계정",
-    email: "jiyu@test.com",
-  },
-];
-
-const FindEmailResultPage: NextPage = () => {
+const FindEmailResultPage: NextPage = ({ name, email }: InfoType) => {
   const router = useRouter();
   const isWide = isWideDevice();
 
@@ -49,19 +42,19 @@ const FindEmailResultPage: NextPage = () => {
       <ResultContainer>
         <Description>
           다음 정보로 가입된 계정이
-          <br /> 총 {fakeData.length}개 있습니다.
+          <br /> 총 {name ? 1 : 0}개 있습니다.
         </Description>
 
-        <ResultBox $isWide={isWide} $isDivide={fakeData.length > 0}>
-          {fakeData.length > 0 ? (
+        <ResultBox $isWide={isWide} $isDivide={!!name}>
+          {name ? (
             <>
               <InfoContaniner $isWide={isWide}>
                 <InfoTitle>이름</InfoTitle>
-                <p>{fakeData[0].name}</p>
+                <p>{name}</p>
               </InfoContaniner>
               <InfoContaniner $isWide={isWide}>
                 <InfoTitle>계정</InfoTitle>
-                <p>{fakeData[0].email}</p>
+                <p>{email}</p>
               </InfoContaniner>
             </>
           ) : (
@@ -73,7 +66,7 @@ const FindEmailResultPage: NextPage = () => {
           )}
         </ResultBox>
 
-        {fakeData.length === 0 && (
+        {!name && (
           <LinkButton
             $isWide={isWide}
             $btnColor={SUB_COLOR}
@@ -92,7 +85,7 @@ const FindEmailResultPage: NextPage = () => {
               {
                 pathname: ROUTE.LOGIN,
                 query: {
-                  email: fakeData[0].email,
+                  email: email,
                 },
               },
               ROUTE.LOGIN,
@@ -113,3 +106,13 @@ const FindEmailResultPage: NextPage = () => {
 };
 
 export default FindEmailResultPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const userId = context.query.userId;
+  const { user } = await Api.get<FindAccountResponse>(
+    AUTH.FIND_ACCOUNT(userId),
+  );
+  return {
+    props: user,
+  };
+};

@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { Pharmacy } from './pharmacy';
+import type { Pharmacy } from "./pharmacy";
 
 export interface BookmarkListResponseDto {
+  bookmark: Pharmacy[];
   statusCode: number;
   message: string;
-  bookmark: Pharmacy[];
 }
