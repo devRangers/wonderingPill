@@ -5,5 +5,8 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
+import type { GetMypageResponse } from './getMypageResponse';
 
-export type PillControllerSearchPillParams = { shape: string; colors: string; mark: string; letters?: string; name?: string };
+export type GetMypageResponseDtoResult = {
+  user?: GetMypageResponse;
+};

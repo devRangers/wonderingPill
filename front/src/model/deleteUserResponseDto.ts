@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { PillResultResponseDtoResult } from './pillResultResponseDtoResult';
+import type { DeleteUserResponse } from './deleteUserResponse';
 
-export interface PillResultResponseDto {
+export interface DeleteUserResponseDto {
   statusCode: number;
   message: string;
-  result: PillResultResponseDtoResult;
+  result: DeleteUserResponse;
 }

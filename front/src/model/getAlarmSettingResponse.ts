@@ -6,4 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type PillControllerSearchPillParams = { shape: string; colors: string; mark: string; letters?: string; name?: string };
+export interface GetAlarmSettingResponse {
+  minute: number;
+  hour: number;
+  vip: number[];
+  repeatTime: number;
+  pillName: string;
+}
