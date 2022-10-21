@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
+  NotAcceptableException,
   Param,
   Post,
   Put,
@@ -19,6 +20,8 @@ import { ConfigService } from '@nestjs/config';
 import {
   ApiBody,
   ApiCookieAuth,
+  ApiForbiddenResponse,
+  ApiNotAcceptableResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -109,6 +112,14 @@ export class AuthController {
     description: '회원가입시 회원 검사 성공',
     type: CommonResponseDto,
   })
+  @ApiNotAcceptableResponse({
+    status: 406,
+    description: '이미 존재하는 회원입니다.',
+  })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: '탈퇴한 이력이 존재하는 회원입니다.',
+  })
   @ApiParam({
     name: 'email',
     required: true,
@@ -118,7 +129,7 @@ export class AuthController {
   async checkUser(@Param('email') email: string): Promise<CommonResponseDto> {
     const user: User = await this.authService.getUserByEmail(email);
     if (user) {
-      throw new ForbiddenException('이미 존재하는 회원입니다.');
+      throw new NotAcceptableException('이미 존재하는 회원입니다.');
     }
 
     const deletedUser: User = await this.authService.getUserByEmail(
@@ -141,7 +152,7 @@ export class AuthController {
     description: '탈퇴한 계정을 다시 복원한다.',
   })
   @ApiResponse({
-    status: 2000,
+    status: 200,
     description: '계정 복원 성공',
     type: CommonResponseDto,
   })
@@ -152,11 +163,11 @@ export class AuthController {
   })
   @Put('signup/restore/:email')
   async restoreUser(@Param('email') email: string): Promise<CommonResponseDto> {
-    console.log(email);
-    this.logger.verbose(`User check Success!`);
+    await this.authService.restoreUser(email);
+    this.logger.verbose(`User restore Success!`);
     return {
       statusCode: 200,
-      message: '회원 검사를 성공했습니다.',
+      message: '회원을 복원했습니다.',
     };
   }
 

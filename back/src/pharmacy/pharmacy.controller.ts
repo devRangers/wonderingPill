@@ -5,25 +5,25 @@ import {
   Param,
   Put,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
-import { Pharmacy } from 'prisma/postgresClient';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import {
   PharmacySearchDto,
-  PharmacySearchResponseDto
+  PharmacySearchResponse,
+  PharmacySearchResponseDto,
 } from './dto/pharmacy.search.dto';
 import { PharmacyService } from './pharmacy.service';
-@ApiTags('Pharmacy API')
+@ApiTags('Pharmacies API')
 @Controller('pharmacies')
 export class PharmacyController {
   constructor(private pharmacyService: PharmacyService) {}
@@ -49,9 +49,8 @@ export class PharmacyController {
   async pharmacySearch(
     @Query() pharmacySearchDto: PharmacySearchDto,
   ): Promise<PharmacySearchResponseDto> {
-    const pharmacies: Pharmacy[] = await this.pharmacyService.pharmacySearch(
-      pharmacySearchDto,
-    );
+    const pharmacies: PharmacySearchResponse[] =
+      await this.pharmacyService.pharmacySearch(pharmacySearchDto);
     return {
       statusCode: 200,
       message: '약국 검색을 성공했습니다.',

@@ -30,9 +30,9 @@ export class PharmacyService {
     } catch (error) {
       throw new NotFoundException('검색을 하지 못했습니다.');
     }
-    if (pharmacies === []) {
-      throw new NotFoundException('검색 결과가 존재하지 않습니다.');
-    }
+    // if (pharmacies === []) {
+    //   throw new NotFoundException('검색 결과가 존재하지 않습니다.');
+    // }
     return pharmacies;
   }
 
