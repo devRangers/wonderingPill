@@ -48,10 +48,7 @@ function SearchPharmacy() {
 
   useQuery(
     pharmKeys.searchPharm,
-    () =>
-      Api.get<PharmacyResponse>(
-        `${PHARMACY.SEARCH}?option=${option}&keyword=${keyword}`,
-      ),
+    () => Api.get<PharmacyResponse>(PHARMACY.SEARCH(option, keyword)),
     {
       enabled: !!keyword && isSubmitBtnClicked,
       onSuccess: (data) => {
