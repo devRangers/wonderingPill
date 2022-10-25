@@ -26,6 +26,7 @@ import {
   DeleteAlarmsDto,
   GetAlarmSettingResponse,
   GetAlarmSettingResponseDto,
+  GetAlarmsResponse,
   GetAlarmsResponseDto,
   SetAlarmDto,
 } from './dto';
@@ -156,7 +157,10 @@ export class AlarmsController {
     @GetCurrentUserId() id: string,
     @Param('page') page: number,
   ): Promise<GetAlarmsResponseDto> {
-    const alarms = await this.alarmsService.getAlarms(id, page);
+    const alarms: GetAlarmsResponse[] = await this.alarmsService.getAlarms(
+      id,
+      page,
+    );
     this.logger.log(`GET /:page Success!`);
     return {
       statusCode: 200,
