@@ -1,14 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsString } from 'class-validator';
+import { IsArray, IsJSON, IsString } from 'class-validator';
 import { CommonResponseDto } from 'src/common/dto';
 import { pharmacySearchKeyword } from '../pharmacy-search-keyword.enum';
 
 export class PharmacySearchDto {
-  @ApiProperty()
   @IsString()
   option: pharmacySearchKeyword;
 
-  @ApiProperty()
   @IsString()
   keyword: string;
 }
@@ -31,4 +28,18 @@ export class PharmacySearchResponse {
 export class PharmacySearchResponseDto extends CommonResponseDto {
   @IsJSON()
   pharmacies: PharmacySearchResponse[];
+}
+
+class PharmacyBookMarkId {
+  id: number;
+}
+
+export class pharmacyBookmarkListResponse {
+  @IsArray()
+  PharmacyBookMark: PharmacyBookMarkId[];
+}
+
+export class pharmacyBookmarkListResponseDto extends CommonResponseDto {
+  @IsJSON()
+  lists: pharmacyBookmarkListResponse;
 }

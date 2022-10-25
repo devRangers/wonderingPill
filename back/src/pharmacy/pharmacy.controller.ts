@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiCookieAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -18,6 +19,8 @@ import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import {
+  pharmacyBookmarkListResponse,
+  pharmacyBookmarkListResponseDto,
   PharmacySearchDto,
   PharmacySearchResponse,
   PharmacySearchResponseDto,
@@ -58,9 +61,35 @@ export class PharmacyController {
     };
   }
 
+  @HttpCode(200)
+  @Get('bookmark-list')
+  @UseGuards(AccessGuard)
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  @ApiOperation({
+    summary: '약국 북마크 리스트 조회 API',
+    description: '약국 북마크 리스트를 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '조회 성공',
+    type: pharmacyBookmarkListResponseDto,
+  })
+  async pharmacyBookmarkList(@GetCurrentUserId() id: string) {
+    const lists: pharmacyBookmarkListResponse =
+      await this.pharmacyService.pharmacyBookmarkList(id);
+    return {
+      statusCode: 200,
+      message: '약국 북마크 리스트를 조회했습니다.',
+      lists,
+    };
+  }
+
   @ApiOperation({ summary: '북마크 생성 혹은 삭제' })
   @Put('bookmark/:id')
   @UseGuards(AccessGuard)
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
   @ApiParam({
     name: 'id',
     required: true,
