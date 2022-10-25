@@ -7,7 +7,12 @@ import { User } from 'prisma/mongoClient';
 import { AgendaService } from 'src/infras/agenda/agenda.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { DeleteAlarmsDto, GetAlarmSettingResponse, SetAlarmDto } from './dto';
+import {
+  DeleteAlarmsDto,
+  GetAlarmSettingResponse,
+  GetAlarmsResponse,
+  SetAlarmDto,
+} from './dto';
 
 @Injectable()
 export class AlarmsService {
@@ -120,7 +125,7 @@ export class AlarmsService {
     }
   }
 
-  async getAlarms(id: string, page: number) {
+  async getAlarms(id: string, page: number): Promise<GetAlarmsResponse[]> {
     try {
       const alarms = await this.prismaMongo.reminder.findMany({
         where: { user_id: id },
