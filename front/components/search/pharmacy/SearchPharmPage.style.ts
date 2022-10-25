@@ -126,6 +126,7 @@ export const PharmInfo = styled(
   (props: { $borderColor: string; $isLong: boolean }) => ({
     border: `2px solid ${props.$borderColor}`,
     width: "90%",
+    minHeight: "4rem",
     display: "grid",
     gridTemplateRows: "1fr 1fr",
     gridTemplateColumns: "1.7fr 1fr",
@@ -144,11 +145,13 @@ export const PharmSubInfo = styled("p", {
   color: "#717171",
   padding: "0 5px",
   justifySelf: "end",
+  gridColumnStart: 2,
+  gridRowStart: 2,
 });
 
 export const IconBtn = styled("button", {
   fontSize: "1.2rem",
   gridColumnStart: 2,
-  gridRowStart: 2,
+  gridRowStart: 1,
   justifySelf: "end",
 });
