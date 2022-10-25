@@ -8,7 +8,7 @@ export class FcmService {
       data: {
         title: '[궁금해약] 복용 알림',
         body: `${userName}님! ${pillName} 약을 먹을 시간입니다!`,
-        icon: 'https://storage.cloud.google.com/wonderingpill-bucket/%EA%B6%81%EA%B8%88%ED%95%B4%EC%95%BD.png',
+        icon: 'https://storage.cloud.google.com/wonderingpill-bucket/logo.png',
       },
       token: deviceToken,
     };
