@@ -70,8 +70,8 @@ export const ProfileContainer = styled("div", {
 export const ProfileImageContainer = styled("div", {
   position: "relative",
   borderRadius: "50px",
-  width: "90%",
-  height: "90%",
+  width: "5.5rem",
+  height: "5.5rem",
   overflow: "hidden",
   margin: "auto",
 });
