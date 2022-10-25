@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { GetAlarmsResponse } from './getAlarmsResponse';
+import type { DeleteUserResponse } from './deleteUserResponse';
 
-export interface GetAlarmsResponseDto {
+export interface DeleteUserResponseDto {
   statusCode: number;
   message: string;
-  alarms: GetAlarmsResponse[];
+  result: DeleteUserResponse;
 }
