@@ -8,6 +8,7 @@ import { useMutation } from "react-query";
 import * as Api from "@api";
 import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
+import { GetAlarmSettingResponse as MessageTypes } from "@modelTypes/getAlarmSettingResponse";
 import {
   MAIN_COLOR,
   SEMI_ACCENT_COLOR,
@@ -36,13 +37,7 @@ import RemindForm from "./RemindForm";
 
 export interface SetNotificationPageProps {
   bookmarkId: string;
-  setting: {
-    minute: number;
-    hour: number;
-    vip: number[];
-    repeatTime: number;
-    pillName: string;
-  };
+  setting: MessageTypes;
 }
 
 function SetNotificationPageComp({

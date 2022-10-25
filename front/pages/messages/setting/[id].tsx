@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
-import { GetAlarmSetResponseDto as GetAlarmResponse } from "@modelTypes/getAlarmSetResponseDto";
+import { GetAlarmSettingResponseDto as MessageResponse } from "@modelTypes/getAlarmSettingResponseDto";
 import { ROUTE } from "@utils/constant";
 import { ALARMS } from "@utils/endpoint";
 import SetNotificationPageComp, {
@@ -43,18 +43,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const { alarm }: GetAlarmResponse = await res.json();
+  const { alarm }: MessageResponse = await res.json();
 
   return {
     props: {
       bookmarkId,
-      setting: {
-        minute: typeof alarm.minute === "number" ? alarm.minute : 0,
-        hour: typeof alarm.hour === "number" ? alarm.hour : 0,
-        vip: typeof alarm.vip === "object" ? alarm.vip : [],
-        repeatTime: typeof alarm.repeatTime === "number" ? alarm.repeatTime : 0,
-        pillName: typeof alarm.pillName === "string" ? alarm.pillName : "",
-      },
+      setting: alarm,
     },
   };
 };
