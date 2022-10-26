@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { GetAlarmsResponse } from './getAlarmsResponse';
+import type { PharmacySearchResponse } from './pharmacySearchResponse';
 
-export interface GetAlarmsResponseDto {
+export interface PharmacySearchResponseDto {
   statusCode: number;
   message: string;
-  alarms: GetAlarmsResponse[];
+  pharmacies: PharmacySearchResponse[];
 }

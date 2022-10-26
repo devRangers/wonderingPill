@@ -62,22 +62,18 @@ export class GetAlarmSettingResponseDto extends CommonResponseDto {
 }
 /** -------------- */
 
-/** 알림 설정 내역 조회 */
-// export class GetAlarmsResponse {
-//   id: string;
-//   user_name: string;
-//   pill_name: string;
-//   time: string;
-// }
-
 export class GetAlarmsResponseDto extends CommonResponseDto {
   @IsJSON()
-  alarms: {
-    id: string;
-    user_name: string;
-    pill_name: string;
-    time: string;
-  }[];
+  alarms: GetAlarmsResponse[];
+}
+
+export class GetAlarmsResponse {
+  id: string;
+  user_name: string;
+  pill_name: string;
+  time: string;
+  check: boolean;
+  pillBookmarkId: string;
 }
 
 export class DeleteAlarmsDto {

@@ -6,6 +6,11 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface DeleteUserResponse {
-  result: boolean;
+export interface GetAlarmsResponse {
+  id: string;
+  user_name: string;
+  pill_name: string;
+  time: string;
+  check: boolean;
+  pillBookmarkId: string;
 }

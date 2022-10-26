@@ -14,7 +14,7 @@ export const HeaderContainer = styled(
     gridTemplateColumns: "1fr 1fr 1fr",
     justifyItems: "start",
     alignItems: "center",
-    zIndex: "1",
+    zIndex: 3,
   }),
 );
 
@@ -29,7 +29,7 @@ export const ImageWrapper = styled("div", {
 export const HamburgerBtn = styled("button", {
   fontSize: "2rem",
   color: "#fff",
-  zIndex: "1",
+  zIndex: 3,
 });
 
 export const BellBtn = styled("button", {
@@ -48,6 +48,6 @@ export const HeaderEmptyBox = styled(
   "header",
   (props: { $height: string }) => ({
     width: "100vw",
-    height: props.$height,
+    minHeight: props.$height,
   }),
 );

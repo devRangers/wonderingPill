@@ -6,6 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface DeleteUserResponse {
-  result: boolean;
-}
+export type AuthControllerCheckTokenForSignupParams = { token: unknown; id: unknown };

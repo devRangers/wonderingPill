@@ -7,7 +7,12 @@ import { User } from 'prisma/mongoClient';
 import { AgendaService } from 'src/infras/agenda/agenda.service';
 import { PrismaMongoService } from 'src/prisma/prisma-mongo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { DeleteAlarmsDto, GetAlarmSettingResponse, SetAlarmDto } from './dto';
+import {
+  DeleteAlarmsDto,
+  GetAlarmSettingResponse,
+  GetAlarmsResponse,
+  SetAlarmDto,
+} from './dto';
 
 @Injectable()
 export class AlarmsService {
@@ -108,7 +113,19 @@ export class AlarmsService {
     return await this.agnedaService.getAgenda(id, pillBookmarkId, pillName);
   }
 
-  async getAlarms(id: string, page: number) {
+  async getPillName(id: string) {
+    try {
+      const bookmark = await this.prisma.pillBookMark.findUnique({
+        where: { id },
+        select: { Pill: { select: { name: true } } },
+      });
+      return bookmark.Pill.name;
+    } catch (error) {
+      throw new NotFoundException('약을 조회하지 못했습니다.');
+    }
+  }
+
+  async getAlarms(id: string, page: number): Promise<GetAlarmsResponse[]> {
     try {
       const alarms = await this.prismaMongo.reminder.findMany({
         where: { user_id: id },
@@ -153,18 +170,6 @@ export class AlarmsService {
       });
     } catch (error) {
       throw new NotFoundException('알림을 삭제하지 못했습니다.');
-    }
-  }
-
-  async getPillName(id: string) {
-    try {
-      const bookmark = await this.prisma.pillBookMark.findUnique({
-        where: { id },
-        select: { Pill: { select: { name: true } } },
-      });
-      return bookmark.Pill.name;
-    } catch (error) {
-      throw new NotFoundException('약을 조회하지 못했습니다.');
     }
   }
 }
