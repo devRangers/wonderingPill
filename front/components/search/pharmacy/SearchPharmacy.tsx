@@ -2,7 +2,8 @@ import { useState } from "react";
 import * as Api from "@api";
 import { useQuery } from "react-query";
 import { pharmKeys } from "@utils/queryKey";
-import { PharmacyResponse as PharmacyType } from "@modelTypes/pharmacyResponse";
+import { PharmacySearchResponseDto as PharmacyResponse } from "@modelTypes/pharmacySearchResponseDto";
+import { PharmacySearchResponse as PharmacyType } from "@modelTypes/pharmacySearchResponse";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
   FOOTER_HEIGHT,
@@ -30,12 +31,6 @@ import {
 import KakaoMap from "./KakaoMap";
 import PharmList from "./PharmList";
 import { PHARMACY } from "@utils/endpoint";
-
-interface PharmacyResponse {
-  statusCode: number;
-  message: string;
-  pharmacies: PharmacyType[];
-}
 
 function SearchPharmacy() {
   const isWide = isWideDevice();
