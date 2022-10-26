@@ -16,4 +16,21 @@ module.exports = withPWA({
   images: {
     domains: ["storage.googleapis.com", "storage.cloud.google.com"],
   },
+  async redirects() {
+    return [
+      ...["/account/:path*", "/login/:path*", "/register/:path*"].map(
+        (source) => ({
+          source,
+          has: [
+            {
+              type: "cookie",
+              key: "AccessToken",
+            },
+          ],
+          permanent: false,
+          destination: "/",
+        }),
+      ),
+    ];
+  },
 });
