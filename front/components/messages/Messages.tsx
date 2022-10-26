@@ -6,6 +6,7 @@ import {
   GREEN_COLOR,
   ROUTE,
 } from "@utils/constant";
+import { GetAlarmsResponse as MessageValues } from "@modelTypes/getAlarmsResponse";
 import { AiOutlineCheck } from "react-icons/ai";
 import {
   List,
@@ -16,16 +17,6 @@ import {
   CheckBtnText,
   Time,
 } from "./MessagesPage.style";
-
-export interface MessageValues {
-  id: string;
-  user_id: string;
-  user_name: string;
-  pill_name: string;
-  time: string;
-  check: boolean;
-  pillBookmarkId: string;
-}
 
 interface MessagesProps {
   message: MessageValues;

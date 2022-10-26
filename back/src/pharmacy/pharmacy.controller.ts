@@ -5,25 +5,28 @@ import {
   Param,
   Put,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiCookieAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
-import { Pharmacy } from 'prisma/postgresClient';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
 import {
+  pharmacyBookmarkListResponse,
+  pharmacyBookmarkListResponseDto,
   PharmacySearchDto,
-  PharmacySearchResponseDto
+  PharmacySearchResponse,
+  PharmacySearchResponseDto,
 } from './dto/pharmacy.search.dto';
 import { PharmacyService } from './pharmacy.service';
-@ApiTags('Pharmacy API')
+@ApiTags('Pharmacies API')
 @Controller('pharmacies')
 export class PharmacyController {
   constructor(private pharmacyService: PharmacyService) {}
@@ -49,9 +52,8 @@ export class PharmacyController {
   async pharmacySearch(
     @Query() pharmacySearchDto: PharmacySearchDto,
   ): Promise<PharmacySearchResponseDto> {
-    const pharmacies: Pharmacy[] = await this.pharmacyService.pharmacySearch(
-      pharmacySearchDto,
-    );
+    const pharmacies: PharmacySearchResponse[] =
+      await this.pharmacyService.pharmacySearch(pharmacySearchDto);
     return {
       statusCode: 200,
       message: '약국 검색을 성공했습니다.',
@@ -59,9 +61,35 @@ export class PharmacyController {
     };
   }
 
+  @HttpCode(200)
+  @Get('bookmark-list')
+  @UseGuards(AccessGuard)
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  @ApiOperation({
+    summary: '약국 북마크 리스트 조회 API',
+    description: '약국 북마크 리스트를 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '조회 성공',
+    type: pharmacyBookmarkListResponseDto,
+  })
+  async pharmacyBookmarkList(@GetCurrentUserId() id: string) {
+    const lists: pharmacyBookmarkListResponse =
+      await this.pharmacyService.pharmacyBookmarkList(id);
+    return {
+      statusCode: 200,
+      message: '약국 북마크 리스트를 조회했습니다.',
+      lists,
+    };
+  }
+
   @ApiOperation({ summary: '북마크 생성 혹은 삭제' })
   @Put('bookmark/:id')
   @UseGuards(AccessGuard)
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
   @ApiParam({
     name: 'id',
     required: true,

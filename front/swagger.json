@@ -50,7 +50,9 @@
                 "schema": { "$ref": "#/components/schemas/CommonResponseDto" }
               }
             }
-          }
+          },
+          "403": { "description": "탈퇴한 이력이 존재하는 회원입니다." },
+          "406": { "description": "이미 존재하는 회원입니다." }
         },
         "tags": ["Auth API"]
       }
@@ -71,14 +73,6 @@
         ],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/CommonResponseDto" }
-              }
-            }
-          },
-          "2000": {
             "description": "계정 복원 성공",
             "content": {
               "application/json": {
@@ -355,8 +349,6 @@
     "/api/v1/auth/google-redirect": {
       "get": {
         "operationId": "AuthController_googleLogin",
-        "summary": "",
-        "description": "",
         "parameters": [],
         "responses": { "200": { "description": "" } },
         "tags": ["Auth API"]
@@ -816,14 +808,35 @@
             }
           }
         },
-        "tags": ["Pharmacy API"]
+        "tags": ["Pharmacies API"]
+      }
+    },
+    "/api/v1/pharmacies/bookmark-list": {
+      "get": {
+        "operationId": "PharmacyController_pharmacyBookmarkList",
+        "summary": "약국 북마크 리스트 조회 API",
+        "description": "약국 북마크 리스트를 조회한다.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pharmacyBookmarkListResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pharmacies API"],
+        "security": [{ "refreshToken": [] }, { "accessToken": [] }]
       }
     },
     "/api/v1/pharmacies/bookmark/{id}": {
       "put": {
         "operationId": "PharmacyController_createBookmark",
         "summary": "북마크 생성 혹은 삭제",
-        "description": "",
         "parameters": [
           {
             "name": "id",
@@ -843,7 +856,8 @@
             }
           }
         },
-        "tags": ["Pharmacy API"]
+        "tags": ["Pharmacies API"],
+        "security": [{ "refreshToken": [] }, { "accessToken": [] }]
       }
     },
     "/api/v1/pills/search": {
@@ -1237,12 +1251,34 @@
         },
         "required": ["statusCode", "message", "alarm"]
       },
+      "GetAlarmsResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "user_name": { "type": "string" },
+          "pill_name": { "type": "string" },
+          "time": { "type": "string" },
+          "check": { "type": "boolean" },
+          "pillBookmarkId": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "user_name",
+          "pill_name",
+          "time",
+          "check",
+          "pillBookmarkId"
+        ]
+      },
       "GetAlarmsResponseDto": {
         "type": "object",
         "properties": {
           "statusCode": { "type": "number" },
           "message": { "type": "string" },
-          "alarms": { "type": "array", "items": { "type": "string" } }
+          "alarms": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GetAlarmsResponse" }
+          }
         },
         "required": ["statusCode", "message", "alarms"]
       },
@@ -1253,14 +1289,74 @@
         },
         "required": ["ids"]
       },
+      "PharmacySearchResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "name": { "type": "string" },
+          "phone": { "type": "string" },
+          "address": { "type": "string" },
+          "monday": { "type": "string" },
+          "tuesday": { "type": "string" },
+          "wednesday": { "type": "string" },
+          "thursday": { "type": "string" },
+          "friday": { "type": "string" },
+          "saturday": { "type": "string" },
+          "sunday": { "type": "string" },
+          "holiday": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "address",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+          "holiday"
+        ]
+      },
       "PharmacySearchResponseDto": {
         "type": "object",
         "properties": {
           "statusCode": { "type": "number" },
           "message": { "type": "string" },
-          "pharmacies": { "type": "array", "items": { "type": "object" } }
+          "pharmacies": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PharmacySearchResponse" }
+          }
         },
         "required": ["statusCode", "message", "pharmacies"]
+      },
+      "PharmacyBookMarkId": {
+        "type": "object",
+        "properties": { "id": { "type": "number" } },
+        "required": ["id"]
+      },
+      "pharmacyBookmarkListResponse": {
+        "type": "object",
+        "properties": {
+          "PharmacyBookMark": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PharmacyBookMarkId" }
+          }
+        },
+        "required": ["PharmacyBookMark"]
+      },
+      "pharmacyBookmarkListResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number" },
+          "message": { "type": "string" },
+          "lists": {
+            "$ref": "#/components/schemas/pharmacyBookmarkListResponse"
+          }
+        },
+        "required": ["statusCode", "message", "lists"]
       },
       "pillSearchResponseDto": {
         "type": "object",

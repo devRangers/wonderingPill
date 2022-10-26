@@ -6,10 +6,11 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GetAlarmSetResponseDtoAlarm = {
-  minute?: number;
-  hour?: number;
-  vip?: number[];
-  repeatTime?: number;
-  pillName?: string;
-};
+export interface GetAlarmsResponse {
+  id: string;
+  user_name: string;
+  pill_name: string;
+  time: string;
+  check: boolean;
+  pillBookmarkId: string;
+}

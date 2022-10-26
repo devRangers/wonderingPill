@@ -6,29 +6,17 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface PharmacyResponse {
-  /** 고유 ID */
+export interface PharmacySearchResponse {
   id: number;
-  /** 이름 */
   name: string;
-  /** 번호 */
   phone: string;
-  /** 주소 */
   address: string;
-  /** 월요일 */
   monday: string;
-  /** 화요일 */
   tuesday: string;
-  /** 수요일 */
   wednesday: string;
-  /** 목요일 */
   thursday: string;
-  /** 금요일 */
   friday: string;
-  /** 토요일 */
   saturday: string;
-  /** 일요일 */
   sunday: string;
-  /** 공휴일 */
   holiday: string;
 }
