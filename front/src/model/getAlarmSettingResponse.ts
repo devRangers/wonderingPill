@@ -6,7 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GetSignedUrlResponseResult = {
-  url?: string;
-  fileName?: string;
-};
+export interface GetAlarmSettingResponse {
+  minute: number;
+  hour: number;
+  vip: number[];
+  repeatTime: number;
+  pillName: string;
+}

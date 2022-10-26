@@ -6,7 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface PharmacyCountResponse {
-  /** 검색 개수 */
-  count: number;
-}
+export type GetMypageResponsePillBookMark = { [key: string]: any };

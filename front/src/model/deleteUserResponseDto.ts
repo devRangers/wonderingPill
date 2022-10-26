@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { GetSignedUrlResponseResult } from './getSignedUrlResponseResult';
+import type { DeleteUserResponse } from './deleteUserResponse';
 
-export interface GetSignedUrlResponse {
+export interface DeleteUserResponseDto {
   statusCode: number;
   message: string;
-  result: GetSignedUrlResponseResult;
+  result: DeleteUserResponse;
 }

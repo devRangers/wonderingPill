@@ -5,5 +5,8 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
+import type { PharmacyBookMarkId } from './pharmacyBookMarkId';
 
-export type AuthControllerSignupUser201 = { [key: string]: any };
+export interface PharmacyBookmarkListResponse {
+  PharmacyBookMark: PharmacyBookMarkId[];
+}

@@ -15,9 +15,11 @@ export const Background = styled("div", (props: { $isOpen: boolean }) => ({
 
 export const ModalContainer = styled(
   "div",
-  (props: { $isOpen: boolean; $isInfoPage?: boolean }) => ({
+  (props: { $isOpen: boolean; $isWide: boolean; $isInfoPage?: boolean }) => ({
     position: "fixed",
-    width: props.$isInfoPage ? "60vw" : "85vw",
+    width: props.$isWide ? "60vw" : "85vw",
+    height: props.$isInfoPage ? "80vh" : "",
+    overflowY: props.$isInfoPage ? "scroll" : "",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",

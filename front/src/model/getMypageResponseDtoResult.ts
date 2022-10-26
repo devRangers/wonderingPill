@@ -5,5 +5,8 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
+import type { GetMypageResponse } from './getMypageResponse';
 
-export type GetUserResponseResultUser = { [key: string]: any };
+export type GetMypageResponseDtoResult = {
+  user?: GetMypageResponse;
+};

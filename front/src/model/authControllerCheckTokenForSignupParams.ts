@@ -6,10 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GetAlarmSetResponseDtoAlarm = {
-  minute?: number;
-  hour?: number;
-  vip?: number[];
-  repeatTime?: number;
-  pillName?: string;
-};
+export type AuthControllerCheckTokenForSignupParams = { token: unknown; id: unknown };
