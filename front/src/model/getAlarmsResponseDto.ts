@@ -5,9 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
+import type { GetAlarmsResponse } from './getAlarmsResponse';
 
 export interface GetAlarmsResponseDto {
   statusCode: number;
   message: string;
-  alarms: string[];
+  alarms: GetAlarmsResponse[];
 }

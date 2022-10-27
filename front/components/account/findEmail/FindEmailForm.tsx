@@ -6,6 +6,7 @@ import { useMutation } from "react-query";
 import * as Api from "@api";
 import { FindAccountResponse } from "@modelTypes/findAccountResponse";
 import { FindAccountDto as FindAccountValues } from "@modelTypes/findAccountDto";
+import { AUTH } from "@utils/endpoint";
 import {
   ERROR_MSG_COLOR,
   SUB_COLOR,
@@ -30,6 +31,7 @@ import {
 } from "./FindEmailForm.style";
 import Modal from "@modal/Modal";
 import AuthForm from "./AuthForm";
+import { toast } from "react-toastify";
 
 interface FindEmailValues {
   name: string;
@@ -55,13 +57,13 @@ function FindEmailForm() {
 
   const findEmailMutation = useMutation(
     (data: FindAccountValues) =>
-      Api.post<FindAccountResponse, FindAccountValues>("/auth/send-sms", data),
+      Api.post<FindAccountResponse, FindAccountValues>(AUTH.SEND_SMS, data),
     {
       onSuccess: () => {
         setAuthModalOpen(true);
       },
-      onError: (err) => {
-        console.log(err);
+      onError: ({ message }) => {
+        toast.error(message);
       },
     },
   );

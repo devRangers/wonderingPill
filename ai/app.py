@@ -9,9 +9,16 @@ load_dotenv()
 REDIS_HOST=os.environ.get('REDIS_HOST')
 REDIS_PORT=os.environ.get('REDIS_PORT')
 REDIS_PASSWORD=os.environ.get('REDIS_PASSWORD')
+REDIS_URL=os.environ.get('REDIS_URL')
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+
+if os.environ["FLASK_DEBUG"] == "production":
+    CLIENT_URL = os.environ.get("PROD_CLIENT_URL")
+elif os.environ["FLASK_DEBUG"] == "development":
+    CLIENT_URL = os.environ.get("DEV_CLIENT_URL")
+
+CORS(app, supports_credentials=True, origins=[CLIENT_URL, REDIS_URL])
 app.config["REDIS_URL"] = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}" 
 app.register_blueprint(sse, url_prefix='/classify')
 

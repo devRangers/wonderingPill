@@ -4,7 +4,7 @@ export const MainContainer = styled(
   "div",
   (props: { $bgColor: string; $fullHeight: string }) => ({
     width: "100vw",
-    height: `calc(${props.$fullHeight})`,
+    minHeight: `calc(${props.$fullHeight})`,
     display: "grid",
     gridTemplateRows: "1fr 3fr 5fr",
     backgroundColor: props.$bgColor,

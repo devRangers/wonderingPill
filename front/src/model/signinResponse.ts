@@ -8,7 +8,7 @@
 import type { SigninResponseUser } from './signinResponseUser';
 
 export interface SigninResponse {
-  user: SigninResponseUser;
   statusCode: number;
   message: string;
+  user: SigninResponseUser;
 }

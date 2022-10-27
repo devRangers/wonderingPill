@@ -24,6 +24,7 @@ import {
 } from "@utils/constant";
 import Header from "@header/Header";
 import Footer from "@footer/Footer";
+import { AUTH } from "@utils/endpoint";
 import { ToastContainer } from "react-toastify";
 import { CookiesProvider } from "react-cookie";
 
@@ -71,7 +72,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function getUsers() {
       try {
-        await Api.get<RefreshResponse>("/auth/refresh");
+        await Api.get<RefreshResponse>(AUTH.REFRESH);
         const { user } = await Api.get<CurrentUserResponse>("/auth/current");
         setUser(user);
       } catch (err) {}
@@ -83,7 +84,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const timer = setInterval(async () => {
       try {
-        await Api.get<RefreshResponse>("/auth/refresh");
+        await Api.get<RefreshResponse>(AUTH.REFRESH);
       } catch (err) {}
     }, SILENT_REFRESH_TIME);
 

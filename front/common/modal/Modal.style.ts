@@ -13,24 +13,29 @@ export const Background = styled("div", (props: { $isOpen: boolean }) => ({
   transition: "visibility 0.15s ease-out",
 }));
 
-export const ModalContainer = styled("div", (props: { $isOpen: boolean }) => ({
-  position: "fixed",
-  width: "85vw",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  backgroundColor: "#fff",
-  zIndex: 3,
-  visibility: props.$isOpen ? "visible" : "hidden",
-  transition: "visibility 0.15s ease-out",
-  animationDuration: "0.2s",
-  animationTimingFunction: "ease-out",
-  animationName: {
-    from: {
-      opacity: 0,
+export const ModalContainer = styled(
+  "div",
+  (props: { $isOpen: boolean; $isWide: boolean; $isInfoPage?: boolean }) => ({
+    position: "fixed",
+    width: props.$isWide ? "60vw" : "85vw",
+    height: props.$isInfoPage ? "80vh" : "",
+    overflowY: props.$isInfoPage ? "scroll" : "",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "#fff",
+    zIndex: 3,
+    visibility: props.$isOpen ? "visible" : "hidden",
+    transition: "visibility 0.15s ease-out",
+    animationDuration: "0.2s",
+    animationTimingFunction: "ease-out",
+    animationName: {
+      from: {
+        opacity: 0,
+      },
+      to: {
+        opacity: 1,
+      },
     },
-    to: {
-      opacity: 1,
-    },
-  },
-}));
+  }),
+);

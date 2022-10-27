@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import { useState } from "react";
 import * as Api from "@api";
 import { useQuery } from "react-query";
+import { pharmKeys } from "@utils/queryKey";
 import { PharmacyResponse as PharmacyType } from "@modelTypes/pharmacyResponse";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
@@ -10,6 +11,9 @@ import {
   HEADER_HEIGHT,
   MAIN_COLOR,
   BOX_COLOR,
+  GREEN_COLOR,
+  YELLOW_COLOR,
+  RED_COLOR,
 } from "@utils/constant";
 import {
   PageContainer,
@@ -26,6 +30,7 @@ import {
 } from "@searchPharmComp/SearchPharmPage.style";
 import KakaoMap from "@searchPharmComp/KakaoMap";
 import PharmList from "@searchPharmComp/PharmList";
+import { PHARMACY } from "@utils/endpoint";
 
 interface PharmacyResponse {
   statusCode: number;
@@ -43,8 +48,8 @@ const SearchPharmPage: NextPage = () => {
   const [pharmList, setPharmList] = useState<PharmacyType[]>([]);
 
   useQuery(
-    "searchPharm",
-    () => Api.get<PharmacyResponse>(`/pharmacy/search?${option}=${keyword}`),
+    pharmKeys.searchPharm,
+    () => Api.get<PharmacyResponse>(`${PHARMACY.SEARCH}?${option}=${keyword}`),
     {
       enabled: !!keyword && isSubmitBtnClicked,
       onSuccess: (data) => {
@@ -93,9 +98,9 @@ const SearchPharmPage: NextPage = () => {
       </SearchPharmContainer>
       <PharmListBox $bgColor={MAIN_COLOR}>
         <PharmListBoxHeader $isWide={isWide}>
-          <Dot $bgColor="#FB4646" />
-          <Dot $bgColor="#FEB024" />
-          <Dot $bgColor="#28C131" />
+          <Dot $bgColor={RED_COLOR} />
+          <Dot $bgColor={YELLOW_COLOR} />
+          <Dot $bgColor={GREEN_COLOR} />
         </PharmListBoxHeader>
         <PharmListBoxBody>
           {pharmList.length > 0 && <PharmList pharmList={pharmList} />}
