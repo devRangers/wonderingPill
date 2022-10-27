@@ -19,4 +19,5 @@ export const findEmailKeys = {
  */
 export const pharmKeys = {
   searchPharm: ["searchPharm"] as const,
+  getBookmarkId: ["getBookmarkId"] as const,
 };

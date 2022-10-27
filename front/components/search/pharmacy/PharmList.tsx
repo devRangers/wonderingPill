@@ -7,8 +7,13 @@ import { useStyletron } from "styletron-react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useQuery, useMutation } from "react-query";
 import * as Api from "@api";
-import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
+import { pharmKeys } from "@utils/queryKey";
+import { PHARMACY } from "@utils/endpoint";
+import { PharmacySearchResponse as PharmacyValues } from "@modelTypes/pharmacySearchResponse";
+import { PharmacyBookmarkListResponseDto as BookmarkResponse } from "@modelTypes/pharmacyBookmarkListResponseDto";
 import { MAIN_COLOR } from "@utils/constant";
+import { useAtom } from "jotai";
+import { userAtom } from "@atom/userAtom";
 import {
   PharmInfoContainer,
   PharmInfo,
@@ -20,10 +25,10 @@ import Modal from "@modal/Modal";
 import PharmInfoModal from "./PharmInfoModal";
 
 interface PharmListProps {
-  pharmList: PharmacyResponse[];
+  pharmList: PharmacyValues[];
 }
 
-const initialInfoValues: PharmacyResponse = {
+const initialInfoValues: PharmacyValues = {
   id: 0,
   name: "",
   phone: "",
@@ -53,13 +58,25 @@ const settings = {
 function PharmList({ pharmList }: PharmListProps) {
   const [css] = useStyletron();
   const temp = useMediaQuery({ query: "(min-height : 800px)" });
+  const [user] = useAtom(userAtom);
 
   const [isLong, setIsLong] = useState(false);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [selectedPharmInfo, setSelectedPharmInfo] =
-    useState<PharmacyResponse>(initialInfoValues);
+    useState<PharmacyValues>(initialInfoValues);
+  const [bookmarkList, setBookmarkList] = useState<number[]>([]);
 
-  const selectPharmHandler = (info: PharmacyResponse) => {
+  useQuery(
+    pharmKeys.getBookmarkId,
+    () => Api.get<BookmarkResponse>(PHARMACY.BOOKMARKLIST),
+    {
+      onSuccess: ({ lists }) => {
+        setBookmarkList(lists.PharmacyBookMark.map((item) => item.Pharmacy.id));
+      },
+    },
+  );
+
+  const selectPharmHandler = (info: PharmacyValues) => {
     setSelectedPharmInfo(info);
     setInfoModalOpen(true);
   };
@@ -82,7 +99,15 @@ function PharmList({ pharmList }: PharmListProps) {
                 <PharmName onClick={() => selectPharmHandler(item)}>
                   {item.name}
                 </PharmName>
-                <IconBtn></IconBtn>
+                {user.id && (
+                  <IconBtn>
+                    {bookmarkList.includes(item.id) ? (
+                      <AiFillHeart />
+                    ) : (
+                      <AiOutlineHeart />
+                    )}
+                  </IconBtn>
+                )}
                 <PharmSubInfo>{item.phone}</PharmSubInfo>
               </PharmInfo>
             </div>
