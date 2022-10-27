@@ -34,9 +34,13 @@ class PharmacyBookMarkId {
   id: number;
 }
 
+class PharmacyID {
+  Pharmacy: PharmacyBookMarkId;
+}
+
 export class pharmacyBookmarkListResponse {
   @IsArray()
-  PharmacyBookMark: PharmacyBookMarkId[];
+  PharmacyBookMark: PharmacyID[];
 }
 
 export class pharmacyBookmarkListResponseDto extends CommonResponseDto {
