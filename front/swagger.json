@@ -1337,12 +1337,19 @@
         "properties": { "id": { "type": "number" } },
         "required": ["id"]
       },
+      "PharmacyID": {
+        "type": "object",
+        "properties": {
+          "Pharmacy": { "$ref": "#/components/schemas/PharmacyBookMarkId" }
+        },
+        "required": ["Pharmacy"]
+      },
       "pharmacyBookmarkListResponse": {
         "type": "object",
         "properties": {
           "PharmacyBookMark": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/PharmacyBookMarkId" }
+            "items": { "$ref": "#/components/schemas/PharmacyID" }
           }
         },
         "required": ["PharmacyBookMark"]
