@@ -58,7 +58,11 @@ export class PharmacyService {
       const pharmacyBookmarks: pharmacyBookmarkListResponse[] =
         await this.prisma.user.findMany({
           where: { id },
-          select: { PharmacyBookMark: { select: { id: true } } },
+          select: {
+            PharmacyBookMark: {
+              select: { Pharmacy: { select: { id: true } } },
+            },
+          },
         });
       const lists = pharmacyBookmarks[0];
       return lists;

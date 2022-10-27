@@ -75,7 +75,9 @@ export class PharmacyController {
     description: '조회 성공',
     type: pharmacyBookmarkListResponseDto,
   })
-  async pharmacyBookmarkList(@GetCurrentUserId() id: string) {
+  async pharmacyBookmarkList(
+    @GetCurrentUserId() id: string,
+  ): Promise<pharmacyBookmarkListResponseDto> {
     const lists: pharmacyBookmarkListResponse =
       await this.pharmacyService.pharmacyBookmarkList(id);
     return {
