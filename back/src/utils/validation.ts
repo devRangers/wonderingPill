@@ -30,6 +30,7 @@ export const validation: Joi.Schema = Joi.object({
   SMS_DOMAIN: Joi.string().required(),
   SENDER_PHONE: Joi.string().required(),
   GCS_KEY_FILE: Joi.string().required(), // GCS
+  GCS_BUCKET_URL: Joi.string().required(),
   FIREBASE_KEY_FILE: Joi.string().required(), // FIREBASE
   PILL_DOMAIN: Joi.string().required(), // PILL API
   PILL_KEY: Joi.string().required(),
