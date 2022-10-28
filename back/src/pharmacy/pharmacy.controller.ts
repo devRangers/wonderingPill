@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  Logger,
   Param,
   Put,
   Query,
@@ -18,6 +19,7 @@ import {
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
+import { prefixConstant } from 'src/utils/prefix.constant';
 import {
   pharmacyBookmarkListResponse,
   pharmacyBookmarkListResponseDto,
@@ -29,6 +31,7 @@ import { PharmacyService } from './pharmacy.service';
 @ApiTags('Pharmacies API')
 @Controller('pharmacies')
 export class PharmacyController {
+  private readonly logger = new Logger(`${prefixConstant}/pharmacies`);
   constructor(private pharmacyService: PharmacyService) {}
 
   @HttpCode(200)
@@ -54,6 +57,7 @@ export class PharmacyController {
   ): Promise<PharmacySearchResponseDto> {
     const pharmacies: PharmacySearchResponse[] =
       await this.pharmacyService.pharmacySearch(pharmacySearchDto);
+    this.logger.log(`GET /search Success!`);
     return {
       statusCode: 200,
       message: '약국 검색을 성공했습니다.',
@@ -80,6 +84,7 @@ export class PharmacyController {
   ): Promise<pharmacyBookmarkListResponseDto> {
     const lists: pharmacyBookmarkListResponse =
       await this.pharmacyService.pharmacyBookmarkList(id);
+    this.logger.log(`GET /bookmark-list Success!`);
     return {
       statusCode: 200,
       message: '약국 북마크 리스트를 조회했습니다.',
@@ -108,6 +113,7 @@ export class PharmacyController {
     @Param('id') pharmacyId: number,
   ): Promise<CommonResponseDto> {
     await this.pharmacyService.pharmacyBookmark(id, pharmacyId);
+    this.logger.log(`PUT /bookmark/:id Success!`);
     return { statusCode: 200, message: '약국 북마크를 성공했습니다.' };
   }
 }

@@ -21,6 +21,7 @@ import {
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
+import { prefixConstant } from 'src/utils/prefix.constant';
 import {
   pillResultResponseDto,
   pillSearchDto,
@@ -31,7 +32,7 @@ import { PillService } from './pill.service';
 @ApiTags('Pills API')
 @Controller('pills')
 export class PillController {
-  private readonly logger = new Logger(`AlarmsController`);
+  private readonly logger = new Logger(`${prefixConstant}/pills`);
   constructor(private readonly pillService: PillService) {}
 
   @HttpCode(200)
@@ -72,7 +73,7 @@ export class PillController {
   })
   async searchPill(@Query() query: pillSearchDto) {
     const pills = await this.pillService.searchPill({ query });
-    this.logger.verbose(`Searching Pills Success`);
+    this.logger.log(`GET /search Success!`);
     return {
       statusCode: 200,
       message: '약 검색 결과를 성공적으로 가져왔습니다.',
@@ -98,6 +99,7 @@ export class PillController {
     @Param('id', ParseIntPipe) pill_id: number,
   ): Promise<CommonResponseDto> {
     await this.pillService.bookmarkPill(id, pill_id);
+    this.logger.log(`PUT /bookmark/:id Success!`);
     return {
       statusCode: 200,
       message: '북마크 설정을 완료했습니다.',
@@ -124,7 +126,7 @@ export class PillController {
     @Param('name', ValidationPipe) name: string,
   ): Promise<pillResultResponseDto> {
     const result = await this.pillService.resultPill(name);
-    this.logger.verbose(`get Pill Detail Success`);
+    this.logger.log(`GET /result/:name Success!`);
     return {
       statusCode: 200,
       message: '약 검색 결과를 성공적으로 가져왔습니다.',
