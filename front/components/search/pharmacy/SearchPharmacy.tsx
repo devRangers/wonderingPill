@@ -3,7 +3,7 @@ import * as Api from "@api";
 import { useQuery } from "react-query";
 import { pharmKeys } from "@utils/queryKey";
 import { PharmacySearchResponseDto as PharmacyResponse } from "@modelTypes/pharmacySearchResponseDto";
-import { PharmacySearchResponse as PharmacyType } from "@modelTypes/pharmacySearchResponse";
+import { PharmacySearchResponse as PharmacyValues } from "@modelTypes/pharmacySearchResponse";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
   FOOTER_HEIGHT,
@@ -39,7 +39,7 @@ function SearchPharmacy() {
   const [inputText, setInputText] = useState("");
   const [keyword, setKeyword] = useState("");
   const [isSubmitBtnClicked, setIsSubmitBtnClicked] = useState(false);
-  const [pharmList, setPharmList] = useState<PharmacyType[]>([]);
+  const [pharmList, setPharmList] = useState<PharmacyValues[]>([]);
 
   useQuery(
     pharmKeys.searchPharm,

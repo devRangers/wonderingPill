@@ -1,6 +1,6 @@
 import { MAIN_COLOR, GRAY_COLOR } from "@utils/constant";
 import { BsFillTelephoneFill } from "react-icons/bs";
-import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
+import { PharmacySearchResponse as PharmacyValues } from "@modelTypes/pharmacySearchResponse";
 import {
   Container,
   TitleContainer,
@@ -13,7 +13,7 @@ import {
 
 interface PharmInfoModalProps {
   onClose: () => void;
-  selectedPharmInfo: PharmacyResponse;
+  selectedPharmInfo: PharmacyValues;
 }
 
 function PharmInfoModal({ onClose, selectedPharmInfo }: PharmInfoModalProps) {

@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
+import { PharmacySearchResponse as PharmacyValues } from "@modelTypes/pharmacySearchResponse";
 import { Map } from "./SearchPharmPage.style";
 
 declare global {
@@ -9,7 +9,7 @@ declare global {
 }
 
 interface KakaoMapProps {
-  pharmList: PharmacyResponse[];
+  pharmList: PharmacyValues[];
 }
 
 let map: any;
