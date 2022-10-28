@@ -5,7 +5,7 @@ import Slider from "react-slick";
 import { useMediaQuery } from "react-responsive";
 import { useStyletron } from "styletron-react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import * as Api from "@api";
 import { pharmKeys } from "@utils/queryKey";
 import { PHARMACY } from "@utils/endpoint";
@@ -55,10 +55,13 @@ const settings = {
   adaptiveHeight: true,
 };
 
+const getBookmarkIdKey = pharmKeys.getBookmarkId;
+
 function PharmList({ pharmList }: PharmListProps) {
   const [css] = useStyletron();
   const temp = useMediaQuery({ query: "(min-height : 800px)" });
   const [user] = useAtom(userAtom);
+  const queryClient = useQueryClient();
 
   const [isLong, setIsLong] = useState(false);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
@@ -67,7 +70,7 @@ function PharmList({ pharmList }: PharmListProps) {
   const [bookmarkList, setBookmarkList] = useState<number[]>([]);
 
   useQuery(
-    pharmKeys.getBookmarkId,
+    getBookmarkIdKey,
     () => Api.get<BookmarkResponse>(PHARMACY.BOOKMARKLIST),
     {
       onSuccess: ({ lists }) => {
@@ -76,9 +79,22 @@ function PharmList({ pharmList }: PharmListProps) {
     },
   );
 
+  const bookmarkMutation = useMutation(
+    (id: number) => Api.put(PHARMACY.BOOKMARK(id)),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(getBookmarkIdKey);
+      },
+    },
+  );
+
   const selectPharmHandler = (info: PharmacyValues) => {
     setSelectedPharmInfo(info);
     setInfoModalOpen(true);
+  };
+
+  const bookmarkBtnClickHandler = (id: number) => {
+    bookmarkMutation.mutate(id);
   };
 
   useEffect(() => {
@@ -100,7 +116,7 @@ function PharmList({ pharmList }: PharmListProps) {
                   {item.name}
                 </PharmName>
                 {user.id && (
-                  <IconBtn>
+                  <IconBtn onClick={() => bookmarkBtnClickHandler(item.id)}>
                     {bookmarkList.includes(item.id) ? (
                       <AiFillHeart />
                     ) : (

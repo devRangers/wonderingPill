@@ -57,7 +57,7 @@ export const PHARMACY = {
   PHARMACY: apiBase.pharmacies,
   SEARCH: (option: string, keyword: string) =>
     `${apiBase.pharmacies}/search?option=${option}&keyword=${keyword}`,
-  BOOKMARK: (id: string) => `${apiBase.pharmacies}/bookmark/${id}`,
+  BOOKMARK: (id: number) => `${apiBase.pharmacies}/bookmark/${id}`,
   BOOKMARKLIST: `${apiBase.pharmacies}/bookmark-list`,
 };
 
