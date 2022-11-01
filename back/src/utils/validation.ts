@@ -19,7 +19,9 @@ export const validation: Joi.Schema = Joi.object({
   MAIL_API_DOMAIN: Joi.string().required(),
   SENDER_ADDRESS: Joi.string().required(),
   CHANGE_PASSWORD_KEY: Joi.string().required(),
+  AUTH_EMAIL_KEY: Joi.string().required(),
   PW_TOKEN_TTL: Joi.number().required(),
+  AUTH_EMAIL_TTL: Joi.number().required(),
   REDIS_HOST: Joi.string().required(), // REDIS
   REDIS_PORT: Joi.number().required(),
   REDIS_PASSWORD: Joi.string().required(),

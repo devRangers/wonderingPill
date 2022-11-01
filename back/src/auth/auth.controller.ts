@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Logger,
   NotAcceptableException,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -193,12 +194,22 @@ export class AuthController {
     );
 
     const emailToken: string = uuid().toString();
-    await this.authService.setPWChangeToken(user.id, emailToken);
+
+    try {
+      await this.redisService.setKey(
+        'auth-email' + user.id,
+        this.configService.get('AUTH_EMAIL_KEY') + emailToken,
+        Number(this.configService.get('AUTH_EMAIL_TTL')),
+      );
+    } catch (error) {
+      throw new NotFoundException('토큰을 저장하지 못했습니다.');
+    }
 
     const check: boolean = await this.mailService.sendEmail(
       user.id,
       user.name,
       emailToken,
+      'auth-email',
     );
 
     this.logger.log(`POST /signup/send-email Success!`);
@@ -221,21 +232,23 @@ export class AuthController {
     type: FindPasswordResponse,
   })
   @ApiQuery({
-    name: 'id',
+    name: 'email',
     required: true,
-    description: '유저 아이디',
+    description: '유저 이메일',
   })
   @ApiQuery({
     name: 'token',
     required: true,
-    description: '비밀번호 토큰',
+    description: '이메일 인증 토큰',
   })
   async checkTokenForSignup(@Query() query): Promise<FindPasswordResponse> {
-    const token: string = await this.redisService.getKey('pw' + query.id);
+    const token: string = await this.redisService.getKey(
+      'auth-email' + query.id,
+    );
 
     if (
       query.token !==
-      token.slice(this.configService.get('CHANGE_PASSWORD_KEY').length)
+      token.slice(this.configService.get('AUTH_EMAIL_TTL').length)
     ) {
       throw new ForbiddenException('토큰이 일치하지 않습니다.');
     }
@@ -432,7 +445,7 @@ export class AuthController {
   @HttpCode(201)
   @Post('send-email')
   @Throttle(5, 360)
-  @UseGuards(RecaptchaGuard)
+  // @UseGuards(RecaptchaGuard)
   @ApiOperation({
     summary: '비밀번호 찾기 email 전송 요청 API',
     description: '비밀번호 찾기를 위해 email을 전송 한다.',
@@ -457,9 +470,10 @@ export class AuthController {
     await this.authService.setPWChangeToken(user.id, passwordToken);
 
     const check: boolean = await this.mailService.sendEmail(
-      user.id,
+      user.email,
       user.name,
       passwordToken,
+      'password',
     );
 
     this.logger.log(`POST /send-email Success!`);
