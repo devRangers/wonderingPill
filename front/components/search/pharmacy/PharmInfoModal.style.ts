@@ -46,6 +46,7 @@ export const InfoContent = styled("div", (props: { $borderColor: string }) => ({
   alignItems: "center",
   lineHeight: 1.3,
   textAlign: "center",
+  padding: "0 0.5rem",
 }));
 
 export const CloseBtnContainer = styled("div", {
