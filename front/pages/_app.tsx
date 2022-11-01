@@ -27,6 +27,8 @@ import Footer from "@footer/Footer";
 import { AUTH } from "@utils/endpoint";
 import { ToastContainer } from "react-toastify";
 import { CookiesProvider } from "react-cookie";
+import { DefaultSeo } from "next-seo";
+import { DEFAULT_SEO } from "../next-seo.config";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -94,25 +96,31 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <StyletronProvider value={styletron}>
-      <QueryClientProvider client={queryClient}>
-        <Hydrate state={pageProps?.dehydratedState}>
-          <CookiesProvider>
-            <Head>
-              <meta
-                name="viewport"
-                content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+    <>
+      <DefaultSeo {...DEFAULT_SEO} />
+      <StyletronProvider value={styletron}>
+        <QueryClientProvider client={queryClient}>
+          <Hydrate state={pageProps?.dehydratedState}>
+            <CookiesProvider>
+              <Head>
+                <meta
+                  name="viewport"
+                  content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+                />
+              </Head>
+              <ToastContainer theme="colored" position="top-center" limit={3} />
+              {!URL_WITHOUT_HEADER.includes(router.pathname) && <Header />}
+              <Component {...pageProps} />
+              {!URL_WITHOUT_HEADER.includes(router.pathname) && <Footer />}
+              <ReactQueryDevtools
+                initialIsOpen={false}
+                position="bottom-right"
               />
-            </Head>
-            <ToastContainer theme="colored" position="top-center" limit={3} />
-            {!URL_WITHOUT_HEADER.includes(router.pathname) && <Header />}
-            <Component {...pageProps} />
-            {!URL_WITHOUT_HEADER.includes(router.pathname) && <Footer />}
-            <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
-          </CookiesProvider>
-        </Hydrate>
-      </QueryClientProvider>
-    </StyletronProvider>
+            </CookiesProvider>
+          </Hydrate>
+        </QueryClientProvider>
+      </StyletronProvider>
+    </>
   );
 }
 export default MyApp;
