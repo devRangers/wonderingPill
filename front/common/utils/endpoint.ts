@@ -32,7 +32,7 @@ export const AUTH = {
 export const USERS = {
   MYPAGE: `${apiBase.users}/mypage`,
   PRESIGNED_URL: `${apiBase.users}/presigned-url`,
-  PROFILE_IMG: `${apiBase.users}/profile-img`,
+  PROFILE_IMG: (url: string) => `${apiBase.users}/profile-img?img=${url}`,
   UPDATE: `${apiBase.users}/update`,
   DELETE: `${apiBase.users}/delete`,
   INQUIRY: `${apiBase.users}/inquiry`,
