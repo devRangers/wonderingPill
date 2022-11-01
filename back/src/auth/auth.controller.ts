@@ -174,7 +174,7 @@ export class AuthController {
   }
 
   @HttpCode(201)
-  @Post('signup/send-email')
+  @Get('signup/send-email/:email')
   @Throttle(5, 360)
   @ApiOperation({
     summary: '회원가입시 이메일 전송 API',
@@ -185,19 +185,19 @@ export class AuthController {
     description: '회원가입시 이메일 전송 성공',
     type: FindPasswordResponse,
   })
-  @ApiBody({ type: FindPasswordDto })
+  @ApiParam({
+    name: 'email',
+    required: true,
+    description: '유저 이메일',
+  })
   async sendEmailForSignup(
-    @Body() findPasswordDto: FindPasswordDto,
+    @Param('email') email: string,
   ): Promise<FindPasswordResponse> {
-    const user: User = await this.authService.getUserByEmail(
-      findPasswordDto.email,
-    );
-
     const emailToken: string = uuid().toString();
 
     try {
       await this.redisService.setKey(
-        'auth-email' + user.id,
+        'auth-email' + email,
         this.configService.get('AUTH_EMAIL_KEY') + emailToken,
         Number(this.configService.get('AUTH_EMAIL_TTL')),
       );
@@ -206,13 +206,13 @@ export class AuthController {
     }
 
     const check: boolean = await this.mailService.sendEmail(
-      user.id,
-      user.name,
+      email,
+      '사용자',
       emailToken,
       'auth-email',
     );
 
-    this.logger.log(`POST /signup/send-email Success!`);
+    this.logger.log(`GET /signup/send-email Success!`);
     return {
       statusCode: 201,
       message: '이메일을 성공적으로 전송했습니다.',
@@ -223,8 +223,8 @@ export class AuthController {
   @HttpCode(200)
   @Get('/signup/token')
   @ApiOperation({
-    summary: '비밀번호 변경 토큰 유효 검사 API',
-    description: '비밀번호 변경 토큰이 유효한지 검사 한다.',
+    summary: '이메일 인증 토큰 유효 검사 API',
+    description: '이메일 인증 토큰이 유효한지 검사 한다.',
   })
   @ApiResponse({
     status: 200,
@@ -243,7 +243,7 @@ export class AuthController {
   })
   async checkTokenForSignup(@Query() query): Promise<FindPasswordResponse> {
     const token: string = await this.redisService.getKey(
-      'auth-email' + query.id,
+      'auth-email' + query.email,
     );
 
     if (
