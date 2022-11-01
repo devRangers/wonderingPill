@@ -69,7 +69,6 @@ export class AuthService {
   async restoreUser(email: string) {
     try {
       const newEmail: string = email.slice(0, -1);
-      console.log(newEmail);
 
       await this.prisma.user.update({
         where: { email: email + '_' },
