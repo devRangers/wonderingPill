@@ -41,9 +41,10 @@ export const InfoContent = styled("div", (props: { $borderColor: string }) => ({
   minHeight: "3rem",
   border: `2px solid ${props.$borderColor}`,
   display: "flex",
+  flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  lineHeight: 1.2,
+  lineHeight: 1.3,
   textAlign: "center",
 }));
 

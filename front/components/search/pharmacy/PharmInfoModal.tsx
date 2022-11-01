@@ -10,6 +10,7 @@ import {
   CloseBtnContainer,
   CloseBtn,
 } from "./PharmInfoModal.style";
+import Schedule from "./Schedule";
 
 interface PharmInfoModalProps {
   onClose: () => void;
@@ -17,7 +18,8 @@ interface PharmInfoModalProps {
 }
 
 function PharmInfoModal({ onClose, selectedPharmInfo }: PharmInfoModalProps) {
-  const { name, phone, address } = selectedPharmInfo;
+  const { id, name, phone, address, ...schedules } = selectedPharmInfo;
+
   return (
     <Container>
       <TitleContainer $bgColor={MAIN_COLOR}>{name}</TitleContainer>
@@ -36,22 +38,7 @@ function PharmInfoModal({ onClose, selectedPharmInfo }: PharmInfoModalProps) {
       <InfoContaniner>
         <InfoTitle $bgColor={MAIN_COLOR}>영업시간</InfoTitle>
         <InfoContent $borderColor={MAIN_COLOR}>
-          월요일 09:00~16:00 영업중
-          <br />
-          월요일 09:00~16:00 영업중
-          <br />
-          월요일 09:00~16:00 영업중
-          <br />
-          월요일 09:00~16:00 영업중
-          <br />
-          월요일 09:00~16:00 영업중
-          <br />
-          월요일 09:00~16:00 영업중
-          <br />
-          월요일 09:00~16:00 영업중
-          <br />
-          월요일 09:00~16:00 영업중
-          <br />
+          <Schedule schedules={schedules} />
         </InfoContent>
       </InfoContaniner>
       <CloseBtnContainer>
