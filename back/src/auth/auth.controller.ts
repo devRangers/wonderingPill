@@ -47,6 +47,7 @@ import { MailService } from 'src/infras/mail/mail.service';
 import { RedisService } from 'src/infras/redis/redis.service';
 import { SmsService } from 'src/infras/sms/sms.service';
 import { UsersService } from 'src/users/users.service';
+import { prefixConstant } from 'src/utils/prefix.constant';
 import { v4 as uuid } from 'uuid';
 import { AuthService } from './auth.service';
 import {
@@ -68,7 +69,7 @@ import { Tokens } from './types';
 @ApiTags('Auth API')
 @Controller('auth')
 export class AuthController {
-  private readonly logger = new Logger(`AuthController`);
+  private readonly logger = new Logger(`${prefixConstant}/auth`);
   constructor(
     private readonly authService: AuthService,
     private readonly mailService: MailService,
@@ -94,7 +95,7 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
   ): Promise<CreateUserResponse> {
     const user: User = await this.authService.createUser(createUserDto);
-    this.logger.verbose(`User ${user.email} Sign-Up Success!`);
+    this.logger.log(`POST /signup Success!`);
     return {
       statusCode: 201,
       message: '회원가입에 성공했습니다.',
@@ -103,6 +104,7 @@ export class AuthController {
   }
 
   @HttpCode(200)
+  @Get('signup/check/:email')
   @ApiOperation({
     summary: '회원가입시 회원 검사 API',
     description: '회원가입시 회원이 존재하는지, 탈퇴한 이력이 있는지 조사한다.',
@@ -125,7 +127,6 @@ export class AuthController {
     required: true,
     description: '유저 이메일',
   })
-  @Get('signup/check/:email')
   async checkUser(@Param('email') email: string): Promise<CommonResponseDto> {
     const user: User = await this.authService.getUserByEmail(email);
     if (user) {
@@ -139,7 +140,7 @@ export class AuthController {
       throw new ForbiddenException('탈퇴한 이력이 존재하는 회원입니다.');
     }
 
-    this.logger.verbose(`User check Success!`);
+    this.logger.log(`GET /signup/check/:email Success!`);
     return {
       statusCode: 200,
       message: '회원 검사를 성공했습니다.',
@@ -147,6 +148,7 @@ export class AuthController {
   }
 
   @HttpCode(200)
+  @Put('signup/restore/:email')
   @ApiOperation({
     summary: '계정 복원 API',
     description: '탈퇴한 계정을 다시 복원한다.',
@@ -161,10 +163,9 @@ export class AuthController {
     required: true,
     description: '유저 이메일',
   })
-  @Put('signup/restore/:email')
   async restoreUser(@Param('email') email: string): Promise<CommonResponseDto> {
     await this.authService.restoreUser(email);
-    this.logger.verbose(`User restore Success!`);
+    this.logger.log(`PUT /signup/restore/:email Success!`);
     return {
       statusCode: 200,
       message: '회원을 복원했습니다.',
@@ -200,7 +201,7 @@ export class AuthController {
       emailToken,
     );
 
-    this.logger.verbose(`User ${user.email} send email to update Success!`);
+    this.logger.log(`POST /signup/send-email Success!`);
     return {
       statusCode: 201,
       message: '이메일을 성공적으로 전송했습니다.',
@@ -209,6 +210,7 @@ export class AuthController {
   }
 
   @HttpCode(200)
+  @Get('/signup/token')
   @ApiOperation({
     summary: '비밀번호 변경 토큰 유효 검사 API',
     description: '비밀번호 변경 토큰이 유효한지 검사 한다.',
@@ -228,7 +230,6 @@ export class AuthController {
     required: true,
     description: '비밀번호 토큰',
   })
-  @Get('/signup/token')
   async checkTokenForSignup(@Query() query): Promise<FindPasswordResponse> {
     const token: string = await this.redisService.getKey('pw' + query.id);
 
@@ -239,7 +240,7 @@ export class AuthController {
       throw new ForbiddenException('토큰이 일치하지 않습니다.');
     }
 
-    this.logger.verbose(`User ${query.id} check pw token Success!`);
+    this.logger.log(`GET /signup/token Success!`);
     return {
       statusCode: 200,
       message: '토큰의 유효기간이 만료되지 않았습니다.',
@@ -302,8 +303,7 @@ export class AuthController {
       throw new ForbiddenException('Cookie Failed!');
     }
 
-    this.logger.verbose(`User ${signinUserDto.email} Sign-In Success!`);
-
+    this.logger.log(`POST /signin Success!`);
     return {
       statusCode: 201,
       message: '정상적으로 로그인되었습니다.',
@@ -354,7 +354,7 @@ export class AuthController {
       throw new ForbiddenException('Cookie Failed!');
     }
 
-    this.logger.verbose(`User ${id} keep login Success!`);
+    this.logger.log(`GET /refresh Success!`);
     return {
       statusCode: 200,
       message: '정상적으로 access token이 발행되었습니다.',
@@ -389,7 +389,7 @@ export class AuthController {
       throw new ForbiddenException('Cookie Failed!');
     }
 
-    this.logger.verbose(`User ${id} logout Success!`);
+    this.logger.log(`GET /logout Success!`);
     return {
       statusCode: 200,
       message: '로그아웃이 완료되었습니다.',
@@ -414,7 +414,7 @@ export class AuthController {
     const user: User = await this.usersService.getUserById(id);
     if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
 
-    this.logger.verbose(`Call Current User ${id} Success!`);
+    this.logger.log(`GET /current Success!`);
     return {
       statusCode: 200,
       message: '현재 로그인 유저 조회에 성공했습니다.',
@@ -462,7 +462,7 @@ export class AuthController {
       passwordToken,
     );
 
-    this.logger.verbose(`User ${user.email} send email to update Success!`);
+    this.logger.log(`POST /send-email Success!`);
     return {
       statusCode: 201,
       message: '이메일을 성공적으로 전송했습니다.',
@@ -471,6 +471,7 @@ export class AuthController {
   }
 
   @HttpCode(200)
+  @Get('change-password/check')
   @ApiOperation({
     summary: '비밀번호 변경 토큰 유효 검사 API',
     description: '비밀번호 변경 토큰이 유효한지 검사 한다.',
@@ -490,7 +491,6 @@ export class AuthController {
     required: true,
     description: '비밀번호 토큰',
   })
-  @Get('change-password/check')
   async checkPWToken(@Query() query): Promise<FindPasswordResponse> {
     const token: string = await this.redisService.getKey('pw' + query.id);
 
@@ -501,7 +501,7 @@ export class AuthController {
       throw new ForbiddenException('토큰이 일치하지 않습니다.');
     }
 
-    this.logger.verbose(`User ${query.id} check pw token Success!`);
+    this.logger.log(`GET /change-password/check Success!`);
     return {
       statusCode: 200,
       message: '토큰의 유효기간이 만료되지 않았습니다.',
@@ -531,7 +531,7 @@ export class AuthController {
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<CommonResponseDto> {
     await this.authService.changePassword(email, changePasswordDto);
-    this.logger.verbose(`User ${email} update password Success!`);
+    this.logger.log(`PUT /change-password/:email Success!`);
     return {
       statusCode: 200,
       message: '비밀번호가 변경되었습니다.',
@@ -551,6 +551,7 @@ export class AuthController {
   })
   @UseGuards(GoogleGuard)
   async google() {
+    this.logger.log(`GET /google Success!`);
     return HttpStatus.OK;
   }
 
@@ -576,6 +577,8 @@ export class AuthController {
 
       res.redirect(`${this.configService.get('CLIENT_URL')}/`);
       res.end();
+
+      this.logger.log(`GET /google-redirect Success!`);
     } catch (error) {
       throw new ForbiddenException('Cookie Failed!');
     }
@@ -610,7 +613,7 @@ export class AuthController {
 
     await this.smsService.sendSMS(findAccountDto.phone, verifyCode);
 
-    this.logger.verbose(`User ${findAccountDto.phone} send sms Success!`);
+    this.logger.log(`POST /send-sms Success!`);
     return {
       statusCode: 201,
       message: 'SMS을 성공적으로 전송했습니다.',
@@ -649,7 +652,7 @@ export class AuthController {
       const user: User = await this.authService.getUserByPhone(phone);
       if (!user) throw new ForbiddenException('회원이 존재하지 않습니다.');
 
-      this.logger.verbose(`User ${user.phone} verify code Success!`);
+      this.logger.log(`GET /verify-code Success!`);
       return {
         statusCode: 200,
         message: '인증번호가 일치합니다.',
@@ -659,6 +662,7 @@ export class AuthController {
   }
 
   @HttpCode(200)
+  @Get('find-account/:id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -673,7 +677,6 @@ export class AuthController {
     description: '계정 찾기 성공',
     type: FindAccountResponse,
   })
-  @Get('find-account/:id')
   async getAccount(
     @Param('id', ValidationPipe) id: string,
   ): Promise<FindAccountResponse> {
@@ -689,6 +692,8 @@ export class AuthController {
       name = user.name;
       email = user.email;
     }
+
+    this.logger.log(`GET /find-account/:id Success!`);
 
     return {
       statusCode: 200,
