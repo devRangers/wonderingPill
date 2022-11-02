@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { ACCENT_COLOR, MAIN_COLOR } from "@utils/constant";
 import {
   Container,
@@ -14,48 +15,56 @@ import {
 import ButtonSection from "./ButtonSection";
 import Form from "./OptionForm";
 import {
+  changeStateWithQuery,
   COLOR,
-  ColorInfo,
+  ColorButtons,
   PATTERN,
-  PatternInfo,
+  PatternButtons,
   SHAPE,
-  ShapeInfo,
+  ShapeButtons,
 } from "./optionData";
 
 function Option() {
-  const [isShapeSelected, setIsShapeSelected] = useState(
-    Array(Object.keys(ShapeInfo).length).fill(false),
+  const router = useRouter();
+
+  const colors = router.query.colors;
+  const letters = router.query.letters as string | undefined;
+  const shape = router.query.shape as string | undefined;
+
+  const [shapeButtons, setShapeButtons] = useState(
+    changeStateWithQuery(ShapeButtons, shape),
   );
 
-  const [isColorSelected, setIsColorSelected] = useState(
-    Array(Object.keys(ColorInfo).length).fill(false),
+  const [colorButtons, setColorButtons] = useState(
+    changeStateWithQuery(ColorButtons, colors),
   );
 
-  const [isPatternSelected, setIsPatternSelected] = useState([true, false]);
+  const [patternButtons, setPatternButtons] = useState(PatternButtons);
 
-  const handleClickShapeButtonSelect = (index: number) => {
-    setIsShapeSelected((cur) => {
-      const curArr = [...cur];
-      curArr[index] = !curArr[index];
-      return curArr;
+  const handleClickShapeButtonSelect = (key: string) => {
+    setShapeButtons((cur) => {
+      const curButtons = { ...cur };
+      curButtons[key].isSelected = !curButtons[key].isSelected;
+      return curButtons;
     });
   };
 
-  const handleClickColorButtonSelect = (index: number) => {
-    setIsColorSelected((cur) => {
-      const curArr = [...cur];
-      curArr[index] = !curArr[index];
-      return curArr;
+  const handleClickColorButtonSelect = (key: string) => {
+    setColorButtons((cur) => {
+      const curButtons = { ...cur };
+      curButtons[key].isSelected = !curButtons[key].isSelected;
+      return curButtons;
     });
   };
 
   const handleClickPatternButtonSelect = () => {
-    setIsPatternSelected((cur) => {
-      const curArr = [...cur];
-      curArr[0] = !curArr[0];
-      curArr[1] = !curArr[1];
-
-      return curArr;
+    setPatternButtons((cur) => {
+      const curButtons = { ...cur };
+      Object.entries(PatternButtons).map(
+        ([key, value], index) =>
+          (PatternButtons[key].isSelected = !PatternButtons[key].isSelected),
+      );
+      return curButtons;
     });
   };
 
@@ -82,23 +91,20 @@ function Option() {
       <MainContent $borderColor={MAIN_COLOR}>
         <ButtonSection
           title={SHAPE}
-          buttons={ShapeInfo}
-          isButtonSelected={isShapeSelected}
+          buttons={shapeButtons}
           handleClickButtonSelect={handleClickShapeButtonSelect}
         />
         <ButtonSection
           title={COLOR}
-          buttons={ColorInfo}
-          isButtonSelected={isColorSelected}
+          buttons={colorButtons}
           handleClickButtonSelect={handleClickColorButtonSelect}
         />
         <ButtonSection
           title={PATTERN}
-          buttons={PatternInfo}
-          isButtonSelected={isPatternSelected}
+          buttons={patternButtons}
           handleClickButtonSelect={handleClickPatternButtonSelect}
         />
-        <Form />
+        <Form word={letters} />
       </MainContent>
     </Container>
   );

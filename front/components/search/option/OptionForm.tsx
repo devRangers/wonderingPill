@@ -2,14 +2,18 @@ import React, { useState } from "react";
 import { MAIN_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
 import { Button, Form, Input, InputWrapper, Label } from "./Option.style";
 
+interface OptionFormProp {
+  word: string | undefined;
+}
+
 interface InputValues {
   word: string;
   pillName: string;
 }
 
-function OptionForm() {
+function OptionForm({ word }: OptionFormProp) {
   const [inputsValue, setInputsValue] = useState<InputValues>({
-    word: "",
+    word: word ? word : "",
     pillName: "",
   });
 
@@ -38,6 +42,7 @@ function OptionForm() {
           id="word"
           onChange={handleChangeInputValue}
           $borderColor={SEMI_ACCENT_COLOR}
+          value={inputsValue.word}
         />
       </InputWrapper>
       <InputWrapper $color={SEMI_ACCENT_COLOR}>
@@ -48,6 +53,7 @@ function OptionForm() {
           id="pillName"
           onChange={handleChangeInputValue}
           $borderColor={SEMI_ACCENT_COLOR}
+          value={inputsValue.pillName}
         />
       </InputWrapper>
       <Button type="submit" $bgColor={MAIN_COLOR}>

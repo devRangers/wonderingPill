@@ -1,6 +1,6 @@
 import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
 import React from "react";
-import { ButtonValue } from "./Option";
+import { ButtonValue } from "./optionData";
 import {
   ButtonContainer,
   OptionButton,
@@ -11,14 +11,12 @@ import {
 interface ButtonSectionProps {
   title: string;
   buttons: { [key in string]: ButtonValue };
-  isButtonSelected: boolean[];
-  handleClickButtonSelect: (index: number) => void;
+  handleClickButtonSelect: (key: string) => void;
 }
 
 function ButtonSection({
   title,
   buttons,
-  isButtonSelected,
   handleClickButtonSelect,
 }: ButtonSectionProps) {
   return (
@@ -28,9 +26,9 @@ function ButtonSection({
         {Object.entries(buttons).map(([key, value], index) => (
           <OptionButton
             key={key}
-            onClick={() => handleClickButtonSelect(index)}
+            onClick={() => handleClickButtonSelect(key)}
             $bgColor={SEMI_ACCENT_COLOR}
-            $isSelected={isButtonSelected[index]}
+            $isSelected={value.isSelected}
             $color={GRAY_COLOR}>
             {value.name}
           </OptionButton>
