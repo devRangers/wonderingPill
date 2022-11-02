@@ -9,11 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@types/react-google-recaptcha": "^2.1.5",
-    "@types/react-slick": "^0.23.10",
-    "@types/styletron-engine-atomic": "^1.1.1",
-    "@types/styletron-react": "^5.0.3",
-    "@types/styletron-standard": "^2.0.2",
     "firebase": "8.2.1",
     "formik": "^2.2.9",
     "jotai": "^1.7.4",
@@ -40,6 +35,11 @@
     "@types/react": "18.0.15",
     "@types/react-cookies": "^0.1.0",
     "@types/react-dom": "18.0.6",
+    "@types/react-google-recaptcha": "^2.1.5",
+    "@types/react-slick": "^0.23.10",
+    "@types/styletron-engine-atomic": "^1.1.1",
+    "@types/styletron-react": "^5.0.3",
+    "@types/styletron-standard": "^2.0.2",
     "eslint": "8.19.0",
     "eslint-config-next": "12.2.2",
     "orval": "^6.9.0",
