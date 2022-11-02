@@ -1,11 +1,11 @@
 import ResultList from "@searchComp/resultList/ResultList";
 import { NextSeo } from "next-seo";
-import { RESULT_List_SEO } from "next-seo.config";
+import { RESULT_LIST_SEO } from "next-seo.config";
 
 function ResultPage() {
   return (
     <>
-      <NextSeo {...RESULT_List_SEO} />
+      <NextSeo {...RESULT_LIST_SEO} />
       <ResultList />
     </>
   );
