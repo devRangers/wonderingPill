@@ -73,6 +73,7 @@ function PharmList({ pharmList }: PharmListProps) {
     getBookmarkIdKey,
     () => Api.get<BookmarkResponse>(PHARMACY.BOOKMARKLIST),
     {
+      enabled: !!user.name,
       onSuccess: ({ lists }) => {
         setBookmarkList(lists.PharmacyBookMark.map((item) => item.Pharmacy.id));
       },
