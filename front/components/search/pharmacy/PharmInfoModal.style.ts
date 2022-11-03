@@ -49,6 +49,14 @@ export const InfoContent = styled("div", (props: { $borderColor: string }) => ({
   padding: "0 0.5rem",
 }));
 
+export const TimeContent = styled(
+  "p",
+  (props: { $txtColor: string; $isToday: boolean }) => ({
+    color: props.$isToday ? props.$txtColor : "#000",
+    fontWeight: props.$isToday ? "bold" : "",
+  }),
+);
+
 export const CloseBtnContainer = styled("div", {
   display: "flex",
   justifyContent: "flex-end",
