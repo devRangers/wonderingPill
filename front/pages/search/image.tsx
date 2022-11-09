@@ -9,7 +9,7 @@ const Image: NextPage<FindWithImageProp> = ({ foundCookie }) => {
   return (
     <>
       <NextSeo {...SEARCH_IMAGE_SEO} />
-      <FindWithImage foundCookie={foundCookie} />;
+      <FindWithImage foundCookie={foundCookie} />
     </>
   );
 };
