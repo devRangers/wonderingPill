@@ -1,6 +1,6 @@
+import React, { memo } from "react";
 import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
-import React from "react";
-import { ButtonValue } from "./optionData";
+import { ButtonValue } from "./Option";
 import {
   ButtonContainer,
   OptionButton,
@@ -9,16 +9,20 @@ import {
 } from "./Option.style";
 
 interface ButtonSectionProps {
+  queries?: string | string[] | undefined;
   title: string;
   buttons: { [key in string]: ButtonValue };
-  handleClickButtonSelect: (key: string) => void;
+  handleSetButtons: (key: string) => void;
 }
 
 function ButtonSection({
   title,
   buttons,
-  handleClickButtonSelect,
+  handleSetButtons,
 }: ButtonSectionProps) {
+  const handleClickButtonSelect = (key: string) => {
+    handleSetButtons(key);
+  };
   return (
     <OptionContainer>
       <OptionTitle $color={SEMI_ACCENT_COLOR}>{title}</OptionTitle>
@@ -38,4 +42,4 @@ function ButtonSection({
   );
 }
 
-export default ButtonSection;
+export default memo(ButtonSection);
