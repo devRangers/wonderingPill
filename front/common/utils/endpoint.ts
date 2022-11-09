@@ -1,3 +1,5 @@
+import { PillControllerSearchPillParams } from "@modelTypes/pillControllerSearchPillParams";
+
 const apiBase = {
   auth: "/auth",
   users: "/users",
@@ -60,7 +62,12 @@ export const PHARMACY = {
 };
 
 export const PILLS = {
-  SEARCH: `${apiBase.pills}/search`,
+  SEARCH: (data: PillControllerSearchPillParams) =>
+    `${apiBase.pills}/search?shape=${data.shape}&colors=${data.colors}&mark=${
+      data.mark
+    }${data.letters && `&letters=${data.letters}`}${
+      data.name && `&name=${data.name}`
+    }`,
   BOOKMARK_ID: (id: string) => `${apiBase.pills}/bookmark/${id}`,
   RESULT_NAME: (name: string) => `${apiBase.pills}/result/${name}`,
 };
