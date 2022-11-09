@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { ACCENT_COLOR, MAIN_COLOR } from "@utils/constant";
 import {
   Container,
@@ -14,59 +13,138 @@ import {
 } from "./Option.style";
 import ButtonSection from "./ButtonSection";
 import Form from "./OptionForm";
-import {
-  changeStateWithQuery,
-  COLOR,
-  ColorButtons,
-  PATTERN,
-  PatternButtons,
-  SHAPE,
-  ShapeButtons,
-} from "./optionData";
+import { OptionPageProps } from "pages/search/option";
 
-function Option() {
-  const router = useRouter();
+export const SHAPE = "체형";
+export const COLOR = "색상";
+export const MARK = "문양";
 
-  const colors = router.query.colors;
-  const letters = router.query.letters as string | undefined;
-  const shape = router.query.shape as string | undefined;
+export interface ButtonValue {
+  name: string;
+  isSelected: boolean;
+}
 
-  const [shapeButtons, setShapeButtons] = useState(
-    changeStateWithQuery(ShapeButtons, shape),
-  );
+const changeStateWithQuery = (
+  buttons: { [key in string]: ButtonValue },
+  queries: string | string[] | undefined,
+) => {
+  const curButtons = { ...buttons };
 
-  const [colorButtons, setColorButtons] = useState(
-    changeStateWithQuery(ColorButtons, colors),
-  );
+  if (typeof queries === "string") {
+    curButtons[queries].isSelected = !curButtons[queries].isSelected;
+  } else {
+    Object.entries(curButtons).map(([key, value], index) => {
+      if (queries?.includes(key)) {
+        curButtons[key].isSelected = !curButtons[key].isSelected;
+      }
+    });
+  }
+  return curButtons;
+};
 
-  const [patternButtons, setPatternButtons] = useState(PatternButtons);
+function Option({ colors, letters, shape }: OptionPageProps) {
+  const [shapeButtons, setShapeButtons] = useState<{
+    [key in string]: ButtonValue;
+  }>({
+    circle: {
+      name: "원형",
+      isSelected: false,
+    },
+    oval: {
+      name: "타원형",
+      isSelected: false,
+    },
+    hexagon: {
+      name: "육각형",
+      isSelected: false,
+    },
+    oblong: {
+      name: "장방형",
+      isSelected: false,
+    },
+    pentagon: {
+      name: "오각형",
+      isSelected: false,
+    },
+    rectangle: {
+      name: "장방형",
+      isSelected: false,
+    },
+    triangle: {
+      name: "삼각형",
+      isSelected: false,
+    },
+    rhombus: {
+      name: "마름모형",
+      isSelected: false,
+    },
+    etc: {
+      name: "기타",
+      isSelected: false,
+    },
+  });
 
-  const handleClickShapeButtonSelect = (key: string) => {
+  const [colorButtons, setColorButtons] = useState<{
+    [key in string]: ButtonValue;
+  }>({
+    red: { name: "빨강", isSelected: false },
+    orange: { name: "주황", isSelected: false },
+    yellow: { name: "노랑", isSelected: false },
+    green: { name: "초록", isSelected: false },
+    blue: { name: "파랑", isSelected: false },
+    purple: { name: "보라", isSelected: false },
+    brown: { name: "갈색", isSelected: false },
+    pink: { name: "분홍", isSelected: false },
+    white: { name: "하양", isSelected: false },
+    black: { name: "검정", isSelected: false },
+    gray: { name: "회색", isSelected: false },
+    transparent: { name: "투명", isSelected: false },
+  });
+
+  const [markButtons, setMarkButtons] = useState<{
+    [key in string]: ButtonValue;
+  }>({
+    mark: {
+      name: "있음",
+      isSelected: false,
+    },
+    noMark: {
+      name: "없음",
+      isSelected: true,
+    },
+  });
+
+  const handleSetShapeButtons = useCallback((key: string) => {
     setShapeButtons((cur) => {
       const curButtons = { ...cur };
       curButtons[key].isSelected = !curButtons[key].isSelected;
       return curButtons;
     });
-  };
+  }, []);
 
-  const handleClickColorButtonSelect = (key: string) => {
+  const handleSetColorButtons = useCallback((key: string) => {
     setColorButtons((cur) => {
       const curButtons = { ...cur };
       curButtons[key].isSelected = !curButtons[key].isSelected;
       return curButtons;
     });
-  };
+  }, []);
 
-  const handleClickPatternButtonSelect = () => {
-    setPatternButtons((cur) => {
+  const handleSetMarkButtons = useCallback((key: string) => {
+    setMarkButtons((cur) => {
       const curButtons = { ...cur };
-      Object.entries(PatternButtons).map(
-        ([key, value], index) =>
-          (PatternButtons[key].isSelected = !PatternButtons[key].isSelected),
+      Object.entries(curButtons).forEach(
+        ([key, value], indedx) => (curButtons[key].isSelected = false),
       );
+      curButtons[key].isSelected = !curButtons[key].isSelected;
       return curButtons;
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    setShapeButtons(changeStateWithQuery(shapeButtons, shape));
+    setColorButtons(changeStateWithQuery(colorButtons, colors));
+  }, []);
 
   return (
     <Container>
@@ -92,19 +170,24 @@ function Option() {
         <ButtonSection
           title={SHAPE}
           buttons={shapeButtons}
-          handleClickButtonSelect={handleClickShapeButtonSelect}
+          handleSetButtons={handleSetShapeButtons}
         />
         <ButtonSection
           title={COLOR}
           buttons={colorButtons}
-          handleClickButtonSelect={handleClickColorButtonSelect}
+          handleSetButtons={handleSetColorButtons}
         />
         <ButtonSection
-          title={PATTERN}
-          buttons={patternButtons}
-          handleClickButtonSelect={handleClickPatternButtonSelect}
+          title={MARK}
+          buttons={markButtons}
+          handleSetButtons={handleSetMarkButtons}
         />
-        <Form word={letters} />
+        <Form
+          shape={shape}
+          colors={colors}
+          mark={markButtons["mark"].isSelected ? "1" : "0"}
+          letters={letters}
+        />
       </MainContent>
     </Container>
   );
