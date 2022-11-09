@@ -35,6 +35,8 @@ export const ROUTE = {
   MY_PAGE_MODIFY: "/my-page/modify",
   MESSAGES: "/messages",
   MESSAGES_SETTING: (bookmarkId: string) => `/messages/setting/${bookmarkId}`,
+  GUIDE: "/guide",
+  GUIDE_NAV: (dest: string) => `/guide/${dest}`,
   ERROR: "/error",
   BLOCK: "/blocked",
   INFO: "/info",
