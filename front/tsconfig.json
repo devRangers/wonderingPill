@@ -23,6 +23,7 @@
       "@container/*": ["common/container/*"],
       "@footer/*": ["common/footer/*"],
       "@header/*": ["common/header/*"],
+      "@installContainer/*": ["common/installContainer/*"],
       "@modal/*": ["common/modal/*"],
       "@sidebar/*": ["common/sidebar/*"],
       "@userContainer/*": ["common/userContainer/*"],

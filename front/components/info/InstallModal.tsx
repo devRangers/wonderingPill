@@ -1,10 +1,7 @@
 import Image from "next/image";
 import { useState } from "react";
-import {
-  GRAY_COLOR,
-  SEMI_ACCENT_COLOR,
-  INSTALL_CATEGORIES,
-} from "@utils/constant";
+import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
+import { INSTALL_CATEGORIES } from "@installContainer/constant";
 import {
   Container,
   CloseBtn,

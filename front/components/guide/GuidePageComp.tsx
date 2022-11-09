@@ -1,10 +1,6 @@
 import Link from "next/link";
-import {
-  ACCENT_COLOR,
-  SEMI_ACCENT_COLOR,
-  ROUTE,
-  INSTALL_CATEGORIES,
-} from "@utils/constant";
+import { ACCENT_COLOR, SEMI_ACCENT_COLOR, ROUTE } from "@utils/constant";
+import { INSTALL_CATEGORIES } from "@installContainer/constant";
 import { PageContainer, Title, NavButton } from "./GuidePageComp.style";
 
 function GuidePageComp() {
