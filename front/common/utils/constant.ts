@@ -61,3 +61,9 @@ export const TOASTIFY = {
   CANCEL_ALARM: "알림을 취소했습니다.",
   FAIL: "잠시 후 다시 시도해 주세요.",
 };
+
+export const INSTALL_CATEGORIES = {
+  android: "안드로이드 설치하러 가기",
+  ios: "ios 설치하러 가기",
+  chrome: "chrome 설치하러 가기",
+};
