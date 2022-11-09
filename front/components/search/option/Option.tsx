@@ -11,9 +11,9 @@ import {
   TitleContent,
   TopBorder,
 } from "./Option.style";
+import { OptionPageProps } from "pages/search/option";
 import ButtonSection from "./ButtonSection";
 import Form from "./OptionForm";
-import { OptionPageProps } from "pages/search/option";
 
 export const SHAPE = "체형";
 export const COLOR = "색상";
@@ -141,6 +141,16 @@ function Option({ colors, letters, shape }: OptionPageProps) {
     });
   }, []);
 
+  const setSelectedButtons = useCallback(
+    (buttons: { [key in string]: ButtonValue }) => {
+      return Object.entries(colorButtons)
+        .filter(([key, value]) => value.isSelected === true)
+        .flat()
+        .filter((value, index) => index % 2 === 0);
+    },
+    [],
+  );
+
   useEffect(() => {
     setShapeButtons(changeStateWithQuery(shapeButtons, shape));
     setColorButtons(changeStateWithQuery(colorButtons, colors));
@@ -183,8 +193,8 @@ function Option({ colors, letters, shape }: OptionPageProps) {
           handleSetButtons={handleSetMarkButtons}
         />
         <Form
-          shape={shape}
-          colors={colors}
+          shape={setSelectedButtons(shapeButtons)}
+          colors={setSelectedButtons(colorButtons)}
           mark={markButtons["mark"].isSelected ? "1" : "0"}
           letters={letters}
         />
