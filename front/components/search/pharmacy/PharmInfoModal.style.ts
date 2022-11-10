@@ -41,11 +41,21 @@ export const InfoContent = styled("div", (props: { $borderColor: string }) => ({
   minHeight: "3rem",
   border: `2px solid ${props.$borderColor}`,
   display: "flex",
+  flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  lineHeight: 1.2,
+  lineHeight: 1.3,
   textAlign: "center",
+  padding: "0 0.5rem",
 }));
+
+export const TimeContent = styled(
+  "p",
+  (props: { $txtColor: string; $isToday: boolean }) => ({
+    color: props.$isToday ? props.$txtColor : "#000",
+    fontWeight: props.$isToday ? "bold" : "",
+  }),
+);
 
 export const CloseBtnContainer = styled("div", {
   display: "flex",
