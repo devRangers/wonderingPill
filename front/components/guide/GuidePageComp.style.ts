@@ -20,3 +20,7 @@ export const NavButton = styled("button", (props: { $btnColor: string }) => ({
   borderRadius: "25px",
   height: "70%",
 }));
+
+export const LinkBtn = styled("button", (props: { $btnColor: string }) => ({
+  color: props.$btnColor,
+}));
