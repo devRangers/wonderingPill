@@ -2,12 +2,11 @@ version: '3'
 services:
   backend_server:
     image: ghcr.io/parksujeong74/wonderingpill-back:latest
-    restart: 'on-failure'
+    restart: always
     ports:
       - 5000:5000
     depends_on:
       - redis
-      - postgres
     networks:
       - wonderingpill_networks
   redis:
@@ -20,22 +19,6 @@ services:
     volumes:
       - ./:/data
       - ./conf/redis.conf:/usr/local/conf/redis.conf
-    networks:
-      - wonderingpill_networks
-  postgres:
-    image: postgres:14-alpine
-    container_name: postgres_db
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    env_file: .env
-    healthcheck:
-      test: ['CMD', 'pg_isready']
-    volumes:
-      - ./db_data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
     networks:
       - wonderingpill_networks
 networks:
