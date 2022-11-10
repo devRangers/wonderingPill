@@ -18,6 +18,7 @@ import Form from "./OptionForm";
 export const SHAPE = "체형";
 export const COLOR = "색상";
 export const MARK = "문양";
+const KEY = "0";
 
 export interface ButtonValue {
   name: string;
@@ -29,7 +30,6 @@ const changeStateWithQuery = (
   queries: string | string[] | undefined,
 ) => {
   const curButtons = { ...buttons };
-
   if (typeof queries === "string") {
     curButtons[queries].isSelected = !curButtons[queries].isSelected;
   } else {
@@ -145,8 +145,7 @@ function Option({ colors, letters, shape }: OptionPageProps) {
     (buttons: { [key in string]: ButtonValue }) => {
       return Object.entries(buttons)
         .filter(([key, value]) => value.isSelected === true)
-        .flat()
-        .filter((value, index) => index % 2 === 0);
+        .map((value, index) => value[KEY]);
     },
     [],
   );
