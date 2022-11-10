@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpCode,
   Logger,
@@ -21,6 +22,11 @@ import {
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
+import { GcsService } from 'src/infras/gcs/gcs.service';
+import {
+  GetPresignedUrlResponse,
+  GetPresignedUrlResponseDto,
+} from 'src/users/dto';
 import { prefixConstant } from 'src/utils/prefix.constant';
 import {
   pillResultResponseDto,
@@ -33,7 +39,10 @@ import { PillService } from './pill.service';
 @Controller('pills')
 export class PillController {
   private readonly logger = new Logger(`${prefixConstant}/pills`);
-  constructor(private readonly pillService: PillService) {}
+  constructor(
+    private readonly pillService: PillService,
+    private readonly gcsService: GcsService,
+  ) {}
 
   @HttpCode(200)
   @Get('search')
@@ -131,6 +140,64 @@ export class PillController {
       statusCode: 200,
       message: '약 검색 결과를 성공적으로 가져왔습니다.',
       result,
+    };
+  }
+
+  // signed url 발행 api
+  @HttpCode(200)
+  @Get('search/presigned-url/:id')
+  @ApiOperation({
+    summary: '약 검색 사진 저장 API',
+    description: '약 검색 사진를 저장한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '약 검색 사진 저장 성공',
+    type: GetPresignedUrlResponseDto,
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'presigned 발급용 id',
+  })
+  async getSignedurl(
+    @Param('id', ValidationPipe) id: string,
+  ): Promise<GetPresignedUrlResponseDto> {
+    const { url, fileName }: GetPresignedUrlResponse =
+      await this.gcsService.getPillUrl(id);
+    this.logger.log(`GET /search/:id Success!`);
+    return {
+      statusCode: 200,
+      message: '약 검색 사진 presigned-url을 발급하였습니다.',
+      result: { url, fileName },
+    };
+  }
+
+  // gcs에서 삭제하는 api
+  @HttpCode(200)
+  @Delete('search/presigned-url/:id')
+  @ApiOperation({
+    summary: '약 검색 사진 삭제 API',
+    description: '약 검색 사진을 삭제한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '약 검색 사진 삭제 성공',
+    type: CommonResponseDto,
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'presigned 발급용 id',
+  })
+  async deleteUrl(
+    @Param('id', ValidationPipe) id: string,
+  ): Promise<CommonResponseDto> {
+    await this.gcsService.deletePillImg(id);
+    this.logger.log(`DELETE /search/:id Success!`);
+    return {
+      statusCode: 200,
+      message: '약 검색 사진을 성공적으로 삭제했습니다.',
     };
   }
 }
