@@ -143,7 +143,7 @@ function Option({ colors, letters, shape }: OptionPageProps) {
 
   const setSelectedButtons = useCallback(
     (buttons: { [key in string]: ButtonValue }) => {
-      return Object.entries(colorButtons)
+      return Object.entries(buttons)
         .filter(([key, value]) => value.isSelected === true)
         .flat()
         .filter((value, index) => index % 2 === 0);
