@@ -1,14 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Pharmacy, PharmacyBookMark } from 'prisma/postgresClient';
+import { PharmacyBookMark } from 'prisma/postgresClient';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PharmacySearchDto } from './dto/pharmacy.search.dto';
+import {
+  pharmacyBookmarkListResponse,
+  PharmacySearchDto,
+  PharmacySearchResponse,
+} from './dto/pharmacy.search.dto';
 @Injectable()
 export class PharmacyService {
   constructor(private readonly prisma: PrismaService) {}
 
   async pharmacySearch(
     pharmacySearchDto: PharmacySearchDto,
-  ): Promise<Pharmacy[]> {
+  ): Promise<PharmacySearchResponse[]> {
     const { option, keyword } = pharmacySearchDto;
     let pharmacies;
     try {
@@ -22,6 +26,20 @@ export class PharmacyService {
       } else if (option === 'name') {
         pharmacies = await this.prisma.pharmacy.findMany({
           where: { name: { contains: keyword } },
+          select: {
+            id: true,
+            name: true,
+            phone: true,
+            address: true,
+            monday: true,
+            tuesday: true,
+            wednesday: true,
+            thursday: true,
+            friday: true,
+            saturday: true,
+            sunday: true,
+            holiday: true,
+          },
           take: 10,
         });
       } else {
@@ -30,10 +48,27 @@ export class PharmacyService {
     } catch (error) {
       throw new NotFoundException('검색을 하지 못했습니다.');
     }
-    if (pharmacies === []) {
-      throw new NotFoundException('검색 결과가 존재하지 않습니다.');
-    }
     return pharmacies;
+  }
+
+  async pharmacyBookmarkList(
+    id: string,
+  ): Promise<pharmacyBookmarkListResponse> {
+    try {
+      const pharmacyBookmarks: pharmacyBookmarkListResponse[] =
+        await this.prisma.user.findMany({
+          where: { id },
+          select: {
+            PharmacyBookMark: {
+              select: { Pharmacy: { select: { id: true } } },
+            },
+          },
+        });
+      const lists = pharmacyBookmarks[0];
+      return lists;
+    } catch (error) {
+      throw new NotFoundException('북마크를 조회하지 못했습니다.');
+    }
   }
 
   async pharmacyBookmark(id: string, pharmacyId: number) {

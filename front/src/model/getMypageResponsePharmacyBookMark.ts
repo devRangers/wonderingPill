@@ -6,4 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type BookmarkControllerCreateBookmark201 = { [key: string]: any };
+export type GetMypageResponsePharmacyBookMark = { [key: string]: any };

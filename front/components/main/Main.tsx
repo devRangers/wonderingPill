@@ -63,7 +63,7 @@ function Main() {
       <MainContent>
         <ImageSection>
           <Image
-            src="/images/register_logo.png"
+            src="/images/logo.png"
             alt="wondering-pill-logo"
             layout="fill"
             objectFit="cover"

@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { get, patch } from "@api";
 import { userAtom } from "@atom/userAtom";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
 import { AUTH, USERS } from "@utils/endpoint";
 import { CaptureContainer, CaptureButton } from "./Capture.style";
 import { useAtom } from "jotai";
+import ProfileImg from "./ProfileImg";
 
 interface SignedURLValues {
   statusCode: number;
@@ -22,20 +22,20 @@ function Capture() {
     const { files } = event.target;
     if (!files) return;
     const file = files[0];
-    const newUrl = URL.createObjectURL(file);
 
     try {
-      const result = await getSignedURL();
+      const { result } = await getSignedURL();
 
-      await fetch(result.result.url, {
+      await fetch(result.url, {
         method: "PUT",
         body: file,
         headers: {
           "Content-Type": "application/octet-stream",
         },
       });
+      const imgUrl = result.url.split("png")[0] + "png";
 
-      await patch(`/users/save-profileImg?img=${newUrl}`);
+      await patch(USERS.PROFILE_IMG(imgUrl));
       const { user: curUser } = await get<CurrentUserResponse>(AUTH.CURRENT);
 
       setUser(curUser);
@@ -50,16 +50,9 @@ function Capture() {
 
   return (
     <>
-      <Image
-        src={user.profileImg ? user.profileImg : "/images/logo.png"}
-        alt="wondering-pill-logo"
-        layout="fill"
-        objectFit="cover"
-        style={{
-          borderRadius: "50%",
-        }}
-        priority={true}
-      />
+      {typeof user.profileImg === "string" && user.profileImg.length > 0 && (
+        <ProfileImg profileImg={user.profileImg} />
+      )}
       <CaptureContainer>
         <input
           accept="image/*"

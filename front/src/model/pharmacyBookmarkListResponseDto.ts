@@ -5,10 +5,10 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { SendInquiryResponseResult } from './sendInquiryResponseResult';
+import type { PharmacyBookmarkListResponse } from './pharmacyBookmarkListResponse';
 
-export interface SendInquiryResponse {
+export interface PharmacyBookmarkListResponseDto {
   statusCode: number;
   message: string;
-  result: SendInquiryResponseResult;
+  lists: PharmacyBookmarkListResponse;
 }

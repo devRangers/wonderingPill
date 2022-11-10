@@ -3,6 +3,7 @@ import * as Api from "@api";
 import { messageKeys } from "@utils/queryKey";
 import { GRAY_COLOR, ACCENT_COLOR, TOASTIFY } from "@utils/constant";
 import { ALARMS } from "@utils/endpoint";
+import { GetAlarmsResponse as MessageValues } from "@modelTypes/getAlarmsResponse";
 import {
   CheckModalContainer,
   CloseBtn,
@@ -10,7 +11,6 @@ import {
   BtnContainer,
   CheckModalBtn,
 } from "./MessagesPage.style";
-import { MessageValues } from "./Messages";
 import { toast } from "react-toastify";
 
 interface CheckModalProps {

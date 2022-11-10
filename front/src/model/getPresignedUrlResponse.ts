@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface UseRecapchaDto {
-  token: string;
+export interface GetPresignedUrlResponse {
+  url: string;
+  fileName: string;
 }

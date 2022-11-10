@@ -6,7 +6,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface BookmarkCreateResponseDto {
+export interface PharmacyBookMarkId {
   id: number;
-  pharmacy_id: number;
 }

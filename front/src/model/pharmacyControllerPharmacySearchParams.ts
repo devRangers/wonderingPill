@@ -5,5 +5,6 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
+import type { PharmacyControllerPharmacySearchOption } from './pharmacyControllerPharmacySearchOption';
 
-export type PharmacyControllerPharmacySearchParams = { phone?: string; name?: string; address?: string; start?: number };
+export type PharmacyControllerPharmacySearchParams = { option: PharmacyControllerPharmacySearchOption; keyword: string };

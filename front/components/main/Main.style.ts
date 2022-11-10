@@ -24,7 +24,7 @@ export const MainContent = styled("div", {
 export const ImageSection = styled("section", {
   position: "relative",
   margin: "0 auto",
-  width: "60%",
+  width: "100%",
 });
 export const MainSection = styled("section", {
   display: "grid",
