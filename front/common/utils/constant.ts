@@ -29,6 +29,7 @@ export const ROUTE = {
   PASSWORD_NEW: "/account/password/new",
   SEARCH_IMAGE: "/search/image",
   SEARCH_OPTION: "/search/option",
+  SEARCH_RESULT_LIST: "/search/result-list",
   SEARCH_RESULT: "/search/result",
   SEARCH_RESULT_PILLNAME: (pillName: string) => `/search/result/${pillName}`,
   SEARCH_PHARMACY: "/search/pharmacy",
