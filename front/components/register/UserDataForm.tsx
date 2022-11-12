@@ -27,6 +27,8 @@ import ReactTooltip from "react-tooltip";
 import * as Api from "@api";
 import { AUTH } from "@utils/endpoint";
 
+const MAX_LENGTH = 20;
+
 interface UserDataFormProps {
   applySubmit: ApplySubmitValues;
 }
@@ -109,18 +111,18 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
         .email("이메일을 확인 해 주세요.")
         .required("필수 입력 란입니다."),
       name: Yup.string()
-        .max(20, "20자 이하로 입력 해 주세요.")
+        .max(MAX_LENGTH, "20자 이하로 입력 해 주세요.")
         .required("필수 입력 란입니다."),
       password: Yup.string()
         .matches(
           /^(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*])(?=.{8,})/,
           "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
         )
-        .max(20, "20자 이하로 입력 해 주세요.")
+        .max(MAX_LENGTH, "20자 이하로 입력 해 주세요.")
         .required("필수 입력 란입니다."),
       checkPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
-        .max(20, "20자 이하로 입력 해 주세요.")
+        .max(MAX_LENGTH, "20자 이하로 입력 해 주세요.")
         .required("필수 입력 란입니다."),
       birth: Yup.string()
         .matches(
@@ -189,6 +191,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           {...userDataFormik.getFieldProps("name")}
           placeholder="이름"
           $placeholderColor={GRAY_COLOR}
+          maxLength={MAX_LENGTH + 1}
         />
         {userDataFormik.touched.name && userDataFormik.errors.name ? (
           <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
