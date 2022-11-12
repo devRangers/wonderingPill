@@ -93,7 +93,6 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
         );
       },
       onError: (error, variables, context) => {
-        // An error happened!
         setOpenModal((cur) => {
           const temp = [...cur];
           temp[2] = !temp[2];
@@ -118,7 +117,7 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
           "소문자, 숫자, 특수문자 포함 8자 이상입니다.",
         )
         .max(20, "20자 이하로 입력 해 주세요.")
-        .required("소문자, 숫자, 특수문자 포함 8자 이상입니다."),
+        .required("필수 입력 란입니다."),
       checkPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
         .max(20, "20자 이하로 입력 해 주세요.")
@@ -211,16 +210,21 @@ function UserDataForm({ applySubmit }: UserDataFormProps) {
         />
         {userDataFormik.touched.password && userDataFormik.errors.password ? (
           <>
-            <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
-              필수 입력 란입니다.
-            </ErrorMessage>
-
-            <ReactTooltip
-              key="password-tooltip"
-              id="password-tooltip"
-              place="top">
-              {userDataFormik.errors.password}
-            </ReactTooltip>
+            {userDataFormik.values.password.length === 0 ? (
+              <ErrorMessage $txtColor={ERROR_MSG_COLOR}>
+                {userDataFormik.errors.password}
+              </ErrorMessage>
+            ) : (
+              <>
+                <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
+                <ReactTooltip
+                  key="password-tooltip"
+                  id="password-tooltip"
+                  place="top">
+                  {userDataFormik.errors.password}
+                </ReactTooltip>
+              </>
+            )}
           </>
         ) : (
           <ErrorMessage $txtColor={ERROR_MSG_COLOR} />
