@@ -17,7 +17,7 @@ import {
   ModalTitleBox,
   ImageDescription,
   PillImage,
-} from "./FindWithImage.style";
+} from "./SearchWithImage.style";
 
 const ONE_WEEK = 60 * 60 * 24 * 7;
 
