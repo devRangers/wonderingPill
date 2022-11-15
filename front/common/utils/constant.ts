@@ -27,7 +27,7 @@ export const ROUTE = {
   EMAIL_RESULT: "/account/email/result",
   PASSWORD_FIND: "/account/password/find",
   PASSWORD_NEW: "/account/password/new",
-  SEARCH_IMAGE: "/search/image",
+  SEARCH: "/search",
   SEARCH_OPTION: "/search/option",
   SEARCH_RESULT_LIST: "/search/result-list",
   SEARCH_RESULT: "/search/result",
