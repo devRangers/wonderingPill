@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { PharmacyResponse } from "@modelTypes/pharmacyResponse";
+import { PharmacySearchResponse as PharmacyValues } from "@modelTypes/pharmacySearchResponse";
 import { Map } from "./SearchPharmPage.style";
 
 declare global {
@@ -9,33 +9,34 @@ declare global {
 }
 
 interface KakaoMapProps {
-  pharmList: PharmacyResponse[];
+  pharmList: PharmacyValues[];
 }
 
 let map: any;
 
+const INIT_COORDS = { lat: 33.450701, long: 126.570667 };
+
 function KakaoMap({ pharmList }: KakaoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
+
+  const renderMap = (lat: number, long: number) => {
+    const options = {
+      center: new window.kakao.maps.LatLng(lat, long),
+      level: 3,
+    };
+    map = new window.kakao.maps.Map(mapRef.current, options);
+  };
 
   useEffect(() => {
     window.kakao.maps.load(() => {
       if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const options = {
-            center: new window.kakao.maps.LatLng(
-              position.coords.latitude,
-              position.coords.longitude,
-            ),
-            level: 3,
-          };
-          map = new window.kakao.maps.Map(mapRef.current, options);
-        });
+        navigator.geolocation.getCurrentPosition(
+          (position) =>
+            renderMap(position.coords.latitude, position.coords.longitude),
+          () => renderMap(INIT_COORDS.lat, INIT_COORDS.long),
+        );
       } else {
-        const options = {
-          center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-          level: 3,
-        };
-        map = new window.kakao.maps.Map(mapRef.current, options);
+        renderMap(INIT_COORDS.lat, INIT_COORDS.long);
       }
     });
   }, []);

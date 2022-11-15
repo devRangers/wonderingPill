@@ -55,7 +55,7 @@ export class UsersService {
   /** 현재 로그인한 유저의 프로필 이미지 변경을 위해 Presigned Url 발급 요청 */
   async getPresignedUrl(id: string): Promise<GetPresignedUrlResponse> {
     const { url, fileName }: GetPresignedUrlResponse =
-      await this.gcsService.getPresignedUrl(id);
+      await this.gcsService.getProfileUrl(id);
     return { url, fileName };
   }
 
@@ -66,7 +66,7 @@ export class UsersService {
     const oldDate: string = user.profileImg.split('_')[2];
 
     await this.updateProfileImg(user.id, img); // DB에서 프로필 이미지 변경
-    await this.gcsService.deleteImg(oldDate, id); // GCS에서 이전 프로필 이미지 삭제
+    await this.gcsService.deleteProfileImg(oldDate, id); // GCS에서 이전 프로필 이미지 삭제
   }
 
   /** DB에서 user id로 User 찾기 */

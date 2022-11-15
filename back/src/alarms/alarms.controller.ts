@@ -21,6 +21,7 @@ import {
 import { GetCurrentUserId } from 'src/common/decorators';
 import { CommonResponseDto } from 'src/common/dto';
 import { AccessGuard } from 'src/common/guards';
+import { prefixConstant } from 'src/utils/prefix.constant';
 import { AlarmsService } from './alarms.service';
 import {
   DeleteAlarmsDto,
@@ -34,7 +35,7 @@ import {
 @ApiTags('Alarms API')
 @Controller('alarms')
 export class AlarmsController {
-  private readonly logger = new Logger(`AlarmsController`);
+  private readonly logger = new Logger(`${prefixConstant}/alarms`);
   constructor(private readonly alarmsService: AlarmsService) {}
 
   @HttpCode(201)
