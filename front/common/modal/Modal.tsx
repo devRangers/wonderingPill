@@ -9,8 +9,8 @@ interface ModalProps {
 }
 
 function Modal({ children, open, onClose, isInfoPage }: ModalProps) {
-  if (!open) return null;
   const isWide = useMediaQuery({ query: "(min-width : 1500px)" });
+  if (!open) return null;
 
   return (
     <>
