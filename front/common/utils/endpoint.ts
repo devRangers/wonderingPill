@@ -70,6 +70,7 @@ export const PILLS = {
     }`,
   BOOKMARK_ID: (id: string) => `${apiBase.pills}/bookmark/${id}`,
   RESULT_NAME: (name: string) => `${apiBase.pills}/result/${name}`,
+  PREGINED_URL: (id: string) => `${apiBase.pills}/search/presigned-url/${id}`,
 };
 
 export const NEXT_API = {
