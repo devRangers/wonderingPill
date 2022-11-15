@@ -5,7 +5,7 @@ const apiBase = {
   users: "/users",
   alarms: "/alarms",
   bookmark: "/bookmark",
-  pharmacy: "/pharmacy",
+  pharmacies: "/pharmacies",
   pills: "/pills",
 };
 
@@ -56,9 +56,11 @@ export const BOOKMARK = {
 };
 
 export const PHARMACY = {
-  PHARMACY: apiBase.pharmacy,
-  SEARCH: `${apiBase.pharmacy}/search`,
-  COUNT: `${apiBase.pharmacy}/count`,
+  PHARMACY: apiBase.pharmacies,
+  SEARCH: (option: string, keyword: string) =>
+    `${apiBase.pharmacies}/search?option=${option}&keyword=${keyword}`,
+  BOOKMARK: (id: number) => `${apiBase.pharmacies}/bookmark/${id}`,
+  BOOKMARKLIST: `${apiBase.pharmacies}/bookmark-list`,
 };
 
 export const PILLS = {

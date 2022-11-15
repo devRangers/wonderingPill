@@ -177,7 +177,7 @@ export class AgendaService {
             minute: Number(arr[0]),
             hour: Number(arr[1]),
             vip:
-              arr[4].split(',').length === this.NO_REPEAT_VIP
+              arr[4].split(',').length === 8
                 ? []
                 : arr[4].split(',').map((v) => Number(v)),
             repeatTime: repeat,

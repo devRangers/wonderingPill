@@ -5,8 +5,8 @@
  * WonderingPill API description
  * OpenAPI spec version: 1.0.0
  */
-import type { PharmacyID } from './pharmacyID';
+import type { PharmacyBookMarkId } from './pharmacyBookMarkId';
 
-export interface PharmacyBookmarkListResponse {
-  PharmacyBookMark: PharmacyID[];
+export interface PharmacyID {
+  Pharmacy: PharmacyBookMarkId;
 }

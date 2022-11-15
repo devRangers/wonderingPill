@@ -19,7 +19,9 @@ export const validation: Joi.Schema = Joi.object({
   MAIL_API_DOMAIN: Joi.string().required(),
   SENDER_ADDRESS: Joi.string().required(),
   CHANGE_PASSWORD_KEY: Joi.string().required(),
+  AUTH_EMAIL_KEY: Joi.string().required(),
   PW_TOKEN_TTL: Joi.number().required(),
+  AUTH_EMAIL_TTL: Joi.number().required(),
   REDIS_HOST: Joi.string().required(), // REDIS
   REDIS_PORT: Joi.number().required(),
   REDIS_PASSWORD: Joi.string().required(),
@@ -30,6 +32,7 @@ export const validation: Joi.Schema = Joi.object({
   SMS_DOMAIN: Joi.string().required(),
   SENDER_PHONE: Joi.string().required(),
   GCS_KEY_FILE: Joi.string().required(), // GCS
+  GCS_BUCKET_URL: Joi.string().required(),
   FIREBASE_KEY_FILE: Joi.string().required(), // FIREBASE
   PILL_DOMAIN: Joi.string().required(), // PILL API
   PILL_KEY: Joi.string().required(),

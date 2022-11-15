@@ -1,9 +1,9 @@
-import type { NextPage } from "next";
 import { useState } from "react";
 import * as Api from "@api";
 import { useQuery } from "react-query";
 import { pharmKeys } from "@utils/queryKey";
-import { PharmacyResponse as PharmacyType } from "@modelTypes/pharmacyResponse";
+import { PharmacySearchResponseDto as PharmacyResponse } from "@modelTypes/pharmacySearchResponseDto";
+import { PharmacySearchResponse as PharmacyValues } from "@modelTypes/pharmacySearchResponse";
 import { isWideDevice } from "@utils/isWideDevice";
 import {
   FOOTER_HEIGHT,
@@ -27,34 +27,28 @@ import {
   PharmListBoxHeader,
   Dot,
   PharmListBoxBody,
-} from "@searchPharmComp/SearchPharmPage.style";
-import KakaoMap from "@searchPharmComp/KakaoMap";
-import PharmList from "@searchPharmComp/PharmList";
+} from "./SearchPharmPage.style";
+import KakaoMap from "./KakaoMap";
+import PharmList from "./PharmList";
 import { PHARMACY } from "@utils/endpoint";
 
-interface PharmacyResponse {
-  statusCode: number;
-  message: string;
-  pharmacy: PharmacyType[];
-}
-
-const SearchPharmPage: NextPage = () => {
+function SearchPharmacy() {
   const isWide = isWideDevice();
 
   const [option, setOption] = useState("address");
   const [inputText, setInputText] = useState("");
   const [keyword, setKeyword] = useState("");
   const [isSubmitBtnClicked, setIsSubmitBtnClicked] = useState(false);
-  const [pharmList, setPharmList] = useState<PharmacyType[]>([]);
+  const [pharmList, setPharmList] = useState<PharmacyValues[]>([]);
 
   useQuery(
     pharmKeys.searchPharm,
-    () => Api.get<PharmacyResponse>(`${PHARMACY.SEARCH}?${option}=${keyword}`),
+    () => Api.get<PharmacyResponse>(PHARMACY.SEARCH(option, keyword)),
     {
       enabled: !!keyword && isSubmitBtnClicked,
       onSuccess: (data) => {
         setIsSubmitBtnClicked(false);
-        setPharmList(data.pharmacy);
+        setPharmList(data.pharmacies);
       },
     },
   );
@@ -108,6 +102,6 @@ const SearchPharmPage: NextPage = () => {
       </PharmListBox>
     </PageContainer>
   );
-};
+}
 
-export default SearchPharmPage;
+export default SearchPharmacy;
