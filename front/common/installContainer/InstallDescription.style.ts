@@ -7,7 +7,6 @@ export const Container = styled(
     gridTemplateRows: `repeat(${props.$descriptionLength}, 1fr)`,
     rowGap: "1rem",
     minHeight: "100%",
-    overflowY: "auto",
   }),
 );
 

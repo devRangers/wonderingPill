@@ -10,6 +10,7 @@ import {
   CategoryBtn,
   InfoContainer,
 } from "./InstallModal.style";
+import InstallDescription from "@installContainer/InstallDescription";
 
 interface InstallModalProps {
   onClose: () => void;
@@ -54,7 +55,11 @@ function InstallModal({ onClose }: InstallModalProps) {
         ))}
       </BtnContainer>
       <InfoContainer $borderColor={SEMI_ACCENT_COLOR}>
-        {Object.values(INSTALL_CATEGORIES)[isCategoryBtnClicked.indexOf(true)]}
+        <InstallDescription
+          category={
+            Object.keys(INSTALL_CATEGORIES)[isCategoryBtnClicked.indexOf(true)]
+          }
+        />
       </InfoContainer>
     </Container>
   );

@@ -2,8 +2,9 @@ import { styled } from "styletron-react";
 
 export const Container = styled("div", {
   display: "grid",
-  gridTemplateRows: "1fr 2fr 2fr 15fr",
+  gridTemplateRows: "1fr 2fr 2fr auto",
   minHeight: "60vh",
+  paddingBottom: "1rem",
 });
 
 export const CloseBtn = styled("button", {
@@ -41,7 +42,7 @@ export const InfoContainer = styled(
   (props: { $borderColor: string }) => ({
     border: `5px solid ${props.$borderColor}`,
     width: "75%",
-    height: "90%",
+    height: "100%",
     alignSelf: "center",
     justifySelf: "center",
   }),
