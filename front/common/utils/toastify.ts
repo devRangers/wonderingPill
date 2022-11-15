@@ -17,4 +17,7 @@ export const Toastify = {
   fail(message: string = MESSAGE.FAIL) {
     toast.error(message);
   },
+  info(message: string) {
+    toast.info(message);
+  },
 };
