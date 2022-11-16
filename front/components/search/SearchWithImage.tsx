@@ -19,7 +19,7 @@ import {
   Numbering,
   Title,
   TitleLine,
-} from "./SearchWithImage.style";
+} from "./index.style";
 import Capture from "./capture/Capture";
 
 function FindWithImage() {
