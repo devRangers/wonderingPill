@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { ButtonValue } from "@searchComp/option";
+import { ButtonValue } from "@searchComp/option/Option";
 
 function useMarkButtons() {
   const [markButtons, setColorButtons] = useState<{
