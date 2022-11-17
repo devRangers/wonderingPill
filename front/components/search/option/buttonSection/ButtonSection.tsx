@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
-import { ButtonValue } from "..";
+import { ButtonValue } from "@searchOptionComp/Option";
 import {
   ButtonContainer,
   OptionButton,
   OptionContainer,
   OptionTitle,
-} from "../index.style";
+} from "@searchOptionComp/Option.style";
 
 interface ButtonSectionProps {
   queries?: string | string[] | undefined;

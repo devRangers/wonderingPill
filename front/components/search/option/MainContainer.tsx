@@ -1,12 +1,12 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { MAIN_COLOR } from "@utils/constant";
-import { MainContent } from "./index.style";
-import useShapeButtons from "./buttonSection/hooks/useShapeButtons";
-import useColorButtons from "./buttonSection/hooks/useColorButtons";
-import useMarkButtons from "./buttonSection/hooks/useMarkButtons";
+import { MainContent } from "./Option.style";
+import useShapeButtons from "@hooks/option/useShapeButtons";
+import useColorButtons from "@hooks/option/useColorButtons";
+import useMarkButtons from "@hooks/option/useMarkButtons";
 import ButtonSection from "./buttonSection/ButtonSection";
 import Form from "./form/OptionForm";
-import { ButtonValue } from ".";
+import { ButtonValue } from "./Option";
 
 export const SHAPE = "체형";
 export const COLOR = "색상";
@@ -27,7 +27,7 @@ export const changeStateWithQuery = (
   if (typeof queries === "string") {
     curButtons[queries].isSelected = !curButtons[queries].isSelected;
   } else {
-    Object.entries(curButtons).map(([key, value], index) => {
+    Object.entries(curButtons).map(([key, _]) => {
       if (queries?.includes(key)) {
         curButtons[key].isSelected = !curButtons[key].isSelected;
       }
@@ -44,8 +44,8 @@ function MainContainer({ shape, letters, colors }: MainContainerProps) {
   const setSelectedButtons = useCallback(
     (buttons: { [key in string]: ButtonValue }) => {
       return Object.entries(buttons)
-        .filter(([key, value]) => value.isSelected === true)
-        .map((value, index) => value[KEY]);
+        .filter(([_, value]) => value.isSelected === true)
+        .map((value, _) => value[KEY]);
     },
     [],
   );

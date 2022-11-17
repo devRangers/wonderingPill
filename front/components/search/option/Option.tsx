@@ -1,6 +1,6 @@
 import { OptionPageProps } from "pages/search/option";
 import MainContainer from "./MainContainer";
-import { Container } from "./index.style";
+import { Container } from "./Option.style";
 import TitleContainer from "./TitleContainer";
 
 export interface ButtonValue {

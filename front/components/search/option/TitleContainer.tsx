@@ -5,7 +5,7 @@ import {
   TitleContainer as Container,
   TitleContent,
   TopBorder,
-} from "./index.style";
+} from "./Option.style";
 
 function TitleContainer() {
   return (
