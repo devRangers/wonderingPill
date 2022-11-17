@@ -1,68 +1,38 @@
-import Image from "next/image";
-import { useState } from "react";
-import { AiOutlineInfoCircle } from "react-icons/ai";
-import { MdGroup } from "react-icons/md";
-import { ACCENT_COLOR, SUB_COLOR } from "@utils/constant";
-import {
-  Container,
-  Filter,
-  InfoContainer,
-  Text,
-  Button,
-  BtnContainer,
-  LinkBtn,
-} from "./InfoPage.style";
+import { useState, useCallback } from "react";
 import Modal from "@modal/Modal";
-import InstallModal from "./InstallModal";
-import InfoModal from "./InfoModal";
-import TeamModal from "./TeamModal";
+import InfoPageContent from "./InfoPageContent";
+import InstallModal from "./installModal/InstallModal";
+import InfoModal from "./infoModal/InfoModal";
+import TeamModal from "./teamModal/TeamModal";
 
 function InfoPageComp() {
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
-  const modalCloseHandler = () => {
+  const modalCloseHandler = useCallback(() => {
     setIsInstallModalOpen(false);
     setIsInfoModalOpen(false);
     setIsTeamModalOpen(false);
-  };
+  }, []);
+
+  const installModalOpenHandler = useCallback(() => {
+    setIsInstallModalOpen(true);
+  }, []);
+  const infoModalOpenHandler = useCallback(() => {
+    setIsInfoModalOpen(true);
+  }, []);
+  const teamModalOpenHandler = useCallback(() => {
+    setIsTeamModalOpen(true);
+  }, []);
 
   return (
     <>
-      <Container>
-        <Image
-          src="/images/info/background.jpg"
-          layout="fill"
-          objectFit="cover"
-          priority={true}
-        />
-        <Filter $bgColor={ACCENT_COLOR} />
-        <InfoContainer>
-          <Text>
-            약과 약국을 검색하고
-            <br />
-            나의 복용약을 관리하고 싶다면
-          </Text>
-          <Button
-            $btnColor={SUB_COLOR}
-            onClick={() => setIsInstallModalOpen(true)}>
-            궁금해약 설치하기
-          </Button>
-          <BtnContainer>
-            <Image src="/images/info/logo.png" width="100" height="80" />
-            <LinkBtn onClick={() => setIsInfoModalOpen(true)}>
-              <AiOutlineInfoCircle />
-              <br />
-              서비스 소개
-            </LinkBtn>
-            <LinkBtn onClick={() => setIsTeamModalOpen(true)}>
-              <MdGroup />
-              <br />팀 소개
-            </LinkBtn>
-          </BtnContainer>
-        </InfoContainer>
-      </Container>
+      <InfoPageContent
+        installModalOpenHandler={installModalOpenHandler}
+        infoModalOpenHandler={infoModalOpenHandler}
+        teamModalOpenHandler={teamModalOpenHandler}
+      />
       {(isInstallModalOpen || isInfoModalOpen || isTeamModalOpen) && (
         <Modal
           open={isInstallModalOpen || isInfoModalOpen || isTeamModalOpen}
