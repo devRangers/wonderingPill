@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import CaptureContainer from "common/capture/CaptureContainer";
 import { ROUTE } from "@utils/constant";
 import { Toastify } from "@utils/toastify";
-import { CaptureContainer, CaptureButton } from "./Capture.style";
 import {
   deleteImageOnGCS,
   getPreSignedURL,
   postImageToAIServer,
   putImageOnGCS,
-} from "./api";
+} from "@searchComp/api";
 
 function Capture() {
   const router = useRouter();
@@ -17,16 +17,15 @@ function Capture() {
   const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (!files) return;
-    const file = files[0];
 
-    // 순차적으로 해야함
     try {
-      const { result } = await getPreSignedURL(Date.now().toString());
-      await putImageOnGCS(result.url, file);
+      const uuid = Date.now().toString();
+      const { result } = await getPreSignedURL(uuid);
+      await putImageOnGCS(result.url, files[0]);
       const imgURL = result.url.split("png")[0] + "png";
 
       await postImageToAIServer({ imgURL });
-      await deleteImageOnGCS(Date.now().toString());
+      await deleteImageOnGCS(uuid);
     } catch (e) {
       console.error(e);
       Toastify.fail();
@@ -68,17 +67,7 @@ function Capture() {
         objectFit="contain"
         priority={true}
       />
-      <CaptureContainer>
-        <input
-          accept="image/*"
-          id="icon-button-file"
-          type="file"
-          name="imgURL"
-          onChange={handleCapture}
-          style={{ display: "none" }}
-        />
-        <CaptureButton htmlFor="icon-button-file" />
-      </CaptureContainer>
+      <CaptureContainer handleCapture={handleCapture} />
     </>
   );
 }
