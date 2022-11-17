@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
-import Option from "@searchComp/option/Option";
+import Option from "@searchOptionComp/Option";
 import { NextSeo } from "next-seo";
 import { OPTION_SEO } from "next-seo.config";
 
@@ -25,9 +25,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      colors,
-      letters: typeof letters === "string" ? letters : "",
-      shape: shape ? shape : "circle",
+      colors: colors ? colors : "",
+      letters: letters ? letters : "",
+      shape: shape ? shape : "",
     },
   };
 };
