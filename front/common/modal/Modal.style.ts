@@ -18,8 +18,8 @@ export const ModalContainer = styled(
   (props: { $isOpen: boolean; $isWide: boolean; $isInfoPage?: boolean }) => ({
     position: "fixed",
     width: props.$isWide ? "60vw" : "85vw",
-    height: props.$isInfoPage ? "80vh" : "",
-    overflowY: props.$isInfoPage ? "scroll" : "",
+    maxHeight: props.$isInfoPage ? "80vh" : "",
+    overflowY: props.$isInfoPage ? "auto" : "",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",

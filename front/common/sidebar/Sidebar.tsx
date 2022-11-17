@@ -47,7 +47,7 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
   },
   findPharmacy: {
     title: "약국 찾기",
-    link: ROUTE.MAIN,
+    link: ROUTE.SEARCH_PHARMACY,
     canUseWithLogin: false,
   },
   myPage: {
@@ -57,7 +57,7 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
   },
   guide: {
     title: "설치 가이드",
-    link: ROUTE.MAIN,
+    link: ROUTE.GUIDE,
     canUseWithLogin: false,
   },
 };
