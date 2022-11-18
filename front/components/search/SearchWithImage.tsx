@@ -22,7 +22,7 @@ import {
 } from "./Search.style";
 import Capture from "./capture/Capture";
 
-function FindWithImage() {
+function SearchWithImage() {
   const isWide = isWideDevice();
 
   return (
@@ -62,4 +62,4 @@ function FindWithImage() {
   );
 }
 
-export default memo(FindWithImage);
+export default memo(SearchWithImage);
