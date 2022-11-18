@@ -19,6 +19,7 @@
     "paths": {
       "@api": ["api/api"],
       "@atom/*": ["atom/*"],
+      "@capture/*": ["common/capture/*"],
       "@container/*": ["common/container/*"],
       "@errorContainer/*": ["common/errorContainer/*"],
       "@footer/*": ["common/footer/*"],
