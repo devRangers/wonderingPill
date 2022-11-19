@@ -1,12 +1,8 @@
 import CaptureContainer from "common/capture/CaptureContainer";
 import { userAtom } from "@atom/userAtom";
 import { Toastify } from "@utils/toastify";
-import {
-  getSignedURL,
-  getUser,
-  patchProfileImg,
-  putImageOnGCS,
-} from "@mypage/api";
+import { getSignedURL, getUser, patchProfileImg } from "@mypage/api";
+import { putImageOnGCS } from "api/common/commonApi";
 import ProfileImg from "./ProfileImg";
 import { useAtom } from "jotai";
 

@@ -8,8 +8,8 @@ import {
   deleteImageOnGCS,
   getPreSignedURL,
   postImageToAIServer,
-  putImageOnGCS,
 } from "@searchComp/api";
+import { putImageOnGCS } from "api/common/commonApi";
 
 function Capture() {
   const router = useRouter();
