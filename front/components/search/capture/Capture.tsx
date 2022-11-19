@@ -16,7 +16,10 @@ function Capture() {
 
   const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
-    if (!files) return;
+    if (!files) {
+      Toastify.fail();
+      return;
+    }
 
     try {
       const uuid = Date.now().toString();
