@@ -13,12 +13,10 @@ const Search = ({ foundCookie }: SearchProp) => {
   return (
     <>
       <SearchWithImage />
-      {!foundCookie && modalOpen ? (
+      {!foundCookie && modalOpen && (
         <Modal open={modalOpen} onClose={handleCloseModal}>
           <CaptureGuideModal handleCloseModal={handleCloseModal} />
         </Modal>
-      ) : (
-        <></>
       )}
     </>
   );
