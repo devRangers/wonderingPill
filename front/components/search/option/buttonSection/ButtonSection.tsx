@@ -1,15 +1,14 @@
 import React, { memo } from "react";
 import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
-import { ButtonValue } from "@searchOptionComp/Option";
 import {
   ButtonContainer,
   OptionButton,
   OptionContainer,
   OptionTitle,
 } from "@searchOptionComp/Option.style";
+import { ButtonValue } from "../MainContainer";
 
 interface ButtonSectionProps {
-  queries?: string | string[] | undefined;
   title: string;
   buttons: { [key in string]: ButtonValue };
   handleSetButtons: (key: string) => void;
@@ -28,7 +27,7 @@ function ButtonSection({
     <OptionContainer>
       <OptionTitle $color={SEMI_ACCENT_COLOR}>{title}</OptionTitle>
       <ButtonContainer>
-        {Object.entries(buttons).map(([key, value], index) => (
+        {Object.entries(buttons).map(([key, value]) => (
           <OptionButton
             key={key}
             onClick={() => handleClickButtonSelect(key)}

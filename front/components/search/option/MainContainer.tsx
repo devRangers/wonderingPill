@@ -6,12 +6,16 @@ import useMarkButtons from "@hooks/option/useMarkButtons";
 import { MainContent } from "./Option.style";
 import ButtonSection from "./buttonSection/ButtonSection";
 import Form from "./form/OptionForm";
-import { ButtonValue } from "./Option";
 
 export const SHAPE = "체형";
 export const COLOR = "색상";
 export const MARK = "문양";
 const KEY = "0";
+
+export interface ButtonValue {
+  name: string;
+  isSelected: boolean;
+}
 
 interface MainContainerProps {
   shape: string;

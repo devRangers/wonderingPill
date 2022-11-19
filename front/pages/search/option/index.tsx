@@ -1,13 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
-import Option from "@searchOptionComp/Option";
+import Option, { OptionPageProps } from "@searchOptionComp/Option";
 import { NextSeo } from "next-seo";
 import { OPTION_SEO } from "next-seo.config";
-
-export interface OptionPageProps {
-  colors: string | string[];
-  letters: string;
-  shape: string;
-}
 
 const OptionPage: NextPage<OptionPageProps> = ({ colors, letters, shape }) => {
   return (

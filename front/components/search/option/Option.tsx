@@ -1,11 +1,11 @@
-import { OptionPageProps } from "pages/search/option";
 import MainContainer from "./MainContainer";
 import { Container } from "./Option.style";
 import TitleContainer from "./TitleContainer";
 
-export interface ButtonValue {
-  name: string;
-  isSelected: boolean;
+export interface OptionPageProps {
+  colors: string | string[];
+  letters: string;
+  shape: string;
 }
 
 function Option({ colors, letters, shape }: OptionPageProps) {
