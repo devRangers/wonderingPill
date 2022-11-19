@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import CaptureContainer from "common/capture/CaptureContainer";
+import CaptureContainer from "@capture/CaptureContainer";
 import { ROUTE } from "@utils/constant";
 import { Toastify } from "@utils/toastify";
 import {
