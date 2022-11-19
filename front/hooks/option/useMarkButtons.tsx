@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { ButtonValue } from "@searchComp/option/Option";
+import { ButtonValue } from "@searchComp/option/MainContainer";
 
 function useMarkButtons() {
   const [markButtons, setColorButtons] = useState<{
@@ -19,7 +19,7 @@ function useMarkButtons() {
     setColorButtons((cur) => {
       const curButtons = { ...cur };
       Object.entries(curButtons).forEach(
-        ([key, value], indedx) => (curButtons[key].isSelected = false),
+        ([key, _]) => (curButtons[key].isSelected = false),
       );
       curButtons[key].isSelected = !curButtons[key].isSelected;
       return curButtons;

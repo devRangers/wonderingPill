@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
-import { ButtonValue } from "@searchComp/option/Option";
-import { changeStateWithQuery } from "@searchComp/option/MainContainer";
+import {
+  ButtonValue,
+  changeStateWithQuery,
+} from "@searchComp/option/MainContainer";
 
 function useShapeButtons(shape: string) {
   const [shapeButtons, setShapeButtons] = useState<{

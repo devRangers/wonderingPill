@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
-import { ButtonValue } from "@searchComp/option/Option";
-import { changeStateWithQuery } from "@searchComp/option/MainContainer";
+import {
+  ButtonValue,
+  changeStateWithQuery,
+} from "@searchComp/option/MainContainer";
 
 function useColorButtons(colors: string | string[]) {
   const [colorButtons, setColorButtons] = useState<{
