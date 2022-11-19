@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { MAIN_COLOR } from "@utils/constant";
-import { MainContent } from "./Option.style";
 import useShapeButtons from "@hooks/option/useShapeButtons";
 import useColorButtons from "@hooks/option/useColorButtons";
 import useMarkButtons from "@hooks/option/useMarkButtons";
+import { MainContent } from "./Option.style";
 import ButtonSection from "./buttonSection/ButtonSection";
 import Form from "./form/OptionForm";
 import { ButtonValue } from "./Option";
@@ -44,7 +44,7 @@ function MainContainer({ shape, letters, colors }: MainContainerProps) {
   const setSelectedButtons = useCallback(
     (buttons: { [key in string]: ButtonValue }) => {
       return Object.entries(buttons)
-        .filter(([_, value]) => value.isSelected === true)
+        .filter(([_, value]) => value.isSelected)
         .map((value, _) => value[KEY]);
     },
     [],
