@@ -13,6 +13,7 @@ import {
   ACCENT_COLOR,
   GRAY_COLOR,
 } from "@utils/constant";
+import { Toastify } from "@utils/toastify";
 import {
   InputContainer,
   Input,
@@ -31,7 +32,6 @@ import {
 } from "./FindEmailForm.style";
 import Modal from "@modal/Modal";
 import AuthForm from "./AuthForm";
-import { toast } from "react-toastify";
 
 interface FindEmailValues {
   name: string;
@@ -63,7 +63,7 @@ function FindEmailForm() {
         setAuthModalOpen(true);
       },
       onError: ({ message }) => {
-        toast.error(message);
+        Toastify.fail(message);
       },
     },
   );

@@ -6,8 +6,9 @@ import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseD
 import { GetAlarmsResponseDto as MessageResponse } from "@modelTypes/getAlarmsResponseDto";
 import { GetAlarmsResponse as MessageValues } from "@modelTypes/getAlarmsResponse";
 import { messageKeys } from "@utils/queryKey";
-import { MAIN_COLOR, ACCENT_COLOR, TOASTIFY } from "@utils/constant";
+import { MAIN_COLOR, ACCENT_COLOR } from "@utils/constant";
 import { ALARMS } from "@utils/endpoint";
+import { Toastify } from "@utils/toastify";
 import {
   ContentContainer,
   TitleContainer,
@@ -24,7 +25,6 @@ import Container from "@container/Container";
 import Modal from "@modal/Modal";
 import CheckModal from "@messagesComp/CheckModal";
 import Messages from "@messagesComp/Messages";
-import { toast } from "react-toastify";
 
 interface deleteMessageValues {
   ids: string[];
@@ -91,7 +91,7 @@ function MessagesPageComp() {
         queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       },
       onError: () => {
-        toast.error(TOASTIFY.FAIL);
+        Toastify.fail();
       },
     },
   );
