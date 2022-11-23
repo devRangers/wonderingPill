@@ -70,6 +70,7 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
           name="authNum"
           placeholder="인증번호"
           value={code}
+          autoComplete="one-time-code"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setCode(e.target.value)
           }
