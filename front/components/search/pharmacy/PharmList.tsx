@@ -6,7 +6,7 @@ import { useMediaQuery } from "react-responsive";
 import { useStyletron } from "styletron-react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { pharmKeys } from "@utils/queryKey";
 import { PHARMACY } from "@utils/endpoint";
 import { PharmacySearchResponse as PharmacyValues } from "@modelTypes/pharmacySearchResponse";

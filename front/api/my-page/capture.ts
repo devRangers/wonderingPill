@@ -1,4 +1,4 @@
-import { get, patch } from "@api";
+import { get, patch } from "@api/api";
 import { AUTH, USERS } from "@utils/endpoint";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { GetPresignedUrlResponseDto } from "@modelTypes/getPresignedUrlResponseDto";

@@ -5,7 +5,7 @@ import CaptureContainer from "@capture/CaptureContainer";
 import { ROUTE } from "@utils/constant";
 import { Toastify } from "@utils/toastify";
 import { AI_SERVER_API } from "@utils/endpoint";
-import { putImageOnGCS } from "api/common";
+import { putImageOnGCS } from "@api/common";
 import {
   getPreSignedURL,
   postImageToAIServer,

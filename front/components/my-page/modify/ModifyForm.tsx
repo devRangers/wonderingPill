@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { patch } from "@api";
+import { patch } from "@api/api";
 import { userAtom } from "@atom/userAtom";
 import { USERS } from "@utils/endpoint";
 import { ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";

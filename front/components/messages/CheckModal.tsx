@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { messageKeys } from "@utils/queryKey";
 import { GRAY_COLOR, ACCENT_COLOR } from "@utils/constant";
 import { ALARMS } from "@utils/endpoint";

@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { FindAccountResponse } from "@modelTypes/findAccountResponse";
 import { FindAccountResponseUser as InfoType } from "@modelTypes/findAccountResponseUser";
 import { AUTH } from "@utils/endpoint";

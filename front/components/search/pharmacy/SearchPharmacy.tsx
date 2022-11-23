@@ -1,5 +1,5 @@
 import { useState } from "react";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { useQuery } from "react-query";
 import { pharmKeys } from "@utils/queryKey";
 import { PharmacySearchResponseDto as PharmacyResponse } from "@modelTypes/pharmacySearchResponseDto";

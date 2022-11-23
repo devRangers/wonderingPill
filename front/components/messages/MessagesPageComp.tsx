@@ -1,7 +1,7 @@
 import { useState } from "react";
 import _ from "lodash";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
 import { GetAlarmsResponseDto as MessageResponse } from "@modelTypes/getAlarmsResponseDto";
 import { GetAlarmsResponse as MessageValues } from "@modelTypes/getAlarmsResponse";
