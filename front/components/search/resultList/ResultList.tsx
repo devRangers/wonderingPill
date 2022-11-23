@@ -10,6 +10,7 @@ import {
   RED_COLOR,
   YELLOW_COLOR,
 } from "@utils/constant";
+import { PillSearchResponseDtoPills } from "@modelTypes/pillSearchResponseDtoPills";
 import { ImageWrapper } from "@header/Header.style";
 import {
   Container,
@@ -60,7 +61,8 @@ const PillData: { [key in string]: PillDataValue } = {
   },
 };
 
-function ResultList() {
+function ResultList(pills: PillSearchResponseDtoPills) {
+  console.log(pills);
   return (
     <OuterContainer
       $headerHeight={HEADER_HEIGHT}
