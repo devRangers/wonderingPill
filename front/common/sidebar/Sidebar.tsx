@@ -42,7 +42,7 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
   },
   findWithPicture: {
     title: "사진으로 찾기",
-    link: ROUTE.SEARCH_IMAGE,
+    link: ROUTE.SEARCH,
     canUseWithLogin: false,
   },
   findPharmacy: {

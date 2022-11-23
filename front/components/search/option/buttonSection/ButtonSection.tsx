@@ -1,36 +1,38 @@
+import React, { memo } from "react";
 import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
-import React from "react";
-import { ButtonValue } from "./Option";
 import {
   ButtonContainer,
   OptionButton,
   OptionContainer,
   OptionTitle,
-} from "./Option.style";
+} from "@searchOptionComp/Option.style";
+import { ButtonValue } from "../MainContainer";
 
 interface ButtonSectionProps {
   title: string;
   buttons: { [key in string]: ButtonValue };
-  isButtonSelected: boolean[];
-  handleClickButtonSelect: (index: number) => void;
+  handleSetButtons: (key: string) => void;
 }
 
 function ButtonSection({
   title,
   buttons,
-  isButtonSelected,
-  handleClickButtonSelect,
+  handleSetButtons,
 }: ButtonSectionProps) {
+  const handleClickButtonSelect = (key: string) => {
+    handleSetButtons(key);
+  };
+
   return (
     <OptionContainer>
       <OptionTitle $color={SEMI_ACCENT_COLOR}>{title}</OptionTitle>
       <ButtonContainer>
-        {Object.entries(buttons).map(([key, value], index) => (
+        {Object.entries(buttons).map(([key, value]) => (
           <OptionButton
             key={key}
-            onClick={() => handleClickButtonSelect(index)}
+            onClick={() => handleClickButtonSelect(key)}
             $bgColor={SEMI_ACCENT_COLOR}
-            $isSelected={isButtonSelected[index]}
+            $isSelected={value.isSelected}
             $color={GRAY_COLOR}>
             {value.name}
           </OptionButton>
@@ -40,4 +42,4 @@ function ButtonSection({
   );
 }
 
-export default ButtonSection;
+export default memo(ButtonSection);

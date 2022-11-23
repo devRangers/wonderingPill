@@ -11,15 +11,10 @@ import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import * as Api from "@api";
 import { AUTH } from "@utils/endpoint";
+import { Toastify } from "@utils/toastify";
 import { SigninResponse } from "@modelTypes/signinResponse";
 import { SigninUserDto as LoginTypes } from "@modelTypes/signinUserDto";
-import {
-  SUB_COLOR,
-  ERROR_MSG_COLOR,
-  GRAY_COLOR,
-  ROUTE,
-  TOASTIFY,
-} from "@utils/constant";
+import { SUB_COLOR, ERROR_MSG_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
 import {
   InputContainer,
   Input,
@@ -39,7 +34,6 @@ import {
   KakaoBtn,
   GoogleBtn,
 } from "./LoginForm.style";
-import { toast } from "react-toastify";
 
 type LoginFormValues = Pick<LoginTypes, "email" | "password">;
 
@@ -72,7 +66,7 @@ function LoginForm() {
         router.push(ROUTE.MAIN);
       },
       onError: ({ message }) => {
-        toast.error(message);
+        Toastify.fail(message);
       },
     },
   );

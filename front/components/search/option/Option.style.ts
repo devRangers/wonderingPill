@@ -36,11 +36,6 @@ export const TopBorder = styled("div", (props: { $borderColor: string }) => ({
   backgroundColor: props.$borderColor,
 }));
 
-export const ImageContainer = styled("div", {
-  flex: 0.3,
-  position: "relative",
-});
-
 export const MainContent = styled(
   "section",
   (props: { $borderColor: string }) => ({

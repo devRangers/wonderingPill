@@ -74,6 +74,12 @@ const OPTION_SEO = {
     "궁금해 약 머신러닝 결과 페이지에요. 머신러닝의 결과물을 확인하고 추가적으로 추가할 옵션이 있다면 추가해 보세요.",
 };
 
+const RESULT_LIST_SEO = {
+  title: "검색 결과",
+  description:
+    "궁금해 약 검색 결과 페이지에요. 검색 결과 리스트 들 중 알고 싶은 약을 선택해보세요.",
+};
+
 const RESULT_SEO = {
   title: "검색 결과",
   description:
@@ -118,6 +124,7 @@ export {
   NEW_PASSWORD_SEO,
   SEARCH_IMAGE_SEO,
   OPTION_SEO,
+  RESULT_LIST_SEO,
   RESULT_SEO,
   REGISTER_SEO,
   SET_NOTIFICATION_SEO,
