@@ -9,7 +9,7 @@ import {
   getPreSignedURL,
   postImageToAIServer,
 } from "@searchComp/api";
-import { putImageOnGCS } from "api/common/commonApi";
+import { putImageOnGCS } from "api/common";
 
 function Capture() {
   const router = useRouter();
