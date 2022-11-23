@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 import CaptureContainer from "@capture/CaptureContainer";
 import { ROUTE } from "@utils/constant";
 import { Toastify } from "@utils/toastify";
+import { putImageOnGCS } from "api/common";
 import {
-  deleteImageOnGCS,
   getPreSignedURL,
   postImageToAIServer,
-} from "@searchComp/api";
-import { putImageOnGCS } from "api/common";
+  deleteImageOnGCS,
+} from "api/search/capture";
 
 function Capture() {
   const router = useRouter();
