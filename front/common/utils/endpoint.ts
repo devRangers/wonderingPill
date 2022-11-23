@@ -78,3 +78,8 @@ export const PILLS = {
 export const NEXT_API = {
   VERIFY_CODE: `/api/verify-code`,
 };
+
+export const AI_SERVER_API = {
+  CLASSIFY: `${process.env.NEXT_PUBLIC_AI_SERVER_URL}/classify`,
+  PREDICT: `${process.env.NEXT_PUBLIC_AI_SERVER_URL}/predict`,
+};

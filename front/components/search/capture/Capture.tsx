@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import CaptureContainer from "@capture/CaptureContainer";
 import { ROUTE } from "@utils/constant";
 import { Toastify } from "@utils/toastify";
+import { AI_SERVER_API } from "@utils/endpoint";
 import { putImageOnGCS } from "api/common";
 import {
   getPreSignedURL,
@@ -36,9 +37,7 @@ function Capture() {
   };
 
   useEffect(() => {
-    const eventSource = new EventSource(
-      `${process.env.NEXT_PUBLIC_AI_SERVER_URL}/classify`,
-    );
+    const eventSource = new EventSource(AI_SERVER_API.CLASSIFY);
     eventSource.addEventListener("sse", function (e) {
       const data = JSON.parse(e.data);
       const colors = data.colors.split("/");

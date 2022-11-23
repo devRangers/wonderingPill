@@ -1,5 +1,5 @@
 import { get, delete as del } from "@api";
-import { PILLS } from "@utils/endpoint";
+import { AI_SERVER_API, PILLS } from "@utils/endpoint";
 import { GetPresignedUrlResponseDto as GetPresignedDto } from "@modelTypes/getPresignedUrlResponseDto";
 
 export const getPreSignedURL = (id: string) => {
@@ -7,7 +7,7 @@ export const getPreSignedURL = (id: string) => {
 };
 
 export const postImageToAIServer = (body: { imgURL: string }) => {
-  return fetch(`${process.env.NEXT_PUBLIC_AI_SERVER_URL}/predict`, {
+  return fetch(AI_SERVER_API.PREDICT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
