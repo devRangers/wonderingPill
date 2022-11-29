@@ -18,7 +18,7 @@ if os.environ["FLASK_DEBUG"] == "production":
 elif os.environ["FLASK_DEBUG"] == "development":
     CLIENT_URL = os.environ.get("DEV_CLIENT_URL")
 
-CORS(app, supports_credentials=True, origins=[CLIENT_URL, REDIS_URL])
+CORS(app, supports_credentials=True, resources={r'*': {'origins': [CLIENT_URL, REDIS_URL]}})
 app.config["REDIS_URL"] = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}" 
 app.register_blueprint(sse, url_prefix='/classify')
 
