@@ -9,7 +9,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { AUTH } from "@utils/endpoint";
 import { Toastify } from "@utils/toastify";
 import { SigninResponse } from "@modelTypes/signinResponse";

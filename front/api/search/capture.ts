@@ -1,4 +1,4 @@
-import { get, delete as del } from "@api";
+import { get, delete as del } from "@api/api";
 import { AI_SERVER_API, PILLS } from "@utils/endpoint";
 import { GetPresignedUrlResponseDto as GetPresignedDto } from "@modelTypes/getPresignedUrlResponseDto";
 

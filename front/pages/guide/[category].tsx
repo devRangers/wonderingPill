@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ROUTE, SEMI_ACCENT_COLOR } from "@utils/constant";
 import { LinkBtn } from "@guideComp/GuidePageComp.style";
 import InstallDescription from "@installContainer/InstallDescription";
+import { NextSeo } from "next-seo";
+import { GUIDE_SEO } from "next-seo.config";
 
 interface GuideCategoryPageProps {
   category: string;
@@ -12,6 +14,7 @@ interface GuideCategoryPageProps {
 const GuideCategoryPage: NextPage<GuideCategoryPageProps> = ({ category }) => {
   return (
     <>
+      <NextSeo {...GUIDE_SEO} />
       <InstallDescription category={category} />
       <Link href={ROUTE.GUIDE}>
         <LinkBtn $btnColor={SEMI_ACCENT_COLOR}>

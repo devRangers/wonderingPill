@@ -17,7 +17,7 @@
     "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
-      "@api": ["api/api"],
+      "@api/*": ["api/*"],
       "@atom/*": ["atom/*"],
       "@capture/*": ["common/capture/*"],
       "@container/*": ["common/container/*"],

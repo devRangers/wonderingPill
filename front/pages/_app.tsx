@@ -14,7 +14,7 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
 import {
   URL_WITHOUT_HEADER,

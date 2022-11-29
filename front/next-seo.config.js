@@ -39,9 +39,15 @@ const LOGIN_SEO = {
 };
 
 const FIND_EMAIL_SEO = {
-  title: "이메일 찾기",
+  title: "계정 찾기",
   description:
-    "궁금해 약 이메일 찾기 페이지에요. 이름과 생년월일을 입력하시면 이메일을 찾을 수 있어요",
+    "궁금해 약 계정 찾기 페이지에요. 이름과 생년월일을 입력하시면 계정을 찾을 수 있어요",
+};
+
+const EMAIL_RESULT_SEO = {
+  title: "계정 찾기 결과",
+  description:
+    "궁금해 약 계정 찾기 결과 페이지에요. 계정 찾기 페이지에서 입력한 정보의 계정을 확인할 수 있어요.",
 };
 
 const FIND_PASSWORD_SEO = {
@@ -85,11 +91,35 @@ const REGISTER_SEO = {
   description: "궁금해 약 회원가입 페이지에요.",
 };
 
+const SET_NOTIFICATION_SEO = {
+  title: "알림 설정",
+  description: "알림 설정 페이지에요. 복약 알림을 설정할 수 있어요.",
+};
+
+const NOTIFICATIONS_SEO = {
+  title: "알림 목록",
+  description:
+    "알림 목록 페이지에요. 지난 알림을 확인하고 복약 여부를 설정할 수 있어요.",
+};
+
+const PHARMACY_SEO = {
+  title: "약국 찾기",
+  description:
+    "약국 찾기 페이지에요. 검색으로 약국의 위치와 영업시간 등의 약국 정보를 확인할 수 있어요.",
+};
+
+const GUIDE_SEO = {
+  title: "설치 가이드",
+  description:
+    "궁금해 약 설치 가이드 페이지에요. android, ios, chrome에서 궁금해 약을 설치할 수 있어요.",
+};
+
 export {
   DEFAULT_SEO,
   MY_PAGE_SEO,
   LOGIN_SEO,
   FIND_EMAIL_SEO,
+  EMAIL_RESULT_SEO,
   FIND_PASSWORD_SEO,
   NEW_PASSWORD_SEO,
   SEARCH_IMAGE_SEO,
@@ -97,4 +127,8 @@ export {
   RESULT_LIST_SEO,
   RESULT_SEO,
   REGISTER_SEO,
+  SET_NOTIFICATION_SEO,
+  NOTIFICATIONS_SEO,
+  PHARMACY_SEO,
+  GUIDE_SEO,
 };

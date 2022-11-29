@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import { GetAlarmSettingResponse as MessageTypes } from "@modelTypes/getAlarmSettingResponse";

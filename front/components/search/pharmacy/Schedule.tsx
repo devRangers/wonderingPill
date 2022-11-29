@@ -1,8 +1,11 @@
 import { GREEN_COLOR } from "@utils/constant";
+import { PharmacySearchResponse as PharmacyValues } from "@modelTypes/pharmacySearchResponse";
 import { TimeContent } from "./PharmInfoModal.style";
 
+type scheduleTypes = Omit<PharmacyValues, "id" | "name" | "phone" | "address">;
+
 interface ScheduleProps {
-  schedules: { [key in string]: string };
+  schedules: scheduleTypes;
 }
 
 const days = {
@@ -36,7 +39,7 @@ function Schedule({ schedules }: ScheduleProps) {
           key={key}
           $txtColor={GREEN_COLOR}
           $isToday={key === weekArr[todayIdx]}>
-          {value} {schedules[key]}
+          {value} {schedules[key as keyof scheduleTypes]}
         </TimeContent>
       ))}
     </>

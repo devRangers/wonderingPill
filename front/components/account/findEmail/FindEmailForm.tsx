@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useMutation } from "react-query";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { FindAccountResponse } from "@modelTypes/findAccountResponse";
 import { FindAccountDto as FindAccountValues } from "@modelTypes/findAccountDto";
 import { AUTH } from "@utils/endpoint";

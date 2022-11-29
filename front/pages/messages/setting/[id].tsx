@@ -6,12 +6,19 @@ import { ALARMS } from "@utils/endpoint";
 import SetNotificationPageComp, {
   SetNotificationPageProps,
 } from "@messagesComp/setting/SetNotificationPageComp";
+import { NextSeo } from "next-seo";
+import { SET_NOTIFICATION_SEO } from "next-seo.config";
 
 const SetNotificationPage: NextPage<SetNotificationPageProps> = ({
   bookmarkId,
   setting,
 }) => {
-  return <SetNotificationPageComp bookmarkId={bookmarkId} setting={setting} />;
+  return (
+    <>
+      <NextSeo {...SET_NOTIFICATION_SEO} />
+      <SetNotificationPageComp bookmarkId={bookmarkId} setting={setting} />;
+    </>
+  );
 };
 
 export default SetNotificationPage;

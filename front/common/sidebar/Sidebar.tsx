@@ -8,7 +8,7 @@ import {
   ACCENT_COLOR,
 } from "@utils/constant";
 import { AUTH } from "@utils/endpoint";
-import { get } from "@api";
+import { get } from "@api/api";
 import { userAtom } from "@atom/userAtom";
 import { BsArrowLeftShort } from "react-icons/bs";
 import {

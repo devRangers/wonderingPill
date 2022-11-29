@@ -24,7 +24,7 @@ import { useFormik } from "formik";
 import { useMutation } from "react-query";
 import * as Yup from "yup";
 import ReactTooltip from "react-tooltip";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { AUTH } from "@utils/endpoint";
 
 const MAX_LENGTH = 20;
