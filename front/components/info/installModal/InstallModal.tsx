@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GRAY_COLOR, SEMI_ACCENT_COLOR } from "@utils/constant";
+import { INSTALL_CATEGORIES } from "@installContainer/constant";
 import {
   Container,
   CloseBtn,
@@ -9,26 +10,15 @@ import {
   CategoryBtn,
   InfoContainer,
 } from "./InstallModal.style";
+import InstallDescription from "@installContainer/InstallDescription";
 
 interface InstallModalProps {
   onClose: () => void;
 }
 
-const categoryBtn = {
-  android: {
-    buttonText: "안드로이드에서 앱 설치 방법",
-  },
-  ios: {
-    buttonText: "iOS에서 앱 설치 방법",
-  },
-  chrome: {
-    buttonText: "크롬에서 앱 설치 방법",
-  },
-};
-
 function InstallModal({ onClose }: InstallModalProps) {
   const [isCategoryBtnClicked, setIsCategoryBtnClicked] = useState(() => {
-    const tempArr = Array(Object.keys(categoryBtn).length).fill(false);
+    const tempArr = Array(Object.keys(INSTALL_CATEGORIES).length).fill(false);
     tempArr[0] = true;
     return tempArr;
   });
@@ -53,22 +43,23 @@ function InstallModal({ onClose }: InstallModalProps) {
         />
       </ImageContainer>
       <BtnContainer>
-        {Object.entries(categoryBtn).map(([key, value], idx) => (
+        {Object.entries(INSTALL_CATEGORIES).map(([key, value], idx) => (
           <CategoryBtn
             key={key}
             $btnColor={
               isCategoryBtnClicked[idx] ? SEMI_ACCENT_COLOR : GRAY_COLOR
             }
             onClick={() => catrgoryBtnClickHandler(idx)}>
-            {value.buttonText}
+            {value}
           </CategoryBtn>
         ))}
       </BtnContainer>
       <InfoContainer $borderColor={SEMI_ACCENT_COLOR}>
-        {
-          Object.values(categoryBtn)[isCategoryBtnClicked.indexOf(true)]
-            .buttonText
-        }
+        <InstallDescription
+          category={
+            Object.keys(INSTALL_CATEGORIES)[isCategoryBtnClicked.indexOf(true)]
+          }
+        />
       </InfoContainer>
     </Container>
   );

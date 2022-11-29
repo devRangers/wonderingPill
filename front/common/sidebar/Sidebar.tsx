@@ -8,7 +8,7 @@ import {
   ACCENT_COLOR,
 } from "@utils/constant";
 import { AUTH } from "@utils/endpoint";
-import { get } from "@api";
+import { get } from "@api/api";
 import { userAtom } from "@atom/userAtom";
 import { BsArrowLeftShort } from "react-icons/bs";
 import {
@@ -42,12 +42,12 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
   },
   findWithPicture: {
     title: "사진으로 찾기",
-    link: ROUTE.SEARCH_IMAGE,
+    link: ROUTE.SEARCH,
     canUseWithLogin: false,
   },
   findPharmacy: {
     title: "약국 찾기",
-    link: ROUTE.MAIN,
+    link: ROUTE.SEARCH_PHARMACY,
     canUseWithLogin: false,
   },
   myPage: {
@@ -57,7 +57,7 @@ const ButtonTitle: { [key in string]: ButtonTitleValues } = {
   },
   guide: {
     title: "설치 가이드",
-    link: ROUTE.MAIN,
+    link: ROUTE.GUIDE,
     canUseWithLogin: false,
   },
 };

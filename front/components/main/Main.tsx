@@ -6,8 +6,8 @@ import {
   HEADER_HEIGHT,
   MAIN_COLOR,
   ROUTE,
-  TOASTIFY,
 } from "@utils/constant";
+import { MESSAGE, Toastify } from "@utils/toastify";
 import { userAtom } from "@atom/userAtom";
 import {
   ImageSection,
@@ -18,7 +18,6 @@ import {
   MainSection,
 } from "./Main.style";
 import { useAtom } from "jotai";
-import { toast } from "react-toastify";
 
 interface MainSectionValues {
   src: string;
@@ -27,7 +26,7 @@ interface MainSectionValues {
 const MainSectionTitle: { [key in string]: MainSectionValues } = {
   "사진으로 찾기": {
     src: "/images/main/findwithImage.png",
-    link: ROUTE.SEARCH_IMAGE,
+    link: ROUTE.SEARCH,
   },
   "약국 찾기": {
     src: "/images/main/findPharmacy.png",
@@ -46,11 +45,10 @@ const MainSectionTitle: { [key in string]: MainSectionValues } = {
 function Main() {
   const router = useRouter();
   const [user] = useAtom(userAtom);
-  const notifyNeedLogin = () => toast.info(TOASTIFY.NEED_LOGIN);
 
   const handleClick = (value: MainSectionValues) => {
     !user.id && value.link === ROUTE.MY_PAGE
-      ? notifyNeedLogin()
+      ? Toastify.info(MESSAGE.NEED_LOGIN)
       : router.push(value.link);
   };
 

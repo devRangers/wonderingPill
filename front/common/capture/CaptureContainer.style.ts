@@ -1,6 +1,6 @@
 import { styled } from "styletron-react";
 
-export const CaptureContainer = styled("div", {
+export const Container = styled("div", {
   position: "relative",
   top: "50%",
   left: "50%",

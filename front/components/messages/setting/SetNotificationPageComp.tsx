@@ -5,19 +5,14 @@ import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { CommonResponseDto as Response } from "@modelTypes/commonResponseDto";
 import { SetAlarmDto as SetAlarmValues } from "@modelTypes/setAlarmDto";
 import { GetAlarmSettingResponse as MessageTypes } from "@modelTypes/getAlarmSettingResponse";
-import {
-  MAIN_COLOR,
-  SEMI_ACCENT_COLOR,
-  ROUTE,
-  TOASTIFY,
-} from "@utils/constant";
+import { MAIN_COLOR, SEMI_ACCENT_COLOR, ROUTE } from "@utils/constant";
 import { getToken } from "@utils/firebase";
 import { ALARMS } from "@utils/endpoint";
-import { toast } from "react-toastify";
+import { MESSAGE, Toastify } from "@utils/toastify";
 import {
   ContentContainer,
   TitleContainer,
@@ -59,11 +54,11 @@ function SetNotificationPageComp({
       Api.post<Response, SetAlarmValues>(ALARMS.SET, data),
     {
       onSuccess: () => {
-        toast.success(TOASTIFY.SAVE_ALARM);
+        Toastify.success(MESSAGE.SAVE_ALARM);
         router.push(ROUTE.MY_PAGE);
       },
       onError: () => {
-        toast.error(TOASTIFY.FAIL);
+        Toastify.fail();
       },
     },
   );
@@ -72,11 +67,11 @@ function SetNotificationPageComp({
     () => Api.put(`/alarms/${bookmarkId}`),
     {
       onSuccess: () => {
-        toast.success(TOASTIFY.CANCEL_ALARM);
+        Toastify.success(MESSAGE.CANCEL_ALARM);
         router.push(ROUTE.MY_PAGE);
       },
       onError: () => {
-        toast.error(TOASTIFY.FAIL);
+        Toastify.fail();
       },
     },
   );

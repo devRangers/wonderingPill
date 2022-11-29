@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { patch } from "@api";
+import { patch } from "@api/api";
 import { userAtom } from "@atom/userAtom";
 import { USERS } from "@utils/endpoint";
 import { ERROR_MSG_COLOR, SUB_COLOR } from "@utils/constant";
@@ -80,7 +80,9 @@ function ModifyForm() {
     const totalCheck =
       !values.name && !values.curPassword && !values.newPassword;
     const passwordCheck = values.curPassword && !values.newPassword;
-    if (totalCheck || passwordCheck) {
+    const newPasswordCheck =
+      values.curPassword && values.newPassword && !values.checkPassword;
+    if (totalCheck || passwordCheck || newPasswordCheck) {
       handleFailModal();
       return false;
     }
@@ -151,7 +153,7 @@ function ModifyForm() {
             id="name"
             type="text"
             {...modifyDataFormik.getFieldProps("name")}
-            placeholder={namePlaceholder ? namePlaceholder : user.name}
+            placeholder={namePlaceholder || user.name}
           />
         </ModifyItem>
         <ModifyItem>

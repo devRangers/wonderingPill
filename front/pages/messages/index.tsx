@@ -2,9 +2,16 @@ import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import { ROUTE } from "@utils/constant";
 import MessagesPageComp from "@messagesComp/MessagesPageComp";
+import { NextSeo } from "next-seo";
+import { NOTIFICATIONS_SEO } from "next-seo.config";
 
 const MessageListPage: NextPage = () => {
-  return <MessagesPageComp />;
+  return (
+    <>
+      <NextSeo {...NOTIFICATIONS_SEO} />
+      <MessagesPageComp />;
+    </>
+  );
 };
 
 export default MessageListPage;

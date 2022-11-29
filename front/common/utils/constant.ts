@@ -27,7 +27,9 @@ export const ROUTE = {
   EMAIL_RESULT: "/account/email/result",
   PASSWORD_FIND: "/account/password/find",
   PASSWORD_NEW: "/account/password/new",
-  SEARCH_IMAGE: "/search/image",
+  SEARCH: "/search",
+  SEARCH_OPTION: "/search/option",
+  SEARCH_RESULT_LIST: "/search/result-list",
   SEARCH_RESULT: "/search/result",
   SEARCH_RESULT_PILLNAME: (pillName: string) => `/search/result/${pillName}`,
   SEARCH_PHARMACY: "/search/pharmacy",
@@ -35,6 +37,8 @@ export const ROUTE = {
   MY_PAGE_MODIFY: "/my-page/modify",
   MESSAGES: "/messages",
   MESSAGES_SETTING: (bookmarkId: string) => `/messages/setting/${bookmarkId}`,
+  GUIDE: "/guide",
+  GUIDE_NAV: (dest: string) => `/guide/${dest}`,
   ERROR: "/error",
   BLOCK: "/blocked",
   INFO: "/info",
@@ -51,11 +55,3 @@ export const URL_WITHOUT_HEADER = [
   ROUTE.BLOCK,
   ROUTE.INFO,
 ];
-
-export const TOASTIFY = {
-  LOGIN_FAIL: "이메일이나 비밀번호를 확인해주세요.",
-  NEED_LOGIN: "로그인이 필요한 서비스입니다.",
-  SAVE_ALARM: "알림을 설정했습니다.",
-  CANCEL_ALARM: "알림을 취소했습니다.",
-  FAIL: "잠시 후 다시 시도해 주세요.",
-};

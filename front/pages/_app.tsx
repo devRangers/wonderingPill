@@ -14,9 +14,8 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "@utils/styletron";
 import { useAtom } from "jotai";
 import { userAtom } from "@atom/userAtom";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { SigninResponse as CurrentUserResponse } from "@modelTypes/signinResponse";
-import { RefreshResponse } from "@modelTypes/refreshResponse";
 import {
   URL_WITHOUT_HEADER,
   SILENT_REFRESH_TIME,
@@ -74,26 +73,26 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function getUsers() {
       try {
-        await Api.get<RefreshResponse>(AUTH.REFRESH);
+        await Api.get(AUTH.REFRESH);
         const { user } = await Api.get<CurrentUserResponse>("/auth/current");
         setUser(user);
       } catch (err) {}
     }
     getUsers();
-  }, []);
+  }, [router]);
 
   // refresh token이 있을 경우 access token 주기적으로 재발급
   useEffect(() => {
     const timer = setInterval(async () => {
       try {
-        await Api.get<RefreshResponse>(AUTH.REFRESH);
+        await Api.get(AUTH.REFRESH);
       } catch (err) {}
     }, SILENT_REFRESH_TIME);
 
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [router]);
 
   return (
     <>

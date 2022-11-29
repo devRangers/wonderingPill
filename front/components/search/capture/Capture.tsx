@@ -1,16 +1,64 @@
+import { useEffect } from "react";
 import Image from "next/image";
-import { useState } from "react";
-import { CaptureContainer, CaptureButton } from "./Capture.style";
+import { useRouter } from "next/router";
+import CaptureContainer from "@capture/CaptureContainer";
+import { ROUTE } from "@utils/constant";
+import { Toastify } from "@utils/toastify";
+import { AI_SERVER_API } from "@utils/endpoint";
+import { putImageOnGCS } from "@api/common";
+import {
+  getPreSignedURL,
+  postImageToAIServer,
+  deleteImageOnGCS,
+} from "api/search/capture";
 
 function Capture() {
+  const router = useRouter();
+
   const handleCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
-    if (files?.length) {
-      const file = files[0];
-      const newUrl = URL.createObjectURL(file);
-      // 여기서 서버로 이미지 전송!
+    if (!files) {
+      Toastify.fail();
+      return;
+    }
+
+    try {
+      const uuid = Date.now().toString();
+      const { result } = await getPreSignedURL(uuid);
+      await putImageOnGCS(result.url, files[0]);
+      const imgURL = result.url.split("png")[0] + "png";
+
+      await postImageToAIServer({ imgURL });
+      await deleteImageOnGCS(uuid);
+    } catch (e) {
+      console.error(e);
+      Toastify.fail();
     }
   };
+
+  useEffect(() => {
+    const eventSource = new EventSource(AI_SERVER_API.CLASSIFY);
+    eventSource.addEventListener("sse", function (e) {
+      const data = JSON.parse(e.data);
+      const colors = data.colors.split("/");
+      router.push({
+        pathname: ROUTE.SEARCH_OPTION,
+        query: {
+          colors,
+          letters: data.letters == "NONE" ? "" : data.letters,
+          shape: data.shape,
+        },
+      });
+    });
+
+    eventSource.onerror = (e) => {
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   return (
     <>
@@ -21,16 +69,7 @@ function Capture() {
         objectFit="contain"
         priority={true}
       />
-      <CaptureContainer>
-        <input
-          accept="image/*"
-          id="icon-button-file"
-          type="file"
-          onChange={handleCapture}
-          style={{ display: "none" }}
-        />
-        <CaptureButton htmlFor="icon-button-file" />
-      </CaptureContainer>
+      <CaptureContainer handleCapture={handleCapture} />
     </>
   );
 }

@@ -1,9 +1,11 @@
+import { PillControllerSearchPillParams } from "@modelTypes/pillControllerSearchPillParams";
+
 const apiBase = {
   auth: "/auth",
   users: "/users",
   alarms: "/alarms",
   bookmark: "/bookmark",
-  pharmacy: "/pharmacy",
+  pharmacies: "/pharmacies",
   pills: "/pills",
 };
 
@@ -54,17 +56,30 @@ export const BOOKMARK = {
 };
 
 export const PHARMACY = {
-  PHARMACY: apiBase.pharmacy,
-  SEARCH: `${apiBase.pharmacy}/search`,
-  COUNT: `${apiBase.pharmacy}/count`,
+  PHARMACY: apiBase.pharmacies,
+  SEARCH: (option: string, keyword: string) =>
+    `${apiBase.pharmacies}/search?option=${option}&keyword=${keyword}`,
+  BOOKMARK: (id: number) => `${apiBase.pharmacies}/bookmark/${id}`,
+  BOOKMARKLIST: `${apiBase.pharmacies}/bookmark-list`,
 };
 
 export const PILLS = {
-  SEARCH: `${apiBase.pills}/search`,
+  SEARCH: (data: PillControllerSearchPillParams) =>
+    `${apiBase.pills}/search?shape=${data.shape}&colors=${data.colors}&mark=${
+      data.mark
+    }${data.letters && `&letters=${data.letters}`}${
+      data.name && `&name=${data.name}`
+    }`,
   BOOKMARK_ID: (id: string) => `${apiBase.pills}/bookmark/${id}`,
   RESULT_NAME: (name: string) => `${apiBase.pills}/result/${name}`,
+  PREGINED_URL: (id: string) => `${apiBase.pills}/search/presigned-url/${id}`,
 };
 
 export const NEXT_API = {
   VERIFY_CODE: `/api/verify-code`,
+};
+
+export const AI_SERVER_API = {
+  CLASSIFY: `${process.env.NEXT_PUBLIC_AI_SERVER_URL}/classify`,
+  PREDICT: `${process.env.NEXT_PUBLIC_AI_SERVER_URL}/predict`,
 };

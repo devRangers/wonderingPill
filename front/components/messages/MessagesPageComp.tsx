@@ -1,13 +1,14 @@
 import { useState } from "react";
-import _ from "lodash";
+import uniqBy from "lodash-es/uniqBy";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import * as Api from "@api";
+import * as Api from "@api/api";
 import { CommonResponseDto as CommonResponse } from "@modelTypes/commonResponseDto";
 import { GetAlarmsResponseDto as MessageResponse } from "@modelTypes/getAlarmsResponseDto";
 import { GetAlarmsResponse as MessageValues } from "@modelTypes/getAlarmsResponse";
 import { messageKeys } from "@utils/queryKey";
-import { MAIN_COLOR, ACCENT_COLOR, TOASTIFY } from "@utils/constant";
+import { MAIN_COLOR, ACCENT_COLOR } from "@utils/constant";
 import { ALARMS } from "@utils/endpoint";
+import { Toastify } from "@utils/toastify";
 import {
   ContentContainer,
   TitleContainer,
@@ -24,7 +25,6 @@ import Container from "@container/Container";
 import Modal from "@modal/Modal";
 import CheckModal from "@messagesComp/CheckModal";
 import Messages from "@messagesComp/Messages";
-import { toast } from "react-toastify";
 
 interface deleteMessageValues {
   ids: string[];
@@ -62,7 +62,7 @@ function MessagesPageComp() {
     {
       onSuccess: ({ alarms }) => {
         setMessages((prev) =>
-          _.uniqBy(
+          uniqBy(
             [...prev, ...alarms].sort(function (cur, prev) {
               const prevCheck = Number(prev.check);
               const curCheck = Number(cur.check);
@@ -91,7 +91,7 @@ function MessagesPageComp() {
         queryClient.invalidateQueries(messageKeys.getMessages(pageCount));
       },
       onError: () => {
-        toast.error(TOASTIFY.FAIL);
+        Toastify.fail();
       },
     },
   );

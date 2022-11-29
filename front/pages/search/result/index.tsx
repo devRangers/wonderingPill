@@ -1,14 +1,14 @@
-import ResultList from "@searchComp/result/resultList/ResultList";
+import FilteringSearch from "@searchComp/result/Result";
 import { NextSeo } from "next-seo";
 import { RESULT_SEO } from "next-seo.config";
 
-function ResultPage() {
+function Filter() {
   return (
     <>
       <NextSeo {...RESULT_SEO} />
-      <ResultList />
+      <FilteringSearch />
     </>
   );
 }
 
-export default ResultPage;
+export default Filter;

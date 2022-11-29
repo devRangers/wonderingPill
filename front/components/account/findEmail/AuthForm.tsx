@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { NEXT_API } from "@utils/endpoint";
+import { Toastify } from "@utils/toastify";
 import { findEmailKeys } from "@utils/queryKey";
 import { MAIN_COLOR, ACCENT_COLOR, GRAY_COLOR, ROUTE } from "@utils/constant";
 import {
@@ -17,7 +18,6 @@ import {
   CloseBtnContainer,
   CloseBtn,
 } from "./AuthForm.style";
-import { toast } from "react-toastify";
 
 interface AuthFormProps {
   onClose: () => void;
@@ -52,7 +52,7 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
         });
       },
       onError: ({ message }) => {
-        toast.error(message);
+        Toastify.fail(message);
         setIsSubmitted(false);
       },
     },
@@ -70,6 +70,7 @@ function AuthForm({ onClose, phone }: AuthFormProps) {
           name="authNum"
           placeholder="인증번호"
           value={code}
+          autoComplete="one-time-code"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setCode(e.target.value)
           }
