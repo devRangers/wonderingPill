@@ -7,19 +7,10 @@ export const Container = styled(
     $footerHeight: string;
     $fullHeight: string;
   }) => ({
-    width: "100vw",
-    height: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
-  }),
-);
-
-export const FindWithImageContainer = styled(
-  "div",
-  (props: { $bgColor: string; $isWide: boolean }) => ({
     display: "grid",
     gridTemplateRows: "1fr 1fr",
-    height: "100%",
-    margin: "0 auto",
-    backgroundColor: props.$isWide ? props.$bgColor : "transparent",
+    width: "100vw",
+    height: `calc(${props.$fullHeight} - (${props.$headerHeight} + ${props.$footerHeight}))`,
   }),
 );
 
@@ -44,12 +35,9 @@ export const ImageWrapper = styled("div", {
   margin: "0 auto",
 });
 
-export const DescriptionContainer = styled(
-  "div",
-  (props: { $isWide: boolean }) => ({
-    backgroundColor: "#fff",
-  }),
-);
+export const DescriptionContainer = styled("section", {
+  backgroundColor: "#fff",
+});
 
 export const Description = styled("section", (props: { $isWide: boolean }) => ({
   display: "grid",
