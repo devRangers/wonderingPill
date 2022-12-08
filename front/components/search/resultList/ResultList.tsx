@@ -62,7 +62,6 @@ const PillData: { [key in string]: PillDataValue } = {
 };
 
 function ResultList(pills: PillSearchResponseDtoPills) {
-  console.log(pills);
   return (
     <OuterContainer
       $headerHeight={HEADER_HEIGHT}
